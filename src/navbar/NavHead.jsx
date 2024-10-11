@@ -31,16 +31,16 @@ const NavHead = ({ lang, dict }) => {
               {formattedDate}
             </span>
           </div>
-          <div className="text-white font-nutino">Kumbh Mela 2025</div>
+          <div className="text-white font-nutino">KUMBH MELA 2025</div>
           <div className="flex gap-2">
             <div className="h-full">
               <Select
                 className="rounded-md h-8  "
-                style={{ width: "59px" }}
+                style={{ width: "99px" }}
                 defaultValue={"en"}
                 options={[
-                  { label: "EN", value: "en" },
-                  { label: "HI", value: "hi" },
+                  { label: "ENGLISH", value: "en" },
+                  { label: "HINDI", value: "hi" },
                 ]}
               ></Select>
             </div>

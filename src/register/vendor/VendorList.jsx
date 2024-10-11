@@ -11,6 +11,12 @@ import { setUpdateVendorEl, setVendorListIsUpdated } from "./vendorSlice";
 import { Link } from "react-router-dom";
 
 const columns = [
+  // {
+  //   title: "SrNo",
+  //   dataIndex: "srno",
+  //   key: "srno",
+  //   width:75,
+  // },
   {
     title: "Name",
     dataIndex: "name",
@@ -36,12 +42,12 @@ const columns = [
     key: "company",
     width: 200,
   },
-  {
-    title: "Code",
-    dataIndex: "code",
-    key: "code",
-    width: 160,
-  },
+  // {
+  //   title: "Code",
+  //   dataIndex: "code",
+  //   key: "code",
+  //   width: 160,
+  // },
   // {
   //   title: "Pin",
   //   dataIndex: "pin",
@@ -168,7 +174,7 @@ const VendorList = () => {
     <div className="">
       <>
         <CommonDivider
-          label={"Vendor List"}
+          label={"Vendor List- Sanitation"}
           compo={
             <Button
               className="bg-orange-300 mb-1"

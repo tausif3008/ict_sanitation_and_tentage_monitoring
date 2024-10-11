@@ -97,7 +97,7 @@ const ManPowerAssignmentForm = () => {
           // initialValues={{ role: "option1", department: "sanitation" }}  
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-
+{/* 
             <Form.Item
               label={<div className="font-semibold">Role</div>}
               name="role"
@@ -115,7 +115,7 @@ const ManPowerAssignmentForm = () => {
                   </Option>
                 ))}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
 
             <Form.Item
               label={<div className="font-semibold">User Name</div>}
@@ -181,33 +181,32 @@ const ManPowerAssignmentForm = () => {
                 <Option value="supervisor">Supervisor</Option>
               </Select>
             </Form.Item>
+           
             <Form.Item
-              label={<div className="font-semibold">Information To</div>}
-              name="informationTo"
-              rules={[{ required: true, message: "Please select an option for Information To" }]
-              }
+              label={<div className="font-semibold">Sector</div>}
+              name="sector"
+              rules={[{ required: true, message: "Please select sector" }]}
               className="mb-4"
             >
-              <Select placeholder="Select Information To" className="rounded-none">
-                <Option value="option1">Option 1</Option>
-                <Option value="option2">Option 2</Option>
+              <Select placeholder="Select Sector" className="rounded-none">
+                <Option value="sector1">Sector1</Option>
+                <Option value="sector2">Sector2</Option>
+                <Option value="sector3">Sector3</Option>
+                <Option value="sector4">Sector4</Option>
               </Select>
             </Form.Item>
             <Form.Item
-              label={<div className="font-semibold">Assignment Details</div>}
-              name="assignmentDetails"
+              label={<div className="font-semibold">Time Slot</div>}
+              name="timeSlot"
+              rules={[{ required: true, message: "Please select time slot" }]}
               className="mb-4"
             >
-              <Button className="w-full bg-gray-200">
-                Scan or Upload QR Code
-              </Button>
-            </Form.Item>
-            <Form.Item
-              label={<div className="font-semibold">Assignment Details</div>}
-              name="assignmentDetails"
-              className="mb-4"
-            >
-              <TextArea rows={1} placeholder="Enter Assignment Details" />
+              <Select placeholder="Select Time Slot" className="rounded-none">
+                <Option value="morning">Morning</Option>
+                <Option value="afternoon">Afternoon</Option>
+                <Option value="evening">Evening</Option>
+                <Option value="night">Night</Option>
+              </Select>
             </Form.Item>
           </div>
           <div className="flex justify-end">
