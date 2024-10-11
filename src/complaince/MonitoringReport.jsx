@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
+import CommonTable from "../commonComponents/CommonTable";
 
 const MonitoringReport = ({ data }) => {
   const [details, setDetails] = useState([]);
@@ -23,18 +24,25 @@ const MonitoringReport = ({ data }) => {
       uri = uri + "&" + params.per_page;
     }
 
-    const extraHeaders = { "x-api-version": URLS.asset.version };
+    const extraHeaders = { "x-api-version": URLS.monitoringDetails.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {
-      const data = res.data;
-
       setLoading(false);
+      const data = res?.data;
+      const list = data?.listings[0].questions;
 
-      const list = data?.monitoring[0]?.questions;
-      setDetails(() => list);
+      setDetails(() => {
+        return {
+          list,
+          pageLength: data.paging[0].length,
+          currentPage: data.paging[0].currentpage,
+          totalRecords: data.paging[0].totalrecords,
+        };
+      });
 
-      const assetDetails = data.monitoring[0];
+      const assetDetails = data.listings[0];
+
       setAssetDetails({
         latitude: assetDetails?.latitude,
         longitude: assetDetails?.longitude,
@@ -55,19 +63,17 @@ const MonitoringReport = ({ data }) => {
       title: "Question (EN)",
       dataIndex: "question_en",
       key: "question_en",
-      width: 300,
     },
     {
       title: "Question (HI)",
       dataIndex: "question_hi",
       key: "question_hi",
-      width: 300,
     },
-    {
-      title: "SLA",
-      dataIndex: "sla",
-      key: "sla",
-    },
+    // {
+    //   title: "SLA",
+    //   dataIndex: "sla",
+    //   key: "sla",
+    // },
 
     {
       title: "image",
@@ -86,7 +92,6 @@ const MonitoringReport = ({ data }) => {
       title: "Answer",
       dataIndex: "answer",
       key: "answer",
-      width: 140,
       render: (answer) => {
         if (answer === "1") {
           return (
@@ -109,12 +114,12 @@ const MonitoringReport = ({ data }) => {
         }
       },
     },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      width: 250,
-    },
+    // {
+    //   title: "Description",
+    //   dataIndex: "description",
+    //   key: "description",
+    //   width: 250,
+    // },
   ];
 
   const navigate = useNavigate();
@@ -126,7 +131,7 @@ const MonitoringReport = ({ data }) => {
           <Button
             className="bg-gray-200 rounded-full w-9 h-9"
             onClick={() => {
-              navigate("/asset-type-list");
+              navigate("/monitoring");
             }}
           >
             <ArrowLeftOutlined></ArrowLeftOutlined>
@@ -134,13 +139,13 @@ const MonitoringReport = ({ data }) => {
           <div className="text-d9 text-2xl  w-full flex items-end ">
             <span className="mr-1"> Monitoring Report For: </span>{" "}
             <span className="text-blue-500">
-              {" "}
               {assetDetails.asset_type_name}
             </span>
           </div>
         </div>
+
         <Divider className="bg-d9 h-2/3 mt-1"></Divider>
-        {details.length ? (
+        {details?.list?.length ? (
           <div className="mt-3">
             <div className="flex gap-1 flex-col">
               <div>
@@ -162,7 +167,7 @@ const MonitoringReport = ({ data }) => {
                 <span>QR Code</span>
                 <Image
                   width={130}
-                  src={URLS.baseUrl + assetDetails?.qrCode}
+                  src={URLS.baseUrl + "/" + assetDetails?.qrCode}
                   alt="QR Code"
                 />
               </div>
@@ -175,11 +180,12 @@ const MonitoringReport = ({ data }) => {
                 ></Image>
               </div>
             </div>
+
             <Table
               columns={dateColumns}
-              dataSource={details}
+              dataSource={details.list}
               pagination={false}
-              scroll={{ x: 1200, y: 350 }}
+              scroll={{ x: 1000, y: 350 }}
               bordered
               className="rounded-none"
               loading={loading}

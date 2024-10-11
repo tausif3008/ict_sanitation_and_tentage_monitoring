@@ -1,24 +1,20 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, message, Modal, Table } from "antd";
+import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import {} from "../register/AssetType/AssetTypeSlice";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
-import QRCode from "qrcode.react";
 
 import {
   setAssetInfo,
   setMonitoringListIsUpdated,
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
+import { Image } from "antd";
 
 const Monitoring = () => {
-  const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
@@ -35,8 +31,6 @@ const Monitoring = () => {
   const navigate = useNavigate();
 
   // qr
-  const [qrCodeData, setQrCodeData] = useState(""); // State for QR code data
-  const [qrCodeUrl, setQrCodeUrl] = useState(""); // State for QR code image URL
 
   const getDetails = async () => {
     setLoading(true);
@@ -80,56 +74,45 @@ const Monitoring = () => {
     }
   }, [params, isUpdatedSelector]);
 
-  const handleCancel = () => {
-    setIsModalVisible(false); // Close the modal
-  };
-
   // qr code
   useEffect(() => {
     dispatch(setUpdateMonitoringEl({ updateElement: null }));
   }, [dispatch]);
-
-  const showQrCode = (record) => {
-    setQrCodeData(record.assetsCode); // Set the QR code data (can be the assetsCode or any other data)
-    setQrCodeUrl(record.asset_qr_code); // Set the QR code URL
-    setIsModalVisible(true); // Show the modal
-  };
 
   const columns = [
     {
       title: "Assets Type Name",
       dataIndex: "asset_type_name",
       key: "assetsName",
-      width: 300,
+      width: 210,
     },
 
     {
       title: "Assets Code",
       dataIndex: "asset_code",
       key: "assetsCode",
+      width: 110,
     },
     {
-      title: "Vendor Name",
-      dataIndex: "vendor_name",
-      key: "vendor",
-      width: 200,
+      title: "QR",
+      dataIndex: "asset_qr_code",
+      width: 80,
+      render: (qr) => {
+        return (
+          <Image
+            src={URLS.baseUrl + "/" + qr}
+            alt="QR Code"
+            style={{ maxWidth: "50px" }}
+          />
+        );
+      },
     },
+
     {
-      title: "Vendor Asset Code",
-      dataIndex: "vendor_asset_code",
-      key: "vendor_asset_code",
-      width: 160,
+      title: "remark",
+      dataIndex: "remark",
+      key: "remark",
     },
-    {
-      title: "Sector",
-      dataIndex: "sector",
-      key: "assetsName",
-    },
-    // {
-    //   title: "Description",
-    //   dataIndex: "description",
-    //   key: "description_",
-    // },
     {
       title: "Action",
       key: "action",
@@ -138,13 +121,6 @@ const Monitoring = () => {
 
       render: (text, record) => (
         <div className="flex gap-2">
-          <div
-            className="text-blue-500 cursor-pointer"
-            onClick={() => showQrCode(record)}
-          >
-            QR
-          </div>
-
           <div
             className="text-blue-500 cursor-pointer"
             onClick={() => {
@@ -162,7 +138,7 @@ const Monitoring = () => {
   return (
     <div className="">
       <CommonDivider
-        label={"Assets Monitoring "}
+        label={"Asset Type Monitoring "}
         // compo={
         //   <Button
         //     className="bg-orange-300 mb-1"
@@ -182,29 +158,6 @@ const Monitoring = () => {
         loading={loading}
         scroll={{ x: 1000, y: 400 }}
       ></CommonTable>
-
-      <Modal
-        width={300}
-        title="QR Code"
-        open={isModalVisible}
-        onCancel={handleCancel}
-        footer={null}
-      >
-        <div
-          style={{ textAlign: "center" }}
-          className="flex justify-center items-center"
-        >
-          {qrCodeUrl ? (
-            <img
-              src={URLS.baseUrl + "/" + qrCodeUrl}
-              alt="QR Code"
-              style={{ maxWidth: "200px" }}
-            />
-          ) : (
-            <div>QR Code Not Found</div>
-          )}
-        </div>
-      </Modal>
     </div>
   );
 };

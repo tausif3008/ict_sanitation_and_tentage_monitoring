@@ -9,6 +9,7 @@ const CommonTable = ({ columns, uri, details, loading, scroll }) => {
     if (isNaN(pageNumber)) {
       pageNumber = 1;
     }
+
     let path = "/" + uri + "/page=" + pageNumber + "&per_page=" + page;
     navigate(path);
   };
@@ -19,7 +20,7 @@ const CommonTable = ({ columns, uri, details, loading, scroll }) => {
         loading={loading}
         columns={columns}
         bordered
-        scroll={scroll ? scroll : { x: 1600, y: 400 }}
+        scroll={scroll || { x: 1600, y: 400 }}
         dataSource={details.list || []}
         pagination={false}
       />

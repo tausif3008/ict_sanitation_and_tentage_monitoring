@@ -229,7 +229,7 @@ function App() {
               element={<NotificationAdd></NotificationAdd>}
             ></Route>
             <Route
-              path="monitoring-report/:id"
+              path="monitoring-report/:id/:page?/:per_page?"
               element={<MonitoringReport></MonitoringReport>}
             ></Route>
           </Route>
