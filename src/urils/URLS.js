@@ -45,6 +45,12 @@ const URLS = {
 
   // sectors
   sectors: { path: "/sector", version: 5.43 },
+
+  // proposed sectors
+  vendorProposedSectors: {
+    path: "/vendor-proposed-sectors",
+    version: "5.43",
+  },
 };
 
 export default URLS;

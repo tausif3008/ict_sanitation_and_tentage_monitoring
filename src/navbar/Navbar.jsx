@@ -74,6 +74,14 @@ const register_items = (lang, dict) => {
         </Link>
       ),
     },
+    {
+      key: 10,
+      label: (
+        <Link className="text-black no-underline" to="/vendor-proposed-sectors">
+          Proposed Sectors
+        </Link>
+      ),
+    },
   ];
 };
 

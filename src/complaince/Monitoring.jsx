@@ -13,6 +13,7 @@ import {
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
 import { Image } from "antd";
+import CommonSearchForm from "../commonComponents/CommonSearchForm";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -22,6 +23,8 @@ const Monitoring = () => {
     pageLength: 25,
     currentPage: 1,
   });
+
+  const [searchQuery, setSearchQuery] = useState();
 
   const isUpdatedSelector = useSelector(
     (state) => state.monitoringSlice?.isUpdated
@@ -39,8 +42,14 @@ const Monitoring = () => {
 
     if (params.page) {
       uri = uri + params.page;
-    } else if (params.per_page) {
+    }
+
+    if (params.per_page) {
       uri = uri + "&" + params.per_page;
+    }
+
+    if (searchQuery) {
+      uri = uri + searchQuery;
     }
 
     const extraHeaders = { "x-api-version": URLS.asset.version };
@@ -72,7 +81,7 @@ const Monitoring = () => {
     if (isUpdatedSelector) {
       dispatch(setMonitoringListIsUpdated({ isUpdated: false }));
     }
-  }, [params, isUpdatedSelector]);
+  }, [params, isUpdatedSelector, searchQuery]);
 
   // qr code
   useEffect(() => {
@@ -93,6 +102,12 @@ const Monitoring = () => {
       key: "assetsCode",
       width: 110,
     },
+    // {
+    //   title: "Index Number",
+    //   dataIndex: "index_no",
+    //   key: "assetsCode",
+    //   width: 110,
+    // },
     {
       title: "QR",
       dataIndex: "asset_qr_code",
@@ -137,6 +152,15 @@ const Monitoring = () => {
 
   return (
     <div className="">
+      <CommonSearchForm
+        setSearchQuery={setSearchQuery}
+        searchQuery={searchQuery}
+        fields={[
+          { name: "asset_type_name", label: "Asset Type Name" },
+          { name: "asset_code", label: "Asset Code" },
+          // { name: "index_no", label: "Index No." },
+        ]}
+      ></CommonSearchForm>
       <CommonDivider
         label={"Asset Type Monitoring "}
         // compo={
