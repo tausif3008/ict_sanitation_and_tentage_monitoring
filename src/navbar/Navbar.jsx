@@ -58,7 +58,7 @@ const master_items = (lang, dict) => {
     {
       key: "3",
       label: (
-        <Link className="text-black no-underline" to="/vehicle-registration">
+        <Link className="text-black no-underline" to="/vehicle">
           Vehicle Registration
         </Link>
       ),

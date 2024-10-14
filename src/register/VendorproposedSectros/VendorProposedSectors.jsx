@@ -7,7 +7,6 @@ import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setQuestionListIsUpdated, setUpdateQuestionEl } from "./questionSlice";
 import AppConstants from "../../urils/AppConstants";
 
 const columns = [
@@ -88,7 +87,6 @@ const VendorProposedSectors = () => {
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
               onClick={() => {
-                dispatch(setUpdateQuestionEl({ updateElement: el }));
                 navigate("/add-question-form");
               }}
             >
@@ -111,14 +109,10 @@ const VendorProposedSectors = () => {
 
   useEffect(() => {
     getUsers();
-    if (isUpdatedSelector) {
-      dispatch(setQuestionListIsUpdated({ isUpdated: false }));
-    }
+    // if (isUpdatedSelector) {
+    //   dispatch(setQuestionListIsUpdated({ isUpdated: false }));
+    // }
   }, [params, isUpdatedSelector]);
-
-  useEffect(() => {
-    dispatch(setUpdateQuestionEl({ updateElement: null }));
-  }, []);
 
   return (
     <div className="">

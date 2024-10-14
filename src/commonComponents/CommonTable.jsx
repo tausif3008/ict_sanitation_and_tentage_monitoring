@@ -25,18 +25,20 @@ const CommonTable = ({ columns, uri, details, loading, scroll }) => {
         pagination={false}
       />
 
-      <div className="mt-2 flex justify-between items-center">
-        {<div>Total: {details.totalRecords}</div>}
-        <Pagination
-          align="end"
-          showSizeChanger
-          showQuickJumper
-          current={details.currentPage}
-          total={details.totalRecords}
-          pageSize={details.pageLength}
-          onChange={handlePageChange}
-        />
-      </div>
+      {details.pageLength && (
+        <div className="mt-2 flex justify-between items-center">
+          {<div>Total: {details.totalRecords}</div>}
+          <Pagination
+            align="end"
+            showSizeChanger
+            showQuickJumper
+            current={details.currentPage}
+            total={details.totalRecords}
+            pageSize={details.pageLength}
+            onChange={handlePageChange}
+          />
+        </div>
+      )}
     </div>
   );
 };

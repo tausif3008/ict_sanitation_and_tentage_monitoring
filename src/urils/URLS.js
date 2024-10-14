@@ -42,6 +42,7 @@ const URLS = {
 
   // asset
   assetList: { path: "/asset", version: 5.43 },
+  assetDetails: { path: "/asset/details?assets_id=", version: 5.43 },
 
   // sectors
   sectors: { path: "/sector", version: 5.43 },
@@ -49,6 +50,24 @@ const URLS = {
   // proposed sectors
   vendorProposedSectors: {
     path: "/vendor-proposed-sectors",
+    version: "5.43",
+  },
+  vehicles: {
+    path: "/vehicles",
+    version: 5.43,
+  },
+  addVehicle: {
+    path: "/vehicles/entry",
+    version: 5.43,
+  },
+  editVehicle: {
+    path: "/vehicles/edit",
+    version: 5.43,
+  },
+
+  //permissions
+  permission: {
+    path: "/user-permission/views?user_id=3",
     version: "5.43",
   },
 };

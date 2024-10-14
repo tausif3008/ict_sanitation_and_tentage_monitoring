@@ -12,8 +12,6 @@ import GisServices from "./gis/GisServices";
 import GisList from "./gis/GisList";
 
 import VendorRegistrationForm from "./register/vendor/VendorRegistrationForm";
-import VehicleRegistrationForm from "./vehicle/VehicleRegistrationForm";
-import VehicleList from "./vehicle/VehicleList";
 
 import GPSFleetRegistration from "./gis/GPSFleetRegistration";
 import ManPowerAssignmentForm from "./assignment/ManPowerAssignmentForm";
@@ -45,9 +43,13 @@ import QuestionList from "./register/questions/QuestionList";
 import AssetTypeForm from "./register/AssetType/AssetTypeForm";
 import AssetTypeList from "./register/AssetType/AssetType";
 import VendorList from "./register/vendor/VendorList";
+import VehicleList from "./register/vehicle/VehicleList";
+import AddVehicleForm from "./register/vehicle/AddVehicleForm";
+// import URLS from "./urils/URLS"
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
+  // getData(URLS.permission.path);
 
   return (
     <Provider store={store}>
@@ -103,6 +105,7 @@ function App() {
               path="asset-list/:page?/:per_page?"
               element={<AssetsList></AssetsList>}
             ></Route>
+
             <Route
               path="gis-services"
               element={<GisServices></GisServices>}
@@ -128,14 +131,17 @@ function App() {
               path="vendor/add-vendor-details-form/:id"
               element={<VendorDetailsForm></VendorDetailsForm>}
             ></Route>
+            {/* 
             <Route
               path="vendor-proposed-sectors/:page?/:per_page?"
-              element={<VendorList></VendorList>}
-            ></Route>
+              element={<VendorProposedSectors></VendorProposedSectors>}
+            ></Route> */}
+
             <Route
               path="asset-type-registration"
               element={<AssetTypeForm></AssetTypeForm>}
             ></Route>
+
             <Route
               path="asset-type-list/:page?/:per_page?/:search?"
               element={<AssetTypeList />}
@@ -154,12 +160,9 @@ function App() {
             ></Route>
             <Route
               path="vehicle-registration"
-              element={<VehicleRegistrationForm></VehicleRegistrationForm>}
+              element={<AddVehicleForm></AddVehicleForm>}
             ></Route>
-            <Route
-              path="vehicle-list"
-              element={<VehicleList></VehicleList>}
-            ></Route>
+            <Route path="vehicle" element={<VehicleList></VehicleList>}></Route>
             <Route
               path="manpower-assignment"
               element={<ManPowerAssignmentForm></ManPowerAssignmentForm>}
