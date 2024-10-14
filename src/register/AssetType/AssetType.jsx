@@ -11,8 +11,6 @@ import { setAssetTypeListIsUpdated, setUpdateAssetEl } from "./AssetTypeSlice";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 
 const AssetTypeList = () => {
-  const [updated, setUpdated] = useState(false);
-
   const [questions, setQuestions] = useState([]); // To store questions for the selected asset type
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [selectedAssetType, setSelectedAssetType] = useState(null); // Currently selected asset type for viewing questions
@@ -54,7 +52,6 @@ const AssetTypeList = () => {
 
     if (res) {
       const data = res.data;
-      setUpdated(false);
       setLoading(false);
 
       const list = data.assettypes.map((el, index) => {
