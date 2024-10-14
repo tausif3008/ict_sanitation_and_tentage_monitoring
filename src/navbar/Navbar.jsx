@@ -11,7 +11,7 @@ import { logoutFetch } from "../Fetch/Axios";
 const register_items = (lang, dict) => {
   return [
     {
-      key: "2",
+      key: "1",
       label: (
         <Link className="text-black no-underline hover:text-green" to="/users">
           User Registration
@@ -19,39 +19,7 @@ const register_items = (lang, dict) => {
       ),
     },
     {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/asset-list">
-          Asset Registration
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          GIS Services
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link className="text-black no-underline" to="/gps-fleet-registration">
-          GPS Fleet Registration
-        </Link>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <Link className="text-black no-underline" to="/asset-type-list">
-          Asset Type Registration
-        </Link>
-      ),
-    },
-    {
-      key: "7",
+      key: "2",
       label: (
         <Link className="text-black no-underline" to="/vendor">
           Vendor Registration
@@ -59,7 +27,36 @@ const register_items = (lang, dict) => {
       ),
     },
     {
-      key: "8",
+      key: "3",
+      label: (
+        <Link className="text-black no-underline" to="/asset-list">
+          Asset Tagging
+        </Link>
+      ),
+    },
+  ];
+};
+
+const master_items = (lang, dict) => {
+  return [
+    {
+      key: "1",
+      label: (
+        <Link className="text-black no-underline" to="/asset-type-list">
+          Asset Type Registration
+        </Link>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <Link className="text-black no-underline" to="/questions">
+          Question Registration
+        </Link>
+      ),
+    },
+    {
+      key: "3",
       label: (
         <Link className="text-black no-underline" to="/vehicle-registration">
           Vehicle Registration
@@ -67,10 +64,34 @@ const register_items = (lang, dict) => {
       ),
     },
     {
-      key: "9",
+      key: "4",
       label: (
-        <Link className="text-black no-underline" to="/questions">
-          Question Registration
+        <Link className="text-black no-underline" to="/gps-fleet-registration">
+          GPS Routs Registration
+        </Link>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <Link className="text-black no-underline" to="/gis-services">
+          GPS Device Registration
+        </Link>
+      ),
+    },
+    {
+      key: "5",
+      label: (
+        <Link className="text-black no-underline" to="/gis-services">
+          GIS Map Registration
+        </Link>
+      ),
+    },
+    {
+      key: "6",
+      label: (
+        <Link className="text-black no-underline" to="/gis-services">
+          SLA Parameters
         </Link>
       ),
     },
@@ -418,7 +439,17 @@ const Navbar = ({ lang, setLang }) => {
                 <DropDown
                   text="black"
                   items={register_items(lang, dict)}
-                  name={dict.register[lang]}
+                  // name={dict.register[lang]}
+                  name="User Access & Registration"
+                ></DropDown>
+              </div>
+
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                <DropDown
+                  text="black"
+                  items={master_items(lang, dict)}
+                  // name={dict.register[lang]}
+                  name="Master Data Creation"
                 ></DropDown>
               </div>
 
