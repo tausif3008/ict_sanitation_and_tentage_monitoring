@@ -5,10 +5,8 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { useNavigate, useParams } from "react-router";
 import { getData } from "../../Fetch/Axios";
-import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssetListIsUpdated, setUpdateAssetEl } from "./AssetsSlice";
-import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -57,15 +55,23 @@ const AssetsList = () => {
         return {
           ...el,
           action: (
+            // <Button
+            //   className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
+            //   key={el.name + index}
+            //   onClick={() => {
+            //     navigate("/asset-registration");
+            //   }}
+            // >
+            //   Edit
+            // </Button>
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
               onClick={() => {
-                dispatch(setUpdateAssetEl({ updateElement: el }));
-                navigate("/asset-registration");
+                navigate(`/asset-details/${el.assets_id}`);
               }}
             >
-              <EditOutlined></EditOutlined>
+              Details
             </Button>
           ),
         };
@@ -100,16 +106,35 @@ const AssetsList = () => {
 
   const columns = [
     {
+      title: "Asset Main Type",
+      dataIndex: "asset_main_type_name",
+      key: "asset_main_type_name",
+      width: 140,
+    },
+    {
       title: "Asset Type",
       dataIndex: "asset_type_name",
       key: "asset_type_name",
       width: 220,
     },
     {
+      title: "Vendor Name",
+      dataIndex: "vendor_name",
+      key: "vendor_name",
+      width: 200,
+    },
+    {
       title: "Vendor Asset Code",
       dataIndex: "vendor_asset_code",
       key: "vendor_asset_code",
     },
+    {
+      title: "Sector",
+      dataIndex: "sector",
+      key: "sector",
+      width: 100,
+    },
+
     {
       title: "Location (Lat, Long)",
       render: (text, record) =>
@@ -118,13 +143,14 @@ const AssetsList = () => {
     },
     {
       title: "QR Code",
+      width: 100,
       render: (text, record) => (
-        <div
-          className="text-blue-500 cursor-pointer"
-          onClick={() => handleQRCodeClick(record.qr_code)}
-        >
-          {record.code ? record.code : "No QR Value"}
-        </div>
+        <Image
+          src={URLS.baseUrl + "/" + record.qr_code}
+          width={60}
+          height={60}
+          alt={record.qr_code}
+        ></Image>
       ),
       key: "qrCode",
     },
@@ -159,16 +185,16 @@ const AssetsList = () => {
     <div className="">
       <CommonDivider
         label={"Asset List"}
-        compo={
-          <Button
-            className="bg-orange-300 mb-1"
-            onClick={() => {
-              navigate("/asset-registration");
-            }}
-          >
-            Add Asset
-          </Button>
-        }
+        // compo={
+        //   <Button
+        //     className="bg-orange-300 mb-1"
+        //     onClick={() => {
+        //       navigate("/asset-registration");
+        //     }}
+        //   >
+        //     Add Asset
+        //   </Button>
+        // }
       ></CommonDivider>
 
       {/* <CommonSearchForm
@@ -193,14 +219,12 @@ const AssetsList = () => {
         ]}
       ></CommonSearchForm> */}
 
-      <div className="h-3"></div>
-
       <CommonTable
         columns={columns}
         uri={"asset-list"}
         details={details}
         loading={loading}
-        scroll={{ x: 1000, y: 400 }}
+        scroll={{ x: 1500, y: 400 }}
       ></CommonTable>
 
       <Modal
@@ -208,6 +232,7 @@ const AssetsList = () => {
         onCancel={() => setIsModalVisible(false)}
         footer={null}
         title="QR Code"
+        width={200}
       >
         {qrCodeUrl ? (
           <Image src={qrCodeUrl} alt="QR Code" />

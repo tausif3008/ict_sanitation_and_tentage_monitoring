@@ -7,6 +7,7 @@ import userSlice from "./../register/user/userSlice";
 import questionSlice from "./../register/questions/questionSlice";
 import monitoringSlice from "./../complaince/monitoringSlice";
 import assetsSlice from "./../register/asset/AssetsSlice";
+import vehicleSlice from "./../register/vehicle/vehicleSlice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   questionSlice: questionSlice,
   monitoringSlice: monitoringSlice,
   assetsSlice: assetsSlice,
+  vehicleSlice: vehicleSlice,
 });
 
 export default rootReducer;
