@@ -14,7 +14,7 @@ const register_items = (lang, dict) => {
       key: "1",
       label: (
         <Link className="text-black no-underline hover:text-green" to="/users">
-          User Registration
+          User List
         </Link>
       ),
     },
@@ -22,7 +22,7 @@ const register_items = (lang, dict) => {
       key: "2",
       label: (
         <Link className="text-black no-underline" to="/vendor">
-          Vendor Registration
+          Vendor List
         </Link>
       ),
     },
@@ -43,7 +43,7 @@ const master_items = (lang, dict) => {
       key: "1",
       label: (
         <Link className="text-black no-underline" to="/asset-type-list">
-          Asset Type Registration
+          Asset Type List
         </Link>
       ),
     },
@@ -51,7 +51,7 @@ const master_items = (lang, dict) => {
       key: "2",
       label: (
         <Link className="text-black no-underline" to="/questions">
-          Question Registration
+          Question List
         </Link>
       ),
     },
@@ -59,7 +59,7 @@ const master_items = (lang, dict) => {
       key: "3",
       label: (
         <Link className="text-black no-underline" to="/vehicle">
-          Vehicle Registration
+          Vehicle List
         </Link>
       ),
     },
@@ -67,7 +67,7 @@ const master_items = (lang, dict) => {
       key: "4",
       label: (
         <Link className="text-black no-underline" to="/gps-fleet-registration">
-          GPS Routs Registration
+          GPS Routes List
         </Link>
       ),
     },
@@ -75,7 +75,7 @@ const master_items = (lang, dict) => {
       key: "4",
       label: (
         <Link className="text-black no-underline" to="/gis-services">
-          GPS Device Registration
+          GPS Device List
         </Link>
       ),
     },
@@ -215,18 +215,18 @@ const schedule_items = (lang, dict, navigate) => {
     //   ),
     // },
     {
-      key: "2",
+      key: "1",
       label: (
         <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-management-schedule"
+          className="text-black no-underline"
+          to="/create-sanitation-schedule"
         >
-          Waste Management Schedule
+          Sanitation Management Schedule
         </Link>
       ),
     },
     {
-      key: "3",
+      key: "2",
       label: (
         <Link className="text-black no-underline" to="/create-tentage-schedule">
           Tentage Management Schedule
@@ -234,13 +234,13 @@ const schedule_items = (lang, dict, navigate) => {
       ),
     },
     {
-      key: "4",
+      key: "3",
       label: (
         <Link
-          className="text-black no-underline"
-          to="/create-sanitation-schedule"
+          className="text-black no-underline hover:text-green"
+          to="/waste-management-schedule"
         >
-          Sanitation Management Schedule
+          Waste Management Schedule
         </Link>
       ),
     },
