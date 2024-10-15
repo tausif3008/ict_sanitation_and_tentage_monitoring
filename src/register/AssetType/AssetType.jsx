@@ -82,6 +82,8 @@ const AssetTypeList = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
+    } else {
+      setLoading(false);
     }
   };
 
