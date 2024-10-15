@@ -60,61 +60,64 @@ const Login = () => {
                 </div>
               </div>
               <div className="w-10/12">
-                <Form
-                  form={form}
-                  initialValues={{
-                    remember: true,
-                  }}
-                  onFinish={onFinish}
-                  autoComplete="off"
-                >
-                  <Form.Item
-                    name="username"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your username!",
-                      },
-                    ]}
-                    style={{ marginTop: "15px" }}
+                <div className="flex w-full gap-4">
+                  <Form
+                    className="w-full gap-5 "
+                    form={form}
+                    initialValues={{
+                      remember: true,
+                    }}
+                    onFinish={onFinish}
+                    autoComplete="off"
                   >
-                    <Input
-                      autoComplete="off"
-                      prefix={<UserOutlined />}
-                      placeholder="User Name"
-                      className="rounded-none"
-                    />
-                  </Form.Item>
+                    <Form.Item
+                      name="username"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your username!",
+                        },
+                      ]}
+                      style={{ marginTop: "15px", marginBottom: "30px" }}
+                    >
+                      <Input
+                        autoComplete="off"
+                        prefix={<UserOutlined />}
+                        placeholder="User Name"
+                        className="rounded-none"
+                      />
+                    </Form.Item>
 
-                  <Form.Item
-                    name="password"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please enter your password!",
-                      },
-                    ]}
-                  >
-                    <Input.Password
-                      autoComplete="off"
-                      prefix={<LockOutlined />}
-                      placeholder="Password"
-                      className="rounded-none"
-                    />
-                  </Form.Item>
-                  <Form.Item noStyle>
-                    <div className="flex justify-end">
-                      <Button
-                        loading={loading}
-                        type="primary"
-                        htmlType="submit"
-                        className="bg-orange-400 text-white"
-                      >
-                        Login
-                      </Button>
-                    </div>
-                  </Form.Item>
-                </Form>
+                    <Form.Item
+                      name="password"
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your password!",
+                        },
+                      ]}
+                    >
+                      <Input.Password
+                        autoComplete="off"
+                        prefix={<LockOutlined />}
+                        placeholder="Password"
+                        className="rounded-none"
+                      />
+                    </Form.Item>
+                    <Form.Item noStyle>
+                      <div className="flex justify-end">
+                        <Button
+                          loading={loading}
+                          type="primary"
+                          htmlType="submit"
+                          className="bg-orange-400 text-white"
+                        >
+                          Login
+                        </Button>
+                      </div>
+                    </Form.Item>
+                  </Form>
+                </div>
               </div>
             </div>
           </div>
