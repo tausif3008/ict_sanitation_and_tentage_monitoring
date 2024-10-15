@@ -9,6 +9,7 @@ import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setUpdateVendorEl, setVendorListIsUpdated } from "./vendorSlice";
 import { Link } from "react-router-dom";
+import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 
 const columns = [
   {
@@ -96,14 +97,21 @@ const VendorList = () => {
   const params = useParams();
   const navigate = useNavigate();
 
+  const [searchQuery, setSearchQuery] = useState();
+
   const getDetails = async () => {
     setLoading(true);
 
     let uri = URLS.vendors.path + "&";
     if (params.page) {
       uri = uri + params.page;
-    } else if (params.per_page) {
+    }
+    if (params.per_page) {
       uri = uri + "&" + params.per_page;
+    }
+
+    if (searchQuery) {
+      uri = uri + searchQuery;
     }
 
     const extraHeaders = { "x-api-version": URLS.users.version };
@@ -158,7 +166,7 @@ const VendorList = () => {
     if (isUpdatedSelector) {
       dispatch(setVendorListIsUpdated({ isUpdated: false }));
     }
-  }, [params, isUpdatedSelector]);
+  }, [params, isUpdatedSelector, searchQuery]);
 
   useEffect(() => {
     dispatch(setUpdateVendorEl({ updateElement: null }));
@@ -167,6 +175,16 @@ const VendorList = () => {
   return (
     <div className="">
       <>
+        <CommonSearchForm
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+          fields={[
+            { name: "name", label: "Name" },
+            { name: "email", label: "Email" },
+            { name: "phone", label: "Phone" },
+            // { name: "index_no", label: "Index No." },
+          ]}
+        ></CommonSearchForm>
         <CommonDivider
           label={"Vendor List"}
           compo={

@@ -21,13 +21,9 @@ import { getFormData } from "../../../urils/getFormData";
 import optionsMaker from "../../../urils/OptionMaker";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setSectorQuant,
-  setVendorDetailsListIsUpdated,
-} from "./vendorDetailsSlice";
+import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
 import dayjs from "dayjs";
 import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
-import SectorsField from "./SectorsField";
 
 const { Option } = Select;
 

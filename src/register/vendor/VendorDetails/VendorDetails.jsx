@@ -12,6 +12,7 @@ import {
   setUpdateVendorDetailsEl,
   setVendorDetailsListIsUpdated,
 } from "./vendorDetailsSlice";
+import CommonSearchForm from "../../../commonComponents/CommonSearchForm";
 
 const VendorDetails = () => {
   const dispatch = useDispatch();
@@ -118,7 +119,9 @@ const VendorDetails = () => {
 
     if (params.page) {
       uri = uri + params.page;
-    } else if (params.per_page) {
+    }
+
+    if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
 
@@ -184,6 +187,15 @@ const VendorDetails = () => {
   return (
     <div className="">
       <>
+        {/* <CommonSearchForm
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+          fields={[
+            { name: "name", label: "Name" },
+            { name: "email", label: "email" },
+            // { name: "index_no", label: "Index No." },
+          ]}
+        ></CommonSearchForm> */}
         <div className="flex gap-2 items-center ">
           <Link to="/vendor">
             <Button className="bg-gray-200 rounded-full w-9 h-9">
