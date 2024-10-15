@@ -38,8 +38,8 @@ const CommonFormDropDownMaker = ({
     <Form.Item
       label={<div className="font-semibold">{selectLabel}</div>}
       name={selectName}
+      className="p-0 m-0"
       rules={[{ required, message: RequiredMessage }]}
-      className="mb-4"
     >
       <Select placeholder="Select Main Asset Type" allowClear mode={mode}>
         {options.map((option) => (

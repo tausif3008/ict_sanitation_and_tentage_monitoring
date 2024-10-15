@@ -65,3 +65,7 @@ fill: black !important;
 .ant-form-item-label{
   font-weight: 600;
 }
+
+.ant-select-selector{
+  border-radius: 0px !important;
+}
