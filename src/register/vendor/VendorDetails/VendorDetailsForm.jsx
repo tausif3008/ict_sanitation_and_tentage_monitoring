@@ -59,31 +59,33 @@ const VendorDetailsForm = () => {
 
       let quantity = 0;
 
-      quantity = quantity + updatedDetails.proposedsectors[0].quantity * 1;
-
-      form.setFieldsValue({
-        sector: updatedDetails.proposedsectors[0].sector_id,
-        quantity: updatedDetails.proposedsectors[0].quantity * 1,
-      });
-
-      for (
-        let index = 1;
-        index < updatedDetails.proposedsectors.length;
-        index++
-      ) {
-        sector_info.push({
-          sector: updatedDetails.proposedsectors[index].sector_id,
-          quantity: updatedDetails.proposedsectors[index].quantity * 1,
-        });
+      if (updatedDetails.proposedsectors.length) {
         quantity =
-          quantity + updatedDetails.proposedsectors[index].quantity * 1;
+          quantity + updatedDetails.proposedsectors[0]?.quantity * 1 || 0;
+
+        form.setFieldsValue({
+          sector: updatedDetails.proposedsectors[0].sector_id,
+          quantity: updatedDetails.proposedsectors[0]?.quantity * 1 || 0,
+        });
+
+        for (
+          let index = 1;
+          index < updatedDetails.proposedsectors.length;
+          index++
+        ) {
+          sector_info.push({
+            sector: updatedDetails.proposedsectors[index].sector_id,
+            quantity: updatedDetails.proposedsectors[index]?.quantity * 1 || 0,
+          });
+          quantity =
+            quantity + updatedDetails.proposedsectors[index]?.quantity * 1 || 0;
+        }
+        setQuantity(quantity);
+
+        form.setFieldsValue({
+          sector_info,
+        });
       }
-      setQuantity(quantity);
-
-      form.setFieldsValue({
-        sector_info,
-      });
-
       form.setFieldsValue(updatedDetails);
     }
   }, [vendorDetailsUpdateElSelector, form]);
