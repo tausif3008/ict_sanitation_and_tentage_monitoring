@@ -197,7 +197,7 @@ const UserList = () => {
           { name: "name", label: "Name" },
           { name: "email", label: "Email" },
           { name: "phone", label: "Phone" },
-          { name: "company", label: " Company" },
+          // { name: "company", label: " Company" },
         ]}
         dropdown={
           <UserTypeDropDown

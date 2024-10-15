@@ -37,12 +37,12 @@ const columns = [
     key: "phone",
     width: 110,
   },
-  {
-    title: "Company",
-    dataIndex: "company",
-    key: "company",
-    width: 200,
-  },
+  // {
+  //   title: "Company",
+  //   dataIndex: "company",
+  //   key: "company",
+  //   width: 200,
+  // },
   {
     title: "Code",
     dataIndex: "code",
@@ -130,6 +130,7 @@ const VendorList = () => {
       const list = data.users.map((el, index) => {
         return {
           ...el,
+
           sr: index + 1,
           action: (
             <div className="flex gap-2">
