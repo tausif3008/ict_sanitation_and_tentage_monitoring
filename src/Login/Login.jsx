@@ -75,7 +75,7 @@ const Login = () => {
                       rules={[
                         {
                           required: true,
-                          message: "Please enter your username!",
+                          message: "Please enter your mobile number!",
                         },
                       ]}
                       style={{ marginTop: "15px", marginBottom: "30px" }}
@@ -83,7 +83,7 @@ const Login = () => {
                       <Input
                         autoComplete="off"
                         prefix={<UserOutlined />}
-                        placeholder="User Name"
+                        placeholder="Mobile Number"
                         className="rounded-none"
                       />
                     </Form.Item>

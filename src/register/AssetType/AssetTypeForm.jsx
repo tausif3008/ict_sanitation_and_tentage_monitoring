@@ -7,6 +7,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssetTypeListIsUpdated } from "./AssetTypeSlice";
+import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 
 const AssetTypeForm = () => {
   const { Option } = Select;
@@ -45,7 +46,9 @@ const AssetTypeForm = () => {
 
     const res = await postData(
       getFormData(values),
-      assetUpdateElSelector ? URLS.editAssetType.path : URLS.assetTypeEntry.path,
+      assetUpdateElSelector
+        ? URLS.editAssetType.path
+        : URLS.assetTypeEntry.path,
       {
         version: URLS.register.version,
       }
@@ -87,24 +90,16 @@ const AssetTypeForm = () => {
         <Divider className="bg-d9 h-2/3 mt-1"></Divider>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 mb-3">
-            <Form.Item
-              name="asset_main_type_id"
-              label={<div className="font-semibold">Asset Main Type</div>}
-              rules={[
-                { required: true, message: "Please select an asset main type" },
-              ]}
-            >
-              <Select
-                placeholder="Select asset main type"
-                className="rounded-none"
-              >
-                {assetMainTypes.map((type) => (
-                  <Option key={type.value} value={type.value}>
-                    {type.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item>
+            <CommonFormDropDownMaker
+              uri={"assetMainTypePerPage"}
+              responseListName="assetmaintypes"
+              responseLabelName="name"
+              responseIdName="asset_main_type_id"
+              selectLabel={"Asset Main Type"}
+              selectName={"asset_main_type_id"}
+              required={true}
+              RequiredMessage={"Main type is required!"}
+            ></CommonFormDropDownMaker>
 
             {/* Asset Sub Type Textbox */}
             <Form.Item

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, message, Modal, Table } from "antd";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
@@ -9,6 +9,7 @@ import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssetTypeListIsUpdated, setUpdateAssetEl } from "./AssetTypeSlice";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
+import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 
 const AssetTypeList = () => {
   const [questions, setQuestions] = useState([]); // To store questions for the selected asset type
@@ -126,8 +127,8 @@ const AssetTypeList = () => {
 
   const columns = [
     {
-      title: "Main Type", // Asset main type
-      dataIndex: "asset_main_type",
+      title: "Main Asset ype", // Asset main type
+      dataIndex: "asset_main_type_name",
       key: "asset_main_type",
     },
     {
@@ -190,24 +191,21 @@ const AssetTypeList = () => {
       <CommonSearchForm
         setSearchQuery={setSearchQuery}
         searchQuery={searchQuery}
-        fields={[{ name: "name", label: "Asset Type" }]}
-        dropFields={[
-          {
-            name: "asset_main_type_id",
-            label: "Main Asset Type",
-            options: [
-              {
-                label: "Sanitation",
-                value: "1",
-              },
-              {
-                label: "Tentage",
-                value: "2",
-              },
-            ],
-          },
-        ]}
+        // fields={[{ name: "name", label: "Asset Type" }]}
+        dropdown={
+          <CommonFormDropDownMaker
+            uri={"assetMainTypePerPage"}
+            responseListName="assetmaintypes"
+            responseLabelName="name"
+            responseIdName="asset_main_type_id"
+            selectLabel={"Asset Main Type"}
+            selectName={"asset_main_type_id"}
+            required={false}
+            RequiredMessage={"Main type is required!"}
+          ></CommonFormDropDownMaker>
+        }
       ></CommonSearchForm>
+
       <div className="h-3"></div>
       <CommonTable
         columns={columns}
