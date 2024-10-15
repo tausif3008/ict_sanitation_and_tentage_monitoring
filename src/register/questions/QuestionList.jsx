@@ -19,6 +19,12 @@ const getVal = (val) => {
 };
 
 const columns = [
+  {
+    title: "Sr. No", // Asset main type
+    dataIndex: "sr",
+    key: "sr",
+    width: 80,
+  },
   // {
   //   title: "ID",
   //   dataIndex: "question_id",
@@ -91,6 +97,7 @@ const QuestionList = () => {
       const list = data.listings.map((el, index) => {
         return {
           ...el,
+          sr: index + 1,
           action: (
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "

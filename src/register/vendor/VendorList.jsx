@@ -13,6 +13,12 @@ import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 
 const columns = [
   {
+    title: "Sr. No", // Asset main type
+    dataIndex: "sr",
+    key: "sr",
+    width: 80,
+  },
+  {
     title: "Name",
     dataIndex: "name",
     key: "name",
@@ -124,6 +130,7 @@ const VendorList = () => {
       const list = data.users.map((el, index) => {
         return {
           ...el,
+          sr: index + 1,
           action: (
             <div className="flex gap-2">
               <Button

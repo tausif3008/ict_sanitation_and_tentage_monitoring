@@ -11,6 +11,12 @@ import { setVehicleListIsUpdated, setUpdateVehicleEl } from "./vehicleSlice";
 
 const columns = [
   {
+    title: "Sr. No", // Asset main type
+    dataIndex: "sr",
+    key: "sr",
+    width: 80,
+  },
+  {
     title: "User Name",
     dataIndex: "user_name",
     key: "user_name",
@@ -82,6 +88,7 @@ const VehicleList = () => {
       const list = data.vehicles.map((el, index) => {
         return {
           ...el,
+          sr: index + 1,
           action: (
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
