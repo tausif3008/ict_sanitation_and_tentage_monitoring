@@ -10,14 +10,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { setQuestionListIsUpdated, setUpdateQuestionEl } from "./questionSlice";
 import AppConstants from "../../urils/AppConstants";
 
-const getVal = (val) => {
-  if (val === "undefined" || val === null) {
-    return "-";
-  } else {
-    return val;
-  }
-};
-
 const columns = [
   {
     title: "Sr. No", // Asset main type
