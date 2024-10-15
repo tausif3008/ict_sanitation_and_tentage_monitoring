@@ -3,7 +3,7 @@ import { Badge, Select } from "antd";
 import notificationIcon from "../assets/Dashboard/notification.png";
 import calenderIcon from "../assets/Dashboard/calendarIcon.png";
 import loginIcon from "../assets/Dashboard/logInIcon.png";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
 
 const NavHead = ({ lang, dict }) => {
@@ -31,7 +31,12 @@ const NavHead = ({ lang, dict }) => {
               {formattedDate}
             </span>
           </div>
-          <div className="text-white font-nutino">Kumbh Mela 2025</div>
+          <Link
+            to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+            className="no-underline"
+          >
+            <div className="text-white font-nutino">Kumbh Mela 2025</div>
+          </Link>
           <div className="flex gap-2">
             <div className="h-full">
               <Select
