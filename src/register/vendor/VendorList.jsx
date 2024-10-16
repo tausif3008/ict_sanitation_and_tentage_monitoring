@@ -16,7 +16,7 @@ const columns = [
     title: "Sr. No", // Asset main type
     dataIndex: "sr",
     key: "sr",
-    width: 80,
+    width: 70,
   },
   {
     title: "Name",
@@ -32,7 +32,7 @@ const columns = [
   },
 
   {
-    title: "Phone",
+    title: "Mobile No.",
     dataIndex: "phone",
     key: "phone",
     width: 110,
@@ -43,23 +43,17 @@ const columns = [
   //   key: "company",
   //   width: 200,
   // },
-  {
-    title: "Code",
-    dataIndex: "code",
-    key: "code",
-    width: 160,
-  },
   // {
   //   title: "Pin",
   //   dataIndex: "pin",
   //   key: "pin",
   // },
-  {
-    title: "Country",
-    dataIndex: "country_name",
-    key: "country_name",
-    width: 100,
-  },
+  // {
+  //   title: "Country",
+  //   dataIndex: "country_name",
+  //   key: "country_name",
+  //   width: 100,
+  // },
   {
     title: "State",
     dataIndex: "state_name",
@@ -77,6 +71,12 @@ const columns = [
     dataIndex: "address",
     key: "address",
     width: 300,
+  },
+  {
+    title: "Vendor Code",
+    dataIndex: "code",
+    key: "code",
+    width: 160,
   },
   {
     title: "Action",
