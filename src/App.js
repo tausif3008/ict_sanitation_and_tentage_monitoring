@@ -45,6 +45,8 @@ import AssetTypeList from "./register/AssetType/AssetType";
 import VendorList from "./register/vendor/VendorList";
 import VehicleList from "./register/vehicle/VehicleList";
 import AddVehicleForm from "./register/vehicle/AddVehicleForm";
+import UserProfile from "./Profile/UserProfile";
+import SectorsListing from "./register/sectorListing/SectorListing";
 // import URLS from "./urils/URLS"
 
 function App() {
@@ -214,6 +216,14 @@ function App() {
             <Route
               path="monitoring-report/:id/:page?/:per_page?"
               element={<MonitoringReport></MonitoringReport>}
+            ></Route>
+            <Route
+              path="/user-profile"
+              element={<UserProfile></UserProfile>}
+            ></Route>
+            <Route
+              path="sectors-listing"
+              element={<SectorsListing></SectorsListing>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>

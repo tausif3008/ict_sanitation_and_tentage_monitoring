@@ -131,7 +131,12 @@ const AssetsList = () => {
       key: "sector",
       width: 100,
     },
-
+    {
+      title: "Circle",
+      dataIndex: "circle_id",
+      key: "circle_id",
+      width: 100,
+    },
     {
       title: "Location (Lat, Long)",
       render: (text, record) =>

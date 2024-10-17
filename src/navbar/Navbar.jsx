@@ -96,10 +96,10 @@ const master_items = (lang, dict) => {
       ),
     },
     {
-      key: 10,
+      key: "7",
       label: (
-        <Link className="text-black no-underline" to="/vendor-proposed-sectors">
-          Proposed Sectors
+        <Link className="text-black no-underline" to="/sectors-listing">
+          Sectors List
         </Link>
       ),
     },
@@ -310,7 +310,10 @@ const setting_item = (dict, lang, navigate) => {
     {
       key: "1",
       label: (
-        <Link className="text-black no-underline hover:text-green" to="/">
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/user-profile"
+        >
           Profile
         </Link>
       ),
