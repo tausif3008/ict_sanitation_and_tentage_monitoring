@@ -17,7 +17,7 @@ const IncidentsReport = () => {
     chart: {
       type: "pie",
     },
-    labels: ["Resolved", "Inprogress", "Open"],
+    labels: ["Resolved", "Inprogress", "Unresolved"],
     colors: ["#00E396", "#008FFB", "#FEB019"],
     legend: {
       position: "bottom",
@@ -60,8 +60,8 @@ const IncidentsReport = () => {
   return (
     <div className="p-4  mx-auto bg-white rounded-xl shadow-md space-y-4">
       <div className="flex justify-between items-center">
-        <h3 className="text-xl font-semibold">Incidents Report</h3>
-        <DatePicker defaultValue={moment()}></DatePicker>
+        <h3 className="text-xl font-bold">Sanitation Report</h3>
+        {/* <DatePicker defaultValue={moment()}></DatePicker> */}
       </div>
       <div className="flex flex-col sm:flex-row justify-between">
         <div>
@@ -71,7 +71,7 @@ const IncidentsReport = () => {
               +{percentageChange}%
             </div>
           </div>
-          <p className="text-gray-600">Total number of incidents</p>
+          <p className="text-gray-600">Total number of issue reported</p>
         </div>
         {/* Pie chart */}
         <div className="flex justify-center">
@@ -110,7 +110,7 @@ const IncidentsReport = () => {
         <div className="text-start">
           <div className="text-green-600 font-semibold flex gap-1">
             <img src={openIcon} alt="" className="h-5 w-5" />
-            <span>Open</span>
+            <span>Unresolved</span>
           </div>{" "}
           <h2 className="text-2xl font-bold">{open}</h2>
           <Progress

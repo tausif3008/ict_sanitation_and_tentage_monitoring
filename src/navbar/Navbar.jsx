@@ -66,8 +66,8 @@ const master_items = (lang, dict) => {
     {
       key: "4",
       label: (
-        <Link className="text-black no-underline" to="/gps-fleet-registration">
-          GPS Routs Registration
+        <Link className="text-black no-underline" to="/route">
+          GPS Route Registration
         </Link>
       ),
     },
@@ -96,10 +96,18 @@ const master_items = (lang, dict) => {
       ),
     },
     {
-      key: 10,
+      key: "7",
       label: (
         <Link className="text-black no-underline" to="/vendor-proposed-sectors">
           Proposed Sectors
+        </Link>
+      ),
+    },
+    {
+      key: "8",
+      label: (
+        <Link className="text-black no-underline" to="/sectors-listing">
+          Sectors Listing
         </Link>
       ),
     },
@@ -310,7 +318,7 @@ const setting_item = (dict, lang, navigate) => {
     {
       key: "1",
       label: (
-        <Link className="text-black no-underline hover:text-green" to="/">
+        <Link className="text-black no-underline hover:text-green" to="/user-profile">
           Profile
         </Link>
       ),

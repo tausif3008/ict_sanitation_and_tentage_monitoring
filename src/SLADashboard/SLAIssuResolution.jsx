@@ -6,7 +6,7 @@ const SLAResolution = () => {
     chart: {
       type: "pie",
     },
-    labels: ["Completed", "Pending", "Overdue"],
+    labels: ["Cleaned", "Under Maintenance", "Unresolved"],
     colors: ["#00E396", "#775DD0", "#FF4560"],
     dataLabels: {
       enabled: true,
@@ -48,11 +48,11 @@ const SLAResolution = () => {
     },
   });
 
-  const [chartSeries] = useState([80, 11, 9]);
+  const [chartSeries] = useState([80, 22, 9]);
 
   return (
-    <div className="p-4 rounded-lg shadow-md w-full bg-white">
-      <div className="text-xl font-bold mb-4">SLA Issue Resolution</div>
+    <div className="p-4 rounded-lg w-full bg-white">
+      <div className="text-xl font-bold mb-4">Total Number Of Toilets</div>
       <Chart
         options={chartOptions}
         series={chartSeries}

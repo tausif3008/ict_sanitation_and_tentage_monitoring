@@ -97,7 +97,7 @@ const ManPowerAssignmentForm = () => {
           // initialValues={{ role: "option1", department: "sanitation" }}  
         >
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-{/* 
+
             <Form.Item
               label={<div className="font-semibold">Role</div>}
               name="role"
@@ -115,7 +115,7 @@ const ManPowerAssignmentForm = () => {
                   </Option>
                 ))}
               </Select>
-            </Form.Item> */}
+            </Form.Item>
 
             <Form.Item
               label={<div className="font-semibold">User Name</div>}
@@ -195,19 +195,7 @@ const ManPowerAssignmentForm = () => {
                 <Option value="sector4">Sector4</Option>
               </Select>
             </Form.Item>
-            <Form.Item
-              label={<div className="font-semibold">Time Slot</div>}
-              name="timeSlot"
-              rules={[{ required: true, message: "Please select time slot" }]}
-              className="mb-4"
-            >
-              <Select placeholder="Select Time Slot" className="rounded-none">
-                <Option value="morning">Morning</Option>
-                <Option value="afternoon">Afternoon</Option>
-                <Option value="evening">Evening</Option>
-                <Option value="night">Night</Option>
-              </Select>
-            </Form.Item>
+          
           </div>
           <div className="flex justify-end">
             <Form.Item>

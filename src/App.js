@@ -45,6 +45,9 @@ import AssetTypeList from "./register/AssetType/AssetType";
 import VendorList from "./register/vendor/VendorList";
 import VehicleList from "./register/vehicle/VehicleList";
 import AddVehicleForm from "./register/vehicle/AddVehicleForm";
+import UserProfile from "./Profile/UserProfile";
+import SectorsListing from "./register/sectorsListing/SectorsListing";
+import Routeregistration from "./register/route/Routeregistration.jsx";
 // import URLS from "./urils/URLS"
 
 function App() {
@@ -67,6 +70,11 @@ function App() {
           ></Route>
 
           <Route path="/" element={<Layout></Layout>}>
+            <Route
+              path="/user-profile"
+              element={<UserProfile></UserProfile>}
+            ></Route>
+
             <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
             <Route
               path="/tentage-dashboard"
@@ -136,7 +144,10 @@ function App() {
               path="vendor-proposed-sectors/:page?/:per_page?"
               element={<VendorProposedSectors></VendorProposedSectors>}
             ></Route> */}
-
+            <Route
+              path="sectors-listing"
+              element={<SectorsListing></SectorsListing>}
+            ></Route>
             <Route
               path="asset-type-registration"
               element={<AssetTypeForm></AssetTypeForm>}
@@ -215,7 +226,12 @@ function App() {
               path="monitoring-report/:id/:page?/:per_page?"
               element={<MonitoringReport></MonitoringReport>}
             ></Route>
+             <Route
+              path="route-registration"
+              element={<Routeregistration></Routeregistration>}
+            ></Route>
           </Route>
+
           <Route path="*" element={<AppError></AppError>}></Route>
           <Route path="login" element={<Login></Login>}></Route>
         </Routes>

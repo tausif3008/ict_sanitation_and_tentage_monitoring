@@ -85,7 +85,7 @@ const UserRegistrationForm = () => {
           >
             <ArrowLeftOutlined></ArrowLeftOutlined>
           </Button>
-          <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
+          <div className="text-d9 text-2xl  w-full flex items-end justify-between">
             <div className="font-bold">
               {userUpdateElSelector
                 ? "Update User Details"
