@@ -214,7 +214,7 @@ const VendorDetails = () => {
             <CommonDivider
               label={
                 <div>
-                  Vendor Details For{" "}
+                  Vendor Details For
                   <span className="text-blue-500">{userName}</span>
                 </div>
               }

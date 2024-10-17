@@ -14,6 +14,7 @@ const CommonFormDropDownMaker = ({
   responseListName,
   responseLabelName,
   responseIdName,
+  setValue,
 }) => {
   const [options, setOptions] = useState([]);
 
@@ -41,7 +42,16 @@ const CommonFormDropDownMaker = ({
       className="p-0 m-0"
       rules={[{ required, message: RequiredMessage }]}
     >
-      <Select placeholder="Select Main Asset Type" allowClear mode={mode}>
+      <Select
+        placeholder="Select Main Asset Type"
+        allowClear
+        mode={mode}
+        onChange={(val) => {
+          if (setValue) {
+            setValue(val);
+          }
+        }}
+      >
         {options.map((option) => (
           <Option key={option.value} value={option.value}>
             {option.label}
