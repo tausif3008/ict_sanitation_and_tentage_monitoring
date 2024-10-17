@@ -50,10 +50,10 @@ const AssetsList = () => {
     if (res) {
       const data = res.data;
       setLoading(false);
-
       const list = data.listings.map((el, index) => {
         return {
           ...el,
+          sr: index + 1,
           action: (
             // <Button
             //   className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
@@ -95,16 +95,13 @@ const AssetsList = () => {
     }
   }, [params, isUpdatedSelector, searchQuery]);
 
-  const handleQRCodeClick = (qrCode) => {
-    if (qrCode) {
-      setQrCodeUrl(`https://kumbhtsmonitoring.in/php-api/${qrCode}`);
-      setIsModalVisible(true);
-    } else {
-      message.warning("QR Code not available.");
-    }
-  };
-
   const columns = [
+    {
+      title: "Sr. No", // Asset main type
+      dataIndex: "sr",
+      key: "sr",
+      width: 80,
+    },
     {
       title: "Asset Main Type",
       dataIndex: "asset_main_type_name",

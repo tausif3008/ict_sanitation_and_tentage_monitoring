@@ -164,14 +164,14 @@ const UserRegistrationForm = () => {
               <Input placeholder="Enter email" className="rounded-none " />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label={<div className="font-semibold">Company</div>}
               name="company"
               rules={[{ required: true, message: "Please enter the company" }]}
               className="mb-4"
             >
               <Input placeholder="Company Name" className="rounded-none " />
-            </Form.Item>
+            </Form.Item> */}
 
             <CountryStateCity
               form={form}

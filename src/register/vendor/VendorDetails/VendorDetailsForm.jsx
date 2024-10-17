@@ -21,13 +21,9 @@ import { getFormData } from "../../../urils/getFormData";
 import optionsMaker from "../../../urils/OptionMaker";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  setSectorQuant,
-  setVendorDetailsListIsUpdated,
-} from "./vendorDetailsSlice";
+import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
 import dayjs from "dayjs";
 import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
-import SectorsField from "./SectorsField";
 
 const { Option } = Select;
 
@@ -59,31 +55,33 @@ const VendorDetailsForm = () => {
 
       let quantity = 0;
 
-      quantity = quantity + updatedDetails.proposedsectors[0].quantity * 1;
-
-      form.setFieldsValue({
-        sector: updatedDetails.proposedsectors[0].sector_id,
-        quantity: updatedDetails.proposedsectors[0].quantity * 1,
-      });
-
-      for (
-        let index = 1;
-        index < updatedDetails.proposedsectors.length;
-        index++
-      ) {
-        sector_info.push({
-          sector: updatedDetails.proposedsectors[index].sector_id,
-          quantity: updatedDetails.proposedsectors[index].quantity * 1,
-        });
+      if (updatedDetails.proposedsectors.length) {
         quantity =
-          quantity + updatedDetails.proposedsectors[index].quantity * 1;
+          quantity + updatedDetails.proposedsectors[0]?.quantity * 1 || 0;
+
+        form.setFieldsValue({
+          sector: updatedDetails.proposedsectors[0].sector_id,
+          quantity: updatedDetails.proposedsectors[0]?.quantity * 1 || 0,
+        });
+
+        for (
+          let index = 1;
+          index < updatedDetails.proposedsectors.length;
+          index++
+        ) {
+          sector_info.push({
+            sector: updatedDetails.proposedsectors[index].sector_id,
+            quantity: updatedDetails.proposedsectors[index]?.quantity * 1 || 0,
+          });
+          quantity =
+            quantity + updatedDetails.proposedsectors[index]?.quantity * 1 || 0;
+        }
+        setQuantity(quantity);
+
+        form.setFieldsValue({
+          sector_info,
+        });
       }
-      setQuantity(quantity);
-
-      form.setFieldsValue({
-        sector_info,
-      });
-
       form.setFieldsValue(updatedDetails);
     }
   }, [vendorDetailsUpdateElSelector, form]);

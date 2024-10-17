@@ -30,7 +30,7 @@ const MonitoringReport = ({ data }) => {
     if (res) {
       setLoading(false);
       const data = res?.data;
-      const list = data?.listings[0].questions;
+      const list = data?.listings[0]?.questions;
 
       setDetails(() => {
         return {

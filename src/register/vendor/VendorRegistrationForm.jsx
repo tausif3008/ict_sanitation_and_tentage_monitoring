@@ -146,14 +146,14 @@ const VendorRegistrationForm = () => {
               <TextArea rows={1} />
             </Form.Item>
 
-            <Form.Item
+            {/* <Form.Item
               label={<div className="font-semibold">Company</div>}
               name="company"
               rules={[{ required: true, message: "Please enter the company" }]}
               className="mb-4"
             >
               <Input placeholder="Company Name" className="rounded-none" />
-            </Form.Item>
+            </Form.Item> */}
 
             {!vendorUpdateElSelector && (
               <Form.Item
