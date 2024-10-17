@@ -34,6 +34,7 @@ const VendorDetailsForm = () => {
   const [loading, setLoading] = useState(false);
   const params = useParams();
   const [assetTypes, setAssetTypes] = useState([]);
+  const [assetMainTypeId, setAssetMainTypeId] = useState();
 
   const vendorDetailsUpdateElSelector = useSelector(
     (state) => state.vendorDetailsSlice?.vendorDetailsUpdateEl
@@ -87,16 +88,18 @@ const VendorDetailsForm = () => {
   }, [vendorDetailsUpdateElSelector, form]);
 
   // Populate asset types for selection
+
   useEffect(() => {
-    optionsMaker(
-      "vendorAsset",
-      "assettypes",
-      "name",
-      setAssetTypes,
-      "",
-      "asset_type_id"
-    );
-  }, []);
+    if (assetMainTypeId)
+      optionsMaker(
+        "vendorAsset",
+        "assettypes",
+        "name",
+        setAssetTypes,
+        "?asset_main_type_id=" + assetMainTypeId,
+        "asset_type_id"
+      );
+  }, [assetMainTypeId]);
 
   const [quantity, setQuantity] = useState(0);
 
@@ -270,6 +273,7 @@ const VendorDetailsForm = () => {
               selectName={"asset_main_type_id"}
               required={true}
               RequiredMessage={"Main type is required!"}
+              setValue={setAssetMainTypeId}
             ></CommonFormDropDownMaker>
             <Form.Item
               label={<div className="font-semibold">Asset Type</div>}
@@ -483,7 +487,7 @@ const VendorDetailsForm = () => {
           <div className="flex justify-end">
             <Form.Item>
               <Button
-                // loading={loading}
+                loading={loading}
                 type="primary"
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
