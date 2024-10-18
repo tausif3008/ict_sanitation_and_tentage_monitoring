@@ -273,7 +273,7 @@ export const DICT = {
     hi: "+919876543210",
   },
   emmergency: {
-    en: "Emmergency",
+    en: "Emergency",
     hi: "आपातकाल",
   },
   scan_qr: {
@@ -297,7 +297,7 @@ export const DICT = {
     hi: "उम्र",
   },
   emmergency_no: {
-    en: "Emmergency No.",
+    en: "Emergency No.",
     hi: "आपातकालीन नंबर",
   },
   ambulance: { hi: "एम्बुलेंस", en: "Ambulance" },
