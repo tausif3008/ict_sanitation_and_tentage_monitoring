@@ -183,16 +183,6 @@ const VendorList = () => {
   return (
     <div className="">
       <>
-        <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          fields={[
-            { name: "name", label: "Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-            // { name: "index_no", label: "Index No." },
-          ]}
-        ></CommonSearchForm>
         <CommonDivider
           label={"Vendor List"}
           compo={
@@ -206,6 +196,17 @@ const VendorList = () => {
             </Button>
           }
         ></CommonDivider>
+
+        <CommonSearchForm
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+          fields={[
+            { name: "name", label: "Name" },
+            { name: "email", label: "Email" },
+            { name: "phone", label: "Phone" },
+            // { name: "index_no", label: "Index No." },
+          ]}
+        ></CommonSearchForm>
 
         <CommonTable
           columns={columns}

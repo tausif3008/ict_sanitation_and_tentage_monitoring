@@ -1,7 +1,17 @@
 import React, { useEffect } from "react";
-import { Collapse, Form, Input, Button, Select, notification } from "antd";
+import {
+  Collapse,
+  Form,
+  Input,
+  Button,
+  Select,
+  notification,
+  Row,
+  Col,
+} from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
+
 const CommonSearchForm = ({
   fields,
   dropFields,
@@ -35,19 +45,23 @@ const CommonSearchForm = ({
     setSearchQuery(searchParams);
   };
 
+  const resetForm = () => {
+    form.resetFields();
+    setSearchQuery("&");
+  };
+
   return (
     <div>
       <Collapse
         defaultActiveKey={["1"]}
         size="small"
         className="rounded-none mt-3"
-        collapsible={true}
         items={[
           {
             key: 1,
             label: (
-              <div className="flex items-center h-full ">
-                <img src={search} className="h-5" alt="" />
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
               </div>
             ),
             children: (
@@ -57,63 +71,55 @@ const CommonSearchForm = ({
                 onFinish={onFinishForm}
                 key="1"
               >
-                <div className="grid flex-wrap gap-3 grid-cols-2 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 items-center ">
+                <Row gutter={[16, 16]} align="middle">
                   {dropFields &&
-                    dropFields.map((el) => {
-                      return (
-                        <Form.Item
-                          noStyle
-                          name={el.name}
-                          label={el.label}
-                          layout="vertical"
-                        >
+                    dropFields.map((el) => (
+                      <Col key={el.name} xs={24} sm={12} md={6} lg={5}>
+                        <Form.Item name={el.name} label={el.label}>
                           <Select
                             placeholder="Select Main Type"
                             className="rounded-none"
                           >
                             {el.options.map((opt) => (
-                              <Option key={opt.value} value={opt.name}>
+                              <Select.Option key={opt.value} value={opt.name}>
                                 {opt.label}
-                              </Option>
+                              </Select.Option>
                             ))}
                           </Select>
                         </Form.Item>
-                      );
-                    })}
+                      </Col>
+                    ))}
                   {fields &&
-                    fields.map((el) => {
-                      return (
-                        <Form.Item
-                          noStyle
-                          name={el.name}
-                          label={el.label}
-                          layout="vertical"
-                          className=""
-                        >
+                    fields.map((el) => (
+                      <Col key={el.name} xs={24} sm={12} md={6} lg={5}>
+                        <Form.Item name={el.name} label={el.label}>
                           <Input
                             placeholder={el.label}
                             className="rounded-none w-full"
                           />
                         </Form.Item>
-                      );
-                    })}
-                  {dropdown && dropdown}
-                </div>
+                      </Col>
+                    ))}
+                  {dropdown && (
+                    <Col xs={24} sm={12} md={6} lg={5}>
+                      {dropdown}
+                    </Col>
+                  )}
 
-                <div className="flex w-full justify-end gap-2 ">
-                  <Form.Item noStyle>
+                  <Col
+                    xs={24}
+                    sm={12}
+                    md={6}
+                    lg={4}
+                    className="flex justify-end gap-2"
+                  >
                     <Button
                       type="primary"
                       className="rounded-none bg-5c"
-                      onClick={() => {
-                        form.resetFields();
-                        setSearchQuery("&");
-                      }}
+                      onClick={resetForm}
                     >
                       Reset
                     </Button>
-                  </Form.Item>
-                  <Form.Item noStyle>
                     <Button
                       type="primary"
                       htmlType="submit"
@@ -121,17 +127,16 @@ const CommonSearchForm = ({
                     >
                       Search
                     </Button>
-                  </Form.Item>
-                </div>
+                  </Col>
+                </Row>
               </Form>
             ),
           },
         ]}
-      ></Collapse>
+      />
       {contextHolder}
     </div>
   );
 };
 
 export default CommonSearchForm;
-const { Option } = Select;

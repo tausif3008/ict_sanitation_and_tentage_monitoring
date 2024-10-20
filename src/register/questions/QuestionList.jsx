@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Table, Image, Button } from "antd";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Button } from "antd";
+import { useNavigate, useParams } from "react-router-dom";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
@@ -17,16 +17,6 @@ const columns = [
     key: "sr",
     width: 80,
   },
-  // {
-  //   title: "ID",
-  //   dataIndex: "question_id",
-  //   key: "question_id",
-  // },
-  // {
-  //   title: "Asset Type", // New column for Asset Type
-  //   dataIndex: "asset_type", // Assuming this is the correct field from the API response
-  //   key: "asset_type",
-  // },
   {
     title: "Question (English)",
     dataIndex: "question_en",
@@ -38,9 +28,10 @@ const columns = [
     key: "question_hi",
   },
   {
-    title: "Description",
-    dataIndex: "description",
-    key: "description",
+    title: "Image Require",
+    dataIndex: "is_image",
+    key: "is_image",
+    render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
   },
   {
     title: "Action",
@@ -92,14 +83,14 @@ const QuestionList = () => {
           sr: index + 1,
           action: (
             <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
               key={el.name + index}
               onClick={() => {
                 dispatch(setUpdateQuestionEl({ updateElement: el }));
                 navigate("/add-question-form");
               }}
             >
-              <EditOutlined></EditOutlined>
+              <EditOutlined />
             </Button>
           ),
         };

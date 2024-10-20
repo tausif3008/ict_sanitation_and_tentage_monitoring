@@ -14,7 +14,7 @@ const register_items = (lang, dict) => {
       key: "1",
       label: (
         <Link className="text-black no-underline hover:text-green" to="/users">
-          User List
+          User Registration
         </Link>
       ),
     },
@@ -22,7 +22,7 @@ const register_items = (lang, dict) => {
       key: "2",
       label: (
         <Link className="text-black no-underline" to="/vendor">
-          Vendor List
+          Vendor Registration
         </Link>
       ),
     },
@@ -30,7 +30,7 @@ const register_items = (lang, dict) => {
       key: "3",
       label: (
         <Link className="text-black no-underline" to="/asset-list">
-          Asset Tagging
+          Asset Registration
         </Link>
       ),
     },
