@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { setQuestionListIsUpdated } from "./questionSlice";
 
-const UserRegistrationForm = () => {
+const QuestionRegistrationForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -68,17 +68,17 @@ const UserRegistrationForm = () => {
               navigate("/questions");
             }}
           >
-            <ArrowLeftOutlined></ArrowLeftOutlined>
+            <ArrowLeftOutlined />
           </Button>
-          <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
+          <div className="text-d9 text-2xl w-full flex items-end justify-between">
             <div className="font-bold">
               {questionUpdateElSelector ? "Update Question" : "Add Question"}
             </div>
-            <div className="text-xs">All * marks fields are mandatory</div>
+            <div className="text-xs">All * marked fields are mandatory</div>
           </div>
         </div>
 
-        <Divider className="bg-d9 h-2/3 mt-1"></Divider>
+        <Divider className="bg-d9 h-2/3 mt-1" />
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
             label="Question (English)"
@@ -111,36 +111,8 @@ const UserRegistrationForm = () => {
                 placeholder="Select if image is required"
                 className="rounded-none"
               >
-                <Option value={0}>No</Option>
-                <Option value={1}>Yes</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              label="Action"
-              name="action"
-              className="rounded-none"
-              rules={[{ required: true, message: "Please select an option" }]}
-            >
-              <Select placeholder="Select Action" className="rounded-none">
-                <Option value={1}>Mail</Option>
-                <Option value={2}>WhatsApp</Option>
-                <Option value={3}> Mail & SMS</Option>
-                <Option value={4}>WhatsApp</Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
-              className="rounded-none"
-              label="SLA"
-              name="sla"
-              rules={[{ required: true, message: "Please select an option" }]}
-            >
-              <Select placeholder="Select SLA" className="rounded-none">
-                <Option value={1}>1 Hrs</Option>
-                <Option value={2}>2 Hrs</Option>
-                <Option value={3}> 3 Hrs</Option>
-                <Option value={4}>4 Hrs</Option>
+                <Select.Option value={0}>No</Select.Option>
+                <Select.Option value={1}>Yes</Select.Option>
               </Select>
             </Form.Item>
           </div>
@@ -175,5 +147,4 @@ const UserRegistrationForm = () => {
   );
 };
 
-export default UserRegistrationForm;
-const { Option } = Select;
+export default QuestionRegistrationForm;

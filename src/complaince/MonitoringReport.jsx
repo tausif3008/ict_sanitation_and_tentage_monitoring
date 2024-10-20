@@ -4,60 +4,49 @@ import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
-import CommonTable from "../commonComponents/CommonTable";
+import moment from "moment"; // For date formatting
 
-const MonitoringReport = ({ data }) => {
-  const [details, setDetails] = useState([]);
+const MonitoringReport = () => {
+  const [details, setDetails] = useState({ list: [] });
   const [loading, setLoading] = useState(true);
   const [assetDetails, setAssetDetails] = useState({});
-
   const params = useParams();
+  const navigate = useNavigate();
 
+  // Fetch monitoring details from the API
   const getDetails = async () => {
     setLoading(true);
-
-    let uri = URLS.monitoringDetails.path + params.id + "&";
-
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
-
+    const uri = `${URLS.monitoringDetails.path}${params.id}`;
     const extraHeaders = { "x-api-version": URLS.monitoringDetails.version };
     const res = await getData(uri, extraHeaders);
 
-    if (res) {
-      setLoading(false);
-      const data = res?.data;
-      const list = data?.listings[0]?.questions;
-
-      setDetails(() => {
-        return {
-          list,
-          pageLength: data.paging[0].length,
-          currentPage: data.paging[0].currentpage,
-          totalRecords: data.paging[0].totalrecords,
-        };
-      });
-
-      const assetDetails = data.listings[0];
+    if (res?.success && res.data?.monitoring?.length > 0) {
+      const monitoringData = res.data.monitoring[0];
+      setDetails({ list: monitoringData.questions || [] });
 
       setAssetDetails({
-        latitude: assetDetails?.latitude,
-        longitude: assetDetails?.longitude,
-        remark: assetDetails?.remark,
-        photo: assetDetails?.photo,
-        asset_type_name: assetDetails?.asset_type_name,
-        qrCode: assetDetails?.asset_qr_code,
+        latitude: monitoringData.latitude || "N/A",
+        longitude: monitoringData.longitude || "N/A",
+        remark: monitoringData.remark || "No remarks",
+        photo: monitoringData.photo !== "N" ? monitoringData.photo : null,
+        asset_type_name: monitoringData.asset_type_name || "",
+        qrCode: monitoringData.qr_Code !== "N" ? monitoringData.qr_Code : null,
+        unit_no: monitoringData.unit_no || "N/A", // Added Unit Number
+        submitted_date: monitoringData.updated_at // Added Submitted Date
+          ? moment(monitoringData.updated_at).format("YYYY-MM-DD HH:mm:ss")
+          : "N/A",
       });
+    } else {
+      setDetails({ list: [] });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     getDetails();
   }, [params]);
 
+  // Table columns definition
   const dateColumns = [
     {
       title: "Question (EN)",
@@ -69,60 +58,40 @@ const MonitoringReport = ({ data }) => {
       dataIndex: "question_hi",
       key: "question_hi",
     },
-    // {
-    //   title: "SLA",
-    //   dataIndex: "sla",
-    //   key: "sla",
-    // },
-
     {
-      title: "image",
+      title: "Image",
       dataIndex: "image",
-      key: "answer",
-      render: (image) => {
-        console.log("image", image);
-        if (image !== "N") {
-          <Image width={130} src={URLS.baseUrl + image} alt="QR Code" />;
-        } else {
-          return "-";
-        }
-      },
+      key: "image",
+      render: (image) =>
+        image !== "N" ? (
+          <Image
+            width={130}
+            src={`${URLS.baseUrl}/${image}`}
+            alt="Question Image"
+          />
+        ) : (
+          "-"
+        ),
     },
     {
       title: "Answer",
       dataIndex: "answer",
       key: "answer",
-      render: (answer) => {
-        if (answer === "1") {
-          return (
-            <div className="bg-green-500 p-1 px-3 rounded-md flex w-fit text-xs">
-              Yes
-            </div>
-          );
-        } else if (answer === "0") {
-          return (
-            <div className="bg-orange-500 p-1 px-3 rounded-md flex w-fit text-xs">
-              No
-            </div>
-          );
-        } else {
-          return (
-            <div className="bg-blue-200 p-1 px-3 rounded-md flex w-fit text-xs">
-              Maintenance
-            </div>
-          );
-        }
-      },
+      render: (answer) => (
+        <div
+          className={`p-1 px-3 rounded-md flex w-fit text-xs ${
+            answer === "1"
+              ? "bg-green-500"
+              : answer === "0"
+              ? "bg-orange-500"
+              : "bg-blue-200"
+          }`}
+        >
+          {answer === "1" ? "Yes" : answer === "0" ? "No" : "Maintenance"}
+        </div>
+      ),
     },
-    // {
-    //   title: "Description",
-    //   dataIndex: "description",
-    //   key: "description",
-    //   width: 250,
-    // },
   ];
-
-  const navigate = useNavigate();
 
   return (
     <div>
@@ -130,22 +99,21 @@ const MonitoringReport = ({ data }) => {
         <div className="flex items-center gap-2 font-semibold">
           <Button
             className="bg-gray-200 rounded-full w-9 h-9"
-            onClick={() => {
-              navigate("/monitoring");
-            }}
+            onClick={() => navigate("/monitoring")}
           >
-            <ArrowLeftOutlined></ArrowLeftOutlined>
+            <ArrowLeftOutlined />
           </Button>
-          <div className="text-d9 text-2xl  w-full flex items-end ">
-            <span className="mr-1"> Monitoring Report For: </span>{" "}
+          <div className="text-d9 text-2xl w-full flex items-end">
+            <span className="mr-1">Monitoring Report For:</span>
             <span className="text-blue-500">
               {assetDetails.asset_type_name}
             </span>
           </div>
         </div>
 
-        <Divider className="bg-d9 h-2/3 mt-1"></Divider>
-        {details?.list?.length ? (
+        <Divider className="bg-d9 h-2/3 mt-1" />
+
+        {details.list.length ? (
           <div className="mt-3">
             <div className="flex gap-1 flex-col">
               <div>
@@ -157,27 +125,48 @@ const MonitoringReport = ({ data }) => {
                 <span className="font-semibold">{assetDetails.longitude}</span>
               </div>
               <div>
+                Unit Number:{" "}
+                <span className="font-semibold">{assetDetails.unit_no}</span>{" "}
+                {/* Display Unit Number */}
+              </div>
+              <div>
                 Remark:{" "}
                 <span className="font-semibold">{assetDetails.remark}</span>
+              </div>
+              <div>
+                Submitted Date:{" "}
+                <span className="font-semibold">
+                  {assetDetails.submitted_date}
+                </span>{" "}
+                {/* Display Submitted Date */}
               </div>
             </div>
 
             <div className="flex justify-between mt-2 mb-3">
               <div className="flex flex-col text-center font-semibold">
                 <span>QR Code</span>
-                <Image
-                  width={130}
-                  src={URLS.baseUrl + "/" + assetDetails?.qrCode}
-                  alt="QR Code"
-                />
+                {assetDetails.qr_code ? (
+                  <Image
+                    width={130}
+                    src={`${URLS.baseUrl}/${assetDetails.qr_code}`}
+                    alt="QR Code"
+                  />
+                ) : (
+                  <span>No QR Code Available</span>
+                )}
               </div>
               <div className="flex flex-col text-center font-semibold">
                 <span>Asset Image</span>
-                <Image
-                  width={125}
-                  height={125}
-                  src={URLS.baseUrl + assetDetails?.photo}
-                ></Image>
+                {assetDetails.photo ? (
+                  <Image
+                    width={125}
+                    height={125}
+                    src={`${URLS.baseUrl}/${assetDetails.photo}`}
+                    alt="Asset"
+                  />
+                ) : (
+                  <span>No Image Available</span>
+                )}
               </div>
             </div>
 
@@ -193,7 +182,7 @@ const MonitoringReport = ({ data }) => {
           </div>
         ) : (
           <div className="mt-3 font-semibold text-orange-500 text-center">
-            Not Report Found
+            No Report Found
           </div>
         )}
       </div>

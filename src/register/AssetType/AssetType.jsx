@@ -130,14 +130,13 @@ const AssetTypeList = () => {
 
   const columns = [
     {
-      
-      title: "Sr. No", // Asset main type
+      title: "Sr. No",
       dataIndex: "sr",
       key: "sr",
       width: 80,
     },
     {
-      title: "Main Asset ype", // Asset main type
+      title: "Main Asset Type",
       dataIndex: "asset_main_type_name",
       key: "asset_main_type",
     },
