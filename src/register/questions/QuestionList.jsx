@@ -21,16 +21,30 @@ const columns = [
     title: "Question (English)",
     dataIndex: "question_en",
     key: "question_en",
+    width: 300,
   },
   {
     title: "Question (Hindi)",
     dataIndex: "question_hi",
     key: "question_hi",
+    width: 300,
   },
   {
     title: "Image Require",
     dataIndex: "is_image",
     key: "is_image",
+    render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
+  },
+  {
+    title: "Image Require ON",
+    dataIndex: "is_image_on",
+    key: "is_image_on",
+    render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
+  },
+  {
+    title: "Primary Question",
+    dataIndex: "is_primary",
+    key: "is_primary",
     render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
   },
   {

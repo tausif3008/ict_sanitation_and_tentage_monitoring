@@ -27,7 +27,6 @@ const QuestionRegistrationForm = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-
     values.status = 1;
 
     if (questionUpdateElSelector) {
@@ -39,9 +38,7 @@ const QuestionRegistrationForm = () => {
       questionUpdateElSelector
         ? URLS.editQuestionsEntry.path
         : URLS.questionsEntry.path,
-      {
-        version: URLS.register.version,
-      }
+      { version: URLS.register.version }
     );
 
     if (res) {
@@ -50,7 +47,6 @@ const QuestionRegistrationForm = () => {
 
       if (res.data.success) {
         form.resetFields();
-
         if (questionUpdateElSelector) {
           navigate("/questions");
         }
@@ -64,9 +60,7 @@ const QuestionRegistrationForm = () => {
         <div className="flex gap-2 items-center">
           <Button
             className="bg-gray-200 rounded-full w-9 h-9"
-            onClick={() => {
-              navigate("/questions");
-            }}
+            onClick={() => navigate("/questions")}
           >
             <ArrowLeftOutlined />
           </Button>
@@ -95,12 +89,14 @@ const QuestionRegistrationForm = () => {
               className="rounded-none"
             />
           </Form.Item>
+
           <Form.Item label="Question (Hindi)" name="question_hi">
             <Input
               placeholder="Enter question in Hindi"
               className="rounded-none"
             />
           </Form.Item>
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
             <Form.Item
               label="Is Image"
@@ -111,6 +107,31 @@ const QuestionRegistrationForm = () => {
                 placeholder="Select if image is required"
                 className="rounded-none"
               >
+                <Select.Option value={0}>No</Select.Option>
+                <Select.Option value={1}>Yes</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Is Image On"
+              name="is_image_on"
+              rules={[{ required: true, message: "Please select an option" }]}
+            >
+              <Select
+                placeholder="Select if image is active"
+                className="rounded-none"
+              >
+                <Select.Option value={0}>No</Select.Option>
+                <Select.Option value={1}>Yes</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              label="Is Primary"
+              name="is_primary"
+              rules={[{ required: true, message: "Please select an option" }]}
+            >
+              <Select placeholder="Select if primary" className="rounded-none">
                 <Select.Option value={0}>No</Select.Option>
                 <Select.Option value={1}>Yes</Select.Option>
               </Select>
