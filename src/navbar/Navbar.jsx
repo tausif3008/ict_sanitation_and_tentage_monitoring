@@ -103,6 +103,14 @@ const master_items = (lang, dict) => {
         </Link>
       ),
     },
+    {
+      key: "7",
+      label: (
+        <Link className="text-black no-underline" to="/manpower-assignment">
+          Manpower Assignment
+        </Link>
+      ),
+    },
   ];
 };
 
@@ -153,17 +161,6 @@ const dashboards = (lang, dict) => {
       ),
     },
     {
-      key: "6",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/DMS-dashboard"
-        >
-          DMS Dashboard
-        </Link>
-      ),
-    },
-    {
       key: "7",
       label: (
         <Link
@@ -177,24 +174,16 @@ const dashboards = (lang, dict) => {
   ];
 };
 
-const assignment_items = (lang, dict) => {
+const dms_items = (lang, dict) => {
   return [
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/asset-allotment">
-          Asset Allotment
-        </Link>
-      ),
-    },
     {
       key: "1",
       label: (
         <Link
           className="text-black no-underline hover:text-green"
-          to="/manpower-assignment"
+          to="/DMS-dashboard"
         >
-          Manpower Assignment
+          DMS Dashboard
         </Link>
       ),
     },
@@ -289,8 +278,11 @@ const reports_items = (lang, dict) => {
     {
       key: "2",
       label: (
-        <Link className="text-black no-underline hover:text-green" to="/#">
-          Report 1
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/monitoring"
+        >
+          Monitoring
         </Link>
       ),
     },
@@ -408,7 +400,8 @@ const Navbar = ({ lang, setLang }) => {
             className="z-50  flex items-center h-12 m-auto  justify-start font-bold text-lg"
             style={{ color: "#FF9500" }}
           >
-            <span className="capitalize mr-1">{title} </span> Monitoring System
+            <span className="capitalize mr-1">{title} </span>
+            ICT Sanitation and Tentage Monitoring System
           </div>
         </div>
 
@@ -456,27 +449,27 @@ const Navbar = ({ lang, setLang }) => {
                 ></DropDown>
               </div>
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={assignment_items(lang, dict)}
-                  name="Assignment"
-                ></DropDown>
-              </div>
-
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={schedule_items(lang, dict, navigate)}
                   name="Schedule"
                 ></DropDown>
-              </div>
+              </div> */}
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={complaince_items(lang, dict)}
                   name="Complaince"
+                ></DropDown>
+              </div> */}
+
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
+                <DropDown
+                  text="black"
+                  items={dms_items(lang, dict)}
+                  name={"DMS"}
                 ></DropDown>
               </div>
 
@@ -544,7 +537,7 @@ const Navbar = ({ lang, setLang }) => {
               open={open}
               title={
                 <div className="text-violet-950 text-lg font-semibold">
-                  Tentage and Sanitation Monitoring System
+                  ICT Sanitation and Tentage Monitoring System
                 </div>
               }
             >
@@ -574,29 +567,21 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
 
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                  <DropDown
-                    text="black"
-                    items={assignment_items(lang, dict)}
-                    name="Assignment"
-                  ></DropDown>
-                </div>
-
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
                     text="black"
                     items={schedule_items(lang, dict, navigate)}
                     name="Schedule"
                   ></DropDown>
-                </div>
+                </div> */}
 
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
                     text="black"
                     items={complaince_items(lang, dict)}
                     name="Complaince"
                   ></DropDown>
-                </div>
+                </div> */}
 
                 <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown

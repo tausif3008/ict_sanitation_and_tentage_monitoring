@@ -4,7 +4,8 @@ import Statistics from "./Statistics";
 import SupportAndInfo from "./SupportAndInfo";
 
 const LandingPage = () => {
-  document.title = "KUMBH MELA 2025 - Monitoring System";
+  document.title =
+    "ICT Sanitation and Tentage Monitoring System - MAHA KUMBH MELA 2025";
 
   return (
     <div className="relative z-10 w-full m-auto">

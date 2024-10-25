@@ -30,7 +30,7 @@ const MonitoringReport = () => {
         remark: monitoringData.remark || "No remarks",
         photo: monitoringData.photo !== "N" ? monitoringData.photo : null,
         asset_type_name: monitoringData.asset_type_name || "",
-        qrCode: monitoringData.qr_Code !== "N" ? monitoringData.qr_Code : null,
+        // qrCode: monitoringData.qr_Code !== "N" ? monitoringData.qr_Code : null,
         unit_no: monitoringData.unit_no || "N/A", // Added Unit Number
         submitted_date: monitoringData.updated_at // Added Submitted Date
           ? moment(monitoringData.updated_at).format("YYYY-MM-DD HH:mm:ss")
@@ -144,7 +144,7 @@ const MonitoringReport = () => {
 
             <div className="flex justify-between mt-2 mb-3">
               <div className="flex flex-col text-center font-semibold">
-                <span>QR Code</span>
+                {/* <span>QR Code</span>
                 {assetDetails.qr_code ? (
                   <Image
                     width={130}
@@ -153,7 +153,7 @@ const MonitoringReport = () => {
                   />
                 ) : (
                   <span>No QR Code Available</span>
-                )}
+                )} */}
               </div>
               <div className="flex flex-col text-center font-semibold">
                 <span>Asset Image</span>
