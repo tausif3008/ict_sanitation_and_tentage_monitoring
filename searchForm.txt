@@ -21,7 +21,7 @@
         dropFields={[
           {
             name: "asset_main_type_id",
-            label: "Main Asset Type",
+            label: "Main Type",
             options: [
               {
                 label: "Sanitation",

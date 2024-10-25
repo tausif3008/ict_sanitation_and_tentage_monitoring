@@ -43,7 +43,7 @@ const master_items = (lang, dict) => {
       key: "1",
       label: (
         <Link className="text-black no-underline" to="/asset-type-list">
-          Asset Type List
+          Toilets & Tentage Type List
         </Link>
       ),
     },

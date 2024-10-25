@@ -136,12 +136,12 @@ const AssetTypeList = () => {
       width: 80,
     },
     {
-      title: "Main Asset Type",
+      title: "Category",
       dataIndex: "asset_main_type_name",
       key: "asset_main_type",
     },
     {
-      title: "Asset Type", // Asset name
+      title: "Toilets & Tentage Type", // Asset name
       dataIndex: "name",
       key: "name",
       width: 250,
@@ -184,7 +184,7 @@ const AssetTypeList = () => {
   return (
     <div className="">
       <CommonDivider
-        label={"Asset Type List"}
+        label={"Toilets & Tentage Type List"}
         compo={
           <Button
             className="bg-orange-300 mb-1"
@@ -192,7 +192,7 @@ const AssetTypeList = () => {
               navigate("/asset-type-registration");
             }}
           >
-            Add Asset Type
+            Add Toilets & Tentage Type
           </Button>
         }
       ></CommonDivider>
@@ -207,7 +207,7 @@ const AssetTypeList = () => {
             responseListName="assetmaintypes"
             responseLabelName="name"
             responseIdName="asset_main_type_id"
-            selectLabel={"Asset Main Type"}
+            selectLabel={"Toilets & Tentage Category"}
             selectName={"asset_main_type_id"}
             required={false}
             RequiredMessage={"Main type is required!"}
@@ -252,7 +252,7 @@ const AssetTypeList = () => {
             ]}
           />
         ) : (
-          <p>No questions found for this asset type.</p>
+          <p>No questions found for this type.</p>
         )}
       </Modal>
     </div>
