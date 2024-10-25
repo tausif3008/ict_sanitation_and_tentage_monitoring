@@ -64,31 +64,13 @@ const VendorDetails = () => {
       width: 160,
     },
     {
-      title: "Manager Contact 1",
-      dataIndex: "manager_contact_1",
-      key: "manager_contact_1",
-      width: 160,
-    },
-    {
-      title: "Manager Contact 2",
-      dataIndex: "manager_contact_2",
-      key: "manager_contact_2",
-      width: 160,
-    },
-    {
       title: "Work Order Number",
       dataIndex: "work_order_number",
       key: "work_order_number",
       width: 180,
     },
     {
-      title: "Date of Allocation",
-      dataIndex: "date_of_allocation",
-      key: "date_of_allocation",
-      width: 160,
-    },
-    {
-      title: "Total Allotted Quantity",
+      title: "Allotted Quantity",
       dataIndex: "total_allotted_quantity",
       key: "total_allotted_quantity",
     },
@@ -108,6 +90,24 @@ const VendorDetails = () => {
           </div>
         );
       },
+    },
+    {
+      title: "Manager Contact 1",
+      dataIndex: "manager_contact_1",
+      key: "manager_contact_1",
+      width: 160,
+    },
+    {
+      title: "Manager Contact 2",
+      dataIndex: "manager_contact_2",
+      key: "manager_contact_2",
+      width: 160,
+    },
+    {
+      title: "Date of Allocation",
+      dataIndex: "date_of_allocation",
+      key: "date_of_allocation",
+      width: 160,
     },
     {
       title: "Action",
