@@ -5,7 +5,7 @@ import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../urils/dictionary";
-import img1 from "../assets/Images/goup.png";
+import img1 from "../assets/Images/MahaKumbhLogo.png";
 import { logoutFetch } from "../Fetch/Axios";
 
 const register_items = (lang, dict) => {

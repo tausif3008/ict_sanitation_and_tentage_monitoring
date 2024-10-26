@@ -5,6 +5,8 @@ import calenderIcon from "../assets/Dashboard/calendarIcon.png";
 import loginIcon from "../assets/Dashboard/logInIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
+import img1 from "../assets/Images/goup.png";
+import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 const NavHead = ({ lang, dict }) => {
   const myDate = new Date();
@@ -33,9 +35,13 @@ const NavHead = ({ lang, dict }) => {
           </div>
           <Link
             to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-            className="no-underline"
+            className="no-underline flex items-center space-x-4"
           >
-            <div className="text-white font-nutino">Maha Kumbh Mela 2025</div>
+            <img src={img1} className="h-10" alt="Logo 1" />
+            <div className="text-white font-nutino whitespace-nowrap">
+              Maha Kumbh Mela 2025
+            </div>
+            <img src={img2} className="h-10" alt="Logo 2" />
           </Link>
           <div className="flex gap-2">
             <div className="h-full">
