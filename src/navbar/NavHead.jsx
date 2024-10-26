@@ -37,11 +37,16 @@ const NavHead = ({ lang, dict }) => {
             to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
             className="no-underline flex items-center space-x-4"
           >
-            <img src={img1} className="h-10" alt="Logo 1" />
+            <img src={img2} className="h-20" alt="MahaKumbh 2025 Logo" />
             <div className="text-white font-nutino whitespace-nowrap">
-              Maha Kumbh Mela 2025
+              <div className="text-white font-nutino whitespace-nowrap">
+                <span>Maha Kumbh Mela 2025,</span>
+                <span style={{ display: "block" }}>
+                  Prayagraj Mela Authority.
+                </span>
+              </div>
             </div>
-            <img src={img2} className="h-10" alt="Logo 2" />
+            <img src={img1} className="h-20" alt="UP Police Logo" />
           </Link>
           <div className="flex gap-2">
             <div className="h-full">
