@@ -6,6 +6,7 @@ import { useNavigate } from "react-router";
 import { DICT } from "../urils/dictionary";
 import { loginFetch } from "../Fetch/Axios";
 import "./login.css";
+import BeforeLoginUserTypeDropDown from "../register/user/BeforeLoginUserTypeDropDown";
 
 const Login = () => {
   const localLang = localStorage.getItem("lang");
@@ -14,7 +15,6 @@ const Login = () => {
 
   const [form] = Form.useForm();
   const navigate = useNavigate();
-
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
@@ -45,7 +45,7 @@ const Login = () => {
 
   return (
     <div className="flex m-auto bg-gray-100">
-      <div className="h-screen m-auto flex w-10/12  flex-col justify-center">
+      <div className="h-screen m-auto flex w-10/12 flex-col justify-center">
         <div className="grid md:grid-cols-2 grid-cols-1 w-full h-96 shadow-xl ">
           <div className="w-full h-96 hidden md:flex">
             <img src={loginImage} alt="login" className="w-full h-full" />
@@ -56,13 +56,17 @@ const Login = () => {
                 <div className="flex flex-col">
                   <div className="text-orange-500">{DICT.title1[lang]}</div>
                   <hr className="mt-1 mb-1 text-yellow-900" />
-                  <div className="text-green-800">{DICT.title2[lang]}</div>
+                  <div
+                    className="text-green-800"
+                    style={{ paddingBottom: "50px" }}>
+                    {DICT.title2[lang]}
+                  </div>
                 </div>
               </div>
               <div className="w-10/12">
                 <div className="flex w-full gap-4">
                   <Form
-                    className="w-full gap-5 "
+                    className="w-full gap-5"
                     form={form}
                     initialValues={{
                       remember: true,
@@ -70,6 +74,8 @@ const Login = () => {
                     onFinish={onFinish}
                     autoComplete="off"
                   >
+                    <BeforeLoginUserTypeDropDown form={form} />
+
                     <Form.Item
                       name="username"
                       rules={[

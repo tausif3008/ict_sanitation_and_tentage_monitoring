@@ -401,7 +401,12 @@ const Navbar = ({ lang, setLang }) => {
             style={{ color: "#FF9500" }}
           >
             <span className="capitalize mr-1">{title} </span>
-            ICT Sanitation and Tentage Monitoring System
+            <Link
+              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+              className="no-underline"
+            >
+              ICT Sanitation and Tentage Monitoring System
+            </Link>
           </div>
         </div>
 
