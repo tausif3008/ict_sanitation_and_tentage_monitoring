@@ -82,7 +82,9 @@ const AssetTypeForm = () => {
           </Button>
           <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
             <div className="font-bold">
-              {assetUpdateElSelector ? "Update Asset Type" : "Add Asset Type"}
+              {assetUpdateElSelector
+                ? "Update Toilets & Tentage Type"
+                : "Add Toilets & Tentage Type"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
           </div>
@@ -95,18 +97,23 @@ const AssetTypeForm = () => {
               responseListName="assetmaintypes"
               responseLabelName="name"
               responseIdName="asset_main_type_id"
-              selectLabel={"Asset Main Type"}
+              selectLabel={"Category"}
               selectName={"asset_main_type_id"}
               required={true}
-              RequiredMessage={"Main type is required!"}
+              RequiredMessage={"Category is required!"}
             ></CommonFormDropDownMaker>
 
             {/* Asset Sub Type Textbox */}
             <Form.Item
               name="name"
-              label={<div className="font-semibold">Asset Type Name</div>}
+              label={
+                <div className="font-semibold">Toilets & Tentage Type Name</div>
+              }
               rules={[
-                { required: true, message: "Please enter an asset type" },
+                {
+                  required: true,
+                  message: "Please enter an toilets & tentage type",
+                },
               ]}
             >
               <Input
@@ -117,12 +124,10 @@ const AssetTypeForm = () => {
 
             <Form.Item
               name="description"
-              label={
-                <div className="font-semibold">Asset Type Description</div>
-              }
+              label={<div className="font-semibold">Description</div>}
             >
               <Input
-                placeholder="Asset type description"
+                placeholder="Toilets & Tentage Type Description"
                 className="rounded-none"
               />
             </Form.Item>

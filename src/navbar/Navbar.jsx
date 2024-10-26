@@ -43,7 +43,7 @@ const master_items = (lang, dict) => {
       key: "1",
       label: (
         <Link className="text-black no-underline" to="/asset-type-list">
-          Asset Type List
+          Toilets & Tentage Type List
         </Link>
       ),
     },
@@ -401,7 +401,12 @@ const Navbar = ({ lang, setLang }) => {
             style={{ color: "#FF9500" }}
           >
             <span className="capitalize mr-1">{title} </span>
-            ICT Sanitation and Tentage Monitoring System
+            <Link
+              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+              className="no-underline"
+            >
+              ICT Sanitation and Tentage Monitoring System
+            </Link>
           </div>
         </div>
 

@@ -35,7 +35,7 @@ const NavHead = ({ lang, dict }) => {
             to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
             className="no-underline"
           >
-            <div className="text-white font-nutino">Kumbh Mela 2025</div>
+            <div className="text-white font-nutino">Maha Kumbh Mela 2025</div>
           </Link>
           <div className="flex gap-2">
             <div className="h-full">

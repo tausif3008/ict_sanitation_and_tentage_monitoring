@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Modal, Table } from "antd";
 import CommonTable from "../../../commonComponents/CommonTable";
 import CommonDivider from "../../../commonComponents/CommonDivider";
@@ -12,36 +12,31 @@ import {
   setUpdateVendorDetailsEl,
   setVendorDetailsListIsUpdated,
 } from "./vendorDetailsSlice";
-import CommonSearchForm from "../../../commonComponents/CommonSearchForm";
 
 const VendorDetails = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const params = useParams();
 
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
+    totalRecords: 0,
   });
 
-  const [proposedSectors, setProposedSectors] = useState();
-  const [isModalVisible, setIsModalVisible] = useState();
-  const params = useParams();
+  const [proposedSectors, setProposedSectors] = useState([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [userName, setUserName] = useState("");
 
-  const handleProposedSectorsView = (record) => {
-    setProposedSectors(record);
-    setIsModalVisible(true); // Show the modal
-  };
-
-  const handleCancel = () => {
-    setIsModalVisible(false);
-    setProposedSectors([]);
-  };
+  const isUpdatedSelector = useSelector(
+    (state) => state.vendorDetailsUpdateEl?.isUpdated
+  );
 
   const columns = [
     {
-      title: "Sr. No", // Asset main type
+      title: "Sr. No",
       dataIndex: "sr",
       key: "sr",
       width: 80,
@@ -78,18 +73,14 @@ const VendorDetails = () => {
       title: "Proposed Sectors",
       dataIndex: "proposedsectors",
       key: "proposed_sectors",
-
-      render: (record) => {
-        return (
-          <div
-            onClick={() => handleProposedSectorsView(record)}
-            className="text-blue-500"
-          >
-            {" "}
-            View
-          </div>
-        );
-      },
+      render: (record) => (
+        <div
+          onClick={() => handleProposedSectorsView(record)}
+          className="text-blue-500 cursor-pointer"
+        >
+          View
+        </div>
+      ),
     },
     {
       title: "Manager Contact 1",
@@ -115,21 +106,36 @@ const VendorDetails = () => {
       key: "action",
       fixed: "right",
       width: 80,
+      render: (_, record) => (
+        <Button
+          className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+          onClick={() => {
+            dispatch(setUpdateVendorDetailsEl({ updateElement: record }));
+            navigate("/vendor/add-vendor-details-form/" + params.id);
+          }}
+        >
+          <EditOutlined />
+        </Button>
+      ),
     },
   ];
 
+  const handleProposedSectorsView = (record) => {
+    setProposedSectors(record);
+    setIsModalVisible(true);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+    setProposedSectors([]);
+  };
+
   const getDetails = async () => {
     setLoading(true);
-
     let uri = URLS.vendorDetails.path + params.id + "&";
 
-    if (params.page) {
-      uri = uri + params.page;
-    }
-
-    if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
+    if (params.page) uri += params.page;
+    if (params.per_page) uri += "&" + params.per_page;
 
     const res = await getData(uri, {
       "x-api-version": URLS.vendorDetails.version,
@@ -138,48 +144,38 @@ const VendorDetails = () => {
     if (res) {
       const data = res.data;
       setLoading(false);
-
       setUserName(data.userdetails[0]?.user_name);
 
-      const list = data.userdetails.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-          action: (
-            <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
-              onClick={() => {
-                dispatch(setUpdateVendorDetailsEl({ updateElement: el }));
-                navigate("/vendor/add-vendor-details-form/" + params.id);
-              }}
-            >
-              <EditOutlined></EditOutlined>
-            </Button>
-          ),
-        };
-      });
+      const list = data.userdetails.map((el, index) => ({
+        ...el,
+        sr: index + 1,
+        action: (
+          <Button
+            className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+            key={el.name + index}
+            onClick={() => {
+              dispatch(setUpdateVendorDetailsEl({ updateElement: el }));
+              navigate("/vendor/add-vendor-details-form/" + params.id);
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        ),
+      }));
 
-      setDetails(() => {
-        return {
-          list,
-          pageLength: data.paging[0].length,
-          currentPage: data.paging[0].currentPage,
-          totalRecords: data.paging[0].totalrecords,
-        };
+      setDetails({
+        list,
+        pageLength: data.paging[0].length,
+        currentPage: data.paging[0].currentPage,
+        totalRecords: data.paging[0].totalrecords,
       });
     }
   };
 
-  const isUpdatedSelector = useSelector(
-    (state) => state.vendorDetailsUpdateEl?.isUpdated
-  );
-
   useEffect(() => {
     dispatch(setUpdateVendorDetailsEl({ updateElement: null }));
-  }, []);
+  }, [dispatch]);
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (params.id) {
       getDetails();
@@ -189,68 +185,70 @@ const VendorDetails = () => {
     } else {
       navigate("/vendor");
     }
-  }, [params, isUpdatedSelector]);
+  }, [params, isUpdatedSelector, dispatch, navigate]);
+
+  const totalAllottedQuantity = details.list
+    .reduce(
+      (total, item) => total + Number(item.total_allotted_quantity || 0),
+      0
+    )
+    .toLocaleString(); // Convert to digit format with commas
 
   return (
-    <div className="">
-      <>
-        {/* <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          fields={[
-            { name: "name", label: "Name" },
-            { name: "email", label: "email" },
-            // { name: "index_no", label: "Index No." },
-          ]}
-        ></CommonSearchForm> */}
-        <div className="flex gap-2 items-center ">
-          <Link to="/vendor">
-            <Button className="bg-gray-200 rounded-full w-9 h-9">
-              <ArrowLeftOutlined />
-            </Button>
-          </Link>
+    <div>
+      <div className="flex gap-2 items-center">
+        <Link to="/vendor">
+          <Button className="bg-gray-200 rounded-full w-9 h-9">
+            <ArrowLeftOutlined />
+          </Button>
+        </Link>
 
-          <div className="w-full">
-            <CommonDivider
-              label={
-                <div>
-                  Vendor Details For
-                  <span className="text-blue-500">{userName}</span>
-                </div>
-              }
-              compo={
-                <Button
-                  className="bg-orange-300 mb-1"
-                  onClick={() => {
-                    navigate("/vendor/add-vendor-details-form/" + params.id);
-                  }}
-                >
-                  Add Details
-                </Button>
-              }
-            ></CommonDivider>
-          </div>
+        <div className="w-full">
+          <CommonDivider
+            label={
+              <div>
+                Vendor Details For{" "}
+                <span className="text-blue-500">{userName}</span>
+              </div>
+            }
+            compo={
+              <Button
+                className="bg-orange-300 mb-1"
+                onClick={() =>
+                  navigate("/vendor/add-vendor-details-form/" + params.id)
+                }
+              >
+                Add Details
+              </Button>
+            }
+          />
         </div>
+      </div>
 
-        <CommonTable
-          columns={columns}
-          uri={"vendor/add-vendor-details/" + params.id} // react url
-          details={details}
-          loading={loading}
-        ></CommonTable>
+      <CommonTable
+        columns={columns}
+        uri={"vendor/add-vendor-details/" + params.id}
+        details={details}
+        loading={loading}
+      />
 
-        <Modal
-          title={`Proposed Sectors`}
-          open={isModalVisible}
-          onCancel={handleCancel}
-          footer={null}
-          width={800}
-        >
-          {proposedSectors?.length ? (
+      <div className="text-right font-semibold mt-2">
+        Total Allotted Quantity: {totalAllottedQuantity}
+      </div>
+
+      <Modal
+        title={`Proposed Sectors`}
+        open={isModalVisible}
+        onCancel={handleCancel}
+        footer={null}
+        width={800}
+      >
+        {proposedSectors?.length ? (
+          <>
             <Table
               bordered
               dataSource={proposedSectors}
-              rowKey="question_id"
+              rowKey="sector_name"
               pagination={false}
               scroll={{ x: 300, y: 400 }}
               columns={[
@@ -260,17 +258,27 @@ const VendorDetails = () => {
                   key: "sector_name",
                 },
                 {
-                  title: "quantity",
+                  title: "Quantity",
                   dataIndex: "quantity",
                   key: "quantity",
                 },
               ]}
             />
-          ) : (
-            <p>No questions found for this asset type.</p>
-          )}
-        </Modal>
-      </>
+            {/* Display total sector count below the table */}
+            <div className="text-right font-semibold mt-2">
+              Total Quantity:{" "}
+              {proposedSectors
+                .reduce(
+                  (total, sector) => total + Number(sector.quantity || 0),
+                  0
+                )
+                .toLocaleString()}
+            </div>
+          </>
+        ) : (
+          <p>No sectors found for this asset type.</p>
+        )}
+      </Modal>
     </div>
   );
 };

@@ -43,7 +43,7 @@ const CommonFormDropDownMaker = ({
       rules={[{ required, message: RequiredMessage }]}
     >
       <Select
-        placeholder="Select Main Asset Type"
+        placeholder="Select Category"
         allowClear
         mode={mode}
         onChange={(val) => {

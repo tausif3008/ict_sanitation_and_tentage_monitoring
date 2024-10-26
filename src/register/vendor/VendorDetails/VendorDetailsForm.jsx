@@ -295,17 +295,12 @@ const VendorDetailsForm = () => {
               </Select>
             </Form.Item>
             <Form.Item
-              label={<div className="font-semibold">Contract Number</div>}
+              label={<div className="font-semibold">LOE Number</div>}
               name="contract_number"
-              rules={[
-                { required: true, message: "Please enter contract number" },
-              ]}
+              rules={[{ required: true, message: "Please enter LOE number" }]}
               className="mb-4"
             >
-              <Input
-                placeholder="Enter contract number"
-                className="rounded-none"
-              />
+              <Input placeholder="Enter LOE number" className="rounded-none" />
             </Form.Item>
             <Form.Item
               label={<div className="font-semibold">Manager Contact 1</div>}
