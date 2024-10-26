@@ -30,7 +30,7 @@ const register_items = (lang, dict) => {
       key: "3",
       label: (
         <Link className="text-black no-underline" to="/asset-list">
-          Asset Registration
+          Toilets & Tentage Registration
         </Link>
       ),
     },
@@ -395,7 +395,12 @@ const Navbar = ({ lang, setLang }) => {
     <div className="mx-3 font-nutino bg-white p-1 shadow-md">
       <div className="flex w-full justify-between items-center">
         <div className="flex gap-2 items-center">
-          <img src={img1} className="h-10" alt="" />
+          <Link
+            to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+            className="no-underline">
+            <img src={img1} className="h-10" alt="" />
+          </Link>
+
           <div
             className="z-50  flex items-center h-12 m-auto  justify-start font-bold text-lg"
             style={{ color: "#FF9500" }}

@@ -10,10 +10,7 @@ const CopyWrite = ({ lang = "en" }) => {
         {/* Optional multi-language footer */}
         {/* {dict.last_footer[lang]} */}
         <span>Copyright © Prayagraj Mela Authority 2025</span>
-        <small className="text-xs mt-1">
-          Developed by: Kash IT Solutions
-        </small>{" "}
-        {/* Smaller text */}
+        <small className="text-xs mt-1"></small> {/* Smaller text */}
       </div>
     </footer>
   );

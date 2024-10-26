@@ -7,6 +7,8 @@ import { useNavigate, useParams } from "react-router";
 import { getData } from "../../Fetch/Axios";
 import { useDispatch, useSelector } from "react-redux";
 import { setAssetListIsUpdated, setUpdateAssetEl } from "./AssetsSlice";
+import CommonSearchForm from "../../commonComponents/CommonSearchForm";
+import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -97,19 +99,19 @@ const AssetsList = () => {
 
   const columns = [
     {
-      title: "Sr. No", // Asset main type
+      title: "Sr. No",
       dataIndex: "sr",
       key: "sr",
       width: 80,
     },
     {
-      title: "Asset Main Type",
+      title: "Category",
       dataIndex: "asset_main_type_name",
       key: "asset_main_type_name",
       width: 140,
     },
     {
-      title: "Asset Type",
+      title: "Toilets & Tentage Type",
       dataIndex: "asset_type_name",
       key: "asset_type_name",
       width: 220,
@@ -138,7 +140,7 @@ const AssetsList = () => {
       width: 100,
     },
     {
-      title: "Location (Lat, Long)",
+      title: "Location",
       render: (text, record) =>
         `${record.latitude || "N/A"}, ${record.longitude || "N/A"}`,
       key: "location",
@@ -186,7 +188,7 @@ const AssetsList = () => {
   return (
     <div className="">
       <CommonDivider
-        label={"Asset List"}
+        label={"Toilets & Tentage List"}
         // compo={
         //   <Button
         //     className="bg-orange-300 mb-1"
@@ -199,27 +201,24 @@ const AssetsList = () => {
         // }
       ></CommonDivider>
 
-      {/* <CommonSearchForm
+      <CommonSearchForm
         setSearchQuery={setSearchQuery}
         searchQuery={searchQuery}
-        fields={[{ name: "name", label: "Asset" }]}
-        dropFields={[
-          {
-            name: "asset_main_type_id",
-            label: "Main Asset Type",
-            options: [
-              {
-                label: "Sanitation",
-                value: "1",
-              },
-              {
-                label: "Tentage",
-                value: "2",
-              },
-            ],
-          },
-        ]}
-      ></CommonSearchForm> */}
+        dropdown={
+          <CommonFormDropDownMaker
+            uri={"assetMainTypePerPage"}
+            responseListName="assetmaintypes"
+            responseLabelName="name"
+            responseIdName="asset_main_type_id"
+            // selectLabel={"Toilets & Tentage Category"}
+            selectName={"asset_main_type_id"}
+            required={false}
+            // RequiredMessage={"Main type is required!"}
+          ></CommonFormDropDownMaker>
+        }
+        fields={[{ name: "vendor_asset_code", label: "" }]}
+        // fields={[{ name: "vendor_asset_code", label: "" }]}
+      ></CommonSearchForm>
 
       <CommonTable
         columns={columns}
