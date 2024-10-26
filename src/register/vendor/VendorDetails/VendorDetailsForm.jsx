@@ -253,7 +253,7 @@ const VendorDetailsForm = () => {
           <div className="text-d9 text-2xl w-full flex items-end justify-between ">
             <div className="font-bold">
               {vendorDetailsUpdateElSelector
-                ? "Update Vendor Details"
+                ? "Update Vendor Details {userName}<"
                 : "Vendor Details"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
