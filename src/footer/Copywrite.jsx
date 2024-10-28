@@ -9,8 +9,9 @@ const CopyWrite = ({ lang = "en" }) => {
       <div className="md:w-10/12 w-9/12 xl:w-10/12 2xl:w-9/12 flex flex-col items-center justify-center m-auto">
         {/* Optional multi-language footer */}
         {/* {dict.last_footer[lang]} */}
-        <span>Copyright © Prayagraj Mela Authority 2025</span>
-        <small className="text-xs mt-1"></small> {/* Smaller text */}
+        <span>{dict.copy_right[lang]}</span>
+        <small className="text-xs mt-1">{dict.hosted_by[lang]}</small>{" "}
+        {/* Smaller text */}
       </div>
     </footer>
   );

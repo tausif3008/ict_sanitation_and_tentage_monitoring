@@ -21,6 +21,7 @@ const AssetTypeList = () => {
     list: [],
     pageLength: 25,
     currentPage: 1,
+    totalRecords: 0,
   });
 
   const isUpdatedSelector = useSelector(
@@ -181,6 +182,10 @@ const AssetTypeList = () => {
     dispatch(setUpdateAssetEl({ updateElement: null }));
   }, []);
 
+  const totalAllottedQuantity = details.list
+    .reduce((total, item) => total + Number(item.total_quantity || 0), 0)
+    .toLocaleString(); // Format with commas
+
   return (
     <div className="">
       <CommonDivider
@@ -223,6 +228,10 @@ const AssetTypeList = () => {
         loading={loading}
         scroll={{ x: 1200, y: 400 }}
       ></CommonTable>
+
+      <div className="text-right font-semibold mt-2">
+        Total Allotted Quantity: {totalAllottedQuantity}
+      </div>
 
       <Modal
         title={`Questions for Asset Type ID: ${selectedAssetType}`}

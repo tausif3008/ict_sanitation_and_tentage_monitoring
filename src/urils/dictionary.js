@@ -280,9 +280,13 @@ export const DICT = {
     en: "Scan QR",
     hi: "क्यूआर कोड स्कैन करें",
   },
-  last_footer: {
-    en: "Copyright © Pryagraj Mela Authority 2024-2025",
-    hi: "कॉपीराइट © प्रयागराज मेला प्राधिकरण 2024-2025",
+  copy_right: {
+    en: "Copyright © 2024-2025 Prayagraj Mela Authority. All Rights Reserved.",
+    hi: "कॉपीराइट © 2024-2025 प्रयागराज मेला प्राधिकरण। सर्वाधिकार सुरक्षित।",
+  },
+  hosted_by: {
+    en: "Hosted by Prayagraj Mela Authority.",
+    hi: "मेजबानी-प्रयागराज मेला प्राधिकरण।",
   },
   setting: {
     en: "Setting",
