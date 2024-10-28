@@ -5,7 +5,9 @@ import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../urils/dictionary";
-import img1 from "../assets/Images/MahaKumbhLogo.png";
+import img1 from "../assets/Images/goup.png";
+import img2 from "../assets/Images/MahaKumbhLogo.png";
+
 import { logoutFetch } from "../Fetch/Axios";
 
 const register_items = (lang, dict) => {
@@ -391,14 +393,31 @@ const Navbar = ({ lang, setLang }) => {
   //   }
   // }, [location]);
 
+   const isNavbarTransition =
+     document.querySelector(".navbar-transition")== null;
+
   return (
-    <div className="mx-3 font-nutino bg-white p-1 shadow-md">
+    <div className="px-3 font-nutino bg-white p-1 shadow-md">
       <div className="flex w-full justify-between items-center">
         <div className="flex gap-2 items-center">
           <Link
             to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-            className="no-underline">
-            <img src={img1} className="h-10" alt="" />
+            className="no-underline d-flex"
+          >
+            <img
+              src={img2}
+              className={`h-14 ${
+                isNavbarTransition ? "xl:h-10" : "xl:h-14"
+              } lg:h-10`}
+              alt="MahaKumbh 2025 Logo"
+            />
+            <img
+              src={img1}
+              className={`h-14 ${
+                isNavbarTransition ? "xl:h-10" : "xl:h-14"
+              } lg:h-10`}
+              alt="UP Police Logo"
+            />
           </Link>
 
           <div
@@ -408,7 +427,7 @@ const Navbar = ({ lang, setLang }) => {
             <span className="capitalize mr-1">{title} </span>
             <Link
               to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-              className="no-underline"
+              className="no-underline xxl:text-md xl:text-md lg:text-md md:text-d sm:text-md text-sm"
             >
               ICT Sanitation and Tentage Monitoring System
             </Link>

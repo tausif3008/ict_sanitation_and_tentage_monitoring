@@ -80,7 +80,13 @@ const Footer = ({ lang = "en" }) => {
                 <MailOutlined className="text-orange-400 text-lg" />{" "}
               </div>
               <div className="break-words w-full inline-block">
-                {dict.email_footer[lang]}
+                <a
+                  className="text-black no-underline"                 
+                  href={`mailto:{dict.email_footer[lang]}`}
+                >
+                  {" "}
+                  {dict.email_footer[lang]}
+                </a>
               </div>
             </div>
 
@@ -92,7 +98,12 @@ const Footer = ({ lang = "en" }) => {
                 />{" "}
               </div>
               <div className="break-words w-full inline-block">
-                {dict.phone_number[lang]}{" "}
+                <a
+                  className="text-black no-underline"
+                  href={`tel:${dict.phone_number[lang]}`}
+                >
+                  {dict.phone_number[lang]}{" "}
+                </a>
               </div>
             </div>
           </div>

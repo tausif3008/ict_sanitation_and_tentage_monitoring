@@ -24,7 +24,7 @@ const NavHead = ({ lang, dict }) => {
   let token = localStorage.getItem("sessionToken");
 
   return (
-    <div className="relative top-0 mx-3 bg-orange-400 font-nutino">
+    <div className="relative top-0 px-3 bg-orange-400 font-nutino">
       <div className="font-merriweather flex justify-around w-full m-auto p-2 px-1 md:px-3">
         <div className="text-center font-semibold text-xl w-full col-span-2 flex m-auto justify-between items-center">
           <div className="hidden text-sm bg-white h-8 font-thin p-1 px-2 md:flex gap-1 justify-center items-center rounded">
@@ -37,20 +37,27 @@ const NavHead = ({ lang, dict }) => {
             to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
             className="no-underline flex items-center space-x-4"
           >
-            <img src={img2} className="h-20" alt="MahaKumbh 2025 Logo" />
+            {/* <img src={img2} className="h-20" alt="MahaKumbh 2025 Logo" /> */}
             <div className="text-white font-nutino whitespace-nowrap">
               <div className="text-white font-nutino whitespace-nowrap">
-                <span>Maha Kumbh Mela 2025,</span>
-                <span style={{ display: "block" }}>
+                <span>Maha Kumbh Mela 2025, Prayagraj Mela Authority.</span>
+                {/* <span style={{ display: "block" }}>
                   Prayagraj Mela Authority.
-                </span>
+                </span> */}
               </div>
             </div>
-            <img src={img1} className="h-20" alt="UP Police Logo" />
+            {/* <img src={img1} className="h-20" alt="UP Police Logo" /> */}
           </Link>
-          <div className="flex gap-2">
-            <div className="h-full">
-              <Select
+          <div className="flex gap-2 items-center">
+            <div className="h-full items-center flex">
+              <a className="text-sm text-white no-underline" href="#">
+                Eng{" "}
+              </a>{" "}
+              <span className="text-white"> | </span>
+              <a className="text-sm text-white no-underline" href="#">
+                हिंदी
+              </a>
+              {/* <Select
                 className="rounded-md h-8  "
                 style={{ width: "59px" }}
                 defaultValue={"en"}
@@ -58,10 +65,10 @@ const NavHead = ({ lang, dict }) => {
                   { label: "EN", value: "en" },
                   { label: "HI", value: "hi" },
                 ]}
-              ></Select>
+              ></Select> */}
             </div>
-            <div className=" bg-white flex justify-center items-center rounded w-12">
-              <div className="flex justify-center items-center">
+            <div className=" bg-white flex justify-center items-center rounded w-8 h-8 cursor-pointer">
+              <div className="flex justify-center items-center ">
                 <Badge size="small" status="success" offset={[7, 0]} count={5}>
                   <img
                     className="h-5"
@@ -82,13 +89,28 @@ const NavHead = ({ lang, dict }) => {
                   navigate("/login");
                 }
               }}
-              className="text-sm font-thin p-1 px-2 flex gap-1 justify-center items-center rounded h-8 bg-white"
+              className="text-sm font-thin p-1  flex gap-1 justify-center items-center rounded h-8 w-8 bg-white cursor-pointer ml-1"
             >
-              <img
-                className="h-5"
-                src={token ? logOutIcon : loginIcon}
-                alt=""
-              />
+              {token ? (
+                <img className="h-5" src={logOutIcon} alt="Log Out" />
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  className="h-5"
+                >
+                  <path
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M20 12h-9.5m7.5 3l3-3l-3-3m-5-2V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h5a2 2 0 0 0 2-2v-1"
+                  />
+                </svg>
+              )}
             </div>
           </div>
         </div>
