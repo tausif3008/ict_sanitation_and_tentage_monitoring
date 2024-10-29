@@ -428,7 +428,7 @@ const Navbar = ({ lang, setLang }) => {
             <span className="capitalize mr-1">{title} </span>
             <Link
               to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-              className="no-underline xxl:text-md xl:text-md lg:text-md md:text-d sm:text-md text-xs xs:mr-1"
+              className="no-underline text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
             >
               ICT Sanitation and Tentage Monitoring System
             </Link>
