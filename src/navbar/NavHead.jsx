@@ -38,14 +38,10 @@ const NavHead = ({ lang, dict }) => {
             className="no-underline flex items-center space-x-4"
           >
             {/* <img src={img2} className="h-20" alt="MahaKumbh 2025 Logo" /> */}
-            <div className="text-white font-nutino whitespace-nowrap">
-              <div className="text-white font-nutino whitespace-nowrap">
-                <span>Maha Kumbh Mela 2025, Prayagraj Mela Authority.</span>
-                {/* <span style={{ display: "block" }}>
-                  Prayagraj Mela Authority.
-                </span> */}
-              </div>
+            <div className="text-white font-nutino text-sm xs:text-[8px] md:text-base lg:text-lg leading-tight">
+              <span>Maha Kumbh Mela 2025, Prayagraj Mela Authority.</span>
             </div>
+
             {/* <img src={img1} className="h-20" alt="UP Police Logo" /> */}
           </Link>
           <div className="flex gap-2 items-center">

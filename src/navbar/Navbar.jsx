@@ -406,17 +406,18 @@ const Navbar = ({ lang, setLang }) => {
           >
             <img
               src={img2}
-              className={`h-14 ${
-                isNavbarTransition ? "xl:h-10" : "xl:h-14"
-              } lg:h-10`}
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
+                isNavbarTransition ? "h-10" : "h-14"
+              }`}
               alt="MahaKumbh 2025 Logo"
             />
+
             <img
               src={img1}
-              className={`h-14 ${
-                isNavbarTransition ? "xl:h-10" : "xl:h-14"
-              } lg:h-10`}
-              alt="UP Police Logo"
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
+                isNavbarTransition ? "h-10" : "h-14"
+              }`}
+              alt="MahaKumbh 2025 Logo"
             />
           </Link>
 
@@ -427,7 +428,7 @@ const Navbar = ({ lang, setLang }) => {
             <span className="capitalize mr-1">{title} </span>
             <Link
               to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-              className="no-underline xxl:text-md xl:text-md lg:text-md md:text-d sm:text-md text-sm"
+              className="no-underline xxl:text-md xl:text-md lg:text-md md:text-d sm:text-md text-xs xs:mr-1"
             >
               ICT Sanitation and Tentage Monitoring System
             </Link>

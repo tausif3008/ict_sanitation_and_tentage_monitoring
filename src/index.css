@@ -69,3 +69,6 @@ fill: black !important;
 .ant-select-selector{
   border-radius: 0px !important;
 }
+.gap-2 {
+    gap: 0.5rem; /* Ensures a smaller gap */
+}

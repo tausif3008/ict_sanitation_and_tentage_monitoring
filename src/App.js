@@ -28,6 +28,7 @@ import MonitoringReport from "./complaince/MonitoringReport";
 import NotificationAdd from "./notification/NotificationAdd";
 import WastesDashboard from "./WasteDashboard/WastesDashboard";
 import Dashboard from "./dashboardNew/Dashboard";
+import SanitationDashboard from "./SanitationDashboard/SanitationDashboard";
 import TentageDashboard from "./TentageDashboard/TentageDashboard";
 import IncidentDashboard from "./IncidentDashborad/IncidentDashboard";
 import AppError from "./AppError";
@@ -70,6 +71,10 @@ function App() {
 
           <Route path="/" element={<Layout></Layout>}>
             <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
+            <Route
+              path="/sanitation-dashboard"
+              element={<SanitationDashboard></SanitationDashboard>}
+            ></Route>
             <Route
               path="/tentage-dashboard"
               element={<TentageDashboard></TentageDashboard>}
