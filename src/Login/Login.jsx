@@ -37,7 +37,7 @@ const Login = () => {
       const sessionToken = localStorage.getItem("sessionToken");
       if (sessionToken) {
         clearInterval(intervalId);
-        navigate("/dashboard");
+        navigate("/sanitation-dashboard");
       }
     }, 1000);
     return () => clearInterval(intervalId);
