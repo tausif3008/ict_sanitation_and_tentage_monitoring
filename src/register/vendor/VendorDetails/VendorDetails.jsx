@@ -42,12 +42,12 @@ const VendorDetails = () => {
       width: 80,
     },
     {
-      title: "Asset Main Type",
+      title: "Category",
       dataIndex: "asset_main_type_name",
       key: "main_type",
     },
     {
-      title: "Asset Type",
+      title: "Toilets & Tentage Type",
       dataIndex: "asset_type_name",
       key: "asset_type",
       width: 300,

@@ -123,7 +123,7 @@ const dashboards = (lang, dict) => {
       label: (
         <Link
           className="text-black no-underline hover:text-green"
-          to="/dashboard"
+          to="/sanitation-dashboard"
         >
           Sanitation Dashboard
         </Link>
