@@ -83,11 +83,11 @@ const ToiletDetails = () => {
   }, []);
 
   const priorityToiletTypes = [
-    "Type-1 FRP Septic tank",
-    "Type-2 FRP Soak pit",
+    "Type-1 FRP Septic Tank",
+    "Type-2 FRP Soak Pit",
     "Type-3 FRP Urinals",
-    "Type-4 Prefab Steel Septic tank",
-    "Type-5 Prefab Steel Soak pit",
+    "Type-4 Prefab Steel Septic Tank",
+    "Type-5 Prefab Steel Soak Pit",
   ];
 
   const priorityToilets = toiletData?.filter((item) =>
