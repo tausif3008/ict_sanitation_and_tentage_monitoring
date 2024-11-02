@@ -16,6 +16,8 @@ import PerformanceMatrix from "./PerformanceMatrix/PerformanceMatrix";
 import CompactorsTippers from "./CompactorTippers/CompactorsTipers";
 import AverageCollectionTimeChart from "./AverageCollectionTime";
 import VehiclePerformanceChart from "./VehiclePerformanceChart";
+import VehicleTrackingMapData from "./VehicleTrackingMapData";
+
 
 const columns = [
   {
@@ -126,9 +128,9 @@ const WastesDashboard = () => {
         <FacilityDetails></FacilityDetails>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <MapData></MapData>
+        <VehicleTrackingMapData></VehicleTrackingMapData>
       </div>
-      <div className="lg:col-span-2 col-span-4 bg-white shadow-md rounded-md">
+      {/* <div className="lg:col-span-2 col-span-4 bg-white shadow-md rounded-md">
         <VehiclePerformanceChart></VehiclePerformanceChart>
       </div>
       <div className="lg:col-span-2  lg:flex col-span-4 bg-white shadow-md mb-3 lg:mb-0 h-full rounded-md">
@@ -142,8 +144,8 @@ const WastesDashboard = () => {
           columns={columns}
           dataSource={dataSource}
         ></FacilityDetails>
-      </div>
-      <div className="col-span-4 mt-10 sm:mt-0 w-full rounded-md ">
+      </div> */}
+      {/* <div className="col-span-4 mt-10 sm:mt-0 w-full rounded-md ">
         <DashboardCalender></DashboardCalender>
       </div>
       <div className="col-span-4 lg:col-span-2 flex gap-2 flex-col rounded-md">
@@ -175,12 +177,14 @@ const WastesDashboard = () => {
       >
         <Alerts></Alerts>
       </div>
+
       <div className="lg:col-span-1 col-span-4 ">
         <TaskSchedule></TaskSchedule>
       </div>
       <div className="col-span-4 shadow-md bg-white h-auto rounded-md">
         <PerformanceMatrix></PerformanceMatrix>
       </div>
+       */}
       <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">

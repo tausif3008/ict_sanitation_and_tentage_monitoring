@@ -19,6 +19,7 @@ const Login = () => {
 
   const onFinish = async (values) => {
     const formData = new FormData();
+    formData.append("user_type_id", values.user_type_id);
     formData.append("username", values.username);
     formData.append("platform", "Web");
     formData.append("password", values.password);
@@ -58,7 +59,8 @@ const Login = () => {
                   <hr className="mt-1 mb-1 text-yellow-900" />
                   <div
                     className="text-green-800"
-                    style={{ paddingBottom: "50px" }}>
+                    style={{ paddingBottom: "50px" }}
+                  >
                     {DICT.title2[lang]}
                   </div>
                 </div>
