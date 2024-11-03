@@ -137,7 +137,7 @@ const CleanlinessReport = () => {
     const fetchToiletData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
+          "https://kumbhtsmonitoring.in/php-api/dashboard",
           { method: "POST", headers: headers }
         );
         const result = await response.json();
