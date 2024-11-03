@@ -3,7 +3,6 @@ import { DatePicker, Select, message, Tooltip, Button } from "antd";
 import lines from "../assets/Dashboard/lines.png";
 
 const ToiletDetails = () => {
-
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedToilet, setSelectedToilet] = useState(null);
@@ -66,7 +65,7 @@ const ToiletDetails = () => {
     const fetchAssetData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
+          "https://kumbhtsmonitoring.in/php-api/dashboard",
           { method: "POST", headers: headers }
         );
         const result = await response.json();
