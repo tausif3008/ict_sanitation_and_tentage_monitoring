@@ -49,6 +49,8 @@ import AddVehicleForm from "./register/vehicle/AddVehicleForm";
 import UserProfile from "./Profile/UserProfile";
 import SectorsListing from "./register/sectorListing/SectorListing";
 // import URLS from "./urils/URLS"
+import ParkingList from "./register/parking/ParkingList";
+import SectorWiseReport from "./Reports/SectorWiseReport";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -229,6 +231,12 @@ function App() {
             <Route
               path="sectors-listing"
               element={<SectorsListing></SectorsListing>}
+            ></Route>
+            <Route path="parking" element={<ParkingList></ParkingList>}></Route>
+
+            <Route
+              path="sector-wise-report"
+              element={<SectorWiseReport></SectorWiseReport>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
