@@ -91,8 +91,8 @@ const columns = [
 ];
 
 const UserList = () => {
-  const navigate = useNavigate();
 
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const isUpdatedSelector = useSelector(
@@ -107,7 +107,6 @@ const UserList = () => {
   });
 
   const params = useParams();
-
   const [searchQuery, setSearchQuery] = useState();
 
   const getUsers = async () => {

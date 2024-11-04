@@ -284,15 +284,31 @@ const reports_items = (lang, dict) => {
           className="text-black no-underline hover:text-green"
           to="/monitoring"
         >
-          Monitoring
+          Monitoring Report
         </Link>
       ),
     },
     {
       key: "3",
       label: (
-        <Link className="text-black no-underline" to="/#">
-          Report 2
+        <Link className="text-black no-underline" to="/sector-wise-report">
+          Sector Wise Report
+        </Link>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <Link className="text-black no-underline" to="/circle-wise-report">
+          Circle Wise Report
+        </Link>
+      ),
+    },
+    {
+      key: "5",
+      label: (
+        <Link className="text-black no-underline" to="/vendor-wise-report">
+          Vendor Wise Report
         </Link>
       ),
     },
@@ -393,8 +409,8 @@ const Navbar = ({ lang, setLang }) => {
   //   }
   // }, [location]);
 
-   const isNavbarTransition =
-     document.querySelector(".navbar-transition")== null;
+  const isNavbarTransition =
+    document.querySelector(".navbar-transition") == null;
 
   return (
     <div className="px-3 font-nutino bg-white p-1 shadow-md">

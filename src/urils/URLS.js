@@ -48,6 +48,9 @@ const URLS = {
   // sectors
   sectors: { path: "/sector", version: 5.43 },
 
+  // sectors
+  parking: { path: "/parking", version: 5.43 },
+
   // proposed sectors
   vendorProposedSectors: {
     path: "/vendor-proposed-sectors",

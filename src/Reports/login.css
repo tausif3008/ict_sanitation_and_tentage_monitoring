@@ -1,0 +1,9 @@
+.login-container{
+background: url('https://media.mahakumbh.in/media/2023/12/11172853/DALL%C2%B7E-2024-01-11-17.27.55-A-square-vibrant-depiction-of-the-Maha-Kumbh-Mela-a-major-Hindu-pilgrimage-festival-in-India.-The-image-should-artistically-represent-the-four-sacre.webp');
+background-repeat: no-repeat;
+background-size:cover;
+}
+
+.ant-form-item-explain{
+    display: flex;
+}
