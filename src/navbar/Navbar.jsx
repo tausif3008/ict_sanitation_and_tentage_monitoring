@@ -106,7 +106,15 @@ const master_items = (lang, dict) => {
       ),
     },
     {
-      key: "7",
+      key: "8",
+      label: (
+        <Link className="text-black no-underline" to="/parking">
+          Parking List
+        </Link>
+      ),
+    },
+    {
+      key: "9",
       label: (
         <Link className="text-black no-underline" to="/manpower-assignment">
           Manpower Assignment
