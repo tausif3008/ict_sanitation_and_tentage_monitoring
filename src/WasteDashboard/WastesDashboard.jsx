@@ -1,4 +1,4 @@
-import React from "react";
+    import React from "react";
 import MapData from "./MapData";
 import FacilityDetails from "./FacilityDetails/FacilityDetails";
 import CleanlinessScoreGauge from "./CleanlinessScoreGauge";
@@ -121,7 +121,7 @@ const WastesDashboard = () => {
           <CompactorsTippers></CompactorsTippers>
         </div>
         <div className="w-full border lg:col-span-4 col-span-4 shadow-md bg-white rounded-md">
-          <AverageCollectionTimeChart></AverageCollectionTimeChart>
+          <VehiclePerformanceChart></VehiclePerformanceChart>
         </div>
       </div>
       <div className="col-span-4 shadow-md bg-white h-auto rounded-md">

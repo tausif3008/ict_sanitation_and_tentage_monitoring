@@ -49,11 +49,11 @@ const Compactors = () => {
     labels: ["Average Results"],
   };
 
-  const series = [90]; // Percentage value for the radial bar
+  const series = [100]; // Percentage value for the radial bar
 
   return (
     <div className="border flex justify-center text-start p-2 flex-col w-full">
-      <div className=" font-semibold -mt-0">45</div>
+      <div className=" font-semibold -mt-0">40</div>
       <div className="text-lg">Compactors</div>
       <ReactApexChart
         options={options}

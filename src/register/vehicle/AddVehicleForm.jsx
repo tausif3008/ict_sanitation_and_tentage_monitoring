@@ -90,26 +90,24 @@ const AddVehicleForm = () => {
               required={true}
               RequiredMessage={"Main type is required!"}
             ></CommonFormDropDownMaker>
-            <Form.Item
-              label="Name"
-              name="name"
-              rules={[
-                {
-                  required: true,
-                  message: "Please enter name!",
-                },
-              ]}
-            >
-              <Input placeholder="Vehicle Name" className="rounded-none" />
-            </Form.Item>
-            <Form.Item label="Type" name="type">
+            <Form.Item label="Vehicle Type" name="type">
               <Input placeholder="type" className="rounded-none" />
             </Form.Item>
-            <Form.Item label="Number" name="number">
-              <Input placeholder="Number" className="rounded-none" />
+
+            <Form.Item label="Vehicle Number" name="number">
+              <Input
+                placeholder="enter vehicle number"
+                className="rounded-none"
+              />
             </Form.Item>
-            <Form.Item label="RC" name="rc">
-              <Input placeholder="RC" className="rounded-none" />
+            <Form.Item label="EMEI Number" name="emeinumber">
+              <Input placeholder="enter emei number" className="rounded-none" />
+            </Form.Item>
+            <Form.Item label="Chassis Number" name="chassisnumber">
+              <Input
+                placeholder="enter chassis number"
+                className="rounded-none"
+              />
             </Form.Item>
             <div className="flex w-full justify-end items-end">
               <Form.Item>
