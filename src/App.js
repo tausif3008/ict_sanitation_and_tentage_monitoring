@@ -51,6 +51,8 @@ import SectorsListing from "./register/sectorListing/SectorListing";
 // import URLS from "./urils/URLS"
 import ParkingList from "./register/parking/ParkingList";
 import SectorWiseReport from "./Reports/SectorWiseReport";
+import CircleWiseReport from "./Reports/CircleWiseReport";
+import VendorWiseReport from "./Reports/VendorWiseReport";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -171,7 +173,10 @@ function App() {
               path="vehicle-registration"
               element={<AddVehicleForm></AddVehicleForm>}
             ></Route>
-            <Route path="vehicle" element={<VehicleList></VehicleList>}></Route>
+            <Route
+              path="vehicle/:page?/:per_page?"
+              element={<VehicleList></VehicleList>}
+            ></Route>
             <Route
               path="manpower-assignment"
               element={<ManPowerAssignmentForm></ManPowerAssignmentForm>}
@@ -237,6 +242,14 @@ function App() {
             <Route
               path="sector-wise-report"
               element={<SectorWiseReport></SectorWiseReport>}
+            ></Route>
+            <Route
+              path="circle-wise-report"
+              element={<CircleWiseReport></CircleWiseReport>}
+            ></Route>
+            <Route
+              path="vendor-wise-report"
+              element={<VendorWiseReport></VendorWiseReport>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>

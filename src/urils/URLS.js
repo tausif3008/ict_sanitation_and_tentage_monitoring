@@ -45,8 +45,11 @@ const URLS = {
   assetList: { path: "/asset", version: 5.43 },
   assetDetails: { path: "/asset/details?assets_id=", version: 5.43 },
 
-  // sectors
+  //reporting
   sectors: { path: "/sector", version: 5.43 },
+
+  // sectors
+  circle_wise_report: { path: "/reporting/circle", version: 5.43 },
 
   // sectors
   parking: { path: "/parking", version: 5.43 },

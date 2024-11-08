@@ -143,7 +143,7 @@ const VehicleList = () => {
 
       <CommonTable
         loading={loading}
-        uri={"questions"}
+        uri={"vehicle"}
         columns={columns}
         details={details}
         scroll={{ x: 300, y: 400 }}
