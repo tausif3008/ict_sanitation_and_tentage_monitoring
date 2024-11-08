@@ -27,7 +27,7 @@ const VehicleMap = () => {
     const fetchVehicleData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/vehicle-tracking?page=1&per_page=5&date_format=Today",
+          "https://kumbhtsmonitoring.in/php-api/vehicle-tracking?page=1&per_page=25&date_format=Today",
           {
             method: "GET",
             headers: headers,

@@ -171,7 +171,7 @@ function App() {
               path="vehicle-registration"
               element={<AddVehicleForm></AddVehicleForm>}
             ></Route>
-            <Route path="vehicle" element={<VehicleList></VehicleList>}></Route>
+            <Route path="vehicle/:page?/:per_page?" element={<VehicleList></VehicleList>}></Route>
             <Route
               path="manpower-assignment"
               element={<ManPowerAssignmentForm></ManPowerAssignmentForm>}

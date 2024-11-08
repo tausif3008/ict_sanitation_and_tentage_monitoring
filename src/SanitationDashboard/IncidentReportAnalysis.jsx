@@ -23,7 +23,7 @@ const IncidentReportAnalysis = () => {
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
-            <div className="text-green-600 font-semibold flex gap-1 mb-2">
+            <div className="text-red-600 font-semibold flex gap-1 mb-2">
               <span>High Frequency Sectors</span>
             </div>
             <ul className="mt-2">
@@ -47,7 +47,7 @@ const IncidentReportAnalysis = () => {
       <div className="mt-2">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
-            <div className="text-red-600 font-semibold flex gap-1 mb-2">
+            <div className="text-green-600 font-semibold flex gap-1 mb-2">
               <span>Low Frequency Sectors</span>
             </div>
             <ul className="mt-2">
