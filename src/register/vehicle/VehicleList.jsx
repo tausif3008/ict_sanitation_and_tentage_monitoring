@@ -17,29 +17,30 @@ const columns = [
     width: 80,
   },
   {
-    title: "User Name",
+    title: "Vendor Name",
     dataIndex: "user_name",
     key: "user_name",
   },
+
   {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Type",
+    title: "Vehicle Type",
     dataIndex: "type",
     key: "type",
   },
   {
-    title: "Number",
+    title: "Vehicle Number",
     dataIndex: "number",
     key: "number",
   },
   {
-    title: "RC",
-    dataIndex: "rc",
-    key: "rc",
+    title: "EMEI Number",
+    dataIndex: "emei_number",
+    key: "emei_number",
+  },
+  {
+    title: "Chassis Number",
+    dataIndex: "chassis_number",
+    key: "chassis_number",
   },
   {
     title: "Action",
@@ -142,7 +143,7 @@ const VehicleList = () => {
 
       <CommonTable
         loading={loading}
-        uri={"questions"}
+        uri={"vehicle"}
         columns={columns}
         details={details}
         scroll={{ x: 300, y: 400 }}
