@@ -11,7 +11,7 @@ const ToiletDetails = () => {
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
-  const toiletData = assetData?.asset_count;
+  const toiletData = assetData?.asset_types;
 
   const headers = {
     "Content-Type": "application/json",
@@ -65,7 +65,7 @@ const ToiletDetails = () => {
     const fetchAssetData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard",
+          "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
           { method: "POST", headers: headers }
         );
         const result = await response.json();
@@ -158,8 +158,8 @@ const ToiletDetails = () => {
           style={{ minWidth: "150px", flex: "1" }}
         >
           {toiletData?.map((toilet) => (
-            <Select.Option key={toilet.asset_type_id} value={toilet.type}>
-              {toilet.type}
+            <Select.Option key={toilet.asset_type_id} value={toilet.name}>
+              {toilet.name}
             </Select.Option>
           ))}
         </Select>
@@ -188,10 +188,9 @@ const ToiletDetails = () => {
               key={index}
               title={
                 <div>
-                  <strong>{item.type}</strong>
-                  <div>Response Time: {item.response_time}</div>
-                  <div>Total Quantity: {item.total_quantity}</div>
-                  <div>Registered Quantity: {item.registered_quantity}</div>
+                  <strong>{item.name}</strong>
+                  <div>Total Quantity: {item.total}</div>
+                  <div>Registered Quantity: {item.registered}</div>
                 </div>
               }
               placement="top"
@@ -207,20 +206,18 @@ const ToiletDetails = () => {
               >
                 <div className="text-start flex-1">
                   <div className="text-sm text-gray-500 font-bold">
-                    {item.type}
+                    {item.name}
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
-                      {item.total_quantity}
-                    </span>
+                    <span className="text-sm font-semibold">{item.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                     <span className="text-sm font-semibold">
-                      {item.registered_quantity}
+                      {item.unclean}
                     </span>
                   </div>
                 </div>

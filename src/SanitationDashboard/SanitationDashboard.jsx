@@ -8,6 +8,8 @@ import CleanlinessReport from "./CleanlinessReport";
 import FileStorageWrapper from "./FileStorageWrapper";
 import IncidentReportAnalysis from "./IncidentReportAnalysis";
 import VendorPerformance from "./VendorPerformance";
+import MajorIssuesCount from "./MajorIssuesCount";
+
 
 
 const SanitationDashboard = () => {
@@ -18,6 +20,9 @@ const SanitationDashboard = () => {
       </div>
       <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md">
         <ToiletDetails></ToiletDetails>
+      </div>
+      <div className="col-span-4 shadow-md bg-white rounded-md">
+        <MajorIssuesCount></MajorIssuesCount>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <CleanlinessReport></CleanlinessReport>
