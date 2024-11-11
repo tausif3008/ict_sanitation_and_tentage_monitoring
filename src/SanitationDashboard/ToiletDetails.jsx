@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
+import dayjs from "dayjs";
 import lines from "../assets/Dashboard/lines.png";
 
 const ToiletDetails = () => {
@@ -25,17 +26,20 @@ const ToiletDetails = () => {
     const fetchVendorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/vendor-details",
-          { method: "GET", headers: headers }
+          "https://kumbhtsmonitoring.in/php-api/users?user_type_id=8",
+          {
+            method: "GET",
+            headers: headers,
+          }
         );
         const result = await response.json();
         if (result.success) {
-          setVendorData(result.data.userdetails);
+          setVendorData(result.data.users);
         } else {
-          message.error("Failed to load details.");
+          message.error("Failed to load vendor details.");
         }
       } catch (error) {
-        message.error("Error fetching details.");
+        message.error("Error fetching vendor details.");
       }
     };
     fetchVendorData();
@@ -52,34 +56,62 @@ const ToiletDetails = () => {
         if (result.success) {
           setSectorData(result.data.sectors);
         } else {
-          message.error("Failed to load details.");
+          message.error("Failed to load sector details.");
         }
       } catch (error) {
-        message.error("Error fetching details.");
+        message.error("Error fetching sector details.");
       }
     };
     fetchSectorData();
   }, []);
 
-  useEffect(() => {
-    const fetchAssetData = async () => {
-      try {
-        const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
-          { method: "POST", headers: headers }
-        );
-        const result = await response.json();
-        if (result.success) {
-          setAssetData(result.data);
-        } else {
-          message.error("Failed to load details.");
+  const fetchAssetData = async (
+    sectorId = null,
+    vendorId = null,
+    toiletId = null
+  ) => {
+    try {
+      const response = await fetch(
+        "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
+        {
+          method: "POST",
+          headers: headers,
+          body: JSON.stringify({
+            sector_id: sectorId || undefined,
+            vendor_id: vendorId || undefined,
+            asset_type_id: toiletId || undefined,
+          }),
         }
-      } catch (error) {
-        message.error("Error fetching details.");
+      );
+      const result = await response.json();
+      if (result.success) {
+        setAssetData(result.data);
+      } else {
+        message.error("Failed to load asset details.");
       }
-    };
+    } catch (error) {
+      message.error("Error fetching asset details.");
+    }
+  };
+
+  useEffect(() => {
     fetchAssetData();
   }, []);
+
+  const handleSectorChange = (value) => {
+    setSelectedSector(value);
+    fetchAssetData(value, selectedVendor, selectedToilet);
+  };
+
+  const handleVendorChange = (value) => {
+    setSelectedVendor(value);
+    fetchAssetData(selectedSector, value, selectedToilet);
+  };
+
+  const handleToiletChange = (value) => {
+    setSelectedToilet(value);
+    fetchAssetData(selectedSector, selectedVendor, value);
+  };
 
   const priorityToiletTypes = [
     "Type-1 FRP Septic Tank",
@@ -121,15 +153,15 @@ const ToiletDetails = () => {
       </div>
 
       <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker size="middle" />
+        <DatePicker size="middle" defaultValue={dayjs()} />
         <Select
           value={selectedSector}
-          onChange={(value) => setSelectedSector(value)}
+          onChange={handleSectorChange}
           placeholder="Select Sector"
           style={{ minWidth: "120px", flex: "1" }}
         >
           {sectorData.map((sector) => (
-            <Select.Option key={sector.sector_id} value={sector.name}>
+            <Select.Option key={sector.sector_id} value={sector.sector_id}>
               {sector.name}
             </Select.Option>
           ))}
@@ -137,28 +169,28 @@ const ToiletDetails = () => {
 
         <Select
           value={selectedVendor}
-          onChange={(value) => setSelectedVendor(value)}
+          onChange={handleVendorChange}
           placeholder="Select Vendor"
           style={{ minWidth: "150px", flex: "1" }}
         >
           {vendorData.map((vendor) => (
-            <Select.Option
-              key={vendor.vendor_detail_id}
-              value={vendor.user_name}
-            >
-              {vendor.user_name}
+            <Select.Option key={vendor.user_id} value={vendor.user_id}>
+              {vendor.name}
             </Select.Option>
           ))}
         </Select>
 
         <Select
           value={selectedToilet}
-          onChange={(value) => setSelectedToilet(value)}
+          onChange={handleToiletChange}
           placeholder="Select Toilet"
           style={{ minWidth: "150px", flex: "1" }}
         >
           {toiletData?.map((toilet) => (
-            <Select.Option key={toilet.asset_type_id} value={toilet.name}>
+            <Select.Option
+              key={toilet.asset_type_id}
+              value={toilet.asset_type_id}
+            >
               {toilet.name}
             </Select.Option>
           ))}
@@ -167,9 +199,11 @@ const ToiletDetails = () => {
         <Button
           size="medium"
           type="primary"
-          htmlType="submit"
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
+          onClick={() =>
+            fetchAssetData(selectedSector, selectedVendor, selectedToilet)
+          }
         >
           Search
         </Button>
@@ -230,7 +264,9 @@ const ToiletDetails = () => {
             </Tooltip>
           ))
         ) : (
-          <div>No data available</div>
+          <div className="col-span-full flex justify-center items-center h-32">
+            No data available
+          </div>
         )}
       </div>
 
