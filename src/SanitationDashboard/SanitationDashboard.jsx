@@ -8,6 +8,7 @@ import CleanlinessReport from "./CleanlinessReport";
 import FileStorageWrapper from "./FileStorageWrapper";
 import IncidentReportAnalysis from "./IncidentReportAnalysis";
 import VendorPerformance from "./VendorPerformance";
+import Counts from "./Counts";
 
 
 const SanitationDashboard = () => {
@@ -20,7 +21,10 @@ const SanitationDashboard = () => {
         <ToiletDetails></ToiletDetails>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <CleanlinessReport></CleanlinessReport>
+        <CleanlinessReport></CleanlinessReport> 
+      </div>
+      <div className="col-span-4 shadow-md bg-white rounded-md">
+        <Counts></Counts> 
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <FileStorageWrapper></FileStorageWrapper>
