@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
-import dayjs from 'dayjs';
+import dayjs from "dayjs";
 import lines from "../assets/Dashboard/lines.png";
 
 
@@ -26,10 +26,13 @@ const ToiletDetails = () => {
   useEffect(() => {
     const fetchVendorData = async () => {
       try {
-        const response = await fetch("https://kumbhtsmonitoring.in/php-api/users?user_type_id=8", {
-          method: "GET",
-          headers: headers,
-        });
+        const response = await fetch(
+          "https://kumbhtsmonitoring.in/php-api/users?user_type_id=8",
+          {
+            method: "GET",
+            headers: headers,
+          }
+        );
         const result = await response.json();
         if (result.success) {
           setVendorData(result.data.users);
@@ -63,7 +66,11 @@ const ToiletDetails = () => {
     fetchSectorData();
   }, []);
 
-  const fetchAssetData = async (sectorId = null, vendorId = null, toiletId = null) => {
+  const fetchAssetData = async (
+    sectorId = null,
+    vendorId = null,
+    toiletId = null
+  ) => {
     try {
       const response = await fetch(
         "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
@@ -89,7 +96,7 @@ const ToiletDetails = () => {
   };
 
   useEffect(() => {
-    fetchAssetData(); 
+    fetchAssetData();
   }, []);
 
   const handleSectorChange = (value) => {
@@ -147,8 +154,8 @@ const ToiletDetails = () => {
       </div>
 
       <div className="flex flex-wrap gap-3 mt-0">
-      <DatePicker size="middle" defaultValue={dayjs()} />
-      <Select
+        <DatePicker size="middle" defaultValue={dayjs()} />
+        <Select
           value={selectedSector}
           onChange={handleSectorChange}
           placeholder="Select Sector"
@@ -181,7 +188,10 @@ const ToiletDetails = () => {
           style={{ minWidth: "150px", flex: "1" }}
         >
           {toiletData?.map((toilet) => (
-            <Select.Option key={toilet.asset_type_id} value={toilet.asset_type_id}>
+            <Select.Option
+              key={toilet.asset_type_id}
+              value={toilet.asset_type_id}
+            >
               {toilet.name}
             </Select.Option>
           ))}
@@ -192,7 +202,9 @@ const ToiletDetails = () => {
           type="primary"
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
-          onClick={() => fetchAssetData(selectedSector, selectedVendor, selectedToilet)}
+          onClick={() =>
+            fetchAssetData(selectedSector, selectedVendor, selectedToilet)
+          }
         >
           Search
         </Button>
@@ -235,9 +247,7 @@ const ToiletDetails = () => {
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
-                      {item.clean}
-                    </span>
+                    <span className="text-sm font-semibold">{item.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>

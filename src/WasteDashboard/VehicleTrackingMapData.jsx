@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import { message } from "antd";
-import "leaflet/dist/leaflet.css"; 
+import "leaflet/dist/leaflet.css";
 import Tippers from "../assets/Dashboard/Tippers.png";
 
 const vehicleIcon = new L.Icon({
-  iconUrl: Tippers, 
-  iconSize: [25, 41], 
-  iconAnchor: [12, 41], 
-  popupAnchor: [1, -34], 
+  iconUrl: Tippers,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
 });
 
 const VehicleMap = () => {
@@ -27,7 +27,7 @@ const VehicleMap = () => {
     const fetchVehicleData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/vehicle-tracking?page=1&per_page=25&date_format=Today",
+          "https://kumbhtsmonitoring.in/php-api/vehicle-tracking?page=1&per_page=50&date_format=Today",
           {
             method: "GET",
             headers: headers,
