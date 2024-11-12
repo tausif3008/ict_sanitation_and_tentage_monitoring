@@ -77,6 +77,9 @@ const URLS = {
     path: "/user-permission/views?user_id=3",
     version: "5.43",
   },
+
+  // shift
+  shift: { path: "/shifts", version: 5.43 },
 };
 
 export default URLS;
