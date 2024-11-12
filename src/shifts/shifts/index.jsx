@@ -7,39 +7,9 @@ import CommonTable from "../../commonComponents/CommonTable";
 import { getShifts } from "./shiftSlice";
 import ShiftSelectors from "./shiftSelectors";
 import URLS from "../../urils/URLS";
-
-const columns = [
-  {
-    title: "Sr. No", // Asset main type
-    dataIndex: "sr",
-    key: "sr",
-    width: 80,
-  },
-  {
-    title: "Shift Name",
-    dataIndex: "name",
-    key: "name",
-    width: 300,
-  },
-  {
-    title: "Start Time",
-    dataIndex: "from_time",
-    key: "from_time",
-    width: 300,
-    render: (text) => {
-      return text ? moment(text, "HH:mm:ss").format("hh:mm A") : "00";
-    },
-  },
-  {
-    title: "End Time",
-    dataIndex: "to_time",
-    key: "to_time",
-    width: 300,
-    render: (text) => {
-      return text ? moment(text, "HH:mm:ss").format("hh:mm A") : "00";
-    },
-  },
-];
+import { Button } from "antd";
+import AppConstants from "../../urils/AppConstants";
+import { EditOutlined } from "@ant-design/icons";
 
 const Shift = () => {
   const navigate = useNavigate();
@@ -75,15 +45,96 @@ const Shift = () => {
       uri = URLS.shift.path;
     }
     dispatch(getShifts(uri)); // get shift data
-    // dispatch(getShifts("shifts?page=1&per_page=100")); // get shift data
-
     return () => {};
   }, [params]);
+
+  const columns = [
+    {
+      title: "Sr. No", // Asset main type
+      dataIndex: "sr",
+      key: "sr",
+      width: 80,
+    },
+    {
+      title: "Shift Name",
+      dataIndex: "name",
+      key: "name",
+      width: 300,
+    },
+    {
+      title: "Start Time",
+      dataIndex: "from_time",
+      key: "from_time",
+      width: 300,
+      render: (text) => {
+        return text ? moment(text, "HH:mm:ss").format("hh:mm A") : "00";
+      },
+    },
+    {
+      title: "End Time",
+      dataIndex: "to_time",
+      key: "to_time",
+      width: 300,
+      render: (text) => {
+        return text ? moment(text, "HH:mm:ss").format("hh:mm A") : "00";
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 300,
+      render: (text) => {
+        return Number(text) === 2 ? "Deactive" : "Active";
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: 100,
+      render: (text, record) => {
+        return (
+          <Button
+            className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+            onClick={() => {
+              navigate("/add-shift-form", {
+                state: {
+                  key: "UpdateKey",
+                  record: record, // Pass the record as part of the state
+                },
+              });
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        );
+      },
+    },
+  ];
 
   return (
     <>
       <div className="">
-        <CommonDivider label={"Shift"}></CommonDivider>
+        <CommonDivider
+          label={"Shift"}
+          compo={
+            <Button
+              onClick={() =>
+                navigate("/add-shift-form", {
+                  state: {
+                    key: "AddKey",
+                  },
+                })
+              }
+              className="mb-1"
+              style={{ backgroundColor: AppConstants.AddButtonColor }}
+            >
+              Add Shift
+            </Button>
+          }
+        ></CommonDivider>
 
         <CommonTable
           loading={loading}

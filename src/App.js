@@ -55,6 +55,7 @@ import CircleWiseReport from "./Reports/CircleWiseReport";
 import VendorWiseReport from "./Reports/VendorWiseReport";
 import Shift from "./shifts/shifts";
 import ChangePassword from "./Login/ChangePassword";
+import AddShiftForm from "./shifts/add form";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -254,9 +255,12 @@ function App() {
               element={<VendorWiseReport></VendorWiseReport>}
             ></Route>
             <Route
-              //  path="shift"
               path="shift/:page?/:per_page?"
               element={<Shift></Shift>}
+            ></Route>
+            <Route
+              path="add-shift-form"
+              element={<AddShiftForm></AddShiftForm>}
             ></Route>
             <Route
               path="change-password"
