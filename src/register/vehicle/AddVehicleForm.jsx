@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { setVehicleListIsUpdated } from "./vehicleSlice";
 import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 
+const { Option } = Select;
+
 const AddVehicleForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
@@ -67,9 +69,9 @@ const AddVehicleForm = () => {
               navigate("/vehicle");
             }}
           >
-            <ArrowLeftOutlined></ArrowLeftOutlined>
+            <ArrowLeftOutlined />
           </Button>
-          <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
+          <div className="text-d9 text-2xl w-full flex items-end justify-between">
             <div className="font-bold">
               {vehicleUpdateElSelector ? "Update Vehicle" : "Add Vehicle"}
             </div>
@@ -77,7 +79,7 @@ const AddVehicleForm = () => {
           </div>
         </div>
 
-        <Divider className="bg-d9 h-2/3 mt-1"></Divider>
+        <Divider className="bg-d9 h-2/3 mt-1" />
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3">
             <CommonFormDropDownMaker
@@ -87,11 +89,21 @@ const AddVehicleForm = () => {
               responseIdName="user_id"
               selectLabel={"Vendor"}
               selectName={"user_id"}
-              required={true}
+              // required={true}
               RequiredMessage={"Main type is required!"}
-            ></CommonFormDropDownMaker>
-            <Form.Item label="Vehicle Type" name="type">
-              <Input placeholder="type" className="rounded-none" />
+            />
+            <Form.Item
+              label="Vehicle Type"
+              name="type"
+              // rules={[{ required: true, message: "Vehicle type is required!" }]}
+            >
+              <Select
+                placeholder="Select vehicle type"
+                className="rounded-none"
+              >
+                <Option value="Compactor">Compactor</Option>
+                <Option value="Tipper">Tipper</Option>
+              </Select>
             </Form.Item>
 
             <Form.Item label="Vehicle Number" name="number">
@@ -100,10 +112,10 @@ const AddVehicleForm = () => {
                 className="rounded-none"
               />
             </Form.Item>
-            <Form.Item label="EMEI Number" name="emeinumber">
-              <Input placeholder="enter emei number" className="rounded-none" />
+            <Form.Item label="IMEI Number" name="imei">
+              <Input placeholder="enter imei number" className="rounded-none" />
             </Form.Item>
-            <Form.Item label="Chassis Number" name="chassisnumber">
+            <Form.Item label="Chassis Number" name="chassis_no">
               <Input
                 placeholder="enter chassis number"
                 className="rounded-none"

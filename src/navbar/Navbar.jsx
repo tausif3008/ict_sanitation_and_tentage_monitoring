@@ -336,6 +336,17 @@ const setting_item = (dict, lang, navigate) => {
         </Link>
       ),
     },
+    {
+      key: "2",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/change-password"
+        >
+          Change Password
+        </Link>
+      ),
+    },
   ];
 
   localStorage.getItem("sessionToken")

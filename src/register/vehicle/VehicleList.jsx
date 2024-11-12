@@ -33,14 +33,14 @@ const columns = [
     key: "number",
   },
   {
-    title: "EMEI Number",
-    dataIndex: "emei_number",
-    key: "emei_number",
+    title: "IMEI Number",
+    dataIndex: "imei",
+    key: "imei",
   },
   {
     title: "Chassis Number",
-    dataIndex: "chassis_number",
-    key: "chassis_number",
+    dataIndex: "chassis_no",
+    key: "chassis_no",
   },
   {
     title: "Action",
