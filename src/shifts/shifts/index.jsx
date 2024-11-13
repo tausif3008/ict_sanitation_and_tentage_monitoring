@@ -17,7 +17,7 @@ const Shift = () => {
   const { loading, ShiftData } = ShiftSelectors();
   const params = useParams();
 
-  const [userDetails, setUserDetails] = useState({
+  const [shiftDetails, setShiftDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
@@ -25,11 +25,11 @@ const Shift = () => {
 
   useEffect(() => {
     if (ShiftData) {
-      setUserDetails((prevDetails) => ({
+      setShiftDetails((prevDetails) => ({
         ...prevDetails,
         list: ShiftData?.data?.listings || [],
         pageLength: ShiftData?.data?.paging?.[0]?.length || 0,
-        currentPage: ShiftData?.data?.paging?.[0]?.currentPage || 1,
+        currentPage: ShiftData?.data?.paging?.[0]?.currentpage || 1,
         totalRecords: ShiftData?.data?.paging?.[0]?.totalrecords || 0,
       }));
     }
@@ -140,7 +140,7 @@ const Shift = () => {
           loading={loading}
           uri={`shift`}
           columns={columns || []}
-          details={userDetails || []}
+          details={shiftDetails || []}
           scroll={{ x: 300, y: 400 }}
         ></CommonTable>
       </div>{" "}

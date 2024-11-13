@@ -10,6 +10,7 @@ import assetsSlice from "./../register/asset/AssetsSlice";
 import vehicleSlice from "./../register/vehicle/vehicleSlice";
 import parkingSlice from "./../register/parking/parkingSlice";
 import shiftSlice from "../shifts/shifts/shiftSlice";
+import  vendorWiseSlice from "../Reports/VendorwiseReports/vendorslice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -22,6 +23,7 @@ const rootReducer = combineReducers({
   vehicleSlice: vehicleSlice,
   parkingSlice: parkingSlice,
   shiftSlice: shiftSlice,
+  vendorWiseSlice: vendorWiseSlice,
 });
 
 export default rootReducer;
