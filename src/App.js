@@ -52,10 +52,13 @@ import SectorsListing from "./register/sectorListing/SectorListing";
 import ParkingList from "./register/parking/ParkingList";
 import SectorWiseReport from "./Reports/SectorWiseReport";
 import CircleWiseReport from "./Reports/CircleWiseReport";
-import VendorWiseReport from "./Reports/VendorWiseReport";
+// import VendorWiseReport from "./Reports/VendorWiseReport";
 import Shift from "./shifts/shifts";
 import ChangePassword from "./Login/ChangePassword";
 import AddShiftForm from "./shifts/add form";
+import VendorReports from "./Reports/VendorwiseReports";
+// import VendorWiseReports from "./Reports/VendorwiseReport";
+// import VendorWiseReports from "./Reports/VendorWiseReports";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -251,8 +254,9 @@ function App() {
               element={<CircleWiseReport></CircleWiseReport>}
             ></Route>
             <Route
-              path="vendor-wise-report"
-              element={<VendorWiseReport></VendorWiseReport>}
+              // path="vendor-wise-report"
+              path="vendor-wise-report/:page?/:per_page?"
+              element={<VendorReports></VendorReports>}
             ></Route>
             <Route
               path="shift/:page?/:per_page?"
