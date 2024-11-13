@@ -9,7 +9,6 @@ import URLS from "../../urils/URLS";
 const initialState = {
   loading: false,
   name: null,
-  filter_data: null,
 };
 
 export const shiftSlice = createSlice({
@@ -21,12 +20,6 @@ export const shiftSlice = createSlice({
     },
     postSuccess: (state, action) => {
       state.name = action.payload;
-    },
-    postDrop: (state, action) => {
-      state.drop_data = action.payload;
-    },
-    postFilter: (state, action) => {
-      state.filter_data = action.payload;
     },
   },
   extraReducers: (builder) => {

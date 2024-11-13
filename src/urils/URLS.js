@@ -80,6 +80,8 @@ const URLS = {
 
   // shift
   shift: { path: "/shifts", version: 5.43 },
+  shiftAdd: { path: "/shifts/entry", version: 5.43 },
+  shiftEdit: { path: "/shifts/edit", version: 5.43 },
 };
 
 export default URLS;
