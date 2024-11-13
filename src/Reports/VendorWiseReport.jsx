@@ -159,7 +159,6 @@ const VendorWiseReport = () => {
   const getCircleData = async () => {
     setLoading(true);
     const uri = URLS.vendorReporting.path;
-    console.log("basicUrl +uri", basicUrl + uri);
     const r = basicUrl + uri;
     const res = await postData(r);
 
