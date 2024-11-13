@@ -15,8 +15,6 @@ const CircleWiseReport = () => {
   const [totalClean, setTotalClean] = useState(0);
   const [totalUnclean, setTotalUnclean] = useState(0);
 
-  console.log("circles", circles);
-
   const headers = {
     "Content-Type": "application/json",
     "x-api-key": "YunHu873jHds83hRujGJKd873",

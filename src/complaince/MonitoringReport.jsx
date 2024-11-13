@@ -43,8 +43,6 @@ const MonitoringReport = () => {
     setLoading(false);
   };
 
-  console.log("assetDetails", assetDetails);
-
   useEffect(() => {
     getDetails();
   }, [params]);
@@ -122,62 +120,63 @@ const MonitoringReport = () => {
 
         <Divider className="bg-d9 h-2/3 mt-1" />
 
-        {details?.list.length ? (
-          <div className="mt-3">
-            <div className="flex gap-1 flex-col">
-              <div>
-                Latitude:
-                <span className="font-semibold">{assetDetails?.latitude}</span>
-              </div>
-              <div>
-                Longitude:
-                <span className="font-semibold">{assetDetails?.longitude}</span>
-              </div>
-              <div>
-                Unit Number:
-                <span className="font-semibold">{assetDetails?.unit_no}</span>
-              </div>
-              <div>
-                Remark:
-                <span className="font-semibold">{assetDetails?.remark}</span>
-              </div>
-              <div>
-                Submitted Date:
-                <span className="font-semibold">
-                  {assetDetails?.submitted_date}
-                </span>
-                {/* Display Submitted Date */}
-              </div>
+        <div className="mt-3">
+          <div className="flex gap-1 flex-col">
+            <div>
+              Latitude:
+              <span className="font-semibold">{assetDetails?.latitude}</span>
             </div>
-
-            <div className="flex justify-between mt-2 mb-3">
-              <div className="flex flex-col text-center font-semibold">
-                <span>QR Code</span>
-                {assetDetails?.qrCode ? (
-                  <Image
-                    width={130}
-                    src={`${URLS.baseUrl}/${assetDetails?.qrCode}`}
-                    alt="QR Code"
-                  />
-                ) : (
-                  <span>No QR Code Available</span>
-                )}
-              </div>
-              <div className="flex flex-col text-center font-semibold">
-                <span>Asset Image</span>
-                {assetDetails?.photo ? (
-                  <Image
-                    width={125}
-                    height={125}
-                    src={`${URLS.baseUrl}/${assetDetails?.photo}`}
-                    alt="Asset"
-                  />
-                ) : (
-                  <span>No Image Available</span>
-                )}
-              </div>
+            <div>
+              Longitude:
+              <span className="font-semibold">{assetDetails?.longitude}</span>
             </div>
+            <div>
+              Unit Number:
+              <span className="font-semibold">{assetDetails?.unit_no}</span>
+            </div>
+            <div>
+              Remark:
+              <span className="font-semibold">{assetDetails?.remark}</span>
+            </div>
+            <div>
+              Submitted Date:
+              <span className="font-semibold">
+                {assetDetails?.submitted_date}
+              </span>
+              {/* Display Submitted Date */}
+            </div>
+          </div>
 
+          <div className="flex justify-between mt-2 mb-3">
+            <div className="flex flex-col text-center font-semibold">
+              <span>QR Code</span>
+              {assetDetails?.qrCode ? (
+                <Image
+                  width={130}
+                  src={`${URLS.baseUrl}/${assetDetails?.qrCode}`}
+                  alt="QR Code"
+                />
+              ) : (
+                <span>No QR Code Available</span>
+              )}
+            </div>
+            <div className="flex flex-col text-center font-semibold">
+              <span>Asset Image</span>
+              {assetDetails?.photo ? (
+                <Image
+                  width={125}
+                  height={125}
+                  src={`${URLS.baseUrl}/${assetDetails?.photo}`}
+                  alt="Asset"
+                />
+              ) : (
+                <span>No Image Available</span>
+              )}
+            </div>
+          </div>
+        </div>
+        {details?.list?.length ? (
+          <>
             <Table
               columns={dateColumns || []}
               dataSource={details?.list}
@@ -187,7 +186,7 @@ const MonitoringReport = () => {
               className="rounded-none"
               loading={loading}
             />
-          </div>
+          </>
         ) : (
           <div className="mt-3 font-semibold text-orange-500 text-center">
             No Report Found
