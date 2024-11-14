@@ -36,15 +36,20 @@ const VendorReports = () => {
         totalRecords: vendorReports?.data?.paging?.[0]?.totalrecords || 0,
       }));
 
-      const myexcelData = vendorReports?.data?.vendors?.map((data) => {
+      const myexcelData = vendorReports?.data?.vendors?.map((data, index) => {
         return {
+          sr: index + 1,
           name: data?.name,
-          email: data?.email,
-          phone: data?.phone,
-          address: data?.address,
-          pin: data?.pin,
-          company: data?.company,
-          language: data?.language,
+          // email: data?.email,
+          // phone: data?.phone,
+          // address: data?.address,
+          // pin: data?.pin,
+          // company: data?.company,
+          // language: data?.language,
+          registered: data?.registered,
+          clean: data?.clean,
+          unclean: data?.unclean,
+          total: data?.total,
         };
       });
       setExcelData(myexcelData);
@@ -71,23 +76,43 @@ const VendorReports = () => {
       key: "name",
     },
     {
-      title: "Address",
-      dataIndex: "address",
-      key: "address",
-      render: (text, record) => {
-        return `${text}, Pincode -${record?.pin}`;
-      },
+      title: "Registered",
+      dataIndex: "registered",
+      key: "registered",
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
+      title: "Clean",
+      dataIndex: "clean",
+      key: "clean",
     },
     {
-      title: "Company",
-      dataIndex: "company",
-      key: "company",
+      title: "Unclean",
+      dataIndex: "unclean",
+      key: "unclean",
     },
+    {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+    },
+    // {
+    //   title: "Address",
+    //   dataIndex: "address",
+    //   key: "address",
+    //   render: (text, record) => {
+    //     return `${text}, Pincode -${record?.pin}`;
+    //   },
+    // },
+    // {
+    //   title: "Email",
+    //   dataIndex: "email",
+    //   key: "email",
+    // },
+    // {
+    //   title: "Company",
+    //   dataIndex: "company",
+    //   key: "company",
+    // },
   ];
 
   // excel
@@ -104,9 +129,10 @@ const VendorReports = () => {
 
   // pdf
   const exportToPDF = () => {
-    const doc = new jsPDF("landscape", undefined, undefined, {
-      compress: true,
-    });
+    const doc = new jsPDF();
+    // const doc = new jsPDF("landscape", undefined, undefined, {
+    //   compress: true,
+    // });
 
     // Centered ICT heading
     const ictHeading = "ICT Sanitation and Tentage Monitoring System";
@@ -176,24 +202,33 @@ const VendorReports = () => {
     doc.autoTable({
       head: [
         [
+          "Sr No",
           "Vendor Name",
-          "Email",
-          "Phone",
-          "Address",
-          "Pin code",
-          "Company",
-          "Language",
-          "",
+          // "Email",
+          // "Phone",
+          // "Address",
+          // "Pin code",
+          // "Company",
+          // "Language",
+          "Registered",
+          "Clean",
+          "Unclean",
+          "Total",
         ],
       ],
       body: excelData.map((opt) => [
+        opt?.sr,
         opt?.name,
-        opt?.email,
-        opt?.phone,
-        opt?.address,
-        opt?.pin,
-        opt?.company,
-        opt?.language,
+        // opt?.email,
+        // opt?.phone,
+        // opt?.address,
+        // opt?.pin,
+        // opt?.company,
+        // opt?.language,
+        opt?.registered,
+        opt?.clean,
+        opt?.unclean,
+        opt?.total,
       ]),
       startY: 40, // Start after the header and new text
     });
