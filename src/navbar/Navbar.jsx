@@ -68,7 +68,7 @@ const master_items = (lang, dict) => {
     {
       key: "4",
       label: (
-        <Link className="text-black no-underline" to="/gps-fleet-registration">
+        <Link className="text-black no-underline" to="/route-list">
           GPS Routes List
         </Link>
       ),
@@ -175,6 +175,17 @@ const dashboards = (lang, dict) => {
           to="/incident-dashboard"
         >
           Incident Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "6",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/vendor-dashboard"
+        >
+          Vendor Dashboard
         </Link>
       ),
     },
