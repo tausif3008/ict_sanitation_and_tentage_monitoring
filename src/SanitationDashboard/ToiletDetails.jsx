@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
 import dayjs from "dayjs";
 import lines from "../assets/Dashboard/lines.png";
+import URLS from "../urils/URLS";
 
 const ToiletDetails = () => {
   const [selectedVendor, setSelectedVendor] = useState(null);
@@ -25,13 +26,10 @@ const ToiletDetails = () => {
   useEffect(() => {
     const fetchVendorData = async () => {
       try {
-        const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/users?user_type_id=8",
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
+        const response = await fetch(`${URLS.baseUrl}/users?user_type_id=8`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
         if (result.success) {
           setVendorData(result.data.users);
@@ -48,10 +46,10 @@ const ToiletDetails = () => {
   useEffect(() => {
     const fetchSectorData = async () => {
       try {
-        const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
-          { method: "GET", headers: headers }
-        );
+        const response = await fetch(`${URLS.baseUrl}/sector`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
         if (result.success) {
           setSectorData(result.data.sectors);
@@ -71,18 +69,15 @@ const ToiletDetails = () => {
     toiletId = null
   ) => {
     try {
-      const response = await fetch(
-        "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
-        {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify({
-            sector_id: sectorId || undefined,
-            vendor_id: vendorId || undefined,
-            asset_type_id: toiletId || undefined,
-          }),
-        }
-      );
+      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          sector_id: sectorId || undefined,
+          vendor_id: vendorId || undefined,
+          asset_type_id: toiletId || undefined,
+        }),
+      });
       const result = await response.json();
       if (result.success) {
         setAssetData(result.data);

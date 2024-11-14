@@ -10,8 +10,6 @@ import IncidentReportAnalysis from "./IncidentReportAnalysis";
 import VendorPerformance from "./VendorPerformance";
 import MajorIssuesCount from "./MajorIssuesCount";
 
-
-
 const SanitationDashboard = () => {
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3 ">
@@ -27,6 +25,7 @@ const SanitationDashboard = () => {
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <CleanlinessReport></CleanlinessReport>
       </div>
+
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <FileStorageWrapper></FileStorageWrapper>
       </div>

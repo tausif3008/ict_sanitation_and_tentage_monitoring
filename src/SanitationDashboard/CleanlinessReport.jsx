@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { Button, message, Select, TimePicker } from "antd";
+import URLS from "../urils/URLS";
 
 const CleanlinessReport = () => {
 
@@ -89,7 +90,7 @@ const CleanlinessReport = () => {
     const fetchSectorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
+          `${URLS.baseUrl}/sector`,
           {
             method: "GET",
             headers: headers,
@@ -113,7 +114,8 @@ const CleanlinessReport = () => {
     const fetchQuestionData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/questions",
+          `${URLS.baseUrl}/questions`
+         ,
           {
             method: "GET",
             headers: headers,
@@ -137,7 +139,7 @@ const CleanlinessReport = () => {
     const fetchToiletData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard",
+          `${URLS.baseUrl}/dashboard`,
           { method: "POST", headers: headers }
         );
         const result = await response.json();
