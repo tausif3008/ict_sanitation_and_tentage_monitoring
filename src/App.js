@@ -283,7 +283,7 @@ function App() {
               element={<VendorDashboard></VendorDashboard>}
             ></Route>
             <Route
-              path="/user-type-permission"
+              path="/user-type-permission/:page?/:per_page?"
               element={<UserTypePermission></UserTypePermission>}
             ></Route>
             <Route

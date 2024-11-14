@@ -217,7 +217,7 @@ const UserTypePermission = () => {
 
         <CommonTable
           loading={loading}
-          //   uri={`shift`}
+          uri={`user-type-permission`}
           columns={columns || []}
           details={tableData || []}
           scroll={{ x: 300, y: 400 }}
