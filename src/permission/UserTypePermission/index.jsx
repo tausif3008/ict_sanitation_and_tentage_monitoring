@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import UserTypeSelector from "./userTypeSelector";
 import {
@@ -10,9 +10,10 @@ import {
 import URLS from "../../urils/URLS";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
-import { Collapse, Form, Button, Select, Row, Col } from "antd";
+import { Collapse, Form, Button, Select, Row, Col, Checkbox } from "antd";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getValueLabel } from "../../constant/const";
+import { EditOutlined } from "@ant-design/icons";
 
 const UserTypePermission = () => {
   const [tableData, setTableData] = useState({
@@ -22,7 +23,7 @@ const UserTypePermission = () => {
   });
 
   const dispatch = useDispatch();
-  const params = useParams();
+  const navigate = useNavigate();
   const { loading, UserListDrop, allModulePermission, ModuleListDrop } =
     UserTypeSelector();
 
@@ -46,7 +47,6 @@ const UserTypePermission = () => {
       list: [],
     }));
     form.resetFields();
-    // setSearchQuery("&");
   };
 
   useEffect(() => {
@@ -75,32 +75,38 @@ const UserTypePermission = () => {
           ? getValueLabel(text, ModuleListDrop, "module name") // Pass the numeric value, drop list, and label key
           : ""; // If no text, return an empty string
       },
-
-      //   width: 300,
     },
     {
       title: "Create",
       dataIndex: "create",
       key: "create",
-      //   width: 300,
+      render: (text, record) => {
+        return <Checkbox checked={Number(text) === 1} />;
+      },
     },
     {
       title: "Read",
       dataIndex: "read",
       key: "read",
-      //   width: 300,
+      render: (text, record) => {
+        return <Checkbox checked={Number(text) === 1} />;
+      },
     },
     {
       title: "Update",
       dataIndex: "update",
       key: "update",
-      //   width: 300,
+      render: (text, record) => {
+        return <Checkbox checked={Number(text) === 1} />;
+      },
     },
     {
       title: "Delete",
       dataIndex: "delete",
       key: "delete",
-      //   width: 300,
+      render: (text, record) => {
+        return <Checkbox checked={Number(text) === 1} />;
+      },
     },
     {
       title: "Action",
@@ -108,23 +114,23 @@ const UserTypePermission = () => {
       key: "action",
       fixed: "right",
       width: 100,
-      //   render: (text, record) => {
-      //     return (
-      //       <Button
-      //         className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
-      //         onClick={() => {
-      //           navigate("/add-shift-form", {
-      //             state: {
-      //               key: "UpdateKey",
-      //               record: record, // Pass the record as part of the state
-      //             },
-      //           });
-      //         }}
-      //       >
-      //         <EditOutlined />
-      //       </Button>
-      //     );
-      //   },
+      render: (text, record) => {
+        return (
+          <Button
+            className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+            onClick={() => {
+              navigate("/user-permission-type-form", {
+                state: {
+                  key: "UpdateKey",
+                  record: record, // Pass the record as part of the state
+                },
+              });
+            }}
+          >
+            <EditOutlined />
+          </Button>
+        );
+      },
     },
   ];
 
@@ -161,7 +167,7 @@ const UserTypePermission = () => {
                               required: true,
                               message: "Please select a user type",
                             },
-                          ]} // Required validation rule
+                          ]}
                         >
                           <Select
                             placeholder="Select User Type"
@@ -206,7 +212,6 @@ const UserTypePermission = () => {
               },
             ]}
           />
-          {/* {contextHolder} */}
         </div>
         <CommonDivider label={"User Type Permission"}></CommonDivider>
 

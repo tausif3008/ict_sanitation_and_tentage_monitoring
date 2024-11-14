@@ -11,8 +11,11 @@ const URLS = {
   userType: { path: "/user-types?per_page=100", version: 5.43 },
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
   allUserType: { path: "/user-types", version: 5.43 },
-  allModulePermission: { path: "/module-permission", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },
+
+  // module permission
+  allModulePermission: { path: "/module-permission", version: 5.43 },
+  ModulePermissionEdit: { path: "//module-permission/edit", version: 5.43 },
 
   // vendor
   vendors: { path: "/users/?user_type_id=8", version: "5.43" },
