@@ -41,6 +41,10 @@ const URLS = {
   assetTypes: { path: "/asset-types", version: 5.43 },
   assetTypeEntry: { path: "/asset-types/entry", version: 5.43 },
   editAssetType: { path: "/asset-types/edit", version: 5.43 },
+  assetType: {
+    path: "/asset-types?asset_main_type_id=",
+    version: 5.43,
+  },
 
   // monitoring
   asset: { path: "/asset", version: 5.43 },

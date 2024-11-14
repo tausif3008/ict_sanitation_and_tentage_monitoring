@@ -64,9 +64,18 @@ const AssetTypeList = () => {
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
+              // onClick={() => {
+              //   dispatch(setUpdateAssetEl({ updateElement: el }));
+              //   navigate("/asset-type-registration");
+              // }}
               onClick={() => {
                 dispatch(setUpdateAssetEl({ updateElement: el }));
-                navigate("/asset-type-registration");
+                navigate("/asset-type-registration", {
+                  state: {
+                    key: "UpdateKey",
+                    record: el, // Pass the record as part of the state
+                  },
+                });
               }}
             >
               <EditOutlined></EditOutlined>
