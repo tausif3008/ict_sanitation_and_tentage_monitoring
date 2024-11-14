@@ -1,18 +1,12 @@
-import {
-  CheckCircleOutlined,
-  SyncOutlined,
-  ExclamationCircleOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+
 import React, { useEffect, useState } from "react";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
 import card_red from "../assets/Dashboard/card_red.png";
 import card_purple from "../assets/Dashboard/card_purple.png";
 import { message } from "antd";
-import URLS from "../urils/URLS";
 
-const ToiletsCount = () => {
+const Counts = () => {
   const [totalAssets, setTotalAssets] = useState(0);
   const [registeredAssets, setRegisteredAssets] = useState(0);
   const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
@@ -29,10 +23,13 @@ const ToiletsCount = () => {
   useEffect(() => {
     const fetchAssetData = async () => {
       try {
-        const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
-          method: "POST",
-          headers: headers,
-        });
+        const response = await fetch(
+          `${URLS.baseUrl}/dashboard/sanitation`,
+          {
+            method: "POST",
+            headers: headers,
+          }
+        );
         const result = await response.json();
 
         if (result.success && result.data) {
@@ -56,17 +53,16 @@ const ToiletsCount = () => {
 
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
-      <div className="text-xl font-bold mb-4">Sanitation Toilets Count</div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div className="relative p-3 border rounded-md shadow-md bg-blue-50">
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
               <div className="flex items-center gap-2">
-                <CheckCircleOutlined className="text-green absolute right-[5px]" />
-                <span className="text-green-600">Total Toilets</span>
+                <span className="text-green-600">
+                  Number Of Toilets Cesspool Not Done In 24 hrs
+                </span>
               </div>
-              <h2 className="text-2xl font-bold">{totalAssets}</h2>
+              <h2 className="text-2xl font-bold">{255}</h2>
             </div>
           </div>
           <img
@@ -80,13 +76,11 @@ const ToiletsCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
               <div className="flex items-center gap-2">
-                <SyncOutlined
-                  className="text-orange-600 absolute right-[5px]"
-                  spin
-                />
-                <span className="text-[#eab308]">Registered Toilets</span>
+                <span className="text-[#eab308]">
+                  Number Of Toilets JetSpray Not Deployed
+                </span>
               </div>
-              <h2 className="text-2xl font-bold">{registeredAssets}</h2>
+              <h2 className="text-2xl font-bold">{100}</h2>
             </div>
           </div>
           <img
@@ -100,10 +94,11 @@ const ToiletsCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
               <div className="flex items-center gap-2">
-                <EyeOutlined className="text-violet-600 absolute right-[5px]" />
-                <span className="text-[#db2777]">Under Monitoring</span>
+                <span className="text-[#db2777]">
+                  Number Of Toilets Manpower Not Deployed
+                </span>
               </div>
-              <h2 className="text-2xl font-bold">{assetsUnderMonitoring}</h2>
+              <h2 className="text-2xl font-bold">{300}</h2>
             </div>
           </div>
           <img
@@ -117,10 +112,11 @@ const ToiletsCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
               <div className="flex items-center gap-2">
-                <ExclamationCircleOutlined className="text-violet-600 absolute right-[5px]" />
-                <span className="text-purple-600">Off Monitoring</span>
+                <span className="text-purple-600">
+                  Number Of Toilets Order Free
+                </span>
               </div>
-              <h2 className="text-2xl font-bold">{assetsOffMonitoring}</h2>
+              <h2 className="text-2xl font-bold">{400}</h2>
             </div>
           </div>
           <img
@@ -134,4 +130,4 @@ const ToiletsCount = () => {
   );
 };
 
-export default ToiletsCount;
+export default Counts;

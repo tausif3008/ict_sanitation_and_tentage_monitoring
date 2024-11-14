@@ -87,6 +87,10 @@ const URLS = {
   vendorReporting: { path: "/reporting/vendor", version: 5.43 },
   vendorReportingAdd: { path: "/reporting/vendor/entry", version: 5.43 },
   vendorReportingEdit: { path: "/reporting/vendor/edit", version: 5.43 },
+  
+  
+  routes: { path: "/routes", version: 5.43 },
+
 };
 
 export default URLS;

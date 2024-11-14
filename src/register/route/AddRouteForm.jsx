@@ -1,0 +1,129 @@
+import React, { useEffect, useState } from "react";
+import { Form, Input, Button, Select, Divider } from "antd";
+import { postData } from "../../Fetch/Axios";
+import URLS from "../../urils/URLS";
+import { getFormData } from "../../urils/getFormData";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+// import { setVehicleListIsUpdated } from "./vehicleSlice";
+
+const AddRouteForm = () => {
+  const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const vehicleUpdateElSelector = useSelector(
+    (state) => state.vehicleSlice?.vehicleUpdateEl
+  );
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (vehicleUpdateElSelector) {
+      form.setFieldsValue(vehicleUpdateElSelector);
+    }
+  }, [vehicleUpdateElSelector, form]);
+
+  const onFinish = async (values) => {
+    setLoading(true);
+
+    values.status = 1;
+
+    if (vehicleUpdateElSelector) {
+      values.vehicle_id = vehicleUpdateElSelector.vehicle_id;
+    }
+
+    const res = await postData(
+      getFormData(values),
+      vehicleUpdateElSelector ? URLS.editVehicle.path : URLS.addVehicle.path,
+      {
+        version: URLS.addVehicle.version,
+      }
+    );
+
+    if (res) {
+      setLoading(false);
+      //   dispatch(setVehicleListIsUpdated({ isUpdated: true }));
+
+      if (res.data.success) {
+        form.resetFields();
+
+        if (vehicleUpdateElSelector) {
+          navigate("/route-list");
+        }
+      }
+    }
+  };
+
+  return (
+    <div className="mt-3">
+      <div className="mx-auto p-3 bg-white shadow-md rounded-lg mt-3 w-full">
+        <div className="flex gap-2 items-center">
+          <Button
+            className="bg-gray-200 rounded-full w-9 h-9"
+            onClick={() => {
+              navigate("/route-list");
+            }}
+          >
+            <ArrowLeftOutlined></ArrowLeftOutlined>
+          </Button>
+          <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
+            <div className="font-bold">
+              {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
+            </div>
+            <div className="text-xs">All * marks fields are mandatory</div>
+          </div>
+        </div>
+
+        <Divider className="bg-d9 h-2/3 mt-1"></Divider>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-3">
+            <Form.Item
+              label="Route Name"
+              name="name"
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter name!",
+                },
+              ]}
+            >
+              <Input placeholder="Route Name" className="rounded-none" />
+            </Form.Item>
+            <Form.Item label="Start Point" name="start point">
+              <Input placeholder="enter start point" className="rounded-none" />
+            </Form.Item>
+            <Form.Item label="End Point" name="end point">
+              <Input placeholder="enter end point" className="rounded-none" />
+            </Form.Item>
+            <Form.Item label="Distance" name="rc">
+              <Input
+                placeholder="add distance in meters"
+                className="rounded-none"
+              />
+            </Form.Item>
+            <Form.Item label="Add Sector" name="rc">
+              <Input placeholder="select sector" className="rounded-none" />
+            </Form.Item>
+            
+          </div>
+          <div className="flex justify-end">
+              <Form.Item>
+                <Button
+                  loading={loading}
+                  type="primary"
+                  htmlType="submit"
+                  className="w-fit rounded-none bg-5c"
+                >
+                  {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
+                </Button>
+              </Form.Item>
+            </div>
+        </Form>
+      </div>
+    </div>
+  );
+};
+
+export default AddRouteForm;

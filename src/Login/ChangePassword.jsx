@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Button, Form, Input, message } from "antd";
+import URLS from "../urils/URLS";
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
   const headers = {
@@ -14,8 +16,13 @@ const ChangePassword = () => {
 
   const handleChangePassword = async () => {
     try {
-      if (!newPassword) {
-        message.error("Please enter a new password.");
+      if (!newPassword || !confirmPassword) {
+        message.error("Please enter both password fields.");
+        return;
+      }
+
+      if (newPassword !== confirmPassword) {
+        message.error("Passwords do not match.");
         return;
       }
 
@@ -24,20 +31,18 @@ const ChangePassword = () => {
       const formData = new FormData();
       formData.append("password", newPassword);
 
-      const response = await fetch(
-        "https://kumbhtsmonitoring.in/php-api/change-password",
-        {
-          method: "POST",
-          headers: headers,
-          body: formData,
-        }
-      );
+      const response = await fetch(`${URLS.baseUrl}/change-password`, {
+        method: "POST",
+        headers: headers,
+        body: formData,
+      });
 
       const result = await response.json();
 
       if (result.success) {
         message.success("Password changed successfully!");
         setNewPassword("");
+        setConfirmPassword("");
       } else {
         message.error("Failed to change password.");
       }
@@ -60,16 +65,25 @@ const ChangePassword = () => {
         <div className="grid grid-cols-2 gap-x-10 gap-y-4">
           <div>
             <span className="font-semibold">New Password:</span>
-
-            <Input
+            <Input.Password
               className="rounded-none"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
               placeholder="Enter new password"
             />
           </div>
-        </div>
 
+          <div>
+            <span className="font-semibold">Confirm Password:</span>
+            <Input.Password
+              className="rounded-none"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="Confirm new password"
+            />
+          </div>
+        </div>
+        <br></br>
         <div className="flex justify-end">
           <Form.Item>
             <Button

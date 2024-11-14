@@ -1,15 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
-import dayjs from "dayjs";
 import lines from "../assets/Dashboard/lines.png";
 import URLS from "../urils/URLS";
 
-const ToiletDetails = () => {
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [selectedSector, setSelectedSector] = useState(null);
-  const [selectedToilet, setSelectedToilet] = useState(null);
-  const [vendorData, setVendorData] = useState([]);
-  const [sectorData, setSectorData] = useState([]);
+const Details = () => {
+ 
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -23,59 +18,14 @@ const ToiletDetails = () => {
     "x-access-token": localStorage.getItem("sessionToken") || "",
   };
 
-  useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/users?user_type_id=8`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setVendorData(result.data.users);
-        } else {
-          message.error("Failed to load vendor details.");
-        }
-      } catch (error) {
-        message.error("Error fetching vendor details.");
-      }
-    };
-    fetchVendorData();
-  }, []);
-
-  useEffect(() => {
-    const fetchSectorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/sector`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setSectorData(result.data.sectors);
-        } else {
-          message.error("Failed to load sector details.");
-        }
-      } catch (error) {
-        message.error("Error fetching sector details.");
-      }
-    };
-    fetchSectorData();
-  }, []);
-
-  const fetchAssetData = async (
-    sectorId = null,
-    vendorId = null,
-    toiletId = null
-  ) => {
+  const fetchAssetData = async () => {
     try {
+      const userId = localStorage.getItem("userId");
       const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
-          sector_id: sectorId || undefined,
-          vendor_id: vendorId || undefined,
-          asset_type_id: toiletId || undefined,
+          vendor_id: userId,
         }),
       });
       const result = await response.json();
@@ -92,21 +42,6 @@ const ToiletDetails = () => {
   useEffect(() => {
     fetchAssetData();
   }, []);
-
-  const handleSectorChange = (value) => {
-    setSelectedSector(value);
-    fetchAssetData(value, selectedVendor, selectedToilet);
-  };
-
-  const handleVendorChange = (value) => {
-    setSelectedVendor(value);
-    fetchAssetData(selectedSector, value, selectedToilet);
-  };
-
-  const handleToiletChange = (value) => {
-    setSelectedToilet(value);
-    fetchAssetData(selectedSector, selectedVendor, value);
-  };
 
   const priorityToiletTypes = [
     "Type-1 FRP Septic Tank",
@@ -146,64 +81,6 @@ const ToiletDetails = () => {
           </div>
         </div>
       </div>
-
-      <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker size="middle" defaultValue={dayjs()} />
-        <Select
-          value={selectedSector}
-          onChange={handleSectorChange}
-          placeholder="Select Sector"
-          style={{ minWidth: "120px", flex: "1" }}
-        >
-          {sectorData.map((sector) => (
-            <Select.Option key={sector.sector_id} value={sector.sector_id}>
-              {sector.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Select
-          value={selectedVendor}
-          onChange={handleVendorChange}
-          placeholder="Select Vendor"
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {vendorData.map((vendor) => (
-            <Select.Option key={vendor.user_id} value={vendor.user_id}>
-              {vendor.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Select
-          value={selectedToilet}
-          onChange={handleToiletChange}
-          placeholder="Select Toilet"
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {toiletData?.map((toilet) => (
-            <Select.Option
-              key={toilet.asset_type_id}
-              value={toilet.asset_type_id}
-            >
-              {toilet.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Button
-          size="medium"
-          type="primary"
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-          onClick={() =>
-            fetchAssetData(selectedSector, selectedVendor, selectedToilet)
-          }
-        >
-          Search
-        </Button>
-      </div>
-
       <div
         className={`grid ${
           showAll
@@ -290,4 +167,4 @@ const ToiletDetails = () => {
   );
 };
 
-export default ToiletDetails;
+export default Details;

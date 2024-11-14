@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
@@ -6,7 +7,7 @@ import card_purple from "../assets/Dashboard/card_purple.png";
 import { message } from "antd";
 import URLS from "../urils/URLS";
 
-const MajorIssuesCount = () => {
+const IssueCount = () => {
   const [totalAssets, setTotalAssets] = useState(0);
   const [registeredAssets, setRegisteredAssets] = useState(0);
   const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
@@ -118,4 +119,4 @@ const MajorIssuesCount = () => {
   );
 };
 
-export default MajorIssuesCount;
+export default IssueCount;

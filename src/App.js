@@ -57,8 +57,9 @@ import Shift from "./shifts/shifts";
 import ChangePassword from "./Login/ChangePassword";
 import AddShiftForm from "./shifts/add form";
 import VendorReports from "./Reports/VendorwiseReports";
-// import VendorWiseReports from "./Reports/VendorwiseReport";
-// import VendorWiseReports from "./Reports/VendorWiseReports";
+import AddRouteForm from "./register/route/AddRouteForm";
+import RouteList from "./register/route/RouteList";
+import VendorDashboard from "./vendorDashboard/VendorDashboard";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -270,6 +271,16 @@ function App() {
               path="change-password"
               element={<ChangePassword></ChangePassword>}
             ></Route>
+            <Route path="route-list" element={<RouteList></RouteList>}></Route>
+            <Route
+              path="add-route"
+              element={<AddRouteForm></AddRouteForm>}
+            ></Route>
+            <Route
+              path="/vendor-dashboard"
+              element={<VendorDashboard></VendorDashboard>}
+            ></Route>
+
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
           <Route path="login" element={<Login></Login>}></Route>

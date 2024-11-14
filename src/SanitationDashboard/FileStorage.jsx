@@ -1,6 +1,7 @@
 import { message, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
+import URLS from "../urils/URLS";
 
 const FileStorage = ({ title, series, total, dropdownType }) => {
   const [dropdownValue, setDropdownValue] = useState("");
@@ -52,7 +53,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
     const fetchSectorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
+         `${URLS.baseUrl}/sector`,
           {
             method: "GET",
             headers: headers,

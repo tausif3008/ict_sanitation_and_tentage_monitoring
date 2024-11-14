@@ -1,42 +1,41 @@
+
 import React from "react";
-import MapData from "./MapData";
 import phone from "../assets/Dashboard/phone.png";
 import phoneIcon from "../assets/Dashboard/phone-alt.png";
-import ToiletsCount from "./ToiletsCount";
-import ToiletDetails from "./ToiletDetails";
-import CleanlinessReport from "./CleanlinessReport";
-import FileStorageWrapper from "./FileStorageWrapper";
-import IncidentReportAnalysis from "./IncidentReportAnalysis";
-import VendorPerformance from "./VendorPerformance";
-import MajorIssuesCount from "./MajorIssuesCount";
+import Counts from "./Counts";
+import Details from "./Details";
+import IssueCount from "./IssueCount";
 
-const SanitationDashboard = () => {
+
+const VendorDashboard = () => {
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3 ">
       <div className="w-full border lg:col-span-1 col-span-4 shadow-md bg-white rounded-md">
-        <ToiletsCount></ToiletsCount>
+        <Counts></Counts>
       </div>
       <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md">
-        <ToiletDetails></ToiletDetails>
+        <Details></Details>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <MajorIssuesCount></MajorIssuesCount>
+        <IssueCount></IssueCount>  
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <CleanlinessReport></CleanlinessReport>
+        {/* <CleanlinessReport></CleanlinessReport>  */}
       </div>
+     
+      <div className="col-span-4 shadow-md bg-white rounded-md">
+        {/* <FileStorageWrapper></FileStorageWrapper> */}
 
-      <div className="col-span-4 shadow-md bg-white rounded-md">
-        <FileStorageWrapper></FileStorageWrapper>
+        
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <IncidentReportAnalysis></IncidentReportAnalysis>
+        {/* <IncidentReportAnalysis></IncidentReportAnalysis> */}
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <VendorPerformance></VendorPerformance>
+        {/* <VendorPerformance></VendorPerformance> */}
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <MapData></MapData>
+        {/* <MapData></MapData> */}
       </div>
 
       <div className="col-span-4 ">
@@ -60,4 +59,4 @@ const SanitationDashboard = () => {
   );
 };
 
-export default SanitationDashboard;
+export default VendorDashboard;
