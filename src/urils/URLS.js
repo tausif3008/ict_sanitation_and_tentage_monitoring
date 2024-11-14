@@ -10,6 +10,9 @@ const URLS = {
   city: { path: "/city", version: 5.43 }, //?country_id=1&state_id=1
   userType: { path: "/user-types?per_page=100", version: 5.43 },
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
+  allUserType: { path: "/user-types", version: 5.43 },
+  allModulePermission: { path: "/module-permission", version: 5.43 },
+  moduleList: { path: "/module", version: 5.43 },
 
   // vendor
   vendors: { path: "/users/?user_type_id=8", version: "5.43" },
@@ -87,10 +90,8 @@ const URLS = {
   vendorReporting: { path: "/reporting/vendor", version: 5.43 },
   vendorReportingAdd: { path: "/reporting/vendor/entry", version: 5.43 },
   vendorReportingEdit: { path: "/reporting/vendor/edit", version: 5.43 },
-  
-  
-  routes: { path: "/routes", version: 5.43 },
 
+  routes: { path: "/routes", version: 5.43 },
 };
 
 export default URLS;

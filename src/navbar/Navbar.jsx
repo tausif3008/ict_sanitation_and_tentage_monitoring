@@ -129,6 +129,14 @@ const master_items = (lang, dict) => {
         </Link>
       ),
     },
+    {
+      key: "11",
+      label: (
+        <Link className="text-black no-underline" to="/user-type-permission">
+          User Type Permission
+        </Link>
+      ),
+    },
   ];
 };
 

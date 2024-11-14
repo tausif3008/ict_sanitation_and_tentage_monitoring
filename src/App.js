@@ -60,6 +60,7 @@ import VendorReports from "./Reports/VendorwiseReports";
 import AddRouteForm from "./register/route/AddRouteForm";
 import RouteList from "./register/route/RouteList";
 import VendorDashboard from "./vendorDashboard/VendorDashboard";
+import UserTypePermission from "./permission/UserTypePermission";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -280,7 +281,10 @@ function App() {
               path="/vendor-dashboard"
               element={<VendorDashboard></VendorDashboard>}
             ></Route>
-
+            <Route
+              path="/user-type-permission"
+              element={<UserTypePermission></UserTypePermission>}
+            ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
           <Route path="login" element={<Login></Login>}></Route>
