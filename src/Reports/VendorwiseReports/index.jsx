@@ -46,10 +46,10 @@ const VendorReports = () => {
           // pin: data?.pin,
           // company: data?.company,
           // language: data?.language,
+          total: data?.total,
           registered: data?.registered,
           clean: data?.clean,
           unclean: data?.unclean,
-          total: data?.total,
         };
       });
       setExcelData(myexcelData);
@@ -76,6 +76,11 @@ const VendorReports = () => {
       key: "name",
     },
     {
+      title: "Total",
+      dataIndex: "total",
+      key: "total",
+    },
+    {
       title: "Registered",
       dataIndex: "registered",
       key: "registered",
@@ -89,11 +94,6 @@ const VendorReports = () => {
       title: "Unclean",
       dataIndex: "unclean",
       key: "unclean",
-    },
-    {
-      title: "Total",
-      dataIndex: "total",
-      key: "total",
     },
     // {
     //   title: "Address",
@@ -210,10 +210,10 @@ const VendorReports = () => {
           // "Pin code",
           // "Company",
           // "Language",
+          "Total",
           "Registered",
           "Clean",
           "Unclean",
-          "Total",
         ],
       ],
       body: excelData.map((opt) => [
@@ -225,10 +225,10 @@ const VendorReports = () => {
         // opt?.pin,
         // opt?.company,
         // opt?.language,
+        opt?.total,
         opt?.registered,
         opt?.clean,
         opt?.unclean,
-        opt?.total,
       ]),
       startY: 40, // Start after the header and new text
     });
