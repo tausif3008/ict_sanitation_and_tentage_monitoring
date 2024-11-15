@@ -36,6 +36,17 @@ const register_items = (lang, dict) => {
         </Link>
       ),
     },
+    {
+      key: "4",
+      label: (
+        <Link
+          className="text-black no-underline"
+          to="/vendor-supervisor-registration"
+        >
+          Vendor Supervisor Registration
+        </Link>
+      ),
+    },
   ];
 };
 

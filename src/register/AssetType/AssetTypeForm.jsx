@@ -29,15 +29,15 @@ const AssetTypeForm = () => {
   const dispatch = useDispatch();
 
   // handle select
-  const handleSelect = (value) => {
-    // get assset type
-    const url = URLS?.assetType?.path + value;
-    dispatch(getAssetTypes(url));
+  // const handleSelect = (value) => {
+  //   // get assset type
+  //   const url = URLS?.assetType?.path + value;
+  //   dispatch(getAssetTypes(url));
 
-    form.setFieldsValue({
-      asset_type_id: null,
-    });
-  };
+  //   form.setFieldsValue({
+  //     asset_type_id: null,
+  //   });
+  // };
 
   useEffect(() => {
     // asset main type
@@ -51,9 +51,10 @@ const AssetTypeForm = () => {
 
   useEffect(() => {
     if (assetUpdateElSelector) {
-      const url =
-        URLS?.assetType?.path + assetUpdateElSelector?.asset_main_type_id;
-      dispatch(getAssetTypes(url));
+      console.log("assetUpdateElSelector", assetUpdateElSelector);
+      // const url =
+      //   URLS?.assetType?.path + assetUpdateElSelector?.asset_main_type_id;
+      // dispatch(getAssetTypes(url));
 
       const questionId = assetUpdateElSelector?.questions?.map((data) => {
         return data?.question_id;
@@ -62,6 +63,7 @@ const AssetTypeForm = () => {
         asset_main_type_id: assetUpdateElSelector?.asset_main_type_id,
         name: assetUpdateElSelector?.name,
         asset_type_id: assetUpdateElSelector?.asset_type_id,
+        name_hi: assetUpdateElSelector?.name_hi,
         description: assetUpdateElSelector?.description,
         questions: questionId,
       });
@@ -80,10 +82,15 @@ const AssetTypeForm = () => {
     };
     setLoading(true);
 
+    // if (assetUpdateElSelector) {
+    //   values.asset_type_id = assetUpdateElSelector?.asset_type_id;
+    //   values.questions = assetUpdateElSelector?.questions;
+    // }
     if (assetUpdateElSelector) {
-      values.asset_type_id = assetUpdateElSelector?.asset_type_id;
-      values.questions = assetUpdateElSelector?.questions;
+      finalData.asset_type_id = assetUpdateElSelector?.asset_type_id;
     }
+
+    console.log("finalData", finalData);
 
     const res = await postData(
       getFormData(finalData),
@@ -146,7 +153,7 @@ const AssetTypeForm = () => {
               <Select
                 placeholder="Select status"
                 className="rounded-none"
-                onSelect={handleSelect} // Add onSelect handler
+                // onSelect={handleSelect} // Add onSelect handler
               >
                 {AssetMainTypeDrop?.map((option) => (
                   <Select.Option key={option?.value} value={option?.value}>
@@ -155,7 +162,7 @@ const AssetTypeForm = () => {
                 ))}
               </Select>
             </Form.Item>
-            <Form.Item
+            {/* <Form.Item
               name={"asset_type_id"}
               label={"Asset Type"}
               rules={[
@@ -172,7 +179,7 @@ const AssetTypeForm = () => {
                   </Select.Option>
                 ))}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               name="name"
               label={
@@ -182,6 +189,21 @@ const AssetTypeForm = () => {
                 {
                   required: true,
                   message: "Please enter an toilets & tentage type",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Enter asset type name"
+                className="rounded-none"
+              />
+            </Form.Item>
+            <Form.Item
+              name="name_hi"
+              label={<div className="font-semibold">Hindi</div>}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter hindi text",
                 },
               ]}
             >
