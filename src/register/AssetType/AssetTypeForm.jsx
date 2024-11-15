@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import {
   getAssetMainTypes,
-  getAssetTypes,
+  getSLATypes,
   setAssetTypeListIsUpdated,
 } from "./AssetTypeSlice";
 import AssetTypeSelectors from "./assetTypeSelectors";
@@ -19,7 +19,7 @@ const AssetTypeForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors();
+  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors();
   const { QuestionDrop } = QuestionSelector();
 
   const assetUpdateElSelector = useSelector(
@@ -28,37 +28,17 @@ const AssetTypeForm = () => {
 
   const dispatch = useDispatch();
 
-  // handle select
-  // const handleSelect = (value) => {
-  //   // get assset type
-  //   const url = URLS?.assetType?.path + value;
-  //   dispatch(getAssetTypes(url));
-
-  //   form.setFieldsValue({
-  //     asset_type_id: null,
-  //   });
-  // };
-
-  useEffect(() => {
-    // asset main type
-    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
-    dispatch(getAssetMainTypes(assetMainTypeUrl));
-
-    // question
-    const question = URLS?.questions?.path;
-    dispatch(getQuestionList(question));
-  }, []);
-
   useEffect(() => {
     if (assetUpdateElSelector) {
-      console.log("assetUpdateElSelector", assetUpdateElSelector);
-      // const url =
-      //   URLS?.assetType?.path + assetUpdateElSelector?.asset_main_type_id;
-      // dispatch(getAssetTypes(url));
-
       const questionId = assetUpdateElSelector?.questions?.map((data) => {
         return data?.question_id;
       });
+
+      let slasArray =
+        Number(assetUpdateElSelector?.slas) === 0
+          ? []
+          : assetUpdateElSelector?.slas?.split(",").map((item) => item?.trim());
+
       form.setFieldsValue({
         asset_main_type_id: assetUpdateElSelector?.asset_main_type_id,
         name: assetUpdateElSelector?.name,
@@ -66,31 +46,30 @@ const AssetTypeForm = () => {
         name_hi: assetUpdateElSelector?.name_hi,
         description: assetUpdateElSelector?.description,
         questions: questionId,
+        slas: slasArray,
       });
     }
   }, [assetUpdateElSelector, form]);
 
   const onFinish = async (values) => {
     const stringQuestions = values?.questions
-      ? values?.questions?.map((data) => String(data)).join(", ") // Join questions into a single string
-      : "No questions available"; // Default message if no questions are present
+      ? values?.questions?.map((data) => String(data)).join(", ")
+      : "No questions available";
+    const stringSla = values?.slas
+      ? values?.slas?.map((data) => String(data)).join(", ")
+      : "No slas available";
 
     const finalData = {
       ...values,
       status: 1,
       questions: stringQuestions,
+      slas: stringSla,
     };
     setLoading(true);
 
-    // if (assetUpdateElSelector) {
-    //   values.asset_type_id = assetUpdateElSelector?.asset_type_id;
-    //   values.questions = assetUpdateElSelector?.questions;
-    // }
     if (assetUpdateElSelector) {
       finalData.asset_type_id = assetUpdateElSelector?.asset_type_id;
     }
-
-    console.log("finalData", finalData);
 
     const res = await postData(
       getFormData(finalData),
@@ -103,18 +82,29 @@ const AssetTypeForm = () => {
     );
 
     if (res) {
-      setLoading(false);
       dispatch(setAssetTypeListIsUpdated({ isUpdated: true }));
 
       if (res.data.success) {
         form.resetFields();
-
-        // if (assetUpdateElSelector) {
         navigate("/asset-type-list");
-        // }
       }
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    // asset main type
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl));
+
+    // question
+    const question = URLS?.questions?.path;
+    dispatch(getQuestionList(question));
+
+    // sla types
+    const sla_url = URLS?.slaTypes?.path;
+    dispatch(getSLATypes(sla_url));
+  }, []);
 
   return (
     <div className="mt-3">
@@ -150,11 +140,7 @@ const AssetTypeForm = () => {
                 },
               ]}
             >
-              <Select
-                placeholder="Select status"
-                className="rounded-none"
-                // onSelect={handleSelect} // Add onSelect handler
-              >
+              <Select placeholder="Select status" className="rounded-none">
                 {AssetMainTypeDrop?.map((option) => (
                   <Select.Option key={option?.value} value={option?.value}>
                     {option?.label}
@@ -162,24 +148,6 @@ const AssetTypeForm = () => {
                 ))}
               </Select>
             </Form.Item>
-            {/* <Form.Item
-              name={"asset_type_id"}
-              label={"Asset Type"}
-              rules={[
-                {
-                  required: true,
-                  message: "Please select an asset type", // Customize the error message
-                },
-              ]}
-            >
-              <Select placeholder="Select status" className="rounded-none">
-                {AssetTypeDrop?.map((option) => (
-                  <Select.Option key={option?.value} value={option?.value}>
-                    {option?.label}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item> */}
             <Form.Item
               name="name"
               label={
@@ -228,6 +196,28 @@ const AssetTypeForm = () => {
                 mode="multiple" // Enable multiple selection
               >
                 {QuestionDrop?.map((option) => (
+                  <Select.Option key={option?.value} value={option?.value}>
+                    {option?.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={"slas"}
+              label={"Select SLAS Type"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select slas type",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select SLA Type"
+                className="rounded-none"
+                mode="multiple" // Enable multiple selection
+              >
+                {SLATypeDrop?.map((option) => (
                   <Select.Option key={option?.value} value={option?.value}>
                     {option?.label}
                   </Select.Option>

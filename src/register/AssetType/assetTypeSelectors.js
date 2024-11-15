@@ -5,6 +5,7 @@ const AssetTypeSelectors = () => {
   const AssetMainType = useSelector((state) => state?.assetTypeUpdateEl.name); // asset main type data
   const AssetType = useSelector((state) => state?.assetTypeUpdateEl.type_data); // asset type data
   const loading = useSelector((state) => state?.assetTypeUpdateEl.loading);
+  const SlaData = useSelector((state) => state?.assetTypeUpdateEl.sla_data); // Sla Data
 
   const AssetMainTypeDrop = AssetMainType?.data?.assetmaintypes?.map((data) => {
     // asset main type dropdown
@@ -24,11 +25,23 @@ const AssetTypeSelectors = () => {
       } || []
     );
   });
+  const SLATypeDrop = SlaData?.data?.slatypes?.map((data) => {
+    // Sla dropdown
+    return (
+      {
+        value: data?.sla_type_id,
+        label: data?.name,
+      } || []
+    );
+  });
 
-  // console.log("AssetType", AssetType);
-  // console.log("AssetTypeDrop", AssetTypeDrop);
-
-  return { AssetMainType, loading, AssetMainTypeDrop, AssetTypeDrop };
+  return {
+    AssetMainType,
+    loading,
+    AssetMainTypeDrop,
+    AssetTypeDrop,
+    SLATypeDrop,
+  };
 };
 
 export default AssetTypeSelectors;

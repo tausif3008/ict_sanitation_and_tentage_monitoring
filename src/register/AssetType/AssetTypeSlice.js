@@ -8,6 +8,7 @@ const initialState = {
   type_data: null,
   assetUpdateEl: null,
   isUpdated: false,
+  sla_data: null,
 };
 
 const assetTypeSlice = createSlice({
@@ -28,6 +29,9 @@ const assetTypeSlice = createSlice({
     },
     postType: (state, action) => {
       state.type_data = action.payload;
+    },
+    postSla: (state, action) => {
+      state.sla_data = action.payload;
     },
   },
 });
@@ -58,11 +62,25 @@ export const getAssetTypes = (url) => async (dispatch) => {
   }
 };
 
+// get sla types
+export const getSLATypes = (url) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(`${url}`);
+    dispatch(postSla(res?.data));
+  } catch (error) {
+    console.error("In get sla types error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 export const {
   setUpdateAssetEl,
   setAssetTypeListIsUpdated,
   setLoading,
   postSuccess,
   postType,
+  postSla,
 } = assetTypeSlice.actions;
 export default assetTypeSlice.reducer;
