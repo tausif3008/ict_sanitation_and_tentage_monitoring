@@ -118,6 +118,7 @@ const VendorSupervisorRegistration = () => {
       dataIndex: "action",
       key: "action",
       fixed: "right",
+      width: 80,
       render: (text, record) => {
         return (
           <Button
@@ -141,23 +142,6 @@ const VendorSupervisorRegistration = () => {
   return (
     <div className="">
       <>
-        <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          dropFields={[
-            {
-              name: "vendor_id",
-              label: "Vendor Name",
-              options: VendorListDrop || [],
-            },
-          ]}
-          fields={[
-            { name: "name", label: "Supervisor Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-          ]}
-        ></CommonSearchForm>
-
         <CommonDivider
           label={"Vendor Supervisor List"}
           compo={
@@ -175,6 +159,22 @@ const VendorSupervisorRegistration = () => {
             </Button>
           }
         ></CommonDivider>
+        <CommonSearchForm
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+          dropFields={[
+            {
+              name: "vendor_id",
+              label: "Vendor Name",
+              options: VendorListDrop || [],
+            },
+          ]}
+          fields={[
+            { name: "name", label: "Supervisor Name" },
+            { name: "email", label: "Email" },
+            { name: "phone", label: "Phone" },
+          ]}
+        ></CommonSearchForm>
 
         <CommonTable
           columns={columns}
