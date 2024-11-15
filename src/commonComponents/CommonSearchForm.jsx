@@ -73,16 +73,19 @@ const CommonSearchForm = ({
               >
                 <Row gutter={[16, 16]} align="middle">
                   {dropFields &&
-                    dropFields.map((el) => (
+                    dropFields?.map((el) => (
                       <Col key={el.name} xs={24} sm={12} md={6} lg={5}>
-                        <Form.Item name={el.name} label={el.label}>
+                        <Form.Item name={el?.name} label={el?.label}>
                           <Select
                             placeholder="Select Main Type"
                             className="rounded-none"
                           >
-                            {el.options.map((opt) => (
-                              <Select.Option key={opt.value} value={opt.name}>
-                                {opt.label}
+                            {el?.options?.map((opt) => (
+                              <Select.Option
+                                key={opt?.value}
+                                value={opt?.value}
+                              >
+                                {opt?.label}
                               </Select.Option>
                             ))}
                           </Select>

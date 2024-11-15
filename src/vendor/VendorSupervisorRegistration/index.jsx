@@ -2,7 +2,17 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-import { Button } from "antd";
+// import { Button } from "antd";
+import {
+  Collapse,
+  Form,
+  Input,
+  Button,
+  Select,
+  notification,
+  Row,
+  Col,
+} from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
@@ -18,11 +28,6 @@ const VendorSupervisorRegistration = () => {
   const [searchQuery, setSearchQuery] = useState();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
-    list: [],
-    pageLength: 25,
-    currentPage: 1,
-  });
-  const [userDetails, setUserDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
@@ -62,10 +67,9 @@ const VendorSupervisorRegistration = () => {
         };
       });
 
-      setUserDetails(() => {
+      setDetails(() => {
         return {
           list: list,
-          //   list: res?.data?.users,
           pageLength: res?.data?.paging[0].length,
           currentPage: res?.data?.paging[0].currentPage,
           totalRecords: res?.data?.paging[0].totalrecords,
@@ -137,6 +141,23 @@ const VendorSupervisorRegistration = () => {
   return (
     <div className="">
       <>
+        <CommonSearchForm
+          setSearchQuery={setSearchQuery}
+          searchQuery={searchQuery}
+          dropFields={[
+            {
+              name: "vendor_id",
+              label: "Vendor Name",
+              options: VendorListDrop || [],
+            },
+          ]}
+          fields={[
+            { name: "name", label: "Supervisor Name" },
+            { name: "email", label: "Email" },
+            { name: "phone", label: "Phone" },
+          ]}
+        ></CommonSearchForm>
+
         <CommonDivider
           label={"Vendor Supervisor List"}
           compo={
@@ -155,24 +176,12 @@ const VendorSupervisorRegistration = () => {
           }
         ></CommonDivider>
 
-        {/* <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          fields={[
-            { name: "name", label: "Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-            // { name: "index_no", label: "Index No." },
-          ]}
-        ></CommonSearchForm> */}
-
         <CommonTable
           columns={columns}
           uri={"vendor-supervisor-registration"}
-          //   details={[]}
-          loading={false}
-          details={userDetails}
-          setUserDetails={setUserDetails}
+          loading={loading}
+          details={details}
+          setUserDetails={setDetails}
         ></CommonTable>
       </>
     </div>
