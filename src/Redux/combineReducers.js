@@ -13,6 +13,7 @@ import shiftSlice from "../shifts/shifts/shiftSlice";
 import vendorWiseSlice from "../Reports/VendorwiseReports/vendorslice";
 import userTypeSlice from "../permission/UserTypePermission/userTypeSlice";
 import vendorSupervisorSlice from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import vendorSectorSlice from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -28,6 +29,7 @@ const rootReducer = combineReducers({
   vendorWiseSlice: vendorWiseSlice,
   userTypeSlice: userTypeSlice,
   vendorSupervisorSlice: vendorSupervisorSlice,
+  vendorSectorSlice: vendorSectorSlice,
 });
 
 export default rootReducer;

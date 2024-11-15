@@ -10,6 +10,7 @@ import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";
 
+// User Access & Registration
 const register_items = (lang, dict) => {
   return [
     {
@@ -50,6 +51,7 @@ const register_items = (lang, dict) => {
   ];
 };
 
+// Master data creation
 const master_items = (lang, dict) => {
   return [
     {
@@ -145,6 +147,17 @@ const master_items = (lang, dict) => {
       label: (
         <Link className="text-black no-underline" to="/user-type-permission">
           User Type Permission
+        </Link>
+      ),
+    },
+    {
+      key: "12",
+      label: (
+        <Link
+          className="text-black no-underline"
+          to="/vendor-sector-allocation"
+        >
+          Allocate Sector To Vendor Supervisor
         </Link>
       ),
     },
@@ -321,6 +334,7 @@ const waste_items = (lang, dict) => {
   ];
 };
 
+// reports
 const reports_items = (lang, dict) => {
   return [
     {

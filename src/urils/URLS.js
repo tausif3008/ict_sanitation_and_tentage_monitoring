@@ -20,6 +20,7 @@ const URLS = {
   // vendor
   vendors: { path: "/users/?user_type_id=8", version: "5.43" },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
+  vendorwiseSupervisor: { path: "/users?user_type_id=13", version: "5.43" },
 
   // vendor Details
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
@@ -58,10 +59,10 @@ const URLS = {
   //reporting
   sectors: { path: "/sector", version: 5.43 },
 
-  // sectors
+  // circle wise report
   circle_wise_report: { path: "/reporting/circle", version: 5.43 },
 
-  // sectors
+  // parking
   parking: { path: "/parking", version: 5.43 },
 
   // proposed sectors
@@ -97,6 +98,17 @@ const URLS = {
   vendorReporting: { path: "/reporting/vendor", version: 5.43 },
   vendorReportingAdd: { path: "/reporting/vendor/entry", version: 5.43 },
   vendorReportingEdit: { path: "/reporting/vendor/edit", version: 5.43 },
+
+  // allocation-supervisor
+  getAllocate_Supervisor: { path: "/allocation-supervisor", version: 5.43 },
+  addAllocate_Supervisor: {
+    path: "/allocation-supervisor/entry",
+    version: 5.43,
+  },
+  editAllocate_Supervisor: {
+    path: "/allocation-supervisor/edit",
+    version: 5.43,
+  },
 
   // sla types
   slaTypes: { path: "/sla-types", version: 5.43 },

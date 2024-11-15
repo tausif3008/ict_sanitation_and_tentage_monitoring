@@ -64,6 +64,8 @@ import UserTypePermission from "./permission/UserTypePermission";
 import UpdateUserTypePermisssion from "./permission/UserTypePermission/add-update-form";
 import VendorSupervisorRegistration from "./vendor/VendorSupervisorRegistration";
 import VendorSupervisorForm from "./vendor/VendorSupervisorRegistration/VendorSupervisorForm";
+import VendorSectorAllocation from "./vendor-section-allocation/vendor-sector";
+import VendorSectorForm from "./vendor-section-allocation/vendor-sector/vendorSectorForm";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -301,6 +303,14 @@ function App() {
             <Route
               path="/vendor-supervisor-form"
               element={<VendorSupervisorForm></VendorSupervisorForm>}
+            ></Route>
+            <Route
+              path="/vendor-sector-allocation"
+              element={<VendorSectorAllocation></VendorSectorAllocation>}
+            ></Route>
+            <Route
+              path="/vendor-sector-form"
+              element={<VendorSectorForm></VendorSectorForm>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
