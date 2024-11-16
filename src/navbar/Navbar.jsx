@@ -25,22 +25,6 @@ import {
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
-  // const superAdmin = ["1", "2"];
-  // const vendorDashboard = ["1", "2", "8"];
-  // const sanitationDashboard = ["1", "2", "8"];
-  // const tentageDashboard = ["1", "2", "8"];
-  // const wasteDashboard = ["1", "2", "8"];
-  // const incidentDashboard = ["1", "2", "8"];
-  // const SLADashboard = ["1", "2", "8"];
-
-  // useEffect(() => {}, [userRoleId]);
-  // dashboard
-
-  useEffect(() => {
-    console.log("rrrr");
-    return () => {};
-  }, []);
-
   const loggedIn = localStorage.getItem("sessionToken");
   const [open, setOpen] = useState(false);
 
@@ -508,8 +492,6 @@ const Navbar = ({ lang, setLang }) => {
 
   const location = useLocation();
   const [title, setTitle] = useState("");
-
-  console.log("userRoleId", userRoleId);
 
   // useEffect(() => {
   //   const titleName = location.pathname.split("/").join("").split("-")[0];

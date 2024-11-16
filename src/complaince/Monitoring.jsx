@@ -29,6 +29,9 @@ import { getData } from "../Fetch/Axios";
 import {} from "../register/AssetType/AssetTypeSlice";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
+import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import moment from "moment/moment";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -42,6 +45,11 @@ const Monitoring = () => {
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
+  const { VendorListDrop } = VendorSupervisorSelector();
+
+  const userRoleId = localStorage.getItem("role_id");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
 
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
@@ -66,6 +74,10 @@ const Monitoring = () => {
     setLoading(true);
 
     let uri = URLS.monitoring.path + "?";
+
+    if (userRoleId === "8") {
+      uri = uri + `&vendor_id=${sessionData?.id}`;
+    }
 
     if (params.page) {
       uri = uri + params.page;
@@ -114,6 +126,12 @@ const Monitoring = () => {
   useEffect(() => {
     dispatch(setUpdateMonitoringEl({ updateElement: null }));
   }, [dispatch]);
+
+  useEffect(() => {
+    dispatch(getVendorList()); // vendor list
+
+    return () => {};
+  }, []);
 
   useEffect(() => {
     // get assset main type
@@ -215,11 +233,18 @@ const Monitoring = () => {
         );
       },
     },
-
     {
       title: "remark",
       dataIndex: "remark",
       key: "remark",
+    },
+    {
+      title: "Date",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (text) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
     },
     {
       title: "Action",
@@ -263,18 +288,38 @@ const Monitoring = () => {
                   form={form}
                   layout="vertical"
                   onFinish={onFinishForm}
-                  key="1"
+                  key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key={1} xs={24} sm={12} md={6} lg={5}>
+                    {userRoleId != "8" && (
+                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                        <Form.Item name={"vendor_id"} label={"Select Vendor"}>
+                          <Select
+                            placeholder="Select Vendor"
+                            className="rounded-none"
+                          >
+                            {VendorListDrop?.map((option) => (
+                              <Select.Option
+                                key={option?.value}
+                                value={option?.value}
+                              >
+                                {option?.label}
+                              </Select.Option>
+                            ))}
+                          </Select>
+                        </Form.Item>
+                      </Col>
+                    )}
+
+                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item
                         name={"assetmaintypes"}
                         label={"Asset Main Type"}
                       >
                         <Select
-                          placeholder="Select status"
+                          placeholder="Select Asset Main Type"
                           className="rounded-none"
-                          onSelect={handleSelect} // Add onSelect handler
+                          onSelect={handleSelect}
                         >
                           {assetMainType?.map((option) => (
                             <Select.Option
@@ -287,7 +332,8 @@ const Monitoring = () => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col key={1} xs={24} sm={12} md={6} lg={5}>
+
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item name={"asset_type_id"} label={"Asset Type"}>
                         <Select
                           placeholder="Select Asset Type"
@@ -304,7 +350,8 @@ const Monitoring = () => {
                         </Select>
                       </Form.Item>
                     </Col>
-                    <Col key={1} xs={24} sm={12} md={6} lg={5}>
+
+                    <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item name={"asset_code"} label={"Asset Code"}>
                         <Input
                           placeholder={"Asset Code"}
@@ -312,7 +359,8 @@ const Monitoring = () => {
                         />
                       </Form.Item>
                     </Col>
-                    <Col key={1} xs={24} sm={12} md={6} lg={5}>
+
+                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item
                         name={"date_format"}
                         label={"Select Date Type"}
@@ -333,9 +381,10 @@ const Monitoring = () => {
                         </Select>
                       </Form.Item>
                     </Col>
+
                     {showDateRange && (
                       <>
-                        <Col key={1} xs={24} sm={12} md={6} lg={5}>
+                        <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
                           <Form.Item name={"from_date"} label={"From Date"}>
                             <DatePicker
                               className="rounded-none"
@@ -343,7 +392,8 @@ const Monitoring = () => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col key={1} xs={24} sm={12} md={6} lg={5}>
+
+                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
                           <Form.Item name={"to_date"} label={"To Date"}>
                             <DatePicker
                               className="rounded-none"
@@ -353,6 +403,7 @@ const Monitoring = () => {
                         </Col>
                       </>
                     )}
+
                     <Col
                       xs={24}
                       sm={12}

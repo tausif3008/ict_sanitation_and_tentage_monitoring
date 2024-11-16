@@ -18,7 +18,7 @@ const URLS = {
   ModulePermissionEdit: { path: "//module-permission/edit", version: 5.43 },
 
   // vendor
-  vendors: { path: "/users/?user_type_id=8", version: "5.43" },
+  vendors: { path: "/users?user_type_id=8", version: "5.43" },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
   vendorwiseSupervisor: { path: "/users?user_type_id=13", version: "5.43" },
 

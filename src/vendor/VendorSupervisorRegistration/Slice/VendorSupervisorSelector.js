@@ -8,8 +8,6 @@ const VendorSupervisorSelector = () => {
   );
   const loading = useSelector((state) => state?.vendorSupervisorSlice.loading);
 
-  // console.log("VendorList", VendorList);
-
   const VendorListDrop = VendorList?.data?.users?.map((data) => {
     return {
       value: data?.user_id,
@@ -17,7 +15,7 @@ const VendorSupervisorSelector = () => {
     };
   });
 
-  return { ShiftData, loading, VendorListDrop };
+  return { ShiftData, loading, VendorList, VendorListDrop };
 };
 
 export default VendorSupervisorSelector;
