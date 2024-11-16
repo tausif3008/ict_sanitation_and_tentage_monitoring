@@ -7,9 +7,11 @@ import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
 import img1 from "../assets/Images/goup.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
+import { langingPage } from "../utils/dictionary";
 
-const NavHead = ({ lang, dict }) => {
+const NavHead = ({ lang, setLang }) => {
   const myDate = new Date();
+  const dict = langingPage;
 
   // Format the date
   const options = {
@@ -17,6 +19,16 @@ const NavHead = ({ lang, dict }) => {
     year: "numeric",
     month: "short",
     day: "numeric",
+  };
+
+  const handleLang = () => {
+    if (lang === "en") {
+      localStorage.setItem("lang", "hi");
+      setLang("hi");
+    } else {
+      localStorage.setItem("lang", "en");
+      setLang("en");
+    }
   };
 
   const navigate = useNavigate();
@@ -46,23 +58,26 @@ const NavHead = ({ lang, dict }) => {
           </Link>
           <div className="flex gap-2 items-center">
             <div className="h-full items-center flex">
-              <a className="text-sm text-white no-underline" href="#">
-                Eng{" "}
+              <a
+                className="text-sm text-white no-underline"
+                href="#"
+                onClick={handleLang}
+              >
+                ENG | हिंदी{" "}
               </a>{" "}
-              <span className="text-white"> | </span>
-              <a className="text-sm text-white no-underline" href="#">
-                हिंदी
-              </a>
-              {/* <Select
-                className="rounded-md h-8  "
-                style={{ width: "59px" }}
-                defaultValue={"en"}
-                options={[
-                  { label: "EN", value: "en" },
-                  { label: "HI", value: "hi" },
-                ]}
-              ></Select> */}
+              
             </div>
+
+            {/* <div>
+              <div
+                className="text-black cursor-pointer bg-white rounded p-1 w-full h-full text-start no-underline"
+                onClick={handleLang}
+                style={{ width: "70px" }}
+              >
+                ENG/हिंदी{" "}
+              </div>
+            </div> */}
+
             <div className=" bg-white flex justify-center items-center rounded w-8 h-8 cursor-pointer">
               <div className="flex justify-center items-center ">
                 <Badge size="small" status="success" offset={[7, 0]} count={5}>
