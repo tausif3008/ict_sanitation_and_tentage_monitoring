@@ -8,3 +8,18 @@ export const getValueLabel = (dataId, List, defaultName) => {
     return `${defaultName}`;
   }
 };
+
+export const dateOptions = [
+  {
+    label: "Today",
+    value: "Today",
+  },
+  {
+    label: "Current Month",
+    value: "Current Month",
+  },
+  {
+    label: "From Date to Date",
+    value: "Date Range",
+  },
+];

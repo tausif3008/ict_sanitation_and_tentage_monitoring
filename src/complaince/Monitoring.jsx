@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import URLS from "../urils/URLS";
-import { getData } from "../Fetch/Axios";
-import {} from "../register/AssetType/AssetTypeSlice";
-import CommonDivider from "../commonComponents/CommonDivider";
-import CommonTable from "../commonComponents/CommonTable";
 import {
   Collapse,
   Form,
@@ -15,16 +10,25 @@ import {
   notification,
   Row,
   Col,
+  DatePicker,
 } from "antd";
+import dayjs from "dayjs";
 import {
   setAssetInfo,
   setMonitoringListIsUpdated,
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
+
 import { Image } from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
+import { dateOptions } from "../constant/const";
+import URLS from "../urils/URLS";
+import { getData } from "../Fetch/Axios";
+import {} from "../register/AssetType/AssetTypeSlice";
+import CommonDivider from "../commonComponents/CommonDivider";
+import CommonTable from "../commonComponents/CommonTable";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -37,6 +41,7 @@ const Monitoring = () => {
   const [assetMainType, setAssetMainType] = useState([]); // asset main type
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
+  const [showDateRange, setShowDateRange] = useState(false);
 
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
@@ -73,10 +78,6 @@ const Monitoring = () => {
     if (searchQuery) {
       uri = uri + searchQuery;
     }
-
-    console.log("searchQuery", searchQuery);
-    console.log("uri", uri);
-    console.log("params", params);
 
     const extraHeaders = { "x-api-version": URLS.asset.version };
     const res = await getData(uri, extraHeaders);
@@ -143,6 +144,19 @@ const Monitoring = () => {
 
   // fiter finish
   const onFinishForm = (values) => {
+    const finalData = {
+      ...values,
+    };
+    if (values?.from_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.from_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.from_date = values?.from_date ? start : end;
+      finalData.to_date = values?.to_date ? end : start;
+    }
     const searchParams = generateSearchQuery(values);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
@@ -153,6 +167,18 @@ const Monitoring = () => {
   const resetForm = () => {
     form.resetFields();
     setSearchQuery("&");
+  };
+
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
+    } else {
+      form.setFieldsValue({
+        from_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
+    }
   };
 
   const columns = [
@@ -286,6 +312,47 @@ const Monitoring = () => {
                         />
                       </Form.Item>
                     </Col>
+                    <Col key={1} xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                      >
+                        <Select
+                          placeholder="Select Date Type"
+                          className="rounded-none"
+                          onSelect={handleDateSelect}
+                        >
+                          {dateOptions?.map((option) => (
+                            <Select.Option
+                              key={option?.value}
+                              value={option?.value}
+                            >
+                              {option?.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    {showDateRange && (
+                      <>
+                        <Col key={1} xs={24} sm={12} md={6} lg={5}>
+                          <Form.Item name={"from_date"} label={"From Date"}>
+                            <DatePicker
+                              className="rounded-none"
+                              format="DD/MM/YYYY"
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col key={1} xs={24} sm={12} md={6} lg={5}>
+                          <Form.Item name={"to_date"} label={"To Date"}>
+                            <DatePicker
+                              className="rounded-none"
+                              format="DD/MM/YYYY"
+                            />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    )}
                     <Col
                       xs={24}
                       sm={12}
@@ -316,28 +383,7 @@ const Monitoring = () => {
         />
         {contextHolder}
       </div>
-      {/* <CommonSearchForm
-        setSearchQuery={setSearchQuery}
-        searchQuery={searchQuery}
-        fields={[
-          { name: "asset_type_name", label: "Asset Type Name" },
-          { name: "asset_code", label: "Asset Code" },
-          // { name: "index_no", label: "Index No." },
-        ]}
-      ></CommonSearchForm> */}
-      <CommonDivider
-        label={"Asset Type Monitoring "}
-        // compo={
-        //   <Button
-        //     className="bg-orange-300 mb-1"
-        //     onClick={() => {
-        //       navigate("/add-update-monitoring");
-        //     }}
-        //   >
-        //     Add Monitoring
-        //   </Button>
-        // }
-      ></CommonDivider>
+      <CommonDivider label={"Asset Type Monitoring "}></CommonDivider>
 
       <CommonTable
         columns={columns}
