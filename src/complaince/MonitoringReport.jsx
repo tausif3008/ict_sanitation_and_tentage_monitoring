@@ -8,6 +8,7 @@ import "jspdf-autotable";
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import { IMAGELIST } from "../assets/Images/exportImages";
+import CoordinatesMap from "../commonComponents/map/map";
 
 const MonitoringReport = () => {
   const [details, setDetails] = useState({ list: [] });
@@ -116,7 +117,6 @@ const MonitoringReport = () => {
     doc.setFont("bold");
     doc.text(ictHeading, ictX, 10); // Heading position
 
-    // // Image on the Left (Company Logo or similar image)
     const leftImageX = 10; // X position (from the left)
     const leftImageY = 10; // Y position (from the top)
     const leftImageWidth = 30; // Image width (adjust as needed)
@@ -133,13 +133,12 @@ const MonitoringReport = () => {
       "FAST" // Adds compression for smaller file size
     );
 
-    // // Image on the Right (Another logo or image)
     const rightImageX = pageWidth - 40; // X position (from the right)
     const rightImageY = 10; // Y position (from the top)
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.govt_logo}`,
+      `${IMAGELIST?.kumbh}`,
       "JPEG",
       rightImageX,
       rightImageY,
@@ -153,7 +152,8 @@ const MonitoringReport = () => {
     // Add report title and date on the same line
     const title = "Monitoring Report";
     const date = new Date();
-    const dateString = date.toLocaleString(); // Format the date and time
+    const dateString = moment(date).format("DD-MMM-YYYY hh:mm A");
+    // const dateString = date.toLocaleString(); // Format the date and time
 
     // Calculate positions for the title and date
     const titleX = 44; // Left align title
@@ -172,6 +172,10 @@ const MonitoringReport = () => {
     const lineEndX = rightImageX - 5; // End before the right image
     doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
 
+    const str = assetDetails?.qrCode;
+    const regex = /\/(\d+)\.png$/;
+    const match = str.match(regex);
+
     // Table for dynamic fields (label-value pairs)
     const tableData = [
       ["Circle Name", `: ${assetDetails?.circle_name || ""}`],
@@ -185,6 +189,7 @@ const MonitoringReport = () => {
         }`,
       ],
       ["Unit Number", `: ${assetDetails?.unit_no || ""}`],
+      ["QR Code", `: ${match[1] || ""}`],
       ["Remark", `: ${assetDetails?.remark || ""}`],
       // Add more fields as needed
     ];
@@ -211,7 +216,7 @@ const MonitoringReport = () => {
         // opt?.question_hi,
         opt?.answer === "1" ? "Yes" : "No",
       ]),
-      startY: 120, // Start after the header and new text
+      startY: 130, // Start after the header and new text
     });
 
     // Add footer
@@ -299,6 +304,11 @@ const MonitoringReport = () => {
               ) : (
                 <span>No QR Code Available</span>
               )}
+            </div>
+            <div className="flex flex-col text-center font-semibold mt-6">
+              <CoordinatesMap
+                coordinates={[assetDetails?.longitude, assetDetails?.latitude]}
+              />
             </div>
             <div className="flex flex-col text-center font-semibold">
               <span>Asset Image</span>
