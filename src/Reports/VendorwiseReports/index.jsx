@@ -148,7 +148,7 @@ const VendorReports = () => {
     const leftImageWidth = 30; // Image width (adjust as needed)
     const leftImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbh}`,
+      `${IMAGELIST?.govt_logo}`,
       "JPEG",
       leftImageX,
       leftImageY,
@@ -165,7 +165,7 @@ const VendorReports = () => {
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.govt_logo}`,
+      `${IMAGELIST?.kumbh}`,
       "JPEG",
       rightImageX,
       rightImageY,

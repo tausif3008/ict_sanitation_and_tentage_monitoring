@@ -16,8 +16,6 @@ const MonitoringReport = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  console.log("details", details);
-
   // Fetch monitoring details from the API
   const getDetails = async () => {
     setLoading(true);
@@ -106,148 +104,9 @@ const MonitoringReport = () => {
       ),
     },
   ];
-  // const exportToPDF = () => {
-  //   const doc = new jsPDF();
-  //   // const doc = new jsPDF("landscape", undefined, undefined, {
-  //   //   compress: true,
-  //   // });
-
-  //   // Centered ICT heading
-  //   const ictHeading = "ICT Sanitation and Tentage Monitoring System";
-  //   const pageWidth = doc.internal.pageSize.getWidth();
-  //   const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-  //   doc.setFontSize(14);
-  //   doc.setFont("bold");
-  //   doc.text(ictHeading, ictX, 10); // Heading position
-
-  //   // // Image on the Left (Company Logo or similar image)
-  //   const leftImageX = 10; // X position (from the left)
-  //   const leftImageY = 10; // Y position (from the top)
-  //   const leftImageWidth = 30; // Image width (adjust as needed)
-  //   const leftImageHeight = 25; // Image height (adjust as needed)
-  //   doc.addImage(
-  //     `${IMAGELIST?.govt_logo}`,
-  //     "JPEG",
-  //     leftImageX,
-  //     leftImageY,
-  //     leftImageWidth,
-  //     leftImageHeight,
-  //     undefined,
-  //     undefined,
-  //     "FAST" // Adds compression for smaller file size
-  //   );
-
-  //   // // Image on the Right (Another logo or image)
-  //   const rightImageX = pageWidth - 40; // X position (from the right)
-  //   const rightImageY = 10; // Y position (from the top)
-  //   const rightImageWidth = 30; // Image width (adjust as needed)
-  //   const rightImageHeight = 25; // Image height (adjust as needed)
-  //   doc.addImage(
-  //     `${IMAGELIST?.govt_logo}`,
-  //     "JPEG",
-  //     rightImageX,
-  //     rightImageY,
-  //     rightImageWidth,
-  //     rightImageHeight,
-  //     undefined,
-  //     undefined,
-  //     "FAST" // Adds compression for smaller file size
-  //   );
-
-  //   // Add report title and date on the same line
-  //   const title = "Vendor-Wise Report";
-  //   const date = new Date();
-  //   const dateString = date.toLocaleString(); // Format the date and time
-
-  //   // Calculate positions for the title and date
-  //   const titleX = 44; // Left align title
-  //   const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
-
-  //   // Add title and date
-  //   doc.setFontSize(12);
-  //   doc.setFont("bold");
-  //   doc.text(title, titleX, 25); // Title position
-  //   doc.setFont("normal");
-  //   doc.setFontSize(10); // Smaller font size for date
-  //   doc.text(dateString, dateX, 25); // Date position
-
-  //   // Add a horizontal line below the textBetweenImages, but only up to the edges of the images
-  //   const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
-  //   const lineEndX = rightImageX - 5; // End before the right image
-  //   doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
-
-  //   // Add a horizontal line below the header
-  //   doc.line(10, 30, 200, 30); // x1, y1, x2, y2
-
-  //   // Table for dynamic fields (label-value pairs)
-  //   const tableData = [
-  //     ["Circle Name", `: ${assetDetails?.circle_name || ""}`],
-  //     ["Sector Name", `: ${assetDetails?.sector_name || ""}`],
-  //     ["Latitude", `: ${assetDetails?.latitude || ""}`],
-  //     ["Longitude", `: ${assetDetails?.longitude || ""}`],
-  //     [
-  //       "Submitted  Date",
-  //       `: ${
-  //         moment(assetDetails?.updated_at).format("YYYY-MM-DD HH:mm:ss") || ""
-  //       }`,
-  //     ],
-  //     ["Unit Number", `: ${assetDetails?.unit_no || ""}`],
-  //     ["Remark", `: ${assetDetails?.remark || ""}`],
-  //     // Add more fields as needed
-  //   ];
-
-  //   const margin = 10; // Define margin for the table
-
-  //   // Add the first table (dynamic fields)
-  //   doc.autoTable({
-  //     startY: 35, // Start the table after the header
-  //     body: tableData, // Table body
-  //     theme: "plain", // Table style
-  //     styles: {
-  //       fontSize: 12,
-  //       cellPadding: 3,
-  //     },
-  //     margin: { left: margin, right: margin }, // Set margins
-  //   });
-
-  //   // Get the position after the first table
-  //   const firstTableHeight = doc.lastAutoTable.finalY + 10; // Get the Y position after the first table
-
-  //   // Row data for the second table (question-answer data)
-  //   const row = details?.list?.map((data, index) => {
-  //     return [
-  //       `${index + 1}`,
-  //       `${data?.question_en}`,
-  //       // `${data?.question_hi}`,
-  //       `${data?.answer === "1" ? "Yes" : "No"}`,
-  //     ];
-  //   });
-
-  //   // Table header and content
-  //   doc.autoTable({
-  //     head: [["Sr", "Question (EN)", "Answer"]],
-  //     // head: [["Sr no", "Question (EN)", "Question (HI)", "Answer"]],
-  //     body: row || [],
-  //     startY: 40, // Start after the header and new text
-  //   });
-
-  //   // Add footer
-  //   const footerText1 = "Maha Kumbh Mela 2025, Prayagraj Mela Authority.";
-  //   const footerX = (pageWidth - doc.getTextWidth(footerText1)) / 2; // Center footer
-  //   const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
-
-  //   doc.setFontSize(10);
-  //   doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
-
-  //   // Save the PDF
-  //   doc.save("MonitoringReport.pdf");
-  // };
 
   const exportToPDF = () => {
     const doc = new jsPDF();
-    // const doc = new jsPDF("landscape", undefined, undefined, {
-    //   compress: true,
-    // });
 
     // Centered ICT heading
     const ictHeading = "ICT Sanitation and Tentage Monitoring System";
