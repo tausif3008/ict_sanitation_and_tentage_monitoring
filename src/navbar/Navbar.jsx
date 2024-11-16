@@ -437,6 +437,10 @@ const setting_item = (dict, lang, navigate) => {
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
+  const userRoleId = Number(localStorage.getItem("role_id"));
+
+  const superAdmin = [1, 2];
+
   const loggedIn = localStorage.getItem("sessionToken");
   const [open, setOpen] = useState(false);
 
@@ -548,23 +552,27 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
               )}
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={register_items(lang, dict)}
-                  // name={dict.register[lang]}
-                  name="User Access & Registration"
-                ></DropDown>
-              </div>
+              {superAdmin.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  <DropDown
+                    text="black"
+                    items={register_items(lang, dict)}
+                    // name={dict.register[lang]}
+                    name="User Access & Registration"
+                  ></DropDown>
+                </div>
+              )}
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={master_items(lang, dict)}
-                  // name={dict.register[lang]}
-                  name="Master Data Creation"
-                ></DropDown>
-              </div>
+              {superAdmin.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  <DropDown
+                    text="black"
+                    items={master_items(lang, dict)}
+                    // name={dict.register[lang]}
+                    name="Master Data Creation"
+                  ></DropDown>
+                </div>
+              )}
 
               {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
@@ -582,13 +590,15 @@ const Navbar = ({ lang, setLang }) => {
                 ></DropDown>
               </div> */}
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
-                <DropDown
-                  text="black"
-                  items={dms_items(lang, dict)}
-                  name={"DMS"}
-                ></DropDown>
-              </div>
+              {superAdmin.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
+                  <DropDown
+                    text="black"
+                    items={dms_items(lang, dict)}
+                    name={"DMS"}
+                  ></DropDown>
+                </div>
+              )}
 
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown

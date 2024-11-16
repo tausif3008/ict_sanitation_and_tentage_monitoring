@@ -16,13 +16,15 @@ const loginFetch = async (data, setCanProceed) => {
   try {
     const response = await axios.post(url, data, { headers });
     if (response.data.success) {
-
       const sessionData = response.data.data.sessionData[0];
       localStorage.setItem("sessionToken", response.data.sessionToken);
-      localStorage.setItem("sessionData",
+      localStorage.setItem("role", sessionData?.user_type); // Role
+      localStorage.setItem("role_id", sessionData?.user_type_id); // User type id
+      localStorage.setItem(
+        "sessionData",
         JSON.stringify(response.data.data.sessionData[0])
       );
-      localStorage.setItem("userId", sessionData.id); 
+      localStorage.setItem("userId", sessionData.id);
       setCanProceed(true);
 
       return response.data.success;
