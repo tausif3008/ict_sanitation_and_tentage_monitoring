@@ -9,441 +9,476 @@ import img1 from "../assets/Images/goup.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";
-
-// Dashboard
-const dashboards = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/sanitation-dashboard"
-        >
-          Sanitation Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/tentage-dashboard"
-        >
-          Tentage Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-dashboard"
-        >
-          Waste Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/incident-dashboard"
-        >
-          Incident Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/vendor-dashboard"
-        >
-          Vendor Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "7",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/SLA-dashboard"
-        >
-          SLA Dashboard
-        </Link>
-      ),
-    },
-  ];
-};
-
-// User Access & Registration
-const register_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link className="text-black no-underline hover:text-green" to="/users">
-          User Registration
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/vendor">
-          Vendor Registration
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/asset-list">
-          Toilets & Tentage Registration
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link
-          className="text-black no-underline"
-          to="/vendor-supervisor-registration"
-        >
-          Vendor Supervisor Registration
-        </Link>
-      ),
-    },
-  ];
-};
-
-// Master data creation
-const master_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link className="text-black no-underline" to="/asset-type-list">
-          Toilets & Tentage Type List
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/questions">
-          Question List
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/vehicle">
-          Vehicle List
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/route-list">
-          GPS Routes List
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          GPS Device List
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          GIS Map Registration
-        </Link>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          SLA Parameters
-        </Link>
-      ),
-    },
-    {
-      key: "7",
-      label: (
-        <Link className="text-black no-underline" to="/sectors-listing">
-          Sectors List
-        </Link>
-      ),
-    },
-    {
-      key: "8",
-      label: (
-        <Link className="text-black no-underline" to="/parking">
-          Parking List
-        </Link>
-      ),
-    },
-    {
-      key: "9",
-      label: (
-        <Link className="text-black no-underline" to="/manpower-assignment">
-          Manpower Assignment
-        </Link>
-      ),
-    },
-    {
-      key: "10",
-      label: (
-        <Link className="text-black no-underline" to="/shift">
-          Shift
-        </Link>
-      ),
-    },
-    {
-      key: "11",
-      label: (
-        <Link className="text-black no-underline" to="/user-type-permission">
-          User Type Permission
-        </Link>
-      ),
-    },
-    {
-      key: "12",
-      label: (
-        <Link
-          className="text-black no-underline"
-          to="/vendor-sector-allocation"
-        >
-          Allocate Sector To Vendor Supervisor
-        </Link>
-      ),
-    },
-  ];
-};
-
-const dms_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/DMS-dashboard"
-        >
-          DMS Dashboard
-        </Link>
-      ),
-    },
-  ];
-};
-
-const schedule_items = (lang, dict, navigate) => {
-  return [
-    // {
-    //   key: "1",
-    //   label: (
-    //     <Link
-    //       className="text-black no-underline hover:text-green"
-    //       to="/scheduling-and-deployment"
-    //     >
-    //       Create
-    //     </Link>
-    //   ),
-    // },
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline"
-          to="/create-sanitation-schedule"
-        >
-          Sanitation Management Schedule
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/create-tentage-schedule">
-          Tentage Management Schedule
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-management-schedule"
-        >
-          Waste Management Schedule
-        </Link>
-      ),
-    },
-  ];
-};
-
-const complaince_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/monitoring"
-        >
-          Monitoring
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/notification">
-          Notification
-        </Link>
-      ),
-    },
-  ];
-};
-
-const waste_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline hover:text-green" to="/route">
-          Route
-        </Link>
-      ),
-    },
-  ];
-};
-
-// reports
-const reports_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/monitoring"
-        >
-          Monitoring Report
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/sector-wise-report">
-          Sector Wise Report
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/circle-wise-report">
-          Circle Wise Report
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link className="text-black no-underline" to="/vendor-wise-report">
-          Vendor Wise Report
-        </Link>
-      ),
-    },
-  ];
-};
-
-const setting_item = (dict, lang, navigate) => {
-  const list = [
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/user-profile"
-        >
-          Profile
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/change-password"
-        >
-          Change Password
-        </Link>
-      ),
-    },
-  ];
-
-  localStorage.getItem("sessionToken")
-    ? list.push({
-        key: "3",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              logoutFetch();
-              localStorage.clear();
-              navigate("/home");
-            }}
-          >
-            Logout
-          </div>
-        ),
-      })
-    : list.push({
-        key: "4",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Login
-          </div>
-        ),
-      });
-
-  return list;
-};
+import {
+  DMS_param,
+  incidentDash_param,
+  masterData_param,
+  sanitationDash_param,
+  SLADash_param,
+  superAdmin,
+  tentageDash_param,
+  userAccess_param,
+  vendorDash_param,
+  wasteDash_param,
+} from "../constant/permission";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
-  const userRoleId = Number(localStorage.getItem("role_id"));
+  // const superAdmin = ["1", "2"];
+  // const vendorDashboard = ["1", "2", "8"];
+  // const sanitationDashboard = ["1", "2", "8"];
+  // const tentageDashboard = ["1", "2", "8"];
+  // const wasteDashboard = ["1", "2", "8"];
+  // const incidentDashboard = ["1", "2", "8"];
+  // const SLADashboard = ["1", "2", "8"];
 
-  const superAdmin = [1, 2];
+  // useEffect(() => {}, [userRoleId]);
+  // dashboard
+
+  useEffect(() => {
+    console.log("rrrr");
+    return () => {};
+  }, []);
 
   const loggedIn = localStorage.getItem("sessionToken");
   const [open, setOpen] = useState(false);
+
+  const userRoleId = localStorage.getItem("role_id");
+
+  // Dashboard
+  const dashboards = (lang, dict) => {
+    return [
+      sanitationDash_param?.includes(userRoleId) && {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/sanitation-dashboard"
+          >
+            Sanitation Dashboard
+          </Link>
+        ),
+      },
+      tentageDash_param?.includes(userRoleId) && {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/tentage-dashboard"
+          >
+            Tentage Dashboard
+          </Link>
+        ),
+      },
+      wasteDash_param?.includes(userRoleId) && {
+        key: "4",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/waste-dashboard"
+          >
+            Waste Dashboard
+          </Link>
+        ),
+      },
+      incidentDash_param?.includes(userRoleId) && {
+        key: "5",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/incident-dashboard"
+          >
+            Incident Dashboard
+          </Link>
+        ),
+      },
+      vendorDash_param.includes(userRoleId) && {
+        key: "6",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/vendor-dashboard"
+          >
+            Vendor Dashboard
+          </Link>
+        ),
+      },
+      SLADash_param?.includes(userRoleId) && {
+        key: "7",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/SLA-dashboard"
+          >
+            SLA Dashboard
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // User Access & Registration
+  const register_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/users"
+          >
+            User Registration
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link className="text-black no-underline" to="/vendor">
+            Vendor Registration
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/asset-list">
+            Toilets & Tentage Registration
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-supervisor-registration"
+          >
+            Vendor Supervisor Registration
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // Master data creation
+  const master_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link className="text-black no-underline" to="/asset-type-list">
+            Toilets & Tentage Type List
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link className="text-black no-underline" to="/questions">
+            Question List
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/vehicle">
+            Vehicle List
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/route-list">
+            GPS Routes List
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/gis-services">
+            GPS Device List
+          </Link>
+        ),
+      },
+      {
+        key: "5",
+        label: (
+          <Link className="text-black no-underline" to="/gis-services">
+            GIS Map Registration
+          </Link>
+        ),
+      },
+      {
+        key: "6",
+        label: (
+          <Link className="text-black no-underline" to="/gis-services">
+            SLA Parameters
+          </Link>
+        ),
+      },
+      {
+        key: "7",
+        label: (
+          <Link className="text-black no-underline" to="/sectors-listing">
+            Sectors List
+          </Link>
+        ),
+      },
+      {
+        key: "8",
+        label: (
+          <Link className="text-black no-underline" to="/parking">
+            Parking List
+          </Link>
+        ),
+      },
+      {
+        key: "9",
+        label: (
+          <Link className="text-black no-underline" to="/manpower-assignment">
+            Manpower Assignment
+          </Link>
+        ),
+      },
+      {
+        key: "10",
+        label: (
+          <Link className="text-black no-underline" to="/shift">
+            Shift
+          </Link>
+        ),
+      },
+      {
+        key: "11",
+        label: (
+          <Link className="text-black no-underline" to="/user-type-permission">
+            User Type Permission
+          </Link>
+        ),
+      },
+      {
+        key: "12",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-sector-allocation"
+          >
+            Allocate Sector To Vendor Supervisor
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const dms_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/DMS-dashboard"
+          >
+            DMS Dashboard
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const schedule_items = (lang, dict, navigate) => {
+    return [
+      // {
+      //   key: "1",
+      //   label: (
+      //     <Link
+      //       className="text-black no-underline hover:text-green"
+      //       to="/scheduling-and-deployment"
+      //     >
+      //       Create
+      //     </Link>
+      //   ),
+      // },
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/create-sanitation-schedule"
+          >
+            Sanitation Management Schedule
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/create-tentage-schedule"
+          >
+            Tentage Management Schedule
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/waste-management-schedule"
+          >
+            Waste Management Schedule
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const complaince_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/monitoring"
+          >
+            Monitoring
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/notification">
+            Notification
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const waste_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/route"
+          >
+            Route
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // reports
+  const reports_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/monitoring"
+          >
+            Monitoring Report
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/sector-wise-report">
+            Sector Wise Report
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/circle-wise-report">
+            Circle Wise Report
+          </Link>
+        ),
+      },
+      {
+        key: "5",
+        label: (
+          <Link className="text-black no-underline" to="/vendor-wise-report">
+            Vendor Wise Report
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const setting_item = (dict, lang, navigate) => {
+    const list = [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/user-profile"
+          >
+            Profile
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/change-password"
+          >
+            Change Password
+          </Link>
+        ),
+      },
+    ];
+
+    localStorage.getItem("sessionToken")
+      ? list.push({
+          key: "3",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                logoutFetch();
+                localStorage.clear();
+                navigate("/home");
+              }}
+            >
+              Logout
+            </div>
+          ),
+        })
+      : list.push({
+          key: "4",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </div>
+          ),
+        });
+
+    return list;
+  };
 
   const showDrawer = () => {
     setOpen(true);
@@ -455,13 +490,13 @@ const Navbar = ({ lang, setLang }) => {
 
   const navigate = useNavigate();
 
-  const [logName, setLogName] = useState(false);
+  // const [logName, setLogName] = useState(false);
 
-  useEffect(() => {
-    if (loggedIn) {
-      setLogName(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     setLogName(true);
+  //   }
+  // }, []);
 
   // const handleLang = () => {
   //   if (lang === "hi") {
@@ -473,6 +508,8 @@ const Navbar = ({ lang, setLang }) => {
 
   const location = useLocation();
   const [title, setTitle] = useState("");
+
+  console.log("userRoleId", userRoleId);
 
   // useEffect(() => {
   //   const titleName = location.pathname.split("/").join("").split("-")[0];
@@ -553,7 +590,7 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
               )}
-              {superAdmin.includes(userRoleId) && (
+              {userAccess_param.includes(userRoleId) && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                   <DropDown
                     text="black"
@@ -564,7 +601,7 @@ const Navbar = ({ lang, setLang }) => {
                 </div>
               )}
 
-              {superAdmin.includes(userRoleId) && (
+              {masterData_param.includes(userRoleId) && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                   <DropDown
                     text="black"
@@ -591,7 +628,7 @@ const Navbar = ({ lang, setLang }) => {
                 ></DropDown>
               </div> */}
 
-              {superAdmin.includes(userRoleId) && (
+              {DMS_param.includes(userRoleId) && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
                   <DropDown
                     text="black"
