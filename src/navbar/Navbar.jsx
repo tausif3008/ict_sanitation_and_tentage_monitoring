@@ -10,6 +10,78 @@ import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";
 
+// Dashboard
+const dashboards = (lang, dict) => {
+  return [
+    {
+      key: "2",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/sanitation-dashboard"
+        >
+          Sanitation Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "3",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/tentage-dashboard"
+        >
+          Tentage Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "4",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/waste-dashboard"
+        >
+          Waste Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "5",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/incident-dashboard"
+        >
+          Incident Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "6",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/vendor-dashboard"
+        >
+          Vendor Dashboard
+        </Link>
+      ),
+    },
+    {
+      key: "7",
+      label: (
+        <Link
+          className="text-black no-underline hover:text-green"
+          to="/SLA-dashboard"
+        >
+          SLA Dashboard
+        </Link>
+      ),
+    },
+  ];
+};
+
 // User Access & Registration
 const register_items = (lang, dict) => {
   return [
@@ -158,77 +230,6 @@ const master_items = (lang, dict) => {
           to="/vendor-sector-allocation"
         >
           Allocate Sector To Vendor Supervisor
-        </Link>
-      ),
-    },
-  ];
-};
-
-const dashboards = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/sanitation-dashboard"
-        >
-          Sanitation Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/tentage-dashboard"
-        >
-          Tentage Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-dashboard"
-        >
-          Waste Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/incident-dashboard"
-        >
-          Incident Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/vendor-dashboard"
-        >
-          Vendor Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "7",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/SLA-dashboard"
-        >
-          SLA Dashboard
         </Link>
       ),
     },

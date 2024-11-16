@@ -157,7 +157,7 @@ const Monitoring = () => {
       finalData.from_date = values?.from_date ? start : end;
       finalData.to_date = values?.to_date ? end : start;
     }
-    const searchParams = generateSearchQuery(values);
+    const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
     }
