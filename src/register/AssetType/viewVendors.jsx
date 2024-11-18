@@ -6,7 +6,7 @@ const ViewVendorsSectors = ({
   openModal,
   handleCancel,
   tableData,
-  footer = null,
+  footer = 0,
   width = 800,
   column = [],
 }) => {

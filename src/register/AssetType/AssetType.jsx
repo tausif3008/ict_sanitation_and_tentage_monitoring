@@ -30,7 +30,7 @@ const vendorColumn = [
     key: "user_name",
   },
   {
-    title: "Allotted Sector Quantity",
+    title: "Allotted Quantity",
     dataIndex: "total_allotted_quantity",
     key: "total_allotted_quantity",
     width: "20%",
@@ -51,6 +51,7 @@ const AssetTypeList = () => {
   });
   const [showVendors, setshowVendors] = useState(false);
   const [showVendorsList, setVendorsList] = useState([]); // vendor list
+  const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
   const { VendorListAssetType } = AssetTypeSelectors(); // asset type wise vendor list
 
   const isUpdatedSelector = useSelector(
@@ -172,6 +173,7 @@ const AssetTypeList = () => {
   // get vendors data
   const getVedorsData = (value) => {
     setVendorsList([]);
+    setAllQuantity(0);
     dispatch(getVendorListAssetType(value));
     setshowVendors(true);
   };
@@ -186,6 +188,13 @@ const AssetTypeList = () => {
           };
         }
       );
+      let totalQuantity = VendorListAssetType?.data?.userdetails?.reduce(
+        (accumulator, data) => {
+          return accumulator + Number(data?.total_allotted_quantity || 0);
+        },
+        0
+      );
+      setAllQuantity(totalQuantity);
       setVendorsList(myData); // asset type wise vendor list
     }
   }, [VendorListAssetType]);
@@ -345,6 +354,7 @@ const AssetTypeList = () => {
         handleCancel={handleCancel}
         tableData={showVendorsList || []}
         column={vendorColumn || []}
+        footer={`Total Allotted Quantity : ${allQuantity}`}
       />
     </div>
   );
