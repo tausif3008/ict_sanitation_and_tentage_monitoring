@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
@@ -6,8 +5,10 @@ import card_red from "../assets/Dashboard/card_red.png";
 import card_purple from "../assets/Dashboard/card_purple.png";
 import { message } from "antd";
 import URLS from "../urils/URLS";
+import { useOutletContext } from "react-router";
 
 const IssueCount = () => {
+  const [dict, lang] = useOutletContext();
   const [totalAssets, setTotalAssets] = useState(0);
   const [registeredAssets, setRegisteredAssets] = useState(0);
   const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
@@ -21,6 +22,10 @@ const IssueCount = () => {
     "x-access-token": localStorage.getItem("sessionToken") || "",
   };
 
+  const formatNumber = (number) => {
+    return new Intl.NumberFormat("en-IN").format(number);
+  };
+
   useEffect(() => {
     const fetchAssetData = async () => {
       try {
@@ -31,7 +36,8 @@ const IssueCount = () => {
         const result = await response.json();
 
         if (result.success && result.data) {
-          const { total, registered, under_monitoring, off_monitoring } = result.data.asset_counts;
+          const { total, registered, under_monitoring, off_monitoring } =
+            result.data.asset_counts;
 
           setTotalAssets(total || 0);
           setRegisteredAssets(registered || 0);
@@ -55,9 +61,9 @@ const IssueCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start">
               <span className="text-green-600">
-                Number Of Toilets Cesspool Not Done In 24 hrs
+                {dict.number_of_toilets_cesspool[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{totalAssets}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(totalAssets)}</h2>
             </div>
           </div>
           <img
@@ -71,9 +77,9 @@ const IssueCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start">
               <span className="text-[#eab308]">
-                Number Of Toilets JetSpray Not Deployed
+                {dict.number_of_toilets_jetspray[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{registeredAssets}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(registeredAssets)}</h2>
             </div>
           </div>
           <img
@@ -87,9 +93,9 @@ const IssueCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start">
               <span className="text-[#db2777]">
-                Number Of Toilets Manpower Not Deployed
+                {dict.number_of_toilets_manpower[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{assetsUnderMonitoring}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(assetsUnderMonitoring)}</h2>
             </div>
           </div>
           <img
@@ -103,9 +109,9 @@ const IssueCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start">
               <span className="text-purple-600">
-                Number Of Toilets Order Free
+                {dict.number_of_toilets_odor_free[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{assetsOffMonitoring}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(assetsOffMonitoring)}</h2>
             </div>
           </div>
           <img

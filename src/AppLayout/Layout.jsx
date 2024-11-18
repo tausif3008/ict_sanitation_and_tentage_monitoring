@@ -3,7 +3,7 @@ import Footer from "../footer/Footer";
 import { Outlet, useLocation } from "react-router";
 import MainNavbar from "../navbar/MainNavbar";
 import CopyWrite from "../footer/Copywrite";
-import { DICT } from "../urils/dictionary";
+import { DICT } from "../utils/dictionary";
 import footerBg from "../assets/Dashboard/footerBg.png";
 import { Dropdown, Select } from "antd";
 

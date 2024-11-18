@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
 import dayjs from "dayjs";
@@ -6,16 +5,13 @@ import lines from "../assets/Dashboard/lines.png";
 import URLS from "../urils/URLS";
 import { useOutletContext } from "react-router";
 
-const ToiletDetails = () => {
+const FurnitureDetails = () => {
   const [dict, lang] = useOutletContext();
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedSector, setSelectedSector] = useState(null);
-  const [selectedToilet, setSelectedToilet] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD")); // Default to current date
   const [vendorData, setVendorData] = useState([]);
   const [sectorData, setSectorData] = useState([]);
   const [assetData, setAssetData] = useState([]);
-  const [showAll, setShowAll] = useState(false);
 
   const toiletData = assetData?.asset_types;
 
@@ -73,11 +69,10 @@ const ToiletDetails = () => {
     toiletId = null
   ) => {
     try {
-      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
+      const response = await fetch(`${URLS.baseUrl}/dashboard/furniture`, {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
-          date: selectedDate, // Include the date in the request
           sector_id: sectorId || undefined,
           vendor_id: vendorId || undefined,
           asset_type_id: toiletId || undefined,
@@ -100,72 +95,33 @@ const ToiletDetails = () => {
 
   const handleSectorChange = (value) => {
     setSelectedSector(value);
-    fetchAssetData(value, selectedVendor, selectedToilet);
+    fetchAssetData(value, selectedVendor);
   };
 
   const handleVendorChange = (value) => {
     setSelectedVendor(value);
-    fetchAssetData(selectedSector, value, selectedToilet);
+    fetchAssetData(selectedSector, value);
   };
-
-  const handleToiletChange = (value) => {
-    setSelectedToilet(value);
-    fetchAssetData(selectedSector, selectedVendor, value);
-  };
-
-  const handleDateChange = (date) => {
-    const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
-    setSelectedDate(formattedDate);
-    fetchAssetData(selectedSector, selectedVendor, selectedToilet);
-  };
-
-  const priorityToiletTypes = [
-    "Type-1 FRP Septic Tank",
-    "Type-2 FRP Soak Pit",
-    "Type-3 FRP Urinals",
-    "Type-4 Prefab Steel Septic Tank",
-    "Type-5 Prefab Steel Soak Pit",
-  ];
-
-  const priorityToilets = toiletData?.filter((item) =>
-    priorityToiletTypes.includes(item.type)
-  );
-
-  const otherToilets = toiletData?.filter(
-    (item) => !priorityToiletTypes.includes(item.type)
-  );
-
-  const combinedToilets = [...(priorityToilets || []), ...(otherToilets || [])];
-
-  const displayedToilets = showAll
-    ? combinedToilets
-    : combinedToilets.slice(0, 5);
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
-      <div className="text-xl font-bold">
-        {dict.sanitation_toilet_details[lang]}
-      </div>
+      <div className="text-xl font-bold"> {dict.furniture_details[lang]}</div>
 
       <div className="flex justify-start items-center space-x-6 mb-1">
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-xl">{dict.clean[lang]}</span>
+            <span className="text-sm">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-xl">{dict.unclean[lang]}</span>
+            <span className="text-sm">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker
-          size="middle"
-          defaultValue={dayjs()}
-          onChange={handleDateChange}
-        />
+        <DatePicker size="middle" defaultValue={dayjs()} />
         <Select
           value={selectedSector}
           onChange={handleSectorChange}
@@ -192,44 +148,20 @@ const ToiletDetails = () => {
           ))}
         </Select>
 
-        <Select
-          value={selectedToilet}
-          onChange={handleToiletChange}
-          placeholder={dict.select_toilet[lang]}
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {toiletData?.map((toilet) => (
-            <Select.Option
-              key={toilet.asset_type_id}
-              value={toilet.asset_type_id}
-            >
-              {toilet.name}
-            </Select.Option>
-          ))}
-        </Select>
-
         <Button
           size="medium"
           type="primary"
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
-          onClick={() =>
-            fetchAssetData(selectedSector, selectedVendor, selectedToilet)
-          }
+          onClick={() => fetchAssetData(selectedSector, selectedVendor)}
         >
           {dict.search[lang]}
         </Button>
       </div>
 
-      <div
-        className={`grid ${
-          showAll
-            ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
-            : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
-        } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
-      >
-        {displayedToilets.length > 0 ? (
-          displayedToilets.map((item, index) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+        {toiletData?.length > 0 ? (
+          toiletData.map((item, index) => (
             <Tooltip
               key={index}
               title={
@@ -243,9 +175,7 @@ const ToiletDetails = () => {
               arrowPointAtCenter
             >
               <div
-                className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
-                  showAll ? "" : "h-40"
-                }`}
+                className="relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50"
                 style={{
                   minHeight: "110px",
                 }}
@@ -277,34 +207,12 @@ const ToiletDetails = () => {
           ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
-           {dict.no_data_available[lang]}
+            {dict.no_data_available[lang]}
           </div>
         )}
       </div>
-
-      {!showAll ? (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(true)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-         {dict.see_more[lang]}
-        </Button>
-      ) : (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(false)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-           {dict.show_less[lang]}
-        </Button>
-      )}
-          </div>
+    </div>
   );
 };
 
-export default ToiletDetails;
+export default FurnitureDetails;

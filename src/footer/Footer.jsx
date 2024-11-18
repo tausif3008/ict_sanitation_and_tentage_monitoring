@@ -6,7 +6,7 @@ import {
   PhoneOutlined,
   RightOutlined,
 } from "@ant-design/icons";
-import { DICT } from "../urils/dictionary";
+import { DICT } from "../utils/dictionary";
 
 const Footer = ({ lang = "en" }) => {
   const dict = DICT;

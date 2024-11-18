@@ -7,40 +7,27 @@ import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setVehicleListIsUpdated, setUpdateVehicleEl } from "./vehicleSlice";
+import { setRouteListIsUpdated, setUpdateRoute } from "./routeSlice";
 
 const columns = [
   {
-    title: "Sr. No", // Asset main type
+    title: "Sr. No",
     dataIndex: "sr",
     key: "sr",
     width: 80,
   },
   {
-    title: "Vendor Name",
-    dataIndex: "user_name",
-    key: "user_name",
-  },
-  {
-    title: "Vehicle Type",
-    dataIndex: "type",
-    key: "type",
-  },
-  {
     title: "Vehicle Number",
-    dataIndex: "number",
-    key: "number",
+    dataIndex: "vehicle_number",
+    key: "vehicle_number",
   },
+
   {
-    title: "IMEI Number",
-    dataIndex: "imei",
-    key: "imei",
+    title: "Assigned Route",
+    dataIndex: "route_name",
+    key: "route_name",
   },
-  {
-    title: "Chassis Number",
-    dataIndex: "chassis_no",
-    key: "chassis_no",
-  },
+
   {
     title: "Action",
     dataIndex: "action",
@@ -50,7 +37,7 @@ const columns = [
   },
 ];
 
-const VehicleList = () => {
+const AssignedRouteList = () => {
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(false);
@@ -71,34 +58,34 @@ const VehicleList = () => {
   const getUsers = async () => {
     setLoading(true);
 
-    let uri = URLS.vehicles.path + "/?";
+    let uri = URLS.assignroutes.path + "/?";
     if (params.page) {
       uri = uri + params.page;
     } else if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
 
-    const extraHeaders = { "x-api-version": URLS.vehicles.version };
+    const extraHeaders = { "x-api-version": URLS.assignroutes.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {
       const data = res.data;
       setLoading(false);
 
-      const list = data.vehicles.map((el, index) => {
+      const list = data.assignroutes?.map((el, index) => {
         return {
           ...el,
           sr: index + 1,
           action: (
             <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
               onClick={() => {
-                dispatch(setUpdateVehicleEl({ updateElement: el }));
-                navigate("/vehicle-registration");
+                dispatch(setUpdateRoute({ updateElement: el }));
+                navigate("/assign-route");
               }}
             >
-              <EditOutlined />
+              <EditOutlined></EditOutlined>
             </Button>
           ),
         };
@@ -118,41 +105,37 @@ const VehicleList = () => {
   useEffect(() => {
     getUsers();
     if (isUpdatedSelector) {
-      dispatch(setVehicleListIsUpdated({ isUpdated: false }));
+      dispatch(setRouteListIsUpdated({ isUpdated: false }));
     }
   }, [params, isUpdatedSelector]);
 
   useEffect(() => {
-    dispatch(setUpdateVehicleEl({ updateElement: null }));
+    dispatch(setUpdateRoute({ updateElement: null }));
   }, []);
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="">
       <CommonDivider
-        label={"Vehicle List"}
+        label={"Assigned Route List"}
         compo={
           <Button
-            onClick={() => navigate("/vehicle-registration")}
+            onClick={() => navigate("/assign-route")}
             className="mb-1 bg-green-400"
           >
-            Add Vehicle
+            Assign Route
           </Button>
         }
-      />
+      ></CommonDivider>
 
       <CommonTable
         loading={loading}
-        uri={"vehicle"}
+        uri={"assignroutes"}
         columns={columns}
         details={details}
-        scroll={{ x: 1200, y: 400 }}
-      />
-
-      <div className="mt-4 text-right font-semibold">
-        Total Records: {details.totalRecords || 0}
-      </div>
+        scroll={{ x: 300, y: 400 }}
+      ></CommonTable>
     </div>
   );
 };
 
-export default VehicleList;
+export default AssignedRouteList;

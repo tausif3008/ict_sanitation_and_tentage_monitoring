@@ -68,6 +68,8 @@ import VendorSectorAllocation from "./vendor-section-allocation/vendor-sector";
 import VendorSectorForm from "./vendor-section-allocation/vendor-sector/vendorSectorForm";
 import ConfigSetting from "./setting/ConfigSetting";
 import ConfigSettingForm from "./setting/configSettingSlice/configForm";
+import AssignRouteForm from "./register/route/AssignRouteForm";
+import AssignedRouteList from "./register/route/AssignedRouteList";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -280,6 +282,14 @@ function App() {
               element={<ChangePassword></ChangePassword>}
             ></Route>
             <Route path="route-list" element={<RouteList></RouteList>}></Route>
+            <Route
+              path="assigned-routelist"
+              element={<AssignedRouteList></AssignedRouteList>}
+            ></Route>
+            <Route
+              path="assign-route"
+              element={<AssignRouteForm></AssignRouteForm>}
+            ></Route>
             <Route
               path="add-route"
               element={<AddRouteForm></AddRouteForm>}

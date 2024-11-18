@@ -14,8 +14,11 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import "leaflet-routing-machine/dist/leaflet-routing-machine.css";
 import "leaflet-routing-machine";
+import { useOutletContext } from "react-router";
 
 const MapData = (props) => {
+  const [dict, lang] = useOutletContext();
+
   return (
     <div className="rounded-md">
       <MapComponent {...props}></MapComponent>
@@ -179,6 +182,8 @@ const toiletLatLong = [
 
 
 const MapComponent = ({ tentage = true }) => {
+  const [dict, lang] = useOutletContext();
+
   const mapRef = useRef(null);
   const [userLocation, setUserLocation] = useState({
     lat: 25.435,
@@ -239,18 +244,18 @@ const MapComponent = ({ tentage = true }) => {
   return (
     <div>
       <div className="flex justify-between flex-wrap">
-        <div className="text-xl font-semibold p-2">Locations Of Sanitation</div>
+        <div className="text-xl font-semibold p-2">{dict.location_of_sanitation[lang]}</div>
         <div className="flex text-sm gap-3 items-center justify-end p-1">
           <div className="flex gap-1 justify-center items-center">
-            <div className="h-full flex items-center">Require Cleaning:</div>
+            <div className="h-full flex items-center">{dict.require_cleaning[lang]}</div>
             <img className="h-5 w-5" src={toilet} alt="" />
           </div>
           <div className="flex gap-1 justify-center items-center">
-            <span className="h-full flex items-center">Cleaned:</span>
+            <span className="h-full flex items-center">{dict.cleaned[lang]}</span>
             <img className="h-5 w-5" src={cleanedIcon} alt="" />
           </div>
           <div className="flex gap-1 justify-center items-center">
-            <span className="h-full flex items-center">Under Maintenance:</span>
+            <span className="h-full flex items-center">{dict.under_maintenance[lang]}</span>
             <img className="h-5 w-5" src={UnderMaintenanceIcon} alt="" />
           </div>
         </div>

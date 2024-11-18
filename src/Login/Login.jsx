@@ -3,7 +3,7 @@ import { Button, Form, Input, message, Modal } from "antd";
 import { LockOutlined, UserOutlined } from "@ant-design/icons";
 import loginImage from "../assets/Images/loginImage.jpg";
 import { useNavigate } from "react-router";
-import { DICT } from "../urils/dictionary";
+import { DICT } from "../utils/dictionary";
 import { loginFetch } from "../Fetch/Axios";
 import BeforeLoginUserTypeDropDown from "../register/user/BeforeLoginUserTypeDropDown";
 import "./login.css";
