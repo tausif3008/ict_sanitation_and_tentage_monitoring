@@ -70,12 +70,12 @@ const VendorDetails = () => {
       key: "total_allotted_quantity",
     },
     {
-      title: "Proposed Sectors",
+      title: "Proposed Sectors & Parking",
       dataIndex: "proposedsectors",
       key: "proposed_sectors",
-      render: (record) => (
+      render: (text, record) => (
         <div
-          onClick={() => handleProposedSectorsView(record)}
+          onClick={() => handleProposedSectorsView(text, record)}
           className="text-blue-500 cursor-pointer"
         >
           View
@@ -131,7 +131,7 @@ const VendorDetails = () => {
     },
   ];
 
-  const handleProposedSectorsView = (record) => {
+  const handleProposedSectorsView = (data, record) => {
     setProposedSectors(record);
     setIsModalVisible(true);
   };
@@ -253,17 +253,17 @@ const VendorDetails = () => {
       </div>
 
       <Modal
-        title={`Proposed Sectors`}
+        title={`Proposed Sectors & Parking`}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
         width={800}
       >
-        {proposedSectors?.length ? (
+        {proposedSectors?.proposedsectors?.length ? (
           <>
             <Table
               bordered
-              dataSource={proposedSectors}
+              dataSource={proposedSectors?.proposedsectors}
               rowKey="sector_name"
               pagination={false}
               scroll={{ x: 300, y: 400 }}
@@ -283,7 +283,7 @@ const VendorDetails = () => {
             {/* Display total sector count below the table */}
             <div className="text-right font-semibold mt-2">
               Total Quantity:{" "}
-              {proposedSectors
+              {proposedSectors?.proposedsectors
                 .reduce(
                   (total, sector) => total + Number(sector.quantity || 0),
                   0
@@ -293,6 +293,40 @@ const VendorDetails = () => {
           </>
         ) : (
           <p>No sectors found for this asset type.</p>
+        )}
+        {proposedSectors?.proposedparkings?.length ? (
+          <>
+            <Table
+              bordered
+              dataSource={proposedSectors?.proposedparkings}
+              rowKey="sector_name"
+              pagination={false}
+              scroll={{ x: 300, y: 400 }}
+              columns={[
+                {
+                  title: "Parking Name",
+                  dataIndex: "parking_name",
+                  key: "parking_name",
+                },
+                {
+                  title: "Quantity",
+                  dataIndex: "quantity",
+                  key: "quantity",
+                },
+              ]}
+            />
+            <div className="text-right font-semibold mt-2">
+              Total Quantity:{" "}
+              {proposedSectors?.proposedparkings
+                .reduce(
+                  (total, sector) => total + Number(sector?.quantity || 0),
+                  0
+                )
+                .toLocaleString()}
+            </div>
+          </>
+        ) : (
+          <p>No Parking found for this asset type.</p>
         )}
       </Modal>
     </div>

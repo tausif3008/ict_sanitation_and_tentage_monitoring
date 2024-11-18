@@ -24,29 +24,54 @@ import { useDispatch, useSelector } from "react-redux";
 import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
 import dayjs from "dayjs";
 import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
+import { getParkingData } from "../../parking/parkingSlice";
+import ParkingSelector from "../../parking/parkingSelector";
+import { getValueLabel } from "../../../constant/const";
 
 const { Option } = Select;
 
 const dateFormat = "YYYY-MM-DD";
 
 const VendorDetailsForm = () => {
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
-  const params = useParams();
   const [assetTypes, setAssetTypes] = useState([]);
   const [assetMainTypeId, setAssetMainTypeId] = useState();
+  const [sectorOptions, setSectorOptions] = useState([]);
+  const [quantity, setQuantity] = useState(0);
+  const [parkQuantity, setParkQuantity] = useState(0);
 
+  const dispatch = useDispatch();
+  const [form] = Form.useForm();
+  const params = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const key = location.state?.key;
   const record = location.state?.record;
-
-  // console.log("key", key);
-  console.log("record", record);
+  const { parkingDrop } = ParkingSelector();
 
   // Prepopulate form if editing vendor details
   useEffect(() => {
     if (key === "UpdateKey") {
+      const parkEdit = record?.proposedparkings?.map((data) => {
+        return {
+          quantity: data?.quantity,
+          parking: data?.parking_id,
+        };
+      });
+
+      // Calculate the total parking quantity using reduce
+      const totalParkingQuantity = record?.proposedparkings?.reduce(
+        (total, data) => {
+          return total + Number(data?.quantity); // Add quantity to the total sum
+        },
+        0
+      ); // 0 is the initial value of total
+
+      setParkQuantity(totalParkingQuantity);
+
+      form.setFieldsValue({
+        parking_info: parkEdit,
+      });
       setAssetMainTypeId(record?.asset_main_type_id);
       const updatedDetails = { ...record };
 
@@ -102,8 +127,7 @@ const VendorDetailsForm = () => {
       );
   }, [assetMainTypeId]);
 
-  const [quantity, setQuantity] = useState(0);
-
+  // handle sector
   const handelQuantitySector = () => {
     const vals = form.getFieldsValue();
 
@@ -122,9 +146,27 @@ const VendorDetailsForm = () => {
       }
     }
   };
+  // handle parking
+  const handelQuantityParking = () => {
+    const vals = form.getFieldsValue();
 
-  const dispatch = useDispatch();
+    const selected = [];
+    selected.push(vals.parking);
 
+    if (vals?.sector_info) {
+      for (const key of vals?.parking_info) {
+        if (key?.parking) {
+          if (selected.includes(key.parking)) {
+            message.info("Parking Already Selected!");
+          } else {
+            selected.push(key.parking);
+          }
+        }
+      }
+    }
+  };
+
+  // sector quantity
   const handelQuantity = () => {
     const vals = form.getFieldsValue();
 
@@ -140,6 +182,22 @@ const VendorDetailsForm = () => {
 
     setQuantity(() => {
       return total;
+    });
+  };
+
+  // parking quantity
+  const handelParkQuantity = () => {
+    const vals = form.getFieldsValue();
+    let total = 0;
+
+    if (vals?.parking_info) {
+      for (const key of vals?.parking_info) {
+        if (Number(key?.quantity)) total = total + Number(key?.quantity);
+      }
+    }
+
+    setParkQuantity(() => {
+      return Number(total);
     });
   };
 
@@ -162,8 +220,8 @@ const VendorDetailsForm = () => {
 
     const vals = form.getFieldsValue();
 
-    const selectedSectors = [];
-    const quantities = [];
+    const selectedSectors = []; // id
+    const quantities = []; // quantity
 
     selectedSectors.push(vals.sector);
     quantities.push(vals.quantity);
@@ -175,6 +233,7 @@ const VendorDetailsForm = () => {
             for (const key1 of sectorOptions) {
               if (key1?.value == key?.sector) {
                 message.error(key1.label + " Found duplicate");
+                setLoading(false);
                 return;
               }
             }
@@ -189,8 +248,39 @@ const VendorDetailsForm = () => {
     values.proposed_sectors_quantity = quantities.join(",");
     values.proposed_sectors_id = selectedSectors.join(",");
     values.total_allotted_quantity = quantity;
-
     delete values["sector_info"];
+
+    //  parking
+    const selectedParking = []; // id
+    const park_quantity = []; // quantity
+
+    if (vals?.parking_info) {
+      for (const key of vals?.parking_info) {
+        if (key?.parking) {
+          if (selectedParking.includes(key.parking)) {
+            for (const key1 of sectorOptions) {
+              if (key1?.value == key?.parking) {
+                const keyLabel = getValueLabel(
+                  key1?.value,
+                  parkingDrop,
+                  "parking"
+                );
+                message.error(keyLabel + " Found duplicate");
+                setLoading(false);
+                return;
+              }
+            }
+          } else {
+            selectedParking.push(key.parking);
+            park_quantity.push(key.quantity);
+          }
+        }
+      }
+    }
+
+    values.proposed_parkings_quantity = park_quantity.join(",");
+    values.proposed_parkings_id = selectedParking.join(",");
+    delete values["parking_info"];
 
     const res = await postData(
       getFormData(values),
@@ -203,8 +293,6 @@ const VendorDetailsForm = () => {
     );
 
     if (res) {
-      setLoading(false);
-
       if (res.data.success) {
         form.resetFields();
         dispatch(setVendorDetailsListIsUpdated({ isUpdated: true }));
@@ -214,6 +302,7 @@ const VendorDetailsForm = () => {
         }
       }
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -222,8 +311,6 @@ const VendorDetailsForm = () => {
       navigate("/vendor");
     }
   }, [params, navigate]);
-
-  const [sectorOptions, setSectorOptions] = useState([]);
 
   useEffect(() => {
     optionsMaker(
@@ -234,6 +321,10 @@ const VendorDetailsForm = () => {
       "",
       "sector_id"
     );
+
+    // get parking data
+    const url = URLS?.parking?.path;
+    dispatch(getParkingData(url));
   }, []);
 
   return (
@@ -280,13 +371,12 @@ const VendorDetailsForm = () => {
               label={<div className="font-semibold">Asset Type</div>}
               name="asset_type_id"
               rules={[{ required: true, message: "Please enter asset type" }]}
-              className="mb-4"
+              className="mb-4 w-full"
             >
               <Select
                 showSearch
                 placeholder="Select Asset Type"
                 optionFilterProp="children"
-                style={{ width: 300 }}
               >
                 {assetTypes.map((option) => (
                   <Option key={option.value} value={option.value}>
@@ -474,6 +564,85 @@ const VendorDetailsForm = () => {
                     icon={<PlusOutlined />}
                   >
                     Add Sector
+                  </Button>
+                </Form.Item>
+              </>
+            )}
+          </Form.List>
+
+          <div className="col-span-3 mb-4 font-semibold ">
+            Total Alloted Parking Quantity: {parkQuantity}
+          </div>
+          <Form.List name="parking_info">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name, ...restField }) => (
+                  <div
+                    className="grid grid-cols-3 justify-start items-start gap-3 mt-3 mb-2"
+                    key={key}
+                  >
+                    <div className="w-full ">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "parking"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Parking!",
+                          },
+                        ]}
+                      >
+                        <Select
+                          placeholder="Select a parking"
+                          onChange={handelQuantityParking}
+                        >
+                          {parkingDrop?.map((option) => (
+                            <Option key={option?.value} value={option?.value}>
+                              {option?.label}
+                            </Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </div>
+
+                    <div className="">
+                      <Form.Item
+                        {...restField}
+                        name={[name, "quantity"]}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please enter quantity!",
+                          },
+                        ]}
+                      >
+                        <InputNumber
+                          onInput={handelParkQuantity}
+                          className="w-full"
+                          placeholder="Enter quantity"
+                        />
+                      </Form.Item>
+                    </div>
+
+                    <div className="flex ">
+                      <MinusCircleOutlined
+                        onClick={() => {
+                          remove(name);
+                          handelParkQuantity();
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
+
+                <Form.Item>
+                  <Button
+                    type="dashed"
+                    onClick={() => add()}
+                    block
+                    icon={<PlusOutlined />}
+                  >
+                    Add Parking
                   </Button>
                 </Form.Item>
               </>
