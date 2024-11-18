@@ -2,9 +2,11 @@ import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
 import lines from "../assets/Dashboard/lines.png";
 import URLS from "../urils/URLS";
+import { useOutletContext } from "react-router";
 
 const Details = () => {
- 
+  const [dict, lang] = useOutletContext();
+
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
@@ -67,17 +69,19 @@ const Details = () => {
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
-      <div className="text-xl font-bold">Sanitation Toilet Details</div>
+      <div className="text-xl font-bold">
+        {dict.sanitation_toilet_details[lang]}
+      </div>
 
       <div className="flex justify-start items-center space-x-6 mb-1">
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm">Clean</span>
+            <span className="text-sm">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-sm">Unclean</span>
+            <span className="text-sm">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
@@ -137,7 +141,7 @@ const Details = () => {
           ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
-            No data available
+            {dict.no_data_available[lang]}
           </div>
         )}
       </div>
@@ -150,7 +154,7 @@ const Details = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-          See More
+          {dict.see_more[lang]}
         </Button>
       ) : (
         <Button
@@ -160,7 +164,7 @@ const Details = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-          Show Less
+          {dict.show_less[lang]}
         </Button>
       )}
     </div>

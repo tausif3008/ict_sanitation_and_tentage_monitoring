@@ -1,23 +1,27 @@
 
-import React from "react";
+import React, { useState } from "react";
 import phone from "../assets/Dashboard/phone.png";
 import phoneIcon from "../assets/Dashboard/phone-alt.png";
 import Counts from "./Counts";
 import Details from "./Details";
 import IssueCount from "./IssueCount";
+import { DICT } from "../utils/dictionary";
 
 
 const VendorDashboard = () => {
+  const localLang = localStorage.getItem("lang");
+  const [lang, setLang] = useState(localLang || "en");
+  const props = { dict: DICT, lang: lang };
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3 ">
       <div className="w-full border lg:col-span-1 col-span-4 shadow-md bg-white rounded-md">
-        <Counts></Counts>
+        <Counts {...props}></Counts>
       </div>
       <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md">
-        <Details></Details>
+        <Details {...props}></Details>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <IssueCount></IssueCount>  
+        <IssueCount {...props}></IssueCount>  
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         {/* <CleanlinessReport></CleanlinessReport>  */}

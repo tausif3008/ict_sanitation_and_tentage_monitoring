@@ -97,29 +97,38 @@ const AddRouteForm = () => {
             <Form.Item label="End Point" name="end point">
               <Input placeholder="enter end point" className="rounded-none" />
             </Form.Item>
+            <Form.Item label="Middle Points" name="middle_points">
+              <Select
+                mode="multiple"
+                placeholder="Select middle points"
+                className="rounded-none"
+                options={[
+                  { value: "point1", label: "Point 1" },
+                  { value: "point2", label: "Point 2" },
+                  { value: "point3", label: "Point 3" },
+                  { value: "point4", label: "Point 4" },
+                ]}
+              />
+            </Form.Item>
             <Form.Item label="Distance" name="rc">
               <Input
                 placeholder="add distance in meters"
                 className="rounded-none"
               />
             </Form.Item>
-            <Form.Item label="Add Sector" name="rc">
-              <Input placeholder="select sector" className="rounded-none" />
-            </Form.Item>
-            
           </div>
           <div className="flex justify-end">
-              <Form.Item>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="w-fit rounded-none bg-5c"
-                >
-                  {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
-                </Button>
-              </Form.Item>
-            </div>
+            <Form.Item>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="w-fit rounded-none bg-5c"
+              >
+                {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
+              </Button>
+            </Form.Item>
+          </div>
         </Form>
       </div>
     </div>

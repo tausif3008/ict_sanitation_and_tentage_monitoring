@@ -129,14 +129,14 @@ const AssetsList = () => {
     },
     {
       title: "Sector",
-      dataIndex: "sector",
-      key: "sector",
+      dataIndex: "sector_name",
+      key: "sector_name",
       width: 100,
     },
     {
       title: "Circle",
-      dataIndex: "circle_id",
-      key: "circle_id",
+      dataIndex: "circle_name",
+      key: "circle_name",
       width: 100,
     },
     {
@@ -210,13 +210,12 @@ const AssetsList = () => {
             responseListName="assetmaintypes"
             responseLabelName="name"
             responseIdName="asset_main_type_id"
-            // selectLabel={"Toilets & Tentage Category"}
+            selectLabel={"Category"}
             selectName={"asset_main_type_id"}
             required={false}
             // RequiredMessage={"Main type is required!"}
           ></CommonFormDropDownMaker>
         }
-        fields={[{ name: "vendor_asset_code", label: "" }]}
         // fields={[{ name: "vendor_asset_code", label: "" }]}
       ></CommonSearchForm>
 

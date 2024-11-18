@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
-import { DICT } from "../urils/dictionary";
+import { DICT } from "../utils/dictionary";
 import img1 from "../assets/Images/goup.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 
@@ -184,8 +184,8 @@ const Navbar = ({ lang, setLang }) => {
       {
         key: "4",
         label: (
-          <Link className="text-black no-underline" to="/gis-services">
-            GPS Device List
+          <Link className="text-black no-underline" to="/assigned-routelist">
+            Assigned Route List
           </Link>
         ),
       },
@@ -259,10 +259,7 @@ const Navbar = ({ lang, setLang }) => {
       {
         key: "13",
         label: (
-          <Link
-            className="text-black no-underline"
-            to="/config-setting"
-          >
+          <Link className="text-black no-underline" to="/config-setting">
             Configuration Settings
           </Link>
         ),

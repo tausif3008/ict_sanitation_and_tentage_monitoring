@@ -123,6 +123,7 @@ const URLS = {
   editSettings: { path: "/settings/edit", version: 5.43 },
 
   routes: { path: "/routes", version: 5.43 },
+  assignroutes: { path: "/assignroutes", version: 5.43 },
 };
 
 export default URLS;

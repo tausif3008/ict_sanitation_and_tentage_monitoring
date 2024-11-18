@@ -2,7 +2,7 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-
+import { useOutletContext } from "react-router";
 import good from "./../assets/Dashboard/tentGood.png";
 import tentUnderMaintenance from "./../assets/Dashboard/tentUnderMaintenance.png";
 import TentRequiresCleaning from "./../assets/Dashboard/TentReqiresCleaning.png";
@@ -184,21 +184,23 @@ const tents = [
 ];
 
 const MapData = () => {
+    const [dict, lang] = useOutletContext();
+
   return (
     <div>
       <div className="flex justify-between flex-wrap">
-        <div className="text-xl font-semibold p-2">Locations Of Tents</div>
+        <div className="text-xl font-semibold p-2">{dict.location_of_tents[lang]}</div>
         <div className="flex text-sm gap-3 items-center justify-end p-1">
           <div className="flex gap-1 justify-center items-center">
-            <div className="h-full flex items-center">Requires Attentions:</div>
+            <div className="h-full flex items-center">{dict.require_attention[lang]}</div>
             <img className="h-5 w-5" src={TentRequiresCleaning} alt="" />
           </div>
           <div className="flex gap-1 justify-center items-center">
-            <span className="h-full flex items-center">Good:</span>
+            <span className="h-full flex items-center">{dict.good[lang]}</span>
             <img className="h-5 w-5" src={good} alt="" />
           </div>
           <div className="flex gap-1 justify-center items-center">
-            <span className="h-full flex items-center">Under Maintenance:</span>
+            <span className="h-full flex items-center">{dict.under_maintenance[lang]}</span>
             <img className="h-5 w-5" src={tentUnderMaintenance} alt="" />
           </div>
         </div>

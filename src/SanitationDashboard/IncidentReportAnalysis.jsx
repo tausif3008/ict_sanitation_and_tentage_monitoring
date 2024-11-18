@@ -1,6 +1,10 @@
 import React from "react";
+import { useOutletContext } from "react-router";
+
 
 const IncidentReportAnalysis = () => {
+  const [dict, lang] = useOutletContext();
+
   const highFrequencySectors = [
     { sector: "Sector A", circle: "Circle 1", count: 50 },
     { sector: "Sector B", circle: "Circle 2", count: 35 },
@@ -16,20 +20,20 @@ const IncidentReportAnalysis = () => {
   return (
     <div className="bg-white p-2 rounded-md">
       <div className="flex justify-between items-center mb-4">
-        <div className="text-xl font-bold">Incident Report Analysis</div>
-        <span className="text-gray-500">Last 24 Hrs</span>
+        <div className="text-xl font-bold">{dict.incident_report_analysis[lang]}</div>
+        <span className="text-gray-500">{dict.last_24_hrs[lang]}</span>
       </div>
 
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
             <div className="text-red-600 font-semibold flex gap-1 mb-2">
-              <span>High Frequency Sectors</span>
+              <span>{dict.high_frequency_sector[lang]}</span>
             </div>
             <ul className="mt-2">
               <li className="flex justify-between font-semibold border-b pb-1">
-                <span>Sector</span>
-                <span>Incidents</span>
+                <span>{dict.sector[lang]}</span>
+                <span>{dict.incidents[lang]}</span>
               </li>
               {highFrequencySectors.map((item, index) => (
                 <li
@@ -37,7 +41,7 @@ const IncidentReportAnalysis = () => {
                   className="flex justify-between py-2 border-b last:border-b-0"
                 >
                   <span>{item.sector}</span>
-                  <span className="font-semibold">{item.count} incidents</span>
+                  <span className="font-semibold">{item.count}{dict.incidents[lang]}</span>
                 </li>
               ))}
             </ul>
@@ -48,12 +52,12 @@ const IncidentReportAnalysis = () => {
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
             <div className="text-green-600 font-semibold flex gap-1 mb-2">
-              <span>Low Frequency Sectors</span>
+              <span>{dict.low_frequency_sector[lang]}</span>
             </div>
             <ul className="mt-2">
               <li className="flex justify-between font-semibold border-b pb-1">
-                <span>Sector</span>
-                <span>Incidents</span>
+                <span>{dict.sector[lang]}</span>
+                <span>{dict.incidents[lang]}</span>
               </li>
               {lowFrequencySectors.map((item, index) => (
                 <li
@@ -61,7 +65,7 @@ const IncidentReportAnalysis = () => {
                   className="flex justify-between py-2 border-b last:border-b-0"
                 >
                   <span>{item.sector}</span>
-                  <span className="font-semibold">{item.count} incidents</span>
+                  <span className="font-semibold">{item.count}{dict.incidents[lang]}</span>
                 </li>
               ))}
             </ul>
