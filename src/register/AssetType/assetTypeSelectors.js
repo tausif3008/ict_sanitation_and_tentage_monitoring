@@ -6,6 +6,9 @@ const AssetTypeSelectors = () => {
   const AssetType = useSelector((state) => state?.assetTypeUpdateEl.type_data); // asset type data
   const loading = useSelector((state) => state?.assetTypeUpdateEl.loading);
   const SlaData = useSelector((state) => state?.assetTypeUpdateEl.sla_data); // Sla Data
+  const VendorListAssetType = useSelector(
+    (state) => state?.assetTypeUpdateEl.vendor_assetType
+  ); // asset type wise vendor list
 
   const AssetMainTypeDrop = AssetMainType?.data?.assetmaintypes?.map((data) => {
     // asset main type dropdown
@@ -41,6 +44,7 @@ const AssetTypeSelectors = () => {
     AssetMainTypeDrop,
     AssetTypeDrop,
     SLATypeDrop,
+    VendorListAssetType,
   };
 };
 

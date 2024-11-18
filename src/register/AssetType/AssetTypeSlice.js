@@ -1,6 +1,7 @@
 // slices/counterSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../Axios/commonAxios";
+import URLS from "../../urils/URLS";
 
 const initialState = {
   loading: false,
@@ -9,6 +10,7 @@ const initialState = {
   assetUpdateEl: null,
   isUpdated: false,
   sla_data: null,
+  vendor_assetType: null,
 };
 
 const assetTypeSlice = createSlice({
@@ -32,6 +34,9 @@ const assetTypeSlice = createSlice({
     },
     postSla: (state, action) => {
       state.sla_data = action.payload;
+    },
+    postVendorAssetType: (state, action) => {
+      state.vendor_assetType = action.payload;
     },
   },
 });
@@ -75,6 +80,21 @@ export const getSLATypes = (url) => async (dispatch) => {
   }
 };
 
+// get asset type wise vendor list
+export const getVendorListAssetType = (Id) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(
+      `${URLS?.vendorDetailsAssetType?.path}${Id}`
+    );
+    dispatch(postVendorAssetType(res?.data));
+  } catch (error) {
+    console.error("In get asset type wise vendor list error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 export const {
   setUpdateAssetEl,
   setAssetTypeListIsUpdated,
@@ -82,5 +102,6 @@ export const {
   postSuccess,
   postType,
   postSla,
+  postVendorAssetType,
 } = assetTypeSlice.actions;
 export default assetTypeSlice.reducer;
