@@ -23,7 +23,7 @@ import { Image } from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
-import { dateOptions } from "../constant/const";
+import { dateOptions, getValueLabel } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import {} from "../register/AssetType/AssetTypeSlice";
@@ -32,6 +32,10 @@ import CommonTable from "../commonComponents/CommonTable";
 import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import moment from "moment/moment";
+import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
+import CircleSelector from "../Reports/CircleSlice/circleSelector";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -45,7 +49,9 @@ const Monitoring = () => {
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
-  const { VendorListDrop } = VendorSupervisorSelector();
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { SectorListDrop } = VendorSectorSelectors(); // sector
+  const { CircleListDrop } = CircleSelector(); // circle
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
@@ -129,6 +135,8 @@ const Monitoring = () => {
 
   useEffect(() => {
     dispatch(getVendorList()); // vendor list
+    dispatch(getSectorsList()); // all sectors list
+    dispatch(getAllCircleList()); // all circle list
 
     return () => {};
   }, []);
@@ -210,8 +218,11 @@ const Monitoring = () => {
     {
       title: "Assets Code",
       dataIndex: "asset_code",
-      key: "assetsCode",
+      key: "asset_code",
       width: 110,
+      render: (text, record) => {
+        return text ? `${text}-${record?.unit_no}` : "";
+      },
     },
     // {
     //   title: "Index Number",
@@ -234,9 +245,28 @@ const Monitoring = () => {
       },
     },
     {
-      title: "remark",
-      dataIndex: "remark",
-      key: "remark",
+      title: "Vendor Name",
+      dataIndex: "vendor_id",
+      key: "vendor_id",
+      render: (text) => {
+        return getValueLabel(text, VendorListDrop, "user");
+      },
+    },
+    {
+      title: "Sector Name",
+      dataIndex: "sector_id",
+      key: "sector_id",
+      render: (text) => {
+        return getValueLabel(text, SectorListDrop, "sector");
+      },
+    },
+    {
+      title: "Circle Name",
+      dataIndex: "circle_id",
+      key: "circle_id",
+      render: (text) => {
+        return getValueLabel(text, CircleListDrop, "circle");
+      },
     },
     {
       title: "Date",
@@ -245,6 +275,11 @@ const Monitoring = () => {
       render: (text) => {
         return text ? moment(text).format("DD-MMM-YYYY") : "";
       },
+    },
+    {
+      title: "remark",
+      dataIndex: "remark",
+      key: "remark",
     },
     {
       title: "Action",
