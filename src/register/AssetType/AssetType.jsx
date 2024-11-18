@@ -33,7 +33,7 @@ const vendorColumn = [
     title: "Allotted Sector Quantity",
     dataIndex: "total_allotted_quantity",
     key: "total_allotted_quantity",
-    width: "30%",
+    width: "20%",
   },
 ];
 
