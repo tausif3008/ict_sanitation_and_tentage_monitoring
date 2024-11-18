@@ -106,12 +106,23 @@ const VendorDetails = () => {
       key: "action",
       fixed: "right",
       width: 80,
-      render: (_, record) => (
+      render: (text, record) => (
         <Button
           className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
           onClick={() => {
+            const newObject = Object.keys(record)
+              .filter((key) => key !== "action") // Filter out 'action'
+              .reduce((obj, key) => {
+                obj[key] = record[key]; // Rebuild the object without 'action'
+                return obj;
+              }, {});
             dispatch(setUpdateVendorDetailsEl({ updateElement: record }));
-            navigate("/vendor/add-vendor-details-form/" + params.id);
+            navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
+              state: {
+                key: "UpdateKey",
+                record: newObject, // Pass the record as part of the state
+              },
+            });
           }}
         >
           <EditOutlined />
@@ -215,7 +226,12 @@ const VendorDetails = () => {
               <Button
                 className="bg-orange-300 mb-1"
                 onClick={() =>
-                  navigate("/vendor/add-vendor-details-form/" + params.id)
+                  // navigate("/vendor/add-vendor-details-form/" + params.id)
+                  navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
+                    state: {
+                      key: "AddKey",
+                    },
+                  })
                 }
               >
                 Add Details

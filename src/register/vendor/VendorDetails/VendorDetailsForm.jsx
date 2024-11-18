@@ -19,7 +19,7 @@ import { postData } from "../../../Fetch/Axios";
 import URLS from "../../../urils/URLS";
 import { getFormData } from "../../../urils/getFormData";
 import optionsMaker from "../../../urils/OptionMaker";
-import { useNavigate, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
 import dayjs from "dayjs";
@@ -36,17 +36,19 @@ const VendorDetailsForm = () => {
   const [assetTypes, setAssetTypes] = useState([]);
   const [assetMainTypeId, setAssetMainTypeId] = useState();
 
-  const vendorDetailsUpdateElSelector = useSelector(
-    (state) => state.vendorDetailsSlice?.vendorDetailsUpdateEl
-  );
-
   const navigate = useNavigate();
+  const location = useLocation();
+  const key = location.state?.key;
+  const record = location.state?.record;
+
+  // console.log("key", key);
+  console.log("record", record);
 
   // Prepopulate form if editing vendor details
-
   useEffect(() => {
-    if (vendorDetailsUpdateElSelector) {
-      const updatedDetails = { ...vendorDetailsUpdateElSelector };
+    if (key === "UpdateKey") {
+      setAssetMainTypeId(record?.asset_main_type_id);
+      const updatedDetails = { ...record };
 
       updatedDetails.date_of_allocation = dayjs(
         updatedDetails.date_of_allocation
@@ -85,10 +87,9 @@ const VendorDetailsForm = () => {
       }
       form.setFieldsValue(updatedDetails);
     }
-  }, [vendorDetailsUpdateElSelector, form]);
+  }, [key, record, form]);
 
   // Populate asset types for selection
-
   useEffect(() => {
     if (assetMainTypeId)
       optionsMaker(
@@ -155,8 +156,8 @@ const VendorDetailsForm = () => {
       values.date_of_allocation = values.date_of_allocation.format(dateFormat);
     }
 
-    if (vendorDetailsUpdateElSelector) {
-      values.vendor_detail_id = vendorDetailsUpdateElSelector.vendor_detail_id;
+    if (key === "UpdateKey") {
+      values.vendor_detail_id = record?.vendor_detail_id;
     }
 
     const vals = form.getFieldsValue();
@@ -193,7 +194,7 @@ const VendorDetailsForm = () => {
 
     const res = await postData(
       getFormData(values),
-      vendorDetailsUpdateElSelector
+      key === "UpdateKey"
         ? URLS.editVendorDetails.path
         : URLS.addVendorDetails.path,
       {
@@ -208,7 +209,7 @@ const VendorDetailsForm = () => {
         form.resetFields();
         dispatch(setVendorDetailsListIsUpdated({ isUpdated: true }));
 
-        if (vendorDetailsUpdateElSelector) {
+        if (key === "UpdateKey") {
           navigate("/vendor/add-vendor-details/" + params.id);
         }
       }
@@ -252,8 +253,8 @@ const VendorDetailsForm = () => {
 
           <div className="text-d9 text-2xl w-full flex items-end justify-between ">
             <div className="font-bold">
-              {vendorDetailsUpdateElSelector
-                ? "Update Vendor Details {userName}<"
+              {key === "UpdateKey"
+                ? `Update Vendor Details ${record?.user_name}`
                 : "Vendor Details"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
@@ -487,7 +488,7 @@ const VendorDetailsForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {vendorDetailsUpdateElSelector ? "Update" : "Register"}
+                {key === "UpdateKey" ? "Update" : "Register"}
               </Button>
             </Form.Item>
           </div>
