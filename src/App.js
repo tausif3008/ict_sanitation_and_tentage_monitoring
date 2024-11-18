@@ -66,6 +66,8 @@ import VendorSupervisorRegistration from "./vendor/VendorSupervisorRegistration"
 import VendorSupervisorForm from "./vendor/VendorSupervisorRegistration/VendorSupervisorForm";
 import VendorSectorAllocation from "./vendor-section-allocation/vendor-sector";
 import VendorSectorForm from "./vendor-section-allocation/vendor-sector/vendorSectorForm";
+import ConfigSetting from "./setting/ConfigSetting";
+import ConfigSettingForm from "./setting/configSettingSlice/configForm";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -311,6 +313,14 @@ function App() {
             <Route
               path="/vendor-sector-form"
               element={<VendorSectorForm></VendorSectorForm>}
+            ></Route>
+            <Route
+              path="/config-setting"
+              element={<ConfigSetting></ConfigSetting>}
+            ></Route>
+            <Route
+              path="/config-setting-form"
+              element={<ConfigSettingForm></ConfigSettingForm>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>

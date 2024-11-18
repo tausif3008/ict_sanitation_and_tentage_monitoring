@@ -14,6 +14,7 @@ import vendorWiseSlice from "../Reports/VendorwiseReports/vendorslice";
 import userTypeSlice from "../permission/UserTypePermission/userTypeSlice";
 import vendorSupervisorSlice from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import vendorSectorSlice from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import configSlice from "../setting/configSettingSlice/configSlice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
   userTypeSlice: userTypeSlice,
   vendorSupervisorSlice: vendorSupervisorSlice,
   vendorSectorSlice: vendorSectorSlice,
+  configSlice: configSlice,
 });
 
 export default rootReducer;

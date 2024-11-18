@@ -117,6 +117,10 @@ const URLS = {
   // sla types
   slaTypes: { path: "/sla-types", version: 5.43 },
 
+  // config settings
+  getSettings: { path: "/settings/get", version: 5.43 },
+  editSettings: { path: "/settings/edit", version: 5.43 },
+
   routes: { path: "/routes", version: 5.43 },
 };
 

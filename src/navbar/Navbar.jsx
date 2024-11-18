@@ -256,6 +256,17 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      {
+        key: "13",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/config-setting"
+          >
+            Configuration Settings
+          </Link>
+        ),
+      },
     ];
   };
 
