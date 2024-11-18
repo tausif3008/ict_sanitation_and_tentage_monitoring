@@ -265,6 +265,7 @@ const VendorDetails = () => {
               bordered
               dataSource={proposedSectors?.proposedsectors}
               rowKey="sector_name"
+              className="mb-4"
               pagination={false}
               scroll={{ x: 300, y: 400 }}
               columns={[
@@ -280,16 +281,6 @@ const VendorDetails = () => {
                 },
               ]}
             />
-            {/* Display total sector count below the table */}
-            <div className="text-right font-semibold mt-2">
-              Total Quantity:{" "}
-              {proposedSectors?.proposedsectors
-                .reduce(
-                  (total, sector) => total + Number(sector.quantity || 0),
-                  0
-                )
-                .toLocaleString()}
-            </div>
           </>
         ) : (
           <p>No sectors found for this asset type.</p>
@@ -298,6 +289,7 @@ const VendorDetails = () => {
           <>
             <Table
               bordered
+              className="mb-4"
               dataSource={proposedSectors?.proposedparkings}
               rowKey="sector_name"
               pagination={false}
@@ -315,18 +307,25 @@ const VendorDetails = () => {
                 },
               ]}
             />
-            <div className="text-right font-semibold mt-2">
-              Total Quantity:{" "}
-              {proposedSectors?.proposedparkings
-                .reduce(
-                  (total, sector) => total + Number(sector?.quantity || 0),
-                  0
-                )
-                .toLocaleString()}
-            </div>
           </>
         ) : (
           <p>No Parking found for this asset type.</p>
+        )}
+        {(proposedSectors?.proposedsectors?.length ||
+          proposedSectors?.proposedparkings?.length) && (
+          <div className="text-right font-semibold mt-2">
+            Total Quantity:{" "}
+            {(
+              proposedSectors?.proposedparkings?.reduce(
+                (total, park) => total + Number(park?.quantity || 0),
+                0
+              ) +
+              proposedSectors?.proposedsectors?.reduce(
+                (total, sector) => total + Number(sector?.quantity || 0),
+                0
+              )
+            ).toLocaleString()}
+          </div>
         )}
       </Modal>
     </div>

@@ -247,7 +247,7 @@ const VendorDetailsForm = () => {
 
     values.proposed_sectors_quantity = quantities.join(",");
     values.proposed_sectors_id = selectedSectors.join(",");
-    values.total_allotted_quantity = quantity;
+    values.total_allotted_quantity = Number(quantity) + parkQuantity;
     delete values["sector_info"];
 
     //  parking
@@ -448,7 +448,7 @@ const VendorDetailsForm = () => {
             </Form.Item>
 
             <div className="col-span-3 font-semibold ">
-              Total Alloted Quantity: {quantity}
+              Total Alloted Quantity: {quantity + parkQuantity}
             </div>
 
             <div className="col-span-3 grid grid-cols-3 justify-start items-start gap-3 mt-3 mb-2">
@@ -570,9 +570,9 @@ const VendorDetailsForm = () => {
             )}
           </Form.List>
 
-          <div className="col-span-3 mb-4 font-semibold ">
+          {/* <div className="col-span-3 mb-4 font-semibold ">
             Total Alloted Parking Quantity: {parkQuantity}
-          </div>
+          </div> */}
           <Form.List name="parking_info">
             {(fields, { add, remove }) => (
               <>
