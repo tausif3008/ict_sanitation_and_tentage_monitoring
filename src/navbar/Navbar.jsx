@@ -5,7 +5,7 @@ import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
-import img1 from "../assets/Images/goup.png";
+import img1 from "../assets/Images/goup2.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";
@@ -448,7 +448,7 @@ const Navbar = ({ lang, setLang }) => {
               onClick={() => {
                 logoutFetch();
                 localStorage.clear();
-                navigate("/home");
+                navigate("/login");
               }}
             >
               Logout
@@ -524,20 +524,21 @@ const Navbar = ({ lang, setLang }) => {
             className="no-underline d-flex"
           >
             <img
-              src={img2}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
-                isNavbarTransition ? "h-10" : "h-14"
-              }`}
-              alt="MahaKumbh 2025 Logo"
-            />
-
-            <img
               src={img1}
               className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
                 isNavbarTransition ? "h-10" : "h-14"
               }`}
-              alt="MahaKumbh 2025 Logo"
+              alt="UP Govt Logo"
             />
+
+            <img
+              src={img2}
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
+                isNavbarTransition ? "h-10" : "h-14"
+              }`}
+              alt="Maha Kumbh 2025 Logo"
+            />
+            
           </Link>
 
           <div
@@ -546,7 +547,7 @@ const Navbar = ({ lang, setLang }) => {
           >
             <span className="capitalize mr-1">{title} </span>
             <Link
-              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/login"}
               className="no-underline text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
             >
               ICT Sanitation and Tentage Monitoring System
@@ -558,7 +559,7 @@ const Navbar = ({ lang, setLang }) => {
           <div className="z-50  flex items-center h-12 justify-center ">
             <div className="hidden mt-0 xl:flex gap-1 justify-start items-center z-50 text-base font-semibold h-fit text-black lg:text-base">
               {!loggedIn && (
-                <Link to={"/home"} className="no-underline text-black text-sm">
+                <Link to={"/login"} className="no-underline text-black text-sm">
                   <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                     {dict.home[lang]}
                   </div>
