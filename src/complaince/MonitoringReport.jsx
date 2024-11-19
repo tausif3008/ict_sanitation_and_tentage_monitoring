@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Table, Image, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
@@ -6,6 +6,7 @@ import moment from "moment"; // For date formatting
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import html2pdf from "html2pdf.js";
 
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
@@ -18,6 +19,7 @@ const MonitoringReport = () => {
   const [assetDetails, setAssetDetails] = useState({});
   const params = useParams();
   const navigate = useNavigate();
+  const contentRef = useRef();
 
   // Fetch monitoring details from the API
   const getDetails = async () => {
@@ -264,6 +266,130 @@ const MonitoringReport = () => {
     doc.save("Monitoring-Report.pdf");
   };
 
+  const downloadPDF = () => {
+    // Create an HTML table dynamically or have it in your JSX
+    const tableHTML = `
+      <div style="position: relative; padding: 20px; margin-bottom: 30px;">
+        <!-- Top Left Image -->
+        <img 
+          src="${IMAGELIST?.govt_logo}" 
+          style="position: absolute; left: 20px; top: 5px; height: 70px; width: 70px; margin-left: 20px; margin-top: 20px;" 
+        />
+    
+        <!-- Top Right Image -->
+        <img 
+          src="${IMAGELIST?.kumbh}" 
+          style="position: absolute; right: 20px; top: 5px; height: 70px; width: 70px; margin-right: 20px; margin-top: 20px;" 
+        />
+    
+        <h5 style="text-align: center; margin-bottom: 30px;">ICT Sanitation and Tentage Monitoring System</h5>
+        <div style="margin: 20px; margin-top: 30px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">
+          <div style="margin-bottom: 15px;">
+            <strong>Circle:</strong> <span>${assetDetails?.circle_name}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Sector:</strong> <span>${assetDetails?.sector_name}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Latitude:</strong> <span>${assetDetails?.latitude}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Longitude:</strong> <span>${assetDetails?.longitude}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Unit Number:</strong> <span>${assetDetails?.unit_no}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Submitted Date:</strong> <span>${moment(
+              assetDetails?.submitted_date
+            ).format("DD-MMM-YYYY  hh:mm A")}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Remark:</strong> <span>${assetDetails?.remark}</span>
+          </div>
+        </div>
+    
+        <div style="margin: 20px;">
+          <h3 style="text-align: center; margin-bottom: 30px;">Monitoring Report</h3>
+          <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Sr.</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (English)</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (Hindi)</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${details
+                .map(
+                  (item, index) => `
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        index + 1
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        item?.question_en || "N/A"
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd; font-family: 'Noto Sans Devanagari', sans-serif;">${
+                        item?.question_hi || "N/A"
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        item?.answer === "1" ? "Yes" : "No"
+                      }</td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Create a hidden div for the content to be exported as PDF
+    const element = document.createElement("div");
+    element.innerHTML = tableHTML;
+
+    // Set some general margin and padding styles for better spacing
+    const styles = `
+      @page {
+        margin: 20mm;
+      }
+    
+      .table-container {
+        margin-bottom: 20px;
+      }
+    
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    
+      td, th {
+        padding: 8px;
+        border: 1px solid #ddd;
+      }
+    
+      h1 {
+        text-align: center;
+      }
+    
+      .page-break {
+        page-break-before: always;
+      }
+    `;
+
+    // Add styles to the page to handle margins, breaks, and other layout issues
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+
+    // Use html2pdf to generate the PDF with custom styles
+    html2pdf().from(element).save("MonitoringReport.pdf");
+  };
+
   return (
     <div>
       <div className="mx-auto p-3 pb-3 bg-white shadow-md rounded-lg w-full mt-3">
@@ -281,7 +407,8 @@ const MonitoringReport = () => {
             </span>
           </div>
           <div>
-            <Button type="primary" onClick={exportToPDF}>
+            <Button type="primary" onClick={downloadPDF}>
+              {/* <Button type="primary" onClick={exportToPDF}> */}
               Download PDF
             </Button>
           </div>
@@ -294,7 +421,7 @@ const MonitoringReport = () => {
 
         <Divider className="bg-d9 h-2/3 mt-1" />
 
-        <div className="mt-3">
+        <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div>
               Circle:
