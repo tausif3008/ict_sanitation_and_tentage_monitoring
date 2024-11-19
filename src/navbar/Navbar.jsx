@@ -248,11 +248,8 @@ const Navbar = ({ lang, setLang }) => {
       {
         key: "12",
         label: (
-          <Link
-            className="text-black no-underline"
-            to="/vendor-sector-allocation"
-          >
-            Allocate Sector To Vendor Supervisor
+          <Link className="text-black no-underline" to="/sector-allocation">
+            Allocate Sector
           </Link>
         ),
       },
@@ -538,7 +535,6 @@ const Navbar = ({ lang, setLang }) => {
               }`}
               alt="Maha Kumbh 2025 Logo"
             />
-            
           </Link>
 
           <div
@@ -547,7 +543,9 @@ const Navbar = ({ lang, setLang }) => {
           >
             <span className="capitalize mr-1">{title} </span>
             <Link
-              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/login"}
+              to={
+                localStorage.getItem("sessionToken") ? "/dashboard" : "/login"
+              }
               className="no-underline text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
             >
               ICT Sanitation and Tentage Monitoring System

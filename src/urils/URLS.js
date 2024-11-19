@@ -12,6 +12,7 @@ const URLS = {
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
   allUserType: { path: "/user-types", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },
+  TypeWiseUserList: { path: "/users?user_type_id=", version: "5.43" },
 
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
@@ -20,7 +21,7 @@ const URLS = {
   // vendor
   vendors: { path: "/users?user_type_id=8", version: "5.43" },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
-  vendorwiseSupervisor: { path: "/users?user_type_id=13", version: "5.43" },
+  vendorwiseSupervisor: { path: "/users?vendor_id=", version: "5.43" },
 
   // vendor Details
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
@@ -112,6 +113,17 @@ const URLS = {
   },
   editAllocate_Supervisor: {
     path: "/allocation-supervisor/edit",
+    version: 5.43,
+  },
+
+  // allocation sector
+  getAllocate_Sector: { path: "/allocation-sector", version: 5.43 },
+  addAllocate_Sector: {
+    path: "/allocation-sector/entry",
+    version: 5.43,
+  },
+  editAllocate_Sector: {
+    path: "/allocation-sector/edit",
     version: 5.43,
   },
 
