@@ -83,9 +83,9 @@ function App() {
             path="/"
             element={
               loggedIn ? (
-                <Navigate to={"/dashboard"}></Navigate>
+                <Navigate to={"/sanitation-dashboard"}></Navigate>
               ) : (
-                <Navigate to={"/home"} />
+                <Navigate to={"/login"} />
               )
             }
           ></Route>
