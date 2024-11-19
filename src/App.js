@@ -52,7 +52,24 @@ import SectorsListing from "./register/sectorListing/SectorListing";
 import ParkingList from "./register/parking/ParkingList";
 import SectorWiseReport from "./Reports/SectorWiseReport";
 import CircleWiseReport from "./Reports/CircleWiseReport";
-import VendorWiseReport from "./Reports/VendorWiseReport";
+// import VendorWiseReport from "./Reports/VendorWiseReport";
+import Shift from "./shifts/shifts";
+import ChangePassword from "./Login/ChangePassword";
+import AddShiftForm from "./shifts/add form";
+import VendorReports from "./Reports/VendorwiseReports";
+import AddRouteForm from "./register/route/AddRouteForm";
+import RouteList from "./register/route/RouteList";
+import VendorDashboard from "./vendorDashboard/VendorDashboard";
+import UserTypePermission from "./permission/UserTypePermission";
+import UpdateUserTypePermisssion from "./permission/UserTypePermission/add-update-form";
+import VendorSupervisorRegistration from "./vendor/VendorSupervisorRegistration";
+import VendorSupervisorForm from "./vendor/VendorSupervisorRegistration/VendorSupervisorForm";
+import VendorSectorAllocation from "./vendor-section-allocation/vendor-sector";
+import VendorSectorForm from "./vendor-section-allocation/vendor-sector/vendorSectorForm";
+import ConfigSetting from "./setting/ConfigSetting";
+import ConfigSettingForm from "./setting/configSettingSlice/configForm";
+import AssignRouteForm from "./register/route/AssignRouteForm";
+import AssignedRouteList from "./register/route/AssignedRouteList";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -66,9 +83,9 @@ function App() {
             path="/"
             element={
               loggedIn ? (
-                <Navigate to={"/dashboard"}></Navigate>
+                <Navigate to={"/sanitation-dashboard"}></Navigate>
               ) : (
-                <Navigate to={"/home"} />
+                <Navigate to={"/login"} />
               )
             }
           ></Route>
@@ -248,8 +265,72 @@ function App() {
               element={<CircleWiseReport></CircleWiseReport>}
             ></Route>
             <Route
-              path="vendor-wise-report"
-              element={<VendorWiseReport></VendorWiseReport>}
+              // path="vendor-wise-report"
+              path="vendor-wise-report/:page?/:per_page?"
+              element={<VendorReports></VendorReports>}
+            ></Route>
+            <Route
+              path="shift/:page?/:per_page?"
+              element={<Shift></Shift>}
+            ></Route>
+            <Route
+              path="add-shift-form"
+              element={<AddShiftForm></AddShiftForm>}
+            ></Route>
+            <Route
+              path="change-password"
+              element={<ChangePassword></ChangePassword>}
+            ></Route>
+            <Route path="route-list" element={<RouteList></RouteList>}></Route>
+            <Route
+              path="assigned-routelist"
+              element={<AssignedRouteList></AssignedRouteList>}
+            ></Route>
+            <Route
+              path="assign-route"
+              element={<AssignRouteForm></AssignRouteForm>}
+            ></Route>
+            <Route
+              path="add-route"
+              element={<AddRouteForm></AddRouteForm>}
+            ></Route>
+            <Route
+              path="/vendor-dashboard"
+              element={<VendorDashboard></VendorDashboard>}
+            ></Route>
+            <Route
+              path="/user-type-permission/:page?/:per_page?"
+              element={<UserTypePermission></UserTypePermission>}
+            ></Route>
+            <Route
+              path="/user-permission-type-form"
+              element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
+            ></Route>
+            <Route
+              path="/vendor-supervisor-registration"
+              element={
+                <VendorSupervisorRegistration></VendorSupervisorRegistration>
+              }
+            ></Route>
+            <Route
+              path="/vendor-supervisor-form"
+              element={<VendorSupervisorForm></VendorSupervisorForm>}
+            ></Route>
+            <Route
+              path="/vendor-sector-allocation"
+              element={<VendorSectorAllocation></VendorSectorAllocation>}
+            ></Route>
+            <Route
+              path="/vendor-sector-form"
+              element={<VendorSectorForm></VendorSectorForm>}
+            ></Route>
+            <Route
+              path="/config-setting"
+              element={<ConfigSetting></ConfigSetting>}
+            ></Route>
+            <Route
+              path="/config-setting-form"
+              element={<ConfigSettingForm></ConfigSettingForm>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>

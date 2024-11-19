@@ -9,7 +9,13 @@ import monitoringSlice from "./../complaince/monitoringSlice";
 import assetsSlice from "./../register/asset/AssetsSlice";
 import vehicleSlice from "./../register/vehicle/vehicleSlice";
 import parkingSlice from "./../register/parking/parkingSlice";
-import sanitationSlice from "../SanitationDashboard/sanitationSlice";
+import shiftSlice from "../shifts/shifts/shiftSlice";
+import vendorWiseSlice from "../Reports/VendorwiseReports/vendorslice";
+import userTypeSlice from "../permission/UserTypePermission/userTypeSlice";
+import vendorSupervisorSlice from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import vendorSectorSlice from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import configSlice from "../setting/configSettingSlice/configSlice";
+import circleWiseSlice from "../Reports/CircleSlice/circleSlices";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -21,7 +27,13 @@ const rootReducer = combineReducers({
   assetsSlice: assetsSlice,
   vehicleSlice: vehicleSlice,
   parkingSlice: parkingSlice,
-  sanitationSlice: sanitationSlice,
+  shiftSlice: shiftSlice,
+  vendorWiseSlice: vendorWiseSlice,
+  userTypeSlice: userTypeSlice,
+  vendorSupervisorSlice: vendorSupervisorSlice,
+  vendorSectorSlice: vendorSectorSlice,
+  configSlice: configSlice,
+  circleWiseSlice: circleWiseSlice,
 });
 
 export default rootReducer;

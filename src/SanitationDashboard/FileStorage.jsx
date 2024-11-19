@@ -1,11 +1,17 @@
 import { message, Select } from "antd";
 import React, { useState, useEffect } from "react";
 import Chart from "react-apexcharts";
+import URLS from "../urils/URLS";
+import { useOutletContext } from "react-router";
+
 
 const FileStorage = ({ title, series, total, dropdownType }) => {
+  const [dict, lang] = useOutletContext();
   const [dropdownValue, setDropdownValue] = useState("");
   const [selectedSector, setSelectedSector] = useState(null);
   const [sectorData, setSectorData] = useState([]);
+  const [selectedCircle, setSelectedCircle] = useState(null);
+  const [circleData, setCircleData] = useState([]);
 
   const chartOptions = {
     chart: {
@@ -26,7 +32,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
             total: {
               show: true,
               showAlways: true,
-              label: "Total Incidents",
+              label: dict.total_incidents[lang],
               fontSize: "16px",
               fontWeight: "bold",
               formatter: () => `${total}`,
@@ -52,7 +58,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
     const fetchSectorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
+         `${URLS.baseUrl}/sector`,
           {
             method: "GET",
             headers: headers,
@@ -72,6 +78,31 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
     fetchSectorData();
   }, []);
 
+  useEffect(() => {
+    const fetchCircleData = async () => {
+      try {
+        const response = await fetch(
+         `${URLS.baseUrl}/reporting/circle`,
+          {
+            method: "POST",
+            headers: headers,
+          }
+        );
+        const result = await response.json();
+
+        if (result.success) {
+          setCircleData(result.data.circles);
+        } else {
+          message.error("Failed to load details.");
+        }
+      } catch (error) {
+        message.error("Error fetching details.");
+      }
+    };
+    fetchCircleData();
+  }, []);
+
+
   const renderDropdown = () => {
     switch (dropdownType) {
       case "zone":
@@ -80,7 +111,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
             value={dropdownValue}
             onChange={(e) => setDropdownValue(e.target.value)}
           >
-            <option value="">Select Zone</option>
+            <option value=""> {dict.select_zone[lang]}</option>
             <option value="Zone 1">Zone 1</option>
             <option value="Zone 2">Zone 2</option>
             <option value="Zone 3">Zone 3</option>
@@ -91,7 +122,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
           <Select
             value={selectedSector}
             onChange={(value) => setSelectedSector(value)}
-            placeholder="Select Sector"
+            placeholder={dict.select_sector[lang]}
             style={{ width: "130px" }}
           >
             {sectorData.map((sector) => (
@@ -104,13 +135,16 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
       case "circle":
         return (
           <Select
-            value={dropdownValue}
-            onChange={(e) => setDropdownValue(e.target.value)}
+            value={selectedCircle}
+            onChange={(value) => setSelectedCircle(value)}
+            placeholder={dict.select_circle[lang]}
+            style={{ width: "130px" }}
           >
-            <option value="">Select Circle</option>
-            <option value="Circle 1">Circle 1</option>
-            <option value="Circle 2">Circle 2</option>
-            <option value="Circle 3">Circle 3</option>
+           {circleData.map((sector) => (
+              <Select.Option key={sector.circle_id} value={sector.name}>
+                {sector.name}
+              </Select.Option>
+            ))}
           </Select>
         );
       default:
@@ -132,7 +166,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
             style={{ backgroundColor: "#775DD0" }}
           ></div>
           <div>
-            <div className="text-xs lg:text-sm font-semibold">High Priority</div>
+            <div className="text-xs lg:text-sm font-semibold"> {dict.high_priority[lang]}</div>
           </div>
         </div>
 
@@ -142,7 +176,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
             style={{ backgroundColor: "#00E396" }}
           ></div>
           <div>
-            <div className="text-xs lg:text-sm font-semibold">Med Priority</div>
+            <div className="text-xs lg:text-sm font-semibold">{dict.med_priority[lang]}</div>
           </div>
         </div>
 
@@ -152,7 +186,7 @@ const FileStorage = ({ title, series, total, dropdownType }) => {
             style={{ backgroundColor: "#FF4560" }}
           ></div>
           <div>
-            <div className="text-xs lg:text-sm font-semibold">Low Priority</div>
+            <div className="text-xs lg:text-sm font-semibold">{dict.low_priority[lang]}</div>
           </div>
         </div>
       </div>

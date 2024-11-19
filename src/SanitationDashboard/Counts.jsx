@@ -1,9 +1,4 @@
-import {
-  CheckCircleOutlined,
-  SyncOutlined,
-  ExclamationCircleOutlined,
-  EyeOutlined,
-} from "@ant-design/icons";
+
 import React, { useEffect, useState } from "react";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
@@ -12,7 +7,6 @@ import card_purple from "../assets/Dashboard/card_purple.png";
 import { message } from "antd";
 
 const Counts = () => {
-  const baseUrl = "https://kumbhtsmonitoring.in/php-api";
   const [totalAssets, setTotalAssets] = useState(0);
   const [registeredAssets, setRegisteredAssets] = useState(0);
   const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
@@ -30,7 +24,7 @@ const Counts = () => {
     const fetchAssetData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
+          `${URLS.baseUrl}/dashboard/sanitation`,
           {
             method: "POST",
             headers: headers,

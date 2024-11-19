@@ -4,378 +4,473 @@ import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
-import { DICT } from "../urils/dictionary";
-import img1 from "../assets/Images/goup.png";
+import { DICT } from "../utils/dictionary";
+import img1 from "../assets/Images/goup2.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";
-
-const register_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link className="text-black no-underline hover:text-green" to="/users">
-          User Registration
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/vendor">
-          Vendor Registration
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/asset-list">
-          Toilets & Tentage Registration
-        </Link>
-      ),
-    },
-  ];
-};
-
-const master_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link className="text-black no-underline" to="/asset-type-list">
-          Toilets & Tentage Type List
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/questions">
-          Question List
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/vehicle">
-          Vehicle List
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/gps-fleet-registration">
-          GPS Routes List
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          GPS Device List
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          GIS Map Registration
-        </Link>
-      ),
-    },
-    {
-      key: "6",
-      label: (
-        <Link className="text-black no-underline" to="/gis-services">
-          SLA Parameters
-        </Link>
-      ),
-    },
-    {
-      key: "7",
-      label: (
-        <Link className="text-black no-underline" to="/sectors-listing">
-          Sectors List
-        </Link>
-      ),
-    },
-    {
-      key: "8",
-      label: (
-        <Link className="text-black no-underline" to="/parking">
-          Parking List
-        </Link>
-      ),
-    },
-    {
-      key: "9",
-      label: (
-        <Link className="text-black no-underline" to="/manpower-assignment">
-          Manpower Assignment
-        </Link>
-      ),
-    },
-  ];
-};
-
-const dashboards = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/sanitation-dashboard"
-        >
-          Sanitation Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/tentage-dashboard"
-        >
-          Tentage Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-dashboard"
-        >
-          Waste Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/incident-dashboard"
-        >
-          Incident Dashboard
-        </Link>
-      ),
-    },
-    {
-      key: "7",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/SLA-dashboard"
-        >
-          SLA Dashboard
-        </Link>
-      ),
-    },
-  ];
-};
-
-const dms_items = (lang, dict) => {
-  return [
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/DMS-dashboard"
-        >
-          DMS Dashboard
-        </Link>
-      ),
-    },
-  ];
-};
-
-const schedule_items = (lang, dict, navigate) => {
-  return [
-    // {
-    //   key: "1",
-    //   label: (
-    //     <Link
-    //       className="text-black no-underline hover:text-green"
-    //       to="/scheduling-and-deployment"
-    //     >
-    //       Create
-    //     </Link>
-    //   ),
-    // },
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline"
-          to="/create-sanitation-schedule"
-        >
-          Sanitation Management Schedule
-        </Link>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline" to="/create-tentage-schedule">
-          Tentage Management Schedule
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/waste-management-schedule"
-        >
-          Waste Management Schedule
-        </Link>
-      ),
-    },
-  ];
-};
-
-const complaince_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/monitoring"
-        >
-          Monitoring
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/notification">
-          Notification
-        </Link>
-      ),
-    },
-  ];
-};
-
-const waste_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link className="text-black no-underline hover:text-green" to="/route">
-          Route
-        </Link>
-      ),
-    },
-  ];
-};
-
-const reports_items = (lang, dict) => {
-  return [
-    {
-      key: "2",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/monitoring"
-        >
-          Monitoring Report
-        </Link>
-      ),
-    },
-    {
-      key: "3",
-      label: (
-        <Link className="text-black no-underline" to="/sector-wise-report">
-          Sector Wise Report
-        </Link>
-      ),
-    },
-    {
-      key: "4",
-      label: (
-        <Link className="text-black no-underline" to="/circle-wise-report">
-          Circle Wise Report
-        </Link>
-      ),
-    },
-    {
-      key: "5",
-      label: (
-        <Link className="text-black no-underline" to="/vendor-wise-report">
-          Vendor Wise Report
-        </Link>
-      ),
-    },
-  ];
-};
-
-const setting_item = (dict, lang, navigate) => {
-  const list = [
-    {
-      key: "1",
-      label: (
-        <Link
-          className="text-black no-underline hover:text-green"
-          to="/user-profile"
-        >
-          Profile
-        </Link>
-      ),
-    },
-  ];
-
-  localStorage.getItem("sessionToken")
-    ? list.push({
-        key: "3",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              logoutFetch();
-              localStorage.clear();
-              navigate("/home");
-            }}
-          >
-            Logout
-          </div>
-        ),
-      })
-    : list.push({
-        key: "4",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Login
-          </div>
-        ),
-      });
-
-  return list;
-};
+import {
+  DMS_param,
+  incidentDash_param,
+  masterData_param,
+  sanitationDash_param,
+  SLADash_param,
+  superAdmin,
+  tentageDash_param,
+  userAccess_param,
+  vendorDash_param,
+  wasteDash_param,
+} from "../constant/permission";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
   const loggedIn = localStorage.getItem("sessionToken");
   const [open, setOpen] = useState(false);
+
+  const userRoleId = localStorage.getItem("role_id");
+
+  // Dashboard
+  const dashboards = (lang, dict) => {
+    return [
+      sanitationDash_param?.includes(userRoleId) && {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/sanitation-dashboard"
+          >
+            Sanitation Dashboard
+          </Link>
+        ),
+      },
+      tentageDash_param?.includes(userRoleId) && {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/tentage-dashboard"
+          >
+            Tentage Dashboard
+          </Link>
+        ),
+      },
+      wasteDash_param?.includes(userRoleId) && {
+        key: "4",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/waste-dashboard"
+          >
+            Waste Dashboard
+          </Link>
+        ),
+      },
+      incidentDash_param?.includes(userRoleId) && {
+        key: "5",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/incident-dashboard"
+          >
+            Incident Dashboard
+          </Link>
+        ),
+      },
+      vendorDash_param.includes(userRoleId) && {
+        key: "6",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/vendor-dashboard"
+          >
+            Vendor Dashboard
+          </Link>
+        ),
+      },
+      SLADash_param?.includes(userRoleId) && {
+        key: "7",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/SLA-dashboard"
+          >
+            SLA Dashboard
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // User Access & Registration
+  const register_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/users"
+          >
+            User Registration
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link className="text-black no-underline" to="/vendor">
+            Vendor Registration
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/asset-list">
+            Toilets & Tentage Registration
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-supervisor-registration"
+          >
+            Vendor Supervisor Registration
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // Master data creation
+  const master_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link className="text-black no-underline" to="/asset-type-list">
+            Toilets & Tentage Type List
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link className="text-black no-underline" to="/questions">
+            Question List
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/vehicle">
+            Vehicle List
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/route-list">
+            GPS Routes List
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/assigned-routelist">
+            Assigned Route List
+          </Link>
+        ),
+      },
+      {
+        key: "5",
+        label: (
+          <Link className="text-black no-underline" to="/gis-services">
+            GIS Map Registration
+          </Link>
+        ),
+      },
+      {
+        key: "6",
+        label: (
+          <Link className="text-black no-underline" to="/gis-services">
+            SLA Parameters
+          </Link>
+        ),
+      },
+      {
+        key: "7",
+        label: (
+          <Link className="text-black no-underline" to="/sectors-listing">
+            Sectors List
+          </Link>
+        ),
+      },
+      {
+        key: "8",
+        label: (
+          <Link className="text-black no-underline" to="/parking">
+            Parking List
+          </Link>
+        ),
+      },
+      {
+        key: "9",
+        label: (
+          <Link className="text-black no-underline" to="/manpower-assignment">
+            Manpower Assignment
+          </Link>
+        ),
+      },
+      {
+        key: "10",
+        label: (
+          <Link className="text-black no-underline" to="/shift">
+            Shift
+          </Link>
+        ),
+      },
+      {
+        key: "11",
+        label: (
+          <Link className="text-black no-underline" to="/user-type-permission">
+            User Type Permission
+          </Link>
+        ),
+      },
+      {
+        key: "12",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-sector-allocation"
+          >
+            Allocate Sector To Vendor Supervisor
+          </Link>
+        ),
+      },
+      {
+        key: "13",
+        label: (
+          <Link className="text-black no-underline" to="/config-setting">
+            Configuration Settings
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const dms_items = (lang, dict) => {
+    return [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/DMS-dashboard"
+          >
+            DMS Dashboard
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const schedule_items = (lang, dict, navigate) => {
+    return [
+      // {
+      //   key: "1",
+      //   label: (
+      //     <Link
+      //       className="text-black no-underline hover:text-green"
+      //       to="/scheduling-and-deployment"
+      //     >
+      //       Create
+      //     </Link>
+      //   ),
+      // },
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/create-sanitation-schedule"
+          >
+            Sanitation Management Schedule
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/create-tentage-schedule"
+          >
+            Tentage Management Schedule
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/waste-management-schedule"
+          >
+            Waste Management Schedule
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const complaince_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/monitoring"
+          >
+            Monitoring
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/notification">
+            Notification
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const waste_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/route"
+          >
+            Route
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  // reports
+  const reports_items = (lang, dict) => {
+    return [
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/monitoring"
+          >
+            Monitoring Report
+          </Link>
+        ),
+      },
+      {
+        key: "3",
+        label: (
+          <Link className="text-black no-underline" to="/sector-wise-report">
+            Sector Wise Report
+          </Link>
+        ),
+      },
+      {
+        key: "4",
+        label: (
+          <Link className="text-black no-underline" to="/circle-wise-report">
+            Circle Wise Report
+          </Link>
+        ),
+      },
+      {
+        key: "5",
+        label: (
+          <Link className="text-black no-underline" to="/vendor-wise-report">
+            Vendor Wise Report
+          </Link>
+        ),
+      },
+    ];
+  };
+
+  const setting_item = (dict, lang, navigate) => {
+    const list = [
+      {
+        key: "1",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/user-profile"
+          >
+            Profile
+          </Link>
+        ),
+      },
+      {
+        key: "2",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/change-password"
+          >
+            Change Password
+          </Link>
+        ),
+      },
+    ];
+
+    localStorage.getItem("sessionToken")
+      ? list.push({
+          key: "3",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                logoutFetch();
+                localStorage.clear();
+                navigate("/login");
+              }}
+            >
+              Logout
+            </div>
+          ),
+        })
+      : list.push({
+          key: "4",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </div>
+          ),
+        });
+
+    return list;
+  };
 
   const showDrawer = () => {
     setOpen(true);
@@ -387,13 +482,13 @@ const Navbar = ({ lang, setLang }) => {
 
   const navigate = useNavigate();
 
-  const [logName, setLogName] = useState(false);
+  // const [logName, setLogName] = useState(false);
 
-  useEffect(() => {
-    if (loggedIn) {
-      setLogName(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     setLogName(true);
+  //   }
+  // }, []);
 
   // const handleLang = () => {
   //   if (lang === "hi") {
@@ -429,20 +524,21 @@ const Navbar = ({ lang, setLang }) => {
             className="no-underline d-flex"
           >
             <img
-              src={img2}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
-                isNavbarTransition ? "h-10" : "h-14"
-              }`}
-              alt="MahaKumbh 2025 Logo"
-            />
-
-            <img
               src={img1}
               className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
                 isNavbarTransition ? "h-10" : "h-14"
               }`}
-              alt="MahaKumbh 2025 Logo"
+              alt="UP Govt Logo"
             />
+
+            <img
+              src={img2}
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
+                isNavbarTransition ? "h-10" : "h-14"
+              }`}
+              alt="Maha Kumbh 2025 Logo"
+            />
+            
           </Link>
 
           <div
@@ -451,7 +547,7 @@ const Navbar = ({ lang, setLang }) => {
           >
             <span className="capitalize mr-1">{title} </span>
             <Link
-              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+              to={localStorage.getItem("sessionToken") ? "/dashboard" : "/login"}
               className="no-underline text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
             >
               ICT Sanitation and Tentage Monitoring System
@@ -463,7 +559,7 @@ const Navbar = ({ lang, setLang }) => {
           <div className="z-50  flex items-center h-12 justify-center ">
             <div className="hidden mt-0 xl:flex gap-1 justify-start items-center z-50 text-base font-semibold h-fit text-black lg:text-base">
               {!loggedIn && (
-                <Link to={"/home"} className="no-underline text-black text-sm">
+                <Link to={"/login"} className="no-underline text-black text-sm">
                   <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                     {dict.home[lang]}
                   </div>
@@ -485,23 +581,27 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
               )}
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={register_items(lang, dict)}
-                  // name={dict.register[lang]}
-                  name="User Access & Registration"
-                ></DropDown>
-              </div>
+              {userAccess_param.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  <DropDown
+                    text="black"
+                    items={register_items(lang, dict)}
+                    // name={dict.register[lang]}
+                    name="User Access & Registration"
+                  ></DropDown>
+                </div>
+              )}
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={master_items(lang, dict)}
-                  // name={dict.register[lang]}
-                  name="Master Data Creation"
-                ></DropDown>
-              </div>
+              {masterData_param.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  <DropDown
+                    text="black"
+                    items={master_items(lang, dict)}
+                    // name={dict.register[lang]}
+                    name="Master Data Creation"
+                  ></DropDown>
+                </div>
+              )}
 
               {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
@@ -519,13 +619,15 @@ const Navbar = ({ lang, setLang }) => {
                 ></DropDown>
               </div> */}
 
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
-                <DropDown
-                  text="black"
-                  items={dms_items(lang, dict)}
-                  name={"DMS"}
-                ></DropDown>
-              </div>
+              {DMS_param.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
+                  <DropDown
+                    text="black"
+                    items={dms_items(lang, dict)}
+                    name={"DMS"}
+                  ></DropDown>
+                </div>
+              )}
 
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown

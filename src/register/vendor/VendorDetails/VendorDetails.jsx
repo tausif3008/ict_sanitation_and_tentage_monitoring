@@ -70,12 +70,12 @@ const VendorDetails = () => {
       key: "total_allotted_quantity",
     },
     {
-      title: "Proposed Sectors",
+      title: "Proposed Sectors & Parking",
       dataIndex: "proposedsectors",
       key: "proposed_sectors",
-      render: (record) => (
+      render: (text, record) => (
         <div
-          onClick={() => handleProposedSectorsView(record)}
+          onClick={() => handleProposedSectorsView(text, record)}
           className="text-blue-500 cursor-pointer"
         >
           View
@@ -106,12 +106,23 @@ const VendorDetails = () => {
       key: "action",
       fixed: "right",
       width: 80,
-      render: (_, record) => (
+      render: (text, record) => (
         <Button
           className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
           onClick={() => {
+            const newObject = Object.keys(record)
+              .filter((key) => key !== "action") // Filter out 'action'
+              .reduce((obj, key) => {
+                obj[key] = record[key]; // Rebuild the object without 'action'
+                return obj;
+              }, {});
             dispatch(setUpdateVendorDetailsEl({ updateElement: record }));
-            navigate("/vendor/add-vendor-details-form/" + params.id);
+            navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
+              state: {
+                key: "UpdateKey",
+                record: newObject, // Pass the record as part of the state
+              },
+            });
           }}
         >
           <EditOutlined />
@@ -120,7 +131,7 @@ const VendorDetails = () => {
     },
   ];
 
-  const handleProposedSectorsView = (record) => {
+  const handleProposedSectorsView = (data, record) => {
     setProposedSectors(record);
     setIsModalVisible(true);
   };
@@ -215,7 +226,12 @@ const VendorDetails = () => {
               <Button
                 className="bg-orange-300 mb-1"
                 onClick={() =>
-                  navigate("/vendor/add-vendor-details-form/" + params.id)
+                  // navigate("/vendor/add-vendor-details-form/" + params.id)
+                  navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
+                    state: {
+                      key: "AddKey",
+                    },
+                  })
                 }
               >
                 Add Details
@@ -237,18 +253,19 @@ const VendorDetails = () => {
       </div>
 
       <Modal
-        title={`Proposed Sectors`}
+        title={`Proposed Sectors & Parking`}
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
         width={800}
       >
-        {proposedSectors?.length ? (
+        {proposedSectors?.proposedsectors?.length ? (
           <>
             <Table
               bordered
-              dataSource={proposedSectors}
+              dataSource={proposedSectors?.proposedsectors}
               rowKey="sector_name"
+              className="mb-4"
               pagination={false}
               scroll={{ x: 300, y: 400 }}
               columns={[
@@ -264,19 +281,51 @@ const VendorDetails = () => {
                 },
               ]}
             />
-            {/* Display total sector count below the table */}
-            <div className="text-right font-semibold mt-2">
-              Total Quantity:{" "}
-              {proposedSectors
-                .reduce(
-                  (total, sector) => total + Number(sector.quantity || 0),
-                  0
-                )
-                .toLocaleString()}
-            </div>
           </>
         ) : (
           <p>No sectors found for this asset type.</p>
+        )}
+        {proposedSectors?.proposedparkings?.length ? (
+          <>
+            <Table
+              bordered
+              className="mb-4"
+              dataSource={proposedSectors?.proposedparkings}
+              rowKey="sector_name"
+              pagination={false}
+              scroll={{ x: 300, y: 400 }}
+              columns={[
+                {
+                  title: "Parking Name",
+                  dataIndex: "parking_name",
+                  key: "parking_name",
+                },
+                {
+                  title: "Quantity",
+                  dataIndex: "quantity",
+                  key: "quantity",
+                },
+              ]}
+            />
+          </>
+        ) : (
+          <p>No Parking found for this asset type.</p>
+        )}
+        {(proposedSectors?.proposedsectors?.length ||
+          proposedSectors?.proposedparkings?.length) && (
+          <div className="text-right font-semibold mt-2">
+            Total Quantity:{" "}
+            {(
+              proposedSectors?.proposedparkings?.reduce(
+                (total, park) => total + Number(park?.quantity || 0),
+                0
+              ) +
+              proposedSectors?.proposedsectors?.reduce(
+                (total, sector) => total + Number(sector?.quantity || 0),
+                0
+              )
+            ).toLocaleString()}
+          </div>
         )}
       </Modal>
     </div>

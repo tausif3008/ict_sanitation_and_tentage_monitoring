@@ -7,9 +7,35 @@ import { useNavigate, useParams } from "react-router";
 import { getData } from "../../Fetch/Axios";
 import { EditOutlined } from "@ant-design/icons";
 import { useDispatch, useSelector } from "react-redux";
-import { setAssetTypeListIsUpdated, setUpdateAssetEl } from "./AssetTypeSlice";
+import {
+  getVendorListAssetType,
+  setAssetTypeListIsUpdated,
+  setUpdateAssetEl,
+} from "./AssetTypeSlice";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
+import AssetTypeSelectors from "./assetTypeSelectors";
+import ViewVendorsSectors from "./viewVendors";
+
+const vendorColumn = [
+  {
+    title: "Sr No",
+    dataIndex: "sr_no",
+    key: "sr_no",
+    width: "10%",
+  },
+  {
+    title: "Vendor Name",
+    dataIndex: "user_name",
+    key: "user_name",
+  },
+  {
+    title: "Allotted Quantity",
+    dataIndex: "total_allotted_quantity",
+    key: "total_allotted_quantity",
+    width: "20%",
+  },
+];
 
 const AssetTypeList = () => {
   const [questions, setQuestions] = useState([]); // To store questions for the selected asset type
@@ -23,6 +49,10 @@ const AssetTypeList = () => {
     currentPage: 1,
     totalRecords: 0,
   });
+  const [showVendors, setshowVendors] = useState(false);
+  const [showVendorsList, setVendorsList] = useState([]); // vendor list
+  const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
+  const { VendorListAssetType } = AssetTypeSelectors(); // asset type wise vendor list
 
   const isUpdatedSelector = useSelector(
     (state) => state.assetTypeUpdateEl?.isUpdated
@@ -64,9 +94,18 @@ const AssetTypeList = () => {
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
+              // onClick={() => {
+              //   dispatch(setUpdateAssetEl({ updateElement: el }));
+              //   navigate("/asset-type-registration");
+              // }}
               onClick={() => {
                 dispatch(setUpdateAssetEl({ updateElement: el }));
-                navigate("/asset-type-registration");
+                navigate("/asset-type-registration", {
+                  state: {
+                    key: "UpdateKey",
+                    record: el, // Pass the record as part of the state
+                  },
+                });
               }}
             >
               <EditOutlined></EditOutlined>
@@ -124,10 +163,41 @@ const AssetTypeList = () => {
     setIsModalVisible(true); // Show the modal
   };
 
+  // close list
   const handleCancel = () => {
     setIsModalVisible(false); // Close the modal
     setQuestions([]); // Clear the questions when modal closes
+    setshowVendors(false);
   };
+
+  // get vendors data
+  const getVedorsData = (value) => {
+    setVendorsList([]);
+    setAllQuantity(0);
+    dispatch(getVendorListAssetType(value));
+    setshowVendors(true);
+  };
+
+  useEffect(() => {
+    if (VendorListAssetType) {
+      const myData = VendorListAssetType?.data?.userdetails?.map(
+        (data, index) => {
+          return {
+            sr_no: index + 1,
+            ...data,
+          };
+        }
+      );
+      let totalQuantity = VendorListAssetType?.data?.userdetails?.reduce(
+        (accumulator, data) => {
+          return accumulator + Number(data?.total_allotted_quantity || 0);
+        },
+        0
+      );
+      setAllQuantity(totalQuantity);
+      setVendorsList(myData); // asset type wise vendor list
+    }
+  }, [VendorListAssetType]);
 
   const columns = [
     {
@@ -158,6 +228,19 @@ const AssetTypeList = () => {
       dataIndex: "description",
       key: "description",
       width: 300,
+    },
+    {
+      title: "Vendors", // Number of questions
+      dataIndex: "vendors_list",
+      key: "vendors_list",
+      render: (text, record) => (
+        <Button
+          type="link"
+          onClick={() => getVedorsData(record?.asset_type_id)}
+        >
+          View Vendors
+        </Button>
+      ),
     },
     {
       title: "Questions", // Number of questions
@@ -264,6 +347,15 @@ const AssetTypeList = () => {
           <p>No questions found for this type.</p>
         )}
       </Modal>
+
+      <ViewVendorsSectors
+        title={"Vendor List"}
+        openModal={showVendors}
+        handleCancel={handleCancel}
+        tableData={showVendorsList || []}
+        column={vendorColumn || []}
+        footer={`Total Allotted Quantity : ${allQuantity}`}
+      />
     </div>
   );
 };

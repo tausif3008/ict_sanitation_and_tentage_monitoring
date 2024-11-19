@@ -6,20 +6,21 @@ import { getFormData } from "../../urils/getFormData";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { setAssetTypeListIsUpdated } from "./AssetTypeSlice";
-import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
+import {
+  getAssetMainTypes,
+  getSLATypes,
+  setAssetTypeListIsUpdated,
+} from "./AssetTypeSlice";
+import AssetTypeSelectors from "./assetTypeSelectors";
+import { getQuestionList } from "../questions/questionSlice";
+import QuestionSelector from "../questions/questionSelector";
 
 const AssetTypeForm = () => {
-  const { Option } = Select;
-
-  const assetMainTypes = [
-    { value: "1", label: "Sanitation" },
-    { value: "2", label: "Tentage" },
-  ];
-
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors();
+  const { QuestionDrop } = QuestionSelector();
 
   const assetUpdateElSelector = useSelector(
     (state) => state.assetTypeUpdateEl?.assetUpdateEl
@@ -29,23 +30,49 @@ const AssetTypeForm = () => {
 
   useEffect(() => {
     if (assetUpdateElSelector) {
-      form.setFieldsValue(assetUpdateElSelector);
+      const questionId = assetUpdateElSelector?.questions?.map((data) => {
+        return data?.question_id;
+      });
+
+      let slasArray =
+        Number(assetUpdateElSelector?.slas) === 0
+          ? []
+          : assetUpdateElSelector?.slas?.split(",").map((item) => item?.trim());
+
+      form.setFieldsValue({
+        asset_main_type_id: assetUpdateElSelector?.asset_main_type_id,
+        name: assetUpdateElSelector?.name,
+        asset_type_id: assetUpdateElSelector?.asset_type_id,
+        name_hi: assetUpdateElSelector?.name_hi,
+        description: assetUpdateElSelector?.description,
+        questions: questionId,
+        slas: slasArray,
+      });
     }
   }, [assetUpdateElSelector, form]);
 
   const onFinish = async (values) => {
+    const stringQuestions = values?.questions
+      ? values?.questions?.map((data) => String(data)).join(", ")
+      : "No questions available";
+    const stringSla = values?.slas
+      ? values?.slas?.map((data) => String(data)).join(", ")
+      : "No slas available";
+
+    const finalData = {
+      ...values,
+      status: 1,
+      questions: stringQuestions,
+      slas: stringSla,
+    };
     setLoading(true);
 
-    values.status = 1;
-    values.questions = 0;
-
     if (assetUpdateElSelector) {
-      values.asset_type_id = assetUpdateElSelector.asset_type_id;
-      values.questions = assetUpdateElSelector.questions;
+      finalData.asset_type_id = assetUpdateElSelector?.asset_type_id;
     }
 
     const res = await postData(
-      getFormData(values),
+      getFormData(finalData),
       assetUpdateElSelector
         ? URLS.editAssetType.path
         : URLS.assetTypeEntry.path,
@@ -55,18 +82,29 @@ const AssetTypeForm = () => {
     );
 
     if (res) {
-      setLoading(false);
       dispatch(setAssetTypeListIsUpdated({ isUpdated: true }));
 
       if (res.data.success) {
         form.resetFields();
-
-        if (assetUpdateElSelector) {
-          navigate("/asset-type-list");
-        }
+        navigate("/asset-type-list");
       }
     }
+    setLoading(false);
   };
+
+  useEffect(() => {
+    // asset main type
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl));
+
+    // question
+    const question = URLS?.questions?.path;
+    dispatch(getQuestionList(question));
+
+    // sla types
+    const sla_url = URLS?.slaTypes?.path;
+    dispatch(getSLATypes(sla_url));
+  }, []);
 
   return (
     <div className="mt-3">
@@ -92,18 +130,24 @@ const AssetTypeForm = () => {
         <Divider className="bg-d9 h-2/3 mt-1"></Divider>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 mb-3">
-            <CommonFormDropDownMaker
-              uri={"assetMainTypePerPage"}
-              responseListName="assetmaintypes"
-              responseLabelName="name"
-              responseIdName="asset_main_type_id"
-              selectLabel={"Category"}
-              selectName={"asset_main_type_id"}
-              required={true}
-              RequiredMessage={"Category is required!"}
-            ></CommonFormDropDownMaker>
-
-            {/* Asset Sub Type Textbox */}
+            <Form.Item
+              name={"asset_main_type_id"}
+              label={"Asset Main Type"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select an asset main type", // Customize the error message
+                },
+              ]}
+            >
+              <Select placeholder="Select status" className="rounded-none">
+                {AssetMainTypeDrop?.map((option) => (
+                  <Select.Option key={option?.value} value={option?.value}>
+                    {option?.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
             <Form.Item
               name="name"
               label={
@@ -121,7 +165,21 @@ const AssetTypeForm = () => {
                 className="rounded-none"
               />
             </Form.Item>
-
+            <Form.Item
+              name="name_hi"
+              label={<div className="font-semibold">Hindi</div>}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter hindi text",
+                },
+              ]}
+            >
+              <Input
+                placeholder="Enter asset type name"
+                className="rounded-none"
+              />
+            </Form.Item>
             <Form.Item
               name="description"
               label={<div className="font-semibold">Description</div>}
@@ -131,8 +189,42 @@ const AssetTypeForm = () => {
                 className="rounded-none"
               />
             </Form.Item>
+            <Form.Item name={"questions"} label={"Select Questions"}>
+              <Select
+                placeholder="Select Questions"
+                className="rounded-none"
+                mode="multiple" // Enable multiple selection
+              >
+                {QuestionDrop?.map((option) => (
+                  <Select.Option key={option?.value} value={option?.value}>
+                    {option?.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
+            <Form.Item
+              name={"slas"}
+              label={"Select SLAS Type"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please select slas type",
+                },
+              ]}
+            >
+              <Select
+                placeholder="Select SLA Type"
+                className="rounded-none"
+                mode="multiple" // Enable multiple selection
+              >
+                {SLATypeDrop?.map((option) => (
+                  <Select.Option key={option?.value} value={option?.value}>
+                    {option?.label}
+                  </Select.Option>
+                ))}
+              </Select>
+            </Form.Item>
           </div>
-
           <div className="flex justify-end">
             <Form.Item>
               <Button

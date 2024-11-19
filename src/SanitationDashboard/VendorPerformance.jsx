@@ -1,6 +1,9 @@
 import React from "react";
+import { useOutletContext } from "react-router";
 
 const VendorPerformance = () => {
+  const [dict, lang] = useOutletContext();
+
   const highPerformingVendors = [
     { name: "Vendor A", tasksDone: 80, tasksOverdue: 5 },
     { name: "Vendor B", tasksDone: 75, tasksOverdue: 2 },
@@ -16,21 +19,21 @@ const VendorPerformance = () => {
   return (
     <div className="bg-white p-2 rounded-md">
       <div className="flex justify-between items-center mb-4">
-        <div className="text-xl font-bold">Vendor Performance Overview</div>
-        <span className="text-gray-500">Last 24 Hrs</span>
+        <div className="text-xl font-bold">{dict.vendor_performance_overview[lang]}</div>
+        <span className="text-gray-500">{dict.last_24_hrs[lang]}</span>
       </div>
 
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
             <div className="text-green-600 font-semibold flex gap-1 mb-2">
-              <span>High Performing Vendors</span>
+              <span>{dict.high_performing_vendors[lang]}</span>
             </div>
             <ul className="mt-2">
               <li className="flex justify-between font-semibold border-b pb-1">
-                <span>Vendor</span>
-                <span>Task Done</span>
-                <span>Task Overdue</span>
+                <span>{dict.vendor[lang]}</span>
+                <span>{dict.task_done[lang]}</span>
+                <span>{dict.task_overdue[lang]}</span>
               </li>
               {highPerformingVendors.map((vendor, index) => (
                 <li
@@ -50,13 +53,13 @@ const VendorPerformance = () => {
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
             <div className="text-red-600 font-semibold flex gap-1 mb-2">
-              <span>Low Performing Vendors</span>
+              <span>{dict.low_performing_vendors[lang]}</span>
             </div>
             <ul className="mt-2">
               <li className="flex justify-between font-semibold border-b pb-1">
-                <span>Vendor</span>
-                <span>Task Done</span>
-                <span>Task Overdue</span>
+                <span>{dict.vendor[lang]}</span>
+                <span>{dict.task_done[lang]}</span>
+                <span>{dict.task_overdue[lang]}</span>
               </li>
               {lowPerformingVendors.map((vendor, index) => (
                 <li

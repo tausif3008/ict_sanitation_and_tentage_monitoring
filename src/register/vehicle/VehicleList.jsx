@@ -21,7 +21,6 @@ const columns = [
     dataIndex: "user_name",
     key: "user_name",
   },
-
   {
     title: "Vehicle Type",
     dataIndex: "type",
@@ -33,14 +32,14 @@ const columns = [
     key: "number",
   },
   {
-    title: "EMEI Number",
-    dataIndex: "emei_number",
-    key: "emei_number",
+    title: "IMEI Number",
+    dataIndex: "imei",
+    key: "imei",
   },
   {
     title: "Chassis Number",
-    dataIndex: "chassis_number",
-    key: "chassis_number",
+    dataIndex: "chassis_no",
+    key: "chassis_no",
   },
   {
     title: "Action",
@@ -92,14 +91,14 @@ const VehicleList = () => {
           sr: index + 1,
           action: (
             <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
               key={el.name + index}
               onClick={() => {
                 dispatch(setUpdateVehicleEl({ updateElement: el }));
                 navigate("/vehicle-registration");
               }}
             >
-              <EditOutlined></EditOutlined>
+              <EditOutlined />
             </Button>
           ),
         };
@@ -128,7 +127,7 @@ const VehicleList = () => {
   }, []);
 
   return (
-    <div className="">
+    <div className="container mx-auto px-4">
       <CommonDivider
         label={"Vehicle List"}
         compo={
@@ -139,15 +138,19 @@ const VehicleList = () => {
             Add Vehicle
           </Button>
         }
-      ></CommonDivider>
+      />
 
       <CommonTable
         loading={loading}
         uri={"vehicle"}
         columns={columns}
         details={details}
-        scroll={{ x: 300, y: 400 }}
-      ></CommonTable>
+        scroll={{ x: 1200, y: 400 }}
+      />
+
+      <div className="mt-4 text-right font-semibold">
+        Total Records: {details.totalRecords || 0}
+      </div>
     </div>
   );
 };

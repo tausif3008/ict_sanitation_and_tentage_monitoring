@@ -1,13 +1,18 @@
+
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
 import dayjs from "dayjs";
 import lines from "../assets/Dashboard/lines.png";
+import URLS from "../urils/URLS";
+import { useOutletContext } from "react-router";
 
 
 const ToiletDetails = () => {
+  const [dict, lang] = useOutletContext();
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedToilet, setSelectedToilet] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD")); // Default to current date
   const [vendorData, setVendorData] = useState([]);
   const [sectorData, setSectorData] = useState([]);
   const [assetData, setAssetData] = useState([]);
@@ -26,13 +31,10 @@ const ToiletDetails = () => {
   useEffect(() => {
     const fetchVendorData = async () => {
       try {
-        const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/users?user_type_id=8",
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
+        const response = await fetch(`${URLS.baseUrl}/users?user_type_id=8`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
         if (result.success) {
           setVendorData(result.data.users);
@@ -49,10 +51,10 @@ const ToiletDetails = () => {
   useEffect(() => {
     const fetchSectorData = async () => {
       try {
-        const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
-          { method: "GET", headers: headers }
-        );
+        const response = await fetch(`${URLS.baseUrl}/sector`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
         if (result.success) {
           setSectorData(result.data.sectors);
@@ -72,18 +74,16 @@ const ToiletDetails = () => {
     toiletId = null
   ) => {
     try {
-      const response = await fetch(
-        "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
-        {
-          method: "POST",
-          headers: headers,
-          body: JSON.stringify({
-            sector_id: sectorId || undefined,
-            vendor_id: vendorId || undefined,
-            asset_type_id: toiletId || undefined,
-          }),
-        }
-      );
+      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
+        method: "POST",
+        headers: headers,
+        body: JSON.stringify({
+          date: selectedDate, // Include the date in the request
+          sector_id: sectorId || undefined,
+          vendor_id: vendorId || undefined,
+          asset_type_id: toiletId || undefined,
+        }),
+      });
       const result = await response.json();
       if (result.success) {
         setAssetData(result.data);
@@ -114,6 +114,12 @@ const ToiletDetails = () => {
     fetchAssetData(selectedSector, selectedVendor, value);
   };
 
+  const handleDateChange = (date) => {
+    const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
+    setSelectedDate(formattedDate);
+    fetchAssetData(selectedSector, selectedVendor, selectedToilet);
+  };
+
   const priorityToiletTypes = [
     "Type-1 FRP Septic Tank",
     "Type-2 FRP Soak Pit",
@@ -138,27 +144,33 @@ const ToiletDetails = () => {
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
-      <div className="text-xl font-bold">Sanitation Toilet Details</div>
+      <div className="text-xl font-bold">
+        {dict.sanitation_toilet_details[lang]}
+      </div>
 
       <div className="flex justify-start items-center space-x-6 mb-1">
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm">Clean</span>
+            <span className="text-xl">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-sm">Unclean</span>
+            <span className="text-xl">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker size="middle" defaultValue={dayjs()} />
+        <DatePicker
+          size="middle"
+          defaultValue={dayjs()}
+          onChange={handleDateChange}
+        />
         <Select
           value={selectedSector}
           onChange={handleSectorChange}
-          placeholder="Select Sector"
+          placeholder={dict.select_sector[lang]}
           style={{ minWidth: "120px", flex: "1" }}
         >
           {sectorData.map((sector) => (
@@ -171,7 +183,7 @@ const ToiletDetails = () => {
         <Select
           value={selectedVendor}
           onChange={handleVendorChange}
-          placeholder="Select Vendor"
+          placeholder={dict.select_vendor[lang]}
           style={{ minWidth: "150px", flex: "1" }}
         >
           {vendorData.map((vendor) => (
@@ -184,7 +196,7 @@ const ToiletDetails = () => {
         <Select
           value={selectedToilet}
           onChange={handleToiletChange}
-          placeholder="Select Toilet"
+          placeholder={dict.select_toilet[lang]}
           style={{ minWidth: "150px", flex: "1" }}
         >
           {toiletData?.map((toilet) => (
@@ -206,7 +218,7 @@ const ToiletDetails = () => {
             fetchAssetData(selectedSector, selectedVendor, selectedToilet)
           }
         >
-          Search
+          {dict.search[lang]}
         </Button>
       </div>
 
@@ -215,7 +227,7 @@ const ToiletDetails = () => {
           showAll
             ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
-        } gap-2 sm:gap-3 md:gap-4 lg:gap-4`}
+        } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
         {displayedToilets.length > 0 ? (
           displayedToilets.map((item, index) => (
@@ -236,7 +248,7 @@ const ToiletDetails = () => {
                   showAll ? "" : "h-40"
                 }`}
                 style={{
-                  minHeight: "100px",
+                  minHeight: "110px",
                 }}
               >
                 <div className="text-start flex-1">
@@ -266,7 +278,7 @@ const ToiletDetails = () => {
           ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
-            No data available
+           {dict.no_data_available[lang]}
           </div>
         )}
       </div>
@@ -279,7 +291,7 @@ const ToiletDetails = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-          See More
+         {dict.see_more[lang]}
         </Button>
       ) : (
         <Button
@@ -289,10 +301,10 @@ const ToiletDetails = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-          Show Less
+           {dict.show_less[lang]}
         </Button>
       )}
-    </div>
+          </div>
   );
 };
 

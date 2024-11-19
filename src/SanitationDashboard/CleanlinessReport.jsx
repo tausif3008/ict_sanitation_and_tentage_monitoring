@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { Button, message, Select, TimePicker } from "antd";
+import URLS from "../urils/URLS";
+import { useOutletContext } from "react-router";
+
 
 const CleanlinessReport = () => {
-
+  const [dict, lang] = useOutletContext();
   const [selectedToilet, setSelectedToilet] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
   const [questionData, setQuestionData] = useState([]);
@@ -89,7 +92,7 @@ const CleanlinessReport = () => {
     const fetchSectorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
+          `${URLS.baseUrl}/sector`,
           {
             method: "GET",
             headers: headers,
@@ -113,7 +116,8 @@ const CleanlinessReport = () => {
     const fetchQuestionData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/questions",
+          `${URLS.baseUrl}/questions`
+         ,
           {
             method: "GET",
             headers: headers,
@@ -137,7 +141,7 @@ const CleanlinessReport = () => {
     const fetchToiletData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/dashboard",
+          `${URLS.baseUrl}/dashboard`,
           { method: "POST", headers: headers }
         );
         const result = await response.json();
@@ -157,17 +161,18 @@ const CleanlinessReport = () => {
     <div className="bg-white p-3 rounded-lg mx-auto">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-bold">
-          Sectorwise Cleanliness Report (Under Monitoring)
+        {dict.sectorwise_cleanliness_report[lang]}
+          
         </h3>
       </div>
       <div className="flex flex-wrap gap-3 mt-0">
-        <div>
+        {/* <div>
           <TimePicker size="middle"></TimePicker>
-        </div>
+        </div> */}
         <Select
           value={selectedToilet}
           onChange={(value) => setSelectedToilet(value)}
-          placeholder="Select Toilet"
+          placeholder={dict.select_toilet[lang]}
           style={{ minWidth: "300px" }}
         >
           {toiletData?.map((toilet) => (
@@ -179,7 +184,7 @@ const CleanlinessReport = () => {
         <Select
           value={selectedQuestion}
           onChange={(value) => setSelectedQuestion(value)}
-          placeholder="Select Question"
+          placeholder={dict.select_question[lang]}
           style={{ width: "300px" }}
         >
           {questionData?.map((questions) => (
@@ -198,7 +203,7 @@ const CleanlinessReport = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }} 
         >
-          Search
+          {dict.search[lang]}
         </Button>
       </div>
       <Chart options={options} series={series} type="bar" height={300} />
