@@ -43,7 +43,7 @@ const VendorSectorAllocation = () => {
   const getUsers = async () => {
     setLoading(true);
 
-    let uri = URLS.getAllocate_Sector.path + "/?";
+    let uri = URLS.getAllocate_Sector.path + "?";
     if (params.page) {
       uri = uri + params.page;
     }
