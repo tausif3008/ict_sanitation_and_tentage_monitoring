@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   name: null,
   sector_list: null,
+  user_list: null,
 };
 
 export const vendorSectorSlice = createSlice({
@@ -21,6 +22,9 @@ export const vendorSectorSlice = createSlice({
     },
     postSector: (state, action) => {
       state.sector_list = action.payload;
+    },
+    postUser: (state, action) => {
+      state.user_list = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -54,6 +58,19 @@ export const getVendorWiseSupervisorList = (url) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postSector } =
+// get user type wise user list
+export const getUserTypeWiseUserList = (url) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(`${url}`);
+    dispatch(postUser(res?.data));
+  } catch (error) {
+    console.error("In get supervisor list error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postSector, postUser } =
   vendorSectorSlice.actions;
 export default vendorSectorSlice.reducer;

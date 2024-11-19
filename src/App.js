@@ -317,11 +317,11 @@ function App() {
               element={<VendorSupervisorForm></VendorSupervisorForm>}
             ></Route>
             <Route
-              path="/vendor-sector-allocation"
+              path="/sector-allocation/:page?/:per_page?"
               element={<VendorSectorAllocation></VendorSectorAllocation>}
             ></Route>
             <Route
-              path="/vendor-sector-form"
+              path="/sector-allocation-form"
               element={<VendorSectorForm></VendorSectorForm>}
             ></Route>
             <Route

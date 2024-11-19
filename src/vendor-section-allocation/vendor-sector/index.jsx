@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { Link } from "react-router-dom";
-// import { Button } from "antd";
 import {
   Collapse,
   Form,
@@ -25,6 +24,7 @@ import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/V
 import { getSectorsList } from "./Slice/vendorSectorSlice";
 import VendorSectorSelectors from "./Slice/vendorSectorSelectors";
 
+// sector allocation
 const VendorSectorAllocation = () => {
   const params = useParams();
   const [searchQuery, setSearchQuery] = useState();
@@ -43,7 +43,7 @@ const VendorSectorAllocation = () => {
   const getUsers = async () => {
     setLoading(true);
 
-    let uri = URLS.getAllocate_Supervisor.path + "/?";
+    let uri = URLS.getAllocate_Sector.path + "?";
     if (params.page) {
       uri = uri + params.page;
     }
@@ -130,7 +130,7 @@ const VendorSectorAllocation = () => {
           <Button
             className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
             onClick={() => {
-              navigate("/vendor-sector-form", {
+              navigate("/sector-allocation-form", {
                 state: {
                   key: "UpdateKey",
                   record: record, // Pass the record as part of the state
@@ -149,12 +149,12 @@ const VendorSectorAllocation = () => {
     <div className="">
       <>
         <CommonDivider
-          label={"Allocate Sector to Vendor Supervisor"}
+          label={"Allocate Sectors"}
           compo={
             <Button
               className="bg-orange-300 mb-1"
               onClick={() =>
-                navigate("/vendor-sector-form", {
+                navigate("/sector-allocation-form", {
                   state: {
                     key: "AddKey",
                   },
@@ -184,7 +184,7 @@ const VendorSectorAllocation = () => {
 
         <CommonTable
           columns={columns}
-          uri={"vendor-sector-registration"}
+          uri={"sector-allocation"}
           loading={loading}
           details={details}
           setUserDetails={setDetails}
