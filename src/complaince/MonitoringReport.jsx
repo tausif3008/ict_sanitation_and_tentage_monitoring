@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Table, Image, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as XLSX from "xlsx";
+import html2pdf from "html2pdf.js";
+
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import CoordinatesMap from "../commonComponents/map/map";
 
 const MonitoringReport = () => {
-  const [details, setDetails] = useState({ list: [] });
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [assetDetails, setAssetDetails] = useState({});
   const params = useParams();
   const navigate = useNavigate();
+  const contentRef = useRef();
 
   // Fetch monitoring details from the API
   const getDetails = async () => {
@@ -26,7 +30,18 @@ const MonitoringReport = () => {
 
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
-      setDetails({ list: monitoringData.questions || [] });
+      // setDetails({ list: monitoringData.questions || [] });
+      const myexcelData = monitoringData.questions?.map((data, index) => {
+        return {
+          sr: index + 1,
+          question_en: data?.question_en,
+          question_hi: data?.question_hi,
+          description: data?.description,
+          answer: data?.answer,
+          image: data?.image,
+        };
+      });
+      setDetails(myexcelData);
 
       setAssetDetails({
         sector_name: monitoringData.sector_name || "N/A",
@@ -44,7 +59,7 @@ const MonitoringReport = () => {
           : "N/A",
       });
     } else {
-      setDetails({ list: [] });
+      setDetails([]);
     }
     setLoading(false);
   };
@@ -57,9 +72,9 @@ const MonitoringReport = () => {
   const dateColumns = [
     {
       title: "Sr No",
-      dataIndex: "question_id",
-      key: "question_id",
-      width: "8%",
+      dataIndex: "sr",
+      key: "sr",
+      width: "5%",
     },
     {
       title: "Question (EN)",
@@ -85,6 +100,7 @@ const MonitoringReport = () => {
         ) : (
           "-"
         ),
+      width: "15%",
     },
     {
       title: "Answer",
@@ -103,8 +119,26 @@ const MonitoringReport = () => {
           {answer === "1" ? "Yes" : answer === "0" ? "No" : "Maintenance"}
         </div>
       ),
+      width: "10%",
     },
   ];
+
+  // excel
+  const exportToExcel = async () => {
+    if (details && details?.length > 0) {
+      const excelList = details.map((data) => {
+        const { image, answer, ...rest } = data;
+        const modifiedAnswer = answer === "1" ? "Yes" : "No";
+        return { ...rest, answer: modifiedAnswer };
+      });
+      const worksheet = XLSX.utils.json_to_sheet(excelList);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Monitoring Report");
+      XLSX.writeFile(workbook, "MonitoringReport.xlsx");
+    } else {
+      return "";
+    }
+  };
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -138,7 +172,8 @@ const MonitoringReport = () => {
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbh}`,
+      // `${IMAGELIST?.kumbh}`,
+      `${IMAGELIST?.govt_logo}`,
       "JPEG",
       rightImageX,
       rightImageY,
@@ -210,7 +245,7 @@ const MonitoringReport = () => {
     doc.autoTable({
       head: [["Sr", "Question (EN)", "Answer"]],
       // head: [["Sr", "Question (EN)", "Question (HI)", "Answer"]],
-      body: details?.list?.map((opt, index) => [
+      body: details?.map((opt, index) => [
         index + 1,
         opt?.question_en,
         // opt?.question_hi,
@@ -231,6 +266,130 @@ const MonitoringReport = () => {
     doc.save("Monitoring-Report.pdf");
   };
 
+  const downloadPDF = () => {
+    // Create an HTML table dynamically or have it in your JSX
+    const tableHTML = `
+      <div style="position: relative; padding: 20px; margin-bottom: 30px;">
+        <!-- Top Left Image -->
+        <img 
+          src="${IMAGELIST?.govt_logo}" 
+          style="position: absolute; left: 20px; top: 5px; height: 70px; width: 70px; margin-left: 20px; margin-top: 20px;" 
+        />
+    
+        <!-- Top Right Image -->
+        <img 
+          src="${IMAGELIST?.kumbh}" 
+          style="position: absolute; right: 20px; top: 5px; height: 70px; width: 70px; margin-right: 20px; margin-top: 20px;" 
+        />
+    
+        <h5 style="text-align: center; margin-bottom: 30px;">ICT Sanitation and Tentage Monitoring System</h5>
+        <div style="margin: 20px; margin-top: 30px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">
+          <div style="margin-bottom: 15px;">
+            <strong>Circle:</strong> <span>${assetDetails?.circle_name}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Sector:</strong> <span>${assetDetails?.sector_name}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Latitude:</strong> <span>${assetDetails?.latitude}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Longitude:</strong> <span>${assetDetails?.longitude}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Unit Number:</strong> <span>${assetDetails?.unit_no}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Submitted Date:</strong> <span>${moment(
+              assetDetails?.submitted_date
+            ).format("DD-MMM-YYYY  hh:mm A")}</span>
+          </div>
+          <div style="margin-bottom: 15px;">
+            <strong>Remark:</strong> <span>${assetDetails?.remark}</span>
+          </div>
+        </div>
+    
+        <div style="margin: 20px;">
+          <h3 style="text-align: center; margin-bottom: 30px;">Monitoring Report</h3>
+          <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-bottom: 20px;">
+            <thead>
+              <tr>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Sr.</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (English)</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (Hindi)</th>
+                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Answer</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${details
+                .map(
+                  (item, index) => `
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        index + 1
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        item?.question_en || "N/A"
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd; font-family: 'Noto Sans Devanagari', sans-serif;">${
+                        item?.question_hi || "N/A"
+                      }</td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                        item?.answer === "1" ? "Yes" : "No"
+                      }</td>
+                    </tr>
+                  `
+                )
+                .join("")}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    // Create a hidden div for the content to be exported as PDF
+    const element = document.createElement("div");
+    element.innerHTML = tableHTML;
+
+    // Set some general margin and padding styles for better spacing
+    const styles = `
+      @page {
+        margin: 20mm;
+      }
+    
+      .table-container {
+        margin-bottom: 20px;
+      }
+    
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-bottom: 20px;
+      }
+    
+      td, th {
+        padding: 8px;
+        border: 1px solid #ddd;
+      }
+    
+      h1 {
+        text-align: center;
+      }
+    
+      .page-break {
+        page-break-before: always;
+      }
+    `;
+
+    // Add styles to the page to handle margins, breaks, and other layout issues
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = styles;
+    document.head.appendChild(styleSheet);
+
+    // Use html2pdf to generate the PDF with custom styles
+    html2pdf().from(element).save("MonitoringReport.pdf");
+  };
+
   return (
     <div>
       <div className="mx-auto p-3 pb-3 bg-white shadow-md rounded-lg w-full mt-3">
@@ -248,15 +407,21 @@ const MonitoringReport = () => {
             </span>
           </div>
           <div>
-            <Button type="primary" onClick={exportToPDF}>
+            <Button type="primary" onClick={downloadPDF}>
+              {/* <Button type="primary" onClick={exportToPDF}> */}
               Download PDF
+            </Button>
+          </div>
+          <div>
+            <Button type="primary" onClick={exportToExcel}>
+              Download Excel
             </Button>
           </div>
         </div>
 
         <Divider className="bg-d9 h-2/3 mt-1" />
 
-        <div className="mt-3">
+        <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2">
             <div>
               Circle:
@@ -325,11 +490,11 @@ const MonitoringReport = () => {
             </div>
           </div>
         </div>
-        {details?.list?.length ? (
+        {details?.length ? (
           <>
             <Table
               columns={dateColumns || []}
-              dataSource={details?.list}
+              dataSource={details}
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered

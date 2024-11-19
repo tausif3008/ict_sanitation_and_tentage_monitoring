@@ -136,11 +136,10 @@ const AssetTypeList = () => {
       const data = response.data;
       if (data.listings.length > 0) {
         setQuestions({
-          // commonList: data?.listings,
-          unCommonList: data?.listings.filter((data) => {
+          unCommonList: data?.listings?.filter((data) => {
             return data?.is_primary != "1";
           }),
-          commonList: data?.listings.filter((data) => {
+          commonList: data?.listings?.filter((data) => {
             return data?.is_primary === "1";
           }),
           pageLength: data?.paging[0].length,
