@@ -5,13 +5,15 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import CoordinatesMap from "../commonComponents/map/map";
 
 const MonitoringReport = () => {
-  const [details, setDetails] = useState({ list: [] });
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [assetDetails, setAssetDetails] = useState({});
   const params = useParams();
@@ -26,7 +28,18 @@ const MonitoringReport = () => {
 
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
-      setDetails({ list: monitoringData.questions || [] });
+      // setDetails({ list: monitoringData.questions || [] });
+      const myexcelData = monitoringData.questions?.map((data, index) => {
+        return {
+          sr: index + 1,
+          question_en: data?.question_en,
+          question_hi: data?.question_hi,
+          description: data?.description,
+          answer: data?.answer,
+          image: data?.image,
+        };
+      });
+      setDetails(myexcelData);
 
       setAssetDetails({
         sector_name: monitoringData.sector_name || "N/A",
@@ -44,7 +57,7 @@ const MonitoringReport = () => {
           : "N/A",
       });
     } else {
-      setDetails({ list: [] });
+      setDetails([]);
     }
     setLoading(false);
   };
@@ -57,9 +70,9 @@ const MonitoringReport = () => {
   const dateColumns = [
     {
       title: "Sr No",
-      dataIndex: "question_id",
-      key: "question_id",
-      width: "8%",
+      dataIndex: "sr",
+      key: "sr",
+      width: "5%",
     },
     {
       title: "Question (EN)",
@@ -85,6 +98,7 @@ const MonitoringReport = () => {
         ) : (
           "-"
         ),
+      width: "15%",
     },
     {
       title: "Answer",
@@ -103,8 +117,26 @@ const MonitoringReport = () => {
           {answer === "1" ? "Yes" : answer === "0" ? "No" : "Maintenance"}
         </div>
       ),
+      width: "10%",
     },
   ];
+
+  // excel
+  const exportToExcel = async () => {
+    if (details && details?.length > 0) {
+      const excelList = details.map((data) => {
+        const { image, answer, ...rest } = data;
+        const modifiedAnswer = answer === "1" ? "Yes" : "No";
+        return { ...rest, answer: modifiedAnswer };
+      });
+      const worksheet = XLSX.utils.json_to_sheet(excelList);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Monitoring Report");
+      XLSX.writeFile(workbook, "MonitoringReport.xlsx");
+    } else {
+      return "";
+    }
+  };
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -138,7 +170,8 @@ const MonitoringReport = () => {
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbh}`,
+      // `${IMAGELIST?.kumbh}`,
+      `${IMAGELIST?.govt_logo}`,
       "JPEG",
       rightImageX,
       rightImageY,
@@ -210,7 +243,7 @@ const MonitoringReport = () => {
     doc.autoTable({
       head: [["Sr", "Question (EN)", "Answer"]],
       // head: [["Sr", "Question (EN)", "Question (HI)", "Answer"]],
-      body: details?.list?.map((opt, index) => [
+      body: details?.map((opt, index) => [
         index + 1,
         opt?.question_en,
         // opt?.question_hi,
@@ -250,6 +283,11 @@ const MonitoringReport = () => {
           <div>
             <Button type="primary" onClick={exportToPDF}>
               Download PDF
+            </Button>
+          </div>
+          <div>
+            <Button type="primary" onClick={exportToExcel}>
+              Download Excel
             </Button>
           </div>
         </div>
@@ -325,11 +363,11 @@ const MonitoringReport = () => {
             </div>
           </div>
         </div>
-        {details?.list?.length ? (
+        {details?.length ? (
           <>
             <Table
               columns={dateColumns || []}
-              dataSource={details?.list}
+              dataSource={details}
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered
