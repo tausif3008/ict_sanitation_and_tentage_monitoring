@@ -1,555 +1,553 @@
 export const DICT = {
-    title1: { hi: "महाकुंभ मेला 2025", en: "Maha Kumbh Mela 2025" },
-    title2: {
-      hi: "खोया और पाया खोज प्रणाली",
-      en: "LOST & FOUND TRACKING SYSTEM ",
-    },
-    dashboard: {
-      en: "Dashboard",
-      hi: "डैशबोर्ड",
-    },
-    home: {
-      hi: "मुख्य पृष्ठ",
-      en: "Home",
-    },
-    reg_lost: {
-      en: "Enroll Lost Person",
-      hi: "खोया व्यक्ति पंजीकरण",
-    },
-    reg_found: {
-      en: "Enroll Found Person",
-      hi: "मिला व्यक्ति पंजीकरण",
-    },
-    sea_lost: {
-      en: "Search Lost Person",
-      hi: "खोए हुए व्यक्ति की खोज",
-    },
-    sea_found: {
-      en: "Search Found Person",
-      hi: "मिले  हुए व्यक्ति की खोजें",
-    },
-  
-    emp_reg: {
-      en: "User Registration",
-      hi: "प्रयोगकर्ता पंजीकरण",
-    },
-    city_reg: {
-      en: "Citizen Registration",
-      hi: "नागरिक पंजीकरण",
-    },
-    help: {
-      en: "Help",
-      hi: "सहायता",
-    },
-    login: {
-      en: "Login",
-      hi: "लॉगिन",
-    },
-    logout: {
-      en: "Logout",
-      hi: "लॉगआउट",
-    },
-    register: {
-      en: "Register",
-      hi: "पंजीकृत करें",
-    },
-    search: {
-      en: "Search",
-      hi: "खोज",
-    },
-    user_reg: {
-      en: "User Registration",
-      hi: "उपयोगकर्ता पंजीकरण",
-    },
-    notice_board: {
-      en: "Notice Board",
-      hi: "सूचना बोर्ड",
-    },
-    translator: {
-      en: "Translator",
-      hi: "अनुवादक",
-    },
-    bring_fam: {
-      en: "Reuniting Loved Ones, One Step at a Time",
-      hi: "प्रियजनों को फिर से मिलाना, एक कदम एक बार में",
-    },
-    recent_load_found: {
-      en: "Recent Lost & Found Cases",
-      hi: "हाल की खोई और पाई गई घटनाएँ",
-    },
-    toll_free: {
-      en: "24x7 Toll Free - 1920",
-      hi: "24x7 टोल फ्री - 1920",
-    },
-    call_free: {
-      en: "Call toll free number - 1231231232",
-      hi: "टोल फ्री नंबर पर कॉल करें - 1231231232",
-    },
-    email: {
-      en: "Email",
-      hi: "ईमेल",
-    },
-    web_portal: {
-      en: "Web Portal Visit",
-      hi: "वेब पोर्टल पर जाएँ",
-    },
-    download_app: {
-      en: "Download App",
-      hi: "ऐप डाउनलोड करें",
-    },
-    statistics: {
-      en: "Statistics",
-      hi: "आंकड़े",
-    },
-    total_lost: {
-      en: "Total Lost Persons Enrolled",
-      hi: "कुल पंजीकृत खोए हुए व्यक्ति",
-    },
-    total_found: {
-      en: "Total Found Persons Enrolled",
-      hi: "कुल पंजीकृत मिले हुए व्यक्ति",
-    },
-    total_reunion: {
-      en: "Total Reunion Completed",
-      hi: "कुल पुनर्मिलन पूर्ण",
-    },
-    pending_cases: {
-      en: "Pending Cases",
-      hi: "लंबित मामले",
-    },
-    support_info: {
-      en: "Support and Information",
-      hi: "समर्थन और जानकारी",
-    },
-    city_corner: {
-      en: "Citizen's Corner",
-      hi: "नागरिक का कोना",
-    },
-    info_missing: {
-      en: (
-        <>
-          <li className="hover:text-ec">Sector 14 -Near Bridge No. 14</li>
-          <li className="hover:text-ec">
-            Sector 17 - Near Police Chowki Central{" "}
-          </li>
-          <li className="hover:text-ec">Sector 17 - Near Police Post Utari</li>
-          <li className="hover:text-ec">Sector 18 - Opposite Parmarth Niketan</li>
-        </>
-      ),
-      hi: (
-        <>
-          <li> सेक्टर 14 -नियर पुल नं 14</li>
-          <li> सेक्टर 17 -पुलिस चौकी मध्य के पास</li>
-          <li> सेक्टर 17 -पुलिस चौकी उटारी के पास</li>
-          <li> सेक्टर 18 -परमार्थ निकेतन के सामने</li>
-        </>
-      ),
-    },
-    info_found: {
-      en: "Inform About Found Person",
-      hi: "मिले हुए व्यक्ति की जानकारी दें",
-    },
-    useful_links: {
-      en: "Useful Links",
-      hi: "उपयोगी लिंक",
-    },
-    photo_missing_found: {
-      en: "Photographs of Missing/Found Person",
-      hi: "लापता/मिले हुए व्यक्ति की तस्वीरें",
-    },
-    check_status: {
-      en: "Check The Status of Your Complaint of a Missing Person",
-      hi: "लापता व्यक्ति की शिकायत की स्थिति जांचें",
-    },
-    quick_search: {
-      en: "Quick Search",
-      hi: "त्वरित खोज",
-    },
-    login_section: {
-      en: "Login Section",
-      hi: "लॉगिन अनुभाग",
-    },
-    police: {
-      en: "Police",
-      hi: "पुलिस",
-    },
-    mela_official: {
-      en: "Mela Official",
-      hi: "मेला अधिकारी",
-    },
-    lost_found_center: {
-      en: "Lost & Found Centers",
-      hi: "खोया और पाया केंद्र",
-    },
-    citizens: {
-      en: "Citizens",
-      hi: "नागरिक",
-    },
-    todays_statistics: {
-      en: "Today's Statistics",
-      hi: "आज की सांख्यिकी",
-    },
-    lost: {
-      en: "Lost",
-      hi: "खोया हुआ",
-    },
-    found: {
-      en: "Found",
-      hi: "मिला हुआ",
-    },
-  
-    pending: {
-      en: "Pending",
-      hi: "लंबित",
-    },
-    reunion: {
-      en: "Reunion",
-      hi: "पुनर्मिलन",
-    },
-    info: {
-      en: "Information",
-      hi: "जानकारी",
-    },
-    objective: {
-      en: "Objective",
-      hi: "उद्देश्य",
-    },
-    local_help: {
-      en: "Your Local Help",
-      hi: "आपकी स्थानीय सहायता",
-    },
-    do_donts: {
-      en: "Do's & Don'ts",
-      hi: "क्या करें और क्या न करें",
-    },
-    web_links: {
-      en: "Useful Links",
-      hi: "उपयोगी लिंक",
-    },
-    kumbh_mela: {
-      en: "Kumbhmela",
-      hi: "कुंभ मेला",
-    },
-    up_police: {
-      en: "UP Police",
-      hi: "उत्तर प्रदेश पुलिस",
-    },
-    faq: {
-      en: "FAQ",
-      hi: "अक्सर पूछे जाने वाले प्रश्न",
-    },
-    community_forum: {
-      en: "Community Forum",
-      hi: "सामुदायिक मंच",
-    },
-    technical_support: {
-      en: "Technical Support",
-      hi: "तकनीकी सहायता",
-    },
-    citizen_feedback: {
-      en: "Citizen Feedback",
-      hi: "नागरिक प्रतिक्रिया",
-    },
-    contact: {
-      en: "Contact",
-      hi: "संपर्क",
-    },
-    address: {
-      en: "Address",
-      hi: "पता",
-    },
-  
-    address_footer: {
-      en: "Kumbh Mela Adhikari Triveni Bhawan, Prayagraj, Uttar Pradesh.",
-      hi: "कुंभ मेला अधिकारी त्रिवेणी भवन, प्रयागराज, उत्तर प्रदेश।",
-    },
-    email_footer: {
-      en: "helpdesk@kumbhlostandfound.in",
-      hi: "helpdesk@kumbhlostandfound.in",
-    },
-    phone: { en: "Phone", hi: "फ़ोन" },
-    phone_number: {
-      en: "+919876543210",
-      hi: "+919876543210",
-    },
-    emmergency: {
-      en: "Emmergency",
-      hi: "आपातकाल",
-    },
-    scan_qr: {
-      en: "Scan QR",
-      hi: "क्यूआर कोड स्कैन करें",
-    },
-    last_footer: {
-      en: "Copyright © 2024 Kash IT Solutions Limited, Pune",
-      hi: "कॉपीराइट © 2024 काश आईटी सॉल्यूशंस लिमिटेड, पुणे",
-    },
-    setting: {
-      en: "Setting",
-      hi: "सेटिंग",
-    },
-    name: {
-      en: "Name",
-      hi: "नाम",
-    },
-    age: {
-      en: "Age",
-      hi: "उम्र",
-    },
-    emmergency_no: {
-      en: "Emmergency No.",
-      hi: "आपातकालीन नंबर",
-    },
-    ambulance: { hi: "एम्बुलेंस", en: "Ambulance" },
-    fire: { hi: "आग", en: "Fire" },
-    helpline: {
-      en: "Helpline",
-      hi: "हेल्पलाइन",
-    },
-  
-    // ********************************
-      role: {
-      en: "Role",
-      hi: "भूमिका"
+  title1: { hi: "महाकुंभ मेला 2025", en: "Maha Kumbh Mela 2025" },
+  title2: {
+    hi: "आईसीटी स्वच्छता/टेंटेज निगरानी प्रणाली",
+    en: "ICT Sanitation and Tentage Monitoring System",
   },
-    manage_permissions: {
-      en: "Manage Permissions",
-      hi: "अनुमतियाँ प्रबंधित करें"
+  dashboard: {
+    en: "Dashboard",
+    hi: "डैशबोर्ड",
   },
-    handover: {
-      en: "Handover",
-      hi: "हस्तांतरण"
+  home: {
+    hi: "मुख्य पृष्ठ",
+    en: "Home",
   },
-    handover_receipt: {
-      en: "Handover Receipt",
-      hi: "हस्तांतरण रसीद"
+  reg_lost: {
+    en: "Enroll Lost Person",
+    hi: "खोया व्यक्ति पंजीकरण",
   },
-    user: {
-      en: "User",
-      hi: "उपयोगकर्ता"
+  reg_found: {
+    en: "Enroll Found Person",
+    hi: "मिला व्यक्ति पंजीकरण",
+  },
+  sea_lost: {
+    en: "Search Lost Person",
+    hi: "खोए हुए व्यक्ति की खोज",
+  },
+  sea_found: {
+    en: "Search Found Person",
+    hi: "मिले  हुए व्यक्ति की खोजें",
+  },
+
+  emp_reg: {
+    en: "User Registration",
+    hi: "प्रयोगकर्ता पंजीकरण",
+  },
+  city_reg: {
+    en: "Citizen Registration",
+    hi: "नागरिक पंजीकरण",
+  },
+  help: {
+    en: "Help",
+    hi: "सहायता",
+  },
+  login: {
+    en: "Login",
+    hi: "लॉगिन",
+  },
+  logout: {
+    en: "Logout",
+    hi: "लॉगआउट",
+  },
+  register: {
+    en: "Register",
+    hi: "पंजीकृत करें",
+  },
+  search: {
+    en: "Search",
+    hi: "खोज",
+  },
+  user_reg: {
+    en: "User Registration",
+    hi: "उपयोगकर्ता पंजीकरण",
+  },
+  notice_board: {
+    en: "Notice Board",
+    hi: "सूचना बोर्ड",
+  },
+  translator: {
+    en: "Translator",
+    hi: "अनुवादक",
+  },
+  bring_fam: {
+    en: "Reuniting Loved Ones, One Step at a Time",
+    hi: "प्रियजनों को फिर से मिलाना, एक कदम एक बार में",
+  },
+  recent_load_found: {
+    en: "Recent Lost & Found Cases",
+    hi: "हाल की खोई और पाई गई घटनाएँ",
+  },
+  toll_free: {
+    en: "24x7 Toll Free - 1920",
+    hi: "24x7 टोल फ्री - 1920",
+  },
+  call_free: {
+    en: "Call toll free number - 1231231232",
+    hi: "टोल फ्री नंबर पर कॉल करें - 1231231232",
+  },
+  email: {
+    en: "Email",
+    hi: "ईमेल",
+  },
+  web_portal: {
+    en: "Web Portal Visit",
+    hi: "वेब पोर्टल पर जाएँ",
+  },
+  download_app: {
+    en: "Download App",
+    hi: "ऐप डाउनलोड करें",
+  },
+  statistics: {
+    en: "Statistics",
+    hi: "आंकड़े",
+  },
+  total_lost: {
+    en: "Total Lost Persons Enrolled",
+    hi: "कुल पंजीकृत खोए हुए व्यक्ति",
+  },
+  total_found: {
+    en: "Total Found Persons Enrolled",
+    hi: "कुल पंजीकृत मिले हुए व्यक्ति",
+  },
+  total_reunion: {
+    en: "Total Reunion Completed",
+    hi: "कुल पुनर्मिलन पूर्ण",
+  },
+  pending_cases: {
+    en: "Pending Cases",
+    hi: "लंबित मामले",
+  },
+  support_info: {
+    en: "Support and Information",
+    hi: "समर्थन और जानकारी",
+  },
+  city_corner: {
+    en: "Citizen's Corner",
+    hi: "नागरिक का कोना",
+  },
+  info_missing: {
+    en: (
+      <>
+        <li className="hover:text-ec">Sector 14 -Near Bridge No. 14</li>
+        <li className="hover:text-ec">
+          Sector 17 - Near Police Chowki Central{" "}
+        </li>
+        <li className="hover:text-ec">Sector 17 - Near Police Post Utari</li>
+        <li className="hover:text-ec">Sector 18 - Opposite Parmarth Niketan</li>
+      </>
+    ),
+    hi: (
+      <>
+        <li> सेक्टर 14 -नियर पुल नं 14</li>
+        <li> सेक्टर 17 -पुलिस चौकी मध्य के पास</li>
+        <li> सेक्टर 17 -पुलिस चौकी उटारी के पास</li>
+        <li> सेक्टर 18 -परमार्थ निकेतन के सामने</li>
+      </>
+    ),
+  },
+  info_found: {
+    en: "Inform About Found Person",
+    hi: "मिले हुए व्यक्ति की जानकारी दें",
+  },
+  useful_links: {
+    en: "Useful Links",
+    hi: "उपयोगी लिंक",
+  },
+  photo_missing_found: {
+    en: "Photographs of Missing/Found Person",
+    hi: "लापता/मिले हुए व्यक्ति की तस्वीरें",
+  },
+  check_status: {
+    en: "Check The Status of Your Complaint of a Missing Person",
+    hi: "लापता व्यक्ति की शिकायत की स्थिति जांचें",
+  },
+  quick_search: {
+    en: "Quick Search",
+    hi: "त्वरित खोज",
+  },
+  login_section: {
+    en: "Login Section",
+    hi: "लॉगिन अनुभाग",
+  },
+  police: {
+    en: "Police",
+    hi: "पुलिस",
+  },
+  mela_official: {
+    en: "Mela Official",
+    hi: "मेला अधिकारी",
+  },
+  lost_found_center: {
+    en: "Lost & Found Centers",
+    hi: "खोया और पाया केंद्र",
+  },
+  citizens: {
+    en: "Citizens",
+    hi: "नागरिक",
+  },
+  todays_statistics: {
+    en: "Today's Statistics",
+    hi: "आज की सांख्यिकी",
+  },
+  lost: {
+    en: "Lost",
+    hi: "खोया हुआ",
+  },
+  found: {
+    en: "Found",
+    hi: "मिला हुआ",
+  },
+
+  pending: {
+    en: "Pending",
+    hi: "लंबित",
+  },
+  reunion: {
+    en: "Reunion",
+    hi: "पुनर्मिलन",
+  },
+  info: {
+    en: "Information",
+    hi: "जानकारी",
+  },
+  objective: {
+    en: "Objective",
+    hi: "उद्देश्य",
+  },
+  local_help: {
+    en: "Your Local Help",
+    hi: "आपकी स्थानीय सहायता",
+  },
+  do_donts: {
+    en: "Do's & Don'ts",
+    hi: "क्या करें और क्या न करें",
+  },
+  web_links: {
+    en: "Useful Links",
+    hi: "उपयोगी लिंक",
+  },
+  kumbh_mela: {
+    en: "Kumbhmela",
+    hi: "कुंभ मेला",
+  },
+  up_police: {
+    en: "UP Police",
+    hi: "उत्तर प्रदेश पुलिस",
+  },
+  faq: {
+    en: "FAQ",
+    hi: "अक्सर पूछे जाने वाले प्रश्न",
+  },
+  community_forum: {
+    en: "Community Forum",
+    hi: "सामुदायिक मंच",
+  },
+  technical_support: {
+    en: "Technical Support",
+    hi: "तकनीकी सहायता",
+  },
+  citizen_feedback: {
+    en: "Citizen Feedback",
+    hi: "नागरिक प्रतिक्रिया",
+  },
+  contact: {
+    en: "Contact",
+    hi: "संपर्क",
+  },
+  address: {
+    en: "Address",
+    hi: "पता",
+  },
+
+  address_footer: {
+    en: "Kumbh Mela Adhikari Triveni Bhawan, Prayagraj, Uttar Pradesh.",
+    hi: "कुंभ मेला अधिकारी त्रिवेणी भवन, प्रयागराज, उत्तर प्रदेश।",
+  },
+  email_footer: {
+    en: "helpdesk@kumbhlostandfound.in",
+    hi: "helpdesk@kumbhlostandfound.in",
+  },
+  phone: { en: "Phone", hi: "फ़ोन" },
+  phone_number: {
+    en: "+919876543210",
+    hi: "+919876543210",
+  },
+  emmergency: {
+    en: "Emmergency",
+    hi: "आपातकाल",
+  },
+  scan_qr: {
+    en: "Scan QR",
+    hi: "क्यूआर कोड स्कैन करें",
+  },
+  last_footer: {
+    en: "Copyright © 2024 Kash IT Solutions Limited, Pune",
+    hi: "कॉपीराइट © 2024 काश आईटी सॉल्यूशंस लिमिटेड, पुणे",
+  },
+  setting: {
+    en: "Setting",
+    hi: "सेटिंग",
+  },
+  name: {
+    en: "Name",
+    hi: "नाम",
+  },
+  age: {
+    en: "Age",
+    hi: "उम्र",
+  },
+  emmergency_no: {
+    en: "Emmergency No.",
+    hi: "आपातकालीन नंबर",
+  },
+  ambulance: { hi: "एम्बुलेंस", en: "Ambulance" },
+  fire: { hi: "आग", en: "Fire" },
+  helpline: {
+    en: "Helpline",
+    hi: "हेल्पलाइन",
+  },
+
+  // ********************************
+  role: {
+    en: "Role",
+    hi: "भूमिका",
+  },
+  manage_permissions: {
+    en: "Manage Permissions",
+    hi: "अनुमतियाँ प्रबंधित करें",
+  },
+  handover: {
+    en: "Handover",
+    hi: "हस्तांतरण",
+  },
+  handover_receipt: {
+    en: "Handover Receipt",
+    hi: "हस्तांतरण रसीद",
+  },
+  user: {
+    en: "User",
+    hi: "उपयोगकर्ता",
   },
   //Sanitation Dashboard And Vendor Dashboard
   sanitation_toilets_count: {
     en: "Sanitation Toilets Count",
-    hi: "स्वच्छता शौचालय गिनती"
+    hi: "स्वच्छता शौचालय गिनती",
   },
   total_toilets: {
     en: "Total Toilets",
-    hi: "कुल शौचालय"
+    hi: "कुल शौचालय",
   },
   registered_toilets: {
     en: "Registered Toilets",
-    hi: "पंजीकृत शौचालय"
+    hi: "पंजीकृत शौचालय",
   },
   under_monitoring: {
     en: "Under Monitoring",
-    hi: "निगरानी में"
+    hi: "निगरानी में",
   },
   off_monitoring: {
     en: "Off Monitoring",
-    hi: "निगरानी बंद"
+    hi: "निगरानी बंद",
   },
   number_of_toilets_cesspool: {
     en: "Number Of Toilets Cesspool Not Done In 24 Hrs",
-    hi: "24 घंटे में नहीं बने शौचालयों की संख्या"
+    hi: "24 घंटे में नहीं बने शौचालयों की संख्या",
   },
   number_of_toilets_jetspray: {
     en: "Number Of Toilets JetSpray Not Deployed",
-    hi: "शौचालयों की संख्या जेटस्प्रे तैनात नहीं"
+    hi: "शौचालयों की संख्या जेटस्प्रे तैनात नहीं",
   },
   number_of_toilets_manpower: {
     en: "Number Of Toilets Manpower Not Deployed",
-    hi: "शौचालयों की संख्या, तैनात नहीं मानवशक्ति"
+    hi: "शौचालयों की संख्या, तैनात नहीं मानवशक्ति",
   },
   number_of_toilets_odor_free: {
     en: "Number Of Toilets Odor Free",
-    hi: "गंध रहित शौचालयों की संख्या"
+    hi: "गंध रहित शौचालयों की संख्या",
   },
   sanitation_toilet_details: {
     en: "Sanitation Toilet Details",
-    hi: "स्वच्छता शौचालय विवरण"
+    hi: "स्वच्छता शौचालय विवरण",
   },
   clean: {
     en: "Clean",
-    hi: "साफ"
+    hi: "साफ",
   },
   unclean: {
     en: "Unclean",
-    hi: "अशुद्ध"
+    hi: "अशुद्ध",
   },
   no_data_available: {
     en: "No data available",
-    hi: "कोई डेटा मौजूद नहीं"
+    hi: "कोई डेटा मौजूद नहीं",
   },
   see_more: {
     en: "See More",
-    hi: "और देखें"
+    hi: "और देखें",
   },
   show_less: {
     en: "Show Less",
-    hi: "कम दिखाएँ"
+    hi: "कम दिखाएँ",
   },
   search: {
     en: "Search",
-    hi: "खोज"
+    hi: "खोज",
   },
   sectorwise_cleanliness_report: {
     en: "Sectorwise Cleanliness Report (Under Monitoring)",
-    hi: "क्षेत्रवार स्वच्छता रिपोर्ट (निगरानी के तहत)"
+    hi: "क्षेत्रवार स्वच्छता रिपोर्ट (निगरानी के तहत)",
   },
   select_zone: {
     en: "Select Zone",
-    hi: "जोन चुनें"
+    hi: "जोन चुनें",
   },
   select_circle: {
     en: "Select Circle",
-    hi: "वृत्त का चयन करें"
+    hi: "वृत्त का चयन करें",
   },
   high_priority: {
     en: "High Priority",
-    hi: "उच्च प्राथमिकता"
+    hi: "उच्च प्राथमिकता",
   },
   low_priority: {
     en: "Low Priority",
-    hi: "कम प्राथमिकता"
+    hi: "कम प्राथमिकता",
   },
   med_priority: {
     en: "Med Priority",
-    hi: "मेड प्राथमिकता"
+    hi: "मेड प्राथमिकता",
   },
   incident_report_analysis: {
     en: "Incident Report Analysis",
-    hi: "घटना रिपोर्ट विश्लेषण"
+    hi: "घटना रिपोर्ट विश्लेषण",
   },
   last_24_hrs: {
     en: "Last 24 Hrs",
-    hi: "पिछले 24 घंटे"
+    hi: "पिछले 24 घंटे",
   },
   vendor_performance_overview: {
     en: "Vendor Performance Overview",
-    hi: "विक्रेता प्रदर्शन का अवलोकन"
+    hi: "विक्रेता प्रदर्शन का अवलोकन",
   },
   high_performing_vendors: {
     en: "High Performing Vendors",
-    hi: "उच्च प्रदर्शन करने वाले विक्रेता"
+    hi: "उच्च प्रदर्शन करने वाले विक्रेता",
   },
   low_performing_vendors: {
     en: "Low Performing Vendors",
-    hi: "कम प्रदर्शन करने वाले विक्रेता"
+    hi: "कम प्रदर्शन करने वाले विक्रेता",
   },
   vendor: {
     en: "Vendor",
-    hi: "विक्रेता"
+    hi: "विक्रेता",
   },
   task_done: {
     en: "Task Done",
-    hi: "कार्य पूर्ण"
+    hi: "कार्य पूर्ण",
   },
   task_overdue: {
     en: "Task Overdue",
-    hi: "कार्य विलंबित"
+    hi: "कार्य विलंबित",
   },
   high_frequency_sector: {
     en: "High Frequency Sectors",
-    hi: "उच्च आवृत्ति क्षेत्र"
+    hi: "उच्च आवृत्ति क्षेत्र",
   },
   low_frequency_sector: {
     en: "Low Frequency Sectors",
-    hi: "कम आवृत्ति क्षेत्र"
+    hi: "कम आवृत्ति क्षेत्र",
   },
   incidents: {
     en: "Incidents",
-    hi: "घटनाएँ"
+    hi: "घटनाएँ",
   },
   sector: {
     en: "Sector",
-    hi: "क्षेत्र"
+    hi: "क्षेत्र",
   },
   location_of_sanitation: {
     en: "Locations Of Sanitation",
-    hi: "स्वच्छता स्थान"
+    hi: "स्वच्छता स्थान",
   },
   require_cleaning: {
     en: "Require Cleaning",
-    hi: "साफ़ करने की आवश्यकता है"
+    hi: "साफ़ करने की आवश्यकता है",
   },
   cleaned: {
     en: "Cleaned",
-    hi: "साफ़ किया गया"
+    hi: "साफ़ किया गया",
   },
   under_maintenance: {
     en: "Under Maintenance",
-    hi: "मरम्मत के अधीन"
+    hi: "मरम्मत के अधीन",
   },
   select_toilet: {
     en: "Select Toilet",
-    hi: "टॉयलेट चयन करें"
+    hi: "टॉयलेट चयन करें",
   },
   select_question: {
     en: "Select Question",
-    hi: "प्रश्न चयन करें"
+    hi: "प्रश्न चयन करें",
   },
   select_vendor: {
     en: "Select Vendor",
-    hi: "विक्रेता चयन करें"
+    hi: "विक्रेता चयन करें",
   },
   select_sector: {
     en: "Select Sector",
-    hi: "क्षेत्र चयन करें"
+    hi: "क्षेत्र चयन करें",
   },
   total_incidents: {
     en: "Total Incidents",
-    hi: "कुल घटनाएँ"
+    hi: "कुल घटनाएँ",
   },
 
   // tentage dashboard and furniture
   tentage_count: {
     en: "Tentage Count",
-    hi: "तम्बू गिनती"
+    hi: "तम्बू गिनती",
   },
   total_tentage: {
     en: "Total Tentage",
-    hi: "कुल तम्बू"
+    hi: "कुल तम्बू",
   },
   registered_tentage: {
     en: "Registered Tentage",
-    hi: "पंजीकृत तम्बू"
+    hi: "पंजीकृत तम्बू",
   },
   tentage_details: {
     en: "Tentage Details",
-    hi: "तम्बू विवरण"
+    hi: "तम्बू विवरण",
   },
   furniture_count: {
     en: "Furniture Count",
-    hi: "फर्नीचर गिनती"
+    hi: "फर्नीचर गिनती",
   },
   total_furniture: {
     en: "Total Furniture",
-    hi: "कुल फर्नीचर"
+    hi: "कुल फर्नीचर",
   },
   registered_furniture: {
     en: "Registered Furniture",
-    hi: "पंजीकृत फर्नीचर"
+    hi: "पंजीकृत फर्नीचर",
   },
   furniture_details: {
     en: "Furniture Details",
-    hi: "फर्नीचर विवरण"
+    hi: "फर्नीचर विवरण",
   },
   location_of_tents: {
     en: "Locations Of Tents",
-    hi: "तंबू के स्थान"
+    hi: "तंबू के स्थान",
   },
   require_attention: {
     en: "Require Attention",
-    hi: "ध्यान देने की आवश्यकता है"
+    hi: "ध्यान देने की आवश्यकता है",
   },
   good: {
     en: "Good",
-    hi: "अच्छा"
+    hi: "अच्छा",
   },
- 
-  
-  };
+};
   
   // *************Lnding Page**********
   
