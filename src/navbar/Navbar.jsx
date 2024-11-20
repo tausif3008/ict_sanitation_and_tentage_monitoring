@@ -5,7 +5,7 @@ import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
-import img1 from "../assets/Images/goup2.png";
+import img1 from "../assets/Images/UPGovLatestLogo.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 
 import { logoutFetch } from "../Fetch/Axios";

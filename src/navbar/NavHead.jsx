@@ -5,7 +5,7 @@ import calenderIcon from "../assets/Dashboard/calendarIcon.png";
 import loginIcon from "../assets/Dashboard/logInIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
-import img1 from "../assets/Images/goup.png";
+import img1 from "../assets/Images/UPGovLatestLogo.png";
 import img2 from "../assets/Images/MahaKumbhLogo.png";
 import { langingPage } from "../utils/dictionary";
 

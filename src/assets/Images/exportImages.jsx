@@ -1,4 +1,4 @@
-import group from "./goup2.png";
+import group from "./UPGovLatestLogo.png";
 import kumbh from "./MahaKumbhLogo.png";
 
 export const IMAGELIST = {

@@ -70,6 +70,7 @@ import ConfigSetting from "./setting/ConfigSetting";
 import ConfigSettingForm from "./setting/configSettingSlice/configForm";
 import AssignRouteForm from "./register/route/AssignRouteForm";
 import AssignedRouteList from "./register/route/AssignedRouteList";
+import PrivacyPolicy from "./privacypolicy/privacypolicy";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -331,6 +332,10 @@ function App() {
             <Route
               path="/config-setting-form"
               element={<ConfigSettingForm></ConfigSettingForm>}
+            ></Route>
+            <Route
+              path="/privacypolicy"
+              element={<PrivacyPolicy></PrivacyPolicy>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
