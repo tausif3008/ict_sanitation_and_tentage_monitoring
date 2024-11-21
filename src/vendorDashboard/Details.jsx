@@ -1,57 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { DatePicker, Select, message, Tooltip, Button } from "antd";
+import { useDispatch } from "react-redux";
+import { useOutletContext } from "react-router";
 import lines from "../assets/Dashboard/lines.png";
 import URLS from "../urils/URLS";
-import { useOutletContext } from "react-router";
+import { priorityToiletTypes } from "../constant/const";
+import { getFormData } from "../urils/getFormData";
+import { getSanitationDashData } from "../SanitationDashboard/Slice/sanitationDashboard";
+import SanitationDashSelector from "../SanitationDashboard/Slice/sanitationDashboardSelector";
 
 const Details = () => {
   const [dict, lang] = useOutletContext();
-
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
-  const toiletData = assetData?.asset_types;
-
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
-
-  const fetchAssetData = async () => {
-    try {
-      const userId = localStorage.getItem("userId");
-      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({
-          vendor_id: userId,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        setAssetData(result.data);
-      } else {
-        message.error("Failed to load asset details.");
-      }
-    } catch (error) {
-      message.error("Error fetching asset details.");
-    }
-  };
+  const dispatch = useDispatch();
+  const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
+  const toiletData = assetData?.asset_types || [];
+  const RoleId = localStorage.getItem("role_id");
+  const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    fetchAssetData();
-  }, []);
+    if (RoleId === "8") {
+      const finalData = {
+        vendor_id: userId,
+      };
+      const formData = getFormData(finalData);
+      dispatch(getSanitationDashData(formData));
+    }
+  }, [RoleId, userId]);
 
-  const priorityToiletTypes = [
-    "Type-1 FRP Septic Tank",
-    "Type-2 FRP Soak Pit",
-    "Type-3 FRP Urinals",
-    "Type-4 Prefab Steel Septic Tank",
-    "Type-5 Prefab Steel Soak Pit",
-  ];
+  useEffect(() => {
+    if (SanitationDash_data) {
+      setAssetData(SanitationDash_data?.data); // sanitation data
+    }
+  }, [SanitationDash_data]);
 
   const priorityToilets = toiletData?.filter((item) =>
     priorityToiletTypes.includes(item.type)
@@ -146,27 +129,29 @@ const Details = () => {
         )}
       </div>
 
-      {!showAll ? (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(true)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-          {dict.see_more[lang]}
-        </Button>
-      ) : (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(false)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-          {dict.show_less[lang]}
-        </Button>
-      )}
+      {toiletData?.length > 0 ? (
+        !showAll ? (
+          <Button
+            size="medium"
+            type="primary"
+            onClick={() => setShowAll(true)}
+            className="w-32 bg-orange-400 font-semibold"
+            style={{ flexShrink: 0 }}
+          >
+            {dict.see_more[lang]}
+          </Button>
+        ) : (
+          <Button
+            size="medium"
+            type="primary"
+            onClick={() => setShowAll(false)}
+            className="w-32 bg-orange-400 font-semibold"
+            style={{ flexShrink: 0 }}
+          >
+            {dict.show_less[lang]}
+          </Button>
+        )
+      ) : null}
     </div>
   );
 };

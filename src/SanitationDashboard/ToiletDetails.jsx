@@ -12,20 +12,13 @@ import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/Vend
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
+import { priorityToiletTypes } from "../constant/const";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
-
-  const priorityToiletTypes = [
-    "Type-1 FRP Septic Tank",
-    "Type-2 FRP Soak Pit",
-    "Type-3 FRP Urinals",
-    "Type-4 Prefab Steel Septic Tank",
-    "Type-5 Prefab Steel Soak Pit",
-  ];
 
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
