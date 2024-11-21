@@ -19,6 +19,14 @@ const ToiletDetails = () => {
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
+  const priorityToiletTypes = [
+    "Type-1 FRP Septic Tank",
+    "Type-2 FRP Soak Pit",
+    "Type-3 FRP Urinals",
+    "Type-4 Prefab Steel Septic Tank",
+    "Type-5 Prefab Steel Soak Pit",
+  ];
+
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
@@ -72,14 +80,6 @@ const ToiletDetails = () => {
     dispatch(getVendorList()); // vendor details
     dispatch(getSectorsList()); // all sectors
   }, []);
-
-  const priorityToiletTypes = [
-    "Type-1 FRP Septic Tank",
-    "Type-2 FRP Soak Pit",
-    "Type-3 FRP Urinals",
-    "Type-4 Prefab Steel Septic Tank",
-    "Type-5 Prefab Steel Soak Pit",
-  ];
 
   const priorityToilets = toiletData?.filter((item) =>
     priorityToiletTypes.includes(item.type)
@@ -173,7 +173,7 @@ const ToiletDetails = () => {
               loading={loading}
               type="button"
               // htmlType="submit"
-              className="w-fit rounded-none bg-orange-400"
+              className="w-fit rounded-none text-white bg-orange-400"
               onClick={handleReset}
             >
               Reset{" "}
