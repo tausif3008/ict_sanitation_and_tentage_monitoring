@@ -121,7 +121,7 @@ const ToiletDetails = () => {
               allowClear={false}
               format={dateFormat}
               placeholder="Select Date"
-              className="w-full"
+              className="w-full rounded-none"
             />
           </Form.Item>
           <Form.Item label="Sector" name="sector_id">
@@ -150,9 +150,9 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Select Type" name="asset_type_id">
+          <Form.Item label="Select Toilet" name="asset_type_id">
             <Select
-              placeholder="Select Type"
+              placeholder="Select Toilet"
               allowClear
               className="rounded-none"
             >
@@ -171,8 +171,8 @@ const ToiletDetails = () => {
           <div>
             <Button
               loading={loading}
-              type="primary"
-              htmlType="submit"
+              type="button"
+              // htmlType="submit"
               className="w-fit rounded-none bg-orange-400"
               onClick={handleReset}
             >
@@ -253,27 +253,29 @@ const ToiletDetails = () => {
         )}
       </div>
 
-      {!showAll ? (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(true)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-          {dict.see_more[lang]}
-        </Button>
-      ) : (
-        <Button
-          size="medium"
-          type="primary"
-          onClick={() => setShowAll(false)}
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-          {dict.show_less[lang]}
-        </Button>
-      )}
+      {toiletData?.length > 0 ? (
+        !showAll ? (
+          <Button
+            size="medium"
+            type="primary"
+            onClick={() => setShowAll(true)}
+            className="w-32 bg-orange-400 font-semibold"
+            style={{ flexShrink: 0 }}
+          >
+            {dict.see_more[lang]}
+          </Button>
+        ) : (
+          <Button
+            size="medium"
+            type="primary"
+            onClick={() => setShowAll(false)}
+            className="w-32 bg-orange-400 font-semibold"
+            style={{ flexShrink: 0 }}
+          >
+            {dict.show_less[lang]}
+          </Button>
+        )
+      ) : null}
     </div>
   );
 };

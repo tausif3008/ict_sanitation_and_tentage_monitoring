@@ -54,7 +54,6 @@ const MajorIssuesCount = () => {
     fetchAssetData();
   }, []);
 
- 
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -64,7 +63,9 @@ const MajorIssuesCount = () => {
               <span className="text-green-600">
                 {dict.number_of_toilets_cesspool[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(totalAssets)}</h2>
+              <h2 className="text-2xl font-bold">
+                {formatNumber(totalAssets)}
+              </h2>
             </div>
           </div>
           <img
