@@ -10,6 +10,7 @@ const VendorSectorSelectors = () => {
   const TypeUserList = useSelector(
     (state) => state?.vendorSectorSlice.user_list
   );
+  // all sector list dropdown
   const SectorListDrop = SectorData?.data?.sectors?.map((data) => {
     return {
       value: data?.sector_id,

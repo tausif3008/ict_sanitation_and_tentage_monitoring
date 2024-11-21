@@ -1,123 +1,77 @@
-
 import React, { useState, useEffect } from "react";
-import { DatePicker, Select, message, Tooltip, Button } from "antd";
+import { DatePicker, Select, message, Tooltip, Button, Form } from "antd";
 import dayjs from "dayjs";
-import lines from "../assets/Dashboard/lines.png";
-import URLS from "../urils/URLS";
+import moment from "moment";
 import { useOutletContext } from "react-router";
+import { useDispatch } from "react-redux";
+import lines from "../assets/Dashboard/lines.png";
+import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
+import { getSanitationDashData } from "./Slice/sanitationDashboard";
+import { getFormData } from "../urils/getFormData";
 
 const ToiletDetails = () => {
+  const dateFormat = "YYYY-MM-DD";
   const [dict, lang] = useOutletContext();
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [selectedSector, setSelectedSector] = useState(null);
-  const [selectedToilet, setSelectedToilet] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD")); // Default to current date
-  const [vendorData, setVendorData] = useState([]);
-  const [sectorData, setSectorData] = useState([]);
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
-  const toiletData = assetData?.asset_types;
+  const dispatch = useDispatch();
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
 
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
+  const toiletData = assetData?.asset_types || [];
+
+  const [form] = Form.useForm();
+
+  // Reset the form
+  const handleReset = () => {
+    form.resetFields();
+    todayData();
+  };
+
+  // Handle form submission
+  const onFinish = async (values) => {
+    const dayjsDate = new Date(values?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
+    const finalValues = {
+      ...(values?.sector_id && { sector_id: values?.sector_id }),
+      ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+    };
+    const formData = await getFormData(finalValues);
+    dispatch(getSanitationDashData(formData));
+  };
+
+  // today date
+  const todayData = async () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+    });
+    const finalData = {
+      date: newDate,
+    };
+    const formData = await getFormData(finalData);
+    dispatch(getSanitationDashData(formData));
   };
 
   useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/users?user_type_id=8`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setVendorData(result.data.users);
-        } else {
-          message.error("Failed to load vendor details.");
-        }
-      } catch (error) {
-        message.error("Error fetching vendor details.");
-      }
-    };
-    fetchVendorData();
-  }, []);
-
-  useEffect(() => {
-    const fetchSectorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/sector`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setSectorData(result.data.sectors);
-        } else {
-          message.error("Failed to load sector details.");
-        }
-      } catch (error) {
-        message.error("Error fetching sector details.");
-      }
-    };
-    fetchSectorData();
-  }, []);
-
-  const fetchAssetData = async (
-    sectorId = null,
-    vendorId = null,
-    toiletId = null
-  ) => {
-    try {
-      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({
-          date: selectedDate, // Include the date in the request
-          sector_id: sectorId || undefined,
-          vendor_id: vendorId || undefined,
-          asset_type_id: toiletId || undefined,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        setAssetData(result.data);
-      } else {
-        message.error("Failed to load asset details.");
-      }
-    } catch (error) {
-      message.error("Error fetching asset details.");
+    if (SanitationDash_data) {
+      setAssetData(SanitationDash_data?.data); // sanitation data
     }
-  };
+  }, [SanitationDash_data]);
 
   useEffect(() => {
-    fetchAssetData();
+    todayData(); // today data
+    dispatch(getVendorList()); // vendor details
+    dispatch(getSectorsList()); // all sectors
   }, []);
-
-  const handleSectorChange = (value) => {
-    setSelectedSector(value);
-    fetchAssetData(value, selectedVendor, selectedToilet);
-  };
-
-  const handleVendorChange = (value) => {
-    setSelectedVendor(value);
-    fetchAssetData(selectedSector, value, selectedToilet);
-  };
-
-  const handleToiletChange = (value) => {
-    setSelectedToilet(value);
-    fetchAssetData(selectedSector, selectedVendor, value);
-  };
-
-  const handleDateChange = (date) => {
-    const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
-    setSelectedDate(formattedDate);
-    fetchAssetData(selectedSector, selectedVendor, selectedToilet);
-  };
 
   const priorityToiletTypes = [
     "Type-1 FRP Septic Tank",
@@ -160,66 +114,83 @@ const ToiletDetails = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker
-          size="middle"
-          defaultValue={dayjs()}
-          onChange={handleDateChange}
-        />
-        <Select
-          value={selectedSector}
-          onChange={handleSectorChange}
-          placeholder={dict.select_sector[lang]}
-          style={{ minWidth: "120px", flex: "1" }}
-        >
-          {sectorData.map((sector) => (
-            <Select.Option key={sector.sector_id} value={sector.sector_id}>
-              {sector.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Select
-          value={selectedVendor}
-          onChange={handleVendorChange}
-          placeholder={dict.select_vendor[lang]}
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {vendorData.map((vendor) => (
-            <Select.Option key={vendor.user_id} value={vendor.user_id}>
-              {vendor.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Select
-          value={selectedToilet}
-          onChange={handleToiletChange}
-          placeholder={dict.select_toilet[lang]}
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {toiletData?.map((toilet) => (
-            <Select.Option
-              key={toilet.asset_type_id}
-              value={toilet.asset_type_id}
+      <Form form={form} layout="vertical" onFinish={onFinish}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <Form.Item label="Date" name="date">
+            <DatePicker
+              allowClear={false}
+              format={dateFormat}
+              placeholder="Select Date"
+              className="w-full"
+            />
+          </Form.Item>
+          <Form.Item label="Sector" name="sector_id">
+            <Select
+              placeholder="Select sector"
+              allowClear
+              className="rounded-none"
             >
-              {toilet.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Button
-          size="medium"
-          type="primary"
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-          onClick={() =>
-            fetchAssetData(selectedSector, selectedVendor, selectedToilet)
-          }
-        >
-          {dict.search[lang]}
-        </Button>
-      </div>
+              {SectorListDrop?.map((option) => (
+                <Select.Option key={option?.value} value={option?.value}>
+                  {option?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Select Vendor" name="vendor_id">
+            <Select
+              placeholder="Select Vendor"
+              allowClear
+              className="rounded-none"
+            >
+              {VendorListDrop?.map((option) => (
+                <Select.Option key={option?.value} value={option?.value}>
+                  {option?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <Form.Item label="Select Type" name="asset_type_id">
+            <Select
+              placeholder="Select Type"
+              allowClear
+              className="rounded-none"
+            >
+              {toiletData?.map((option) => (
+                <Select.Option
+                  key={option?.asset_type_id}
+                  value={option?.asset_type_id}
+                >
+                  {option?.name}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>{" "}
+        </div>
+        <div className="flex justify-start space-x-2">
+          <div>
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="w-fit rounded-none bg-orange-400"
+              onClick={handleReset}
+            >
+              Reset{" "}
+            </Button>
+          </div>
+          <div>
+            <Button
+              loading={loading}
+              type="primary"
+              htmlType="submit"
+              className="w-fit rounded-none bg-5c"
+            >
+              Search{" "}
+            </Button>
+          </div>
+        </div>{" "}
+      </Form>
 
       <div
         className={`grid ${
@@ -229,14 +200,14 @@ const ToiletDetails = () => {
         } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
         {displayedToilets.length > 0 ? (
-          displayedToilets.map((item, index) => (
+          displayedToilets?.map((item, index) => (
             <Tooltip
               key={index}
               title={
                 <div>
-                  <strong>{item.name}</strong>
-                  <div>Total Quantity: {item.total}</div>
-                  <div>Registered Quantity: {item.registered}</div>
+                  <strong>{item?.name}</strong>
+                  <div>Total Quantity: {item?.total}</div>
+                  <div>Registered Quantity: {item?.registered}</div>
                 </div>
               }
               placement="top"
@@ -252,18 +223,18 @@ const ToiletDetails = () => {
               >
                 <div className="text-start flex-1">
                   <div className="text-sm text-gray-500 font-bold">
-                    {item.name}
+                    {item?.name}
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item.clean}</span>
+                    <span className="text-sm font-semibold">{item?.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                     <span className="text-sm font-semibold">
-                      {item.unclean}
+                      {item?.unclean}
                     </span>
                   </div>
                 </div>
@@ -277,7 +248,7 @@ const ToiletDetails = () => {
           ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
-           {dict.no_data_available[lang]}
+            {dict.no_data_available[lang]}
           </div>
         )}
       </div>
@@ -290,7 +261,7 @@ const ToiletDetails = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-         {dict.see_more[lang]}
+          {dict.see_more[lang]}
         </Button>
       ) : (
         <Button
@@ -300,10 +271,10 @@ const ToiletDetails = () => {
           className="w-32 bg-orange-400 font-semibold"
           style={{ flexShrink: 0 }}
         >
-           {dict.show_less[lang]}
+          {dict.show_less[lang]}
         </Button>
       )}
-          </div>
+    </div>
   );
 };
 

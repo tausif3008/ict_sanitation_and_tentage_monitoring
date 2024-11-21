@@ -16,6 +16,7 @@ import vendorSupervisorSlice from "../vendor/VendorSupervisorRegistration/Slice/
 import vendorSectorSlice from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import configSlice from "../setting/configSettingSlice/configSlice";
 import circleWiseSlice from "../Reports/CircleSlice/circleSlices";
+import  sanitationDashboard  from "../SanitationDashboard/Slice/sanitationDashboard";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -34,6 +35,9 @@ const rootReducer = combineReducers({
   vendorSectorSlice: vendorSectorSlice,
   configSlice: configSlice,
   circleWiseSlice: circleWiseSlice,
+
+  // dashboard
+  sanitationDashboard: sanitationDashboard,
 });
 
 export default rootReducer;

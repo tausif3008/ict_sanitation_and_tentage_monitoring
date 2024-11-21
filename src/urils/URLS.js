@@ -134,8 +134,11 @@ const URLS = {
   getSettings: { path: "/settings/get", version: 5.43 },
   editSettings: { path: "/settings/edit", version: 5.43 },
 
-  routes: { path: "/routes", version: 5.43 },
-  assignroutes: { path: "/assignroutes", version: 5.43 },
+  // config settings
+  getSettings: { path: "/settings/get", version: 5.43 },
+  editSettings: { path: "/settings/edit", version: 5.43 },
+
+  sanitationDash: { path: "/dashboard/sanitation", version: 5.43 },
 };
 
 export default URLS;
