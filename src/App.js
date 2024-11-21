@@ -71,6 +71,7 @@ import ConfigSettingForm from "./setting/configSettingSlice/configForm";
 import AssignRouteForm from "./register/route/AssignRouteForm";
 import AssignedRouteList from "./register/route/AssignedRouteList";
 import PrivacyPolicy from "./privacypolicy/privacypolicy";
+import DeleteAccount from "./deleteaccount/deleteaccount";
 
 function App() {
   const loggedIn = localStorage.getItem("sessionToken");
@@ -336,6 +337,10 @@ function App() {
             <Route
               path="/privacypolicy"
               element={<PrivacyPolicy></PrivacyPolicy>}
+            ></Route>
+            <Route
+              path="/deleteaccount"
+              element={<DeleteAccount></DeleteAccount>}
             ></Route>
           </Route>
           <Route path="*" element={<AppError></AppError>}></Route>
