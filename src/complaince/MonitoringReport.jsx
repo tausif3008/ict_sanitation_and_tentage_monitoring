@@ -52,6 +52,7 @@ const MonitoringReport = () => {
         photo: monitoringData.photo !== "N" ? monitoringData.photo : null,
         asset_type_name: monitoringData.asset_type_name || "",
         qrCode: monitoringData.qr_code || null,
+        code: monitoringData.code || null,
         // qrCode: monitoringData.qr_code !== "N" ? monitoringData.qr_code : null,
         unit_no: monitoringData.unit_no || "N/A", // Added Unit Number
         submitted_date: monitoringData.updated_at // Added Submitted Date
@@ -269,62 +270,81 @@ const MonitoringReport = () => {
   const downloadPDF = () => {
     // Create an HTML table dynamically or have it in your JSX
     const tableHTML = `
-      <div style="position: relative; padding: 20px; margin-bottom: 30px;">
-        <!-- Top Left Image -->
+      <div style="padding: 20px; margin-bottom: 30px;">
         <img 
           src="${IMAGELIST?.govt_logo}" 
-          style="position: absolute; left: 20px; top: 5px; height: 70px; width: 70px; margin-left: 20px; margin-top: 20px;" 
+          style="position: absolute; left: 20px; top: 5px; height: 90px; width: 90px; margin-left: 20px; margin-top: 20px;" 
         />
     
-        <!-- Top Right Image -->
         <img 
-          src="${IMAGELIST?.kumbh}" 
-          style="position: absolute; right: 20px; top: 5px; height: 70px; width: 70px; margin-right: 20px; margin-top: 20px;" 
+          src="${IMAGELIST?.kumbhMela}" 
+          style="position: absolute; right: 20px; top: 5px; height: 90px; width: 90px; margin-right: 20px; margin-top: 20px;" 
         />
     
+        <h3 style="text-align: center; margin-bottom: 30px;">Maha Kumbh 2025</h3>
         <h5 style="text-align: center; margin-bottom: 30px;">ICT Sanitation and Tentage Monitoring System</h5>
-        <div style="margin: 20px; margin-top: 30px; padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;">
-          <div style="margin-bottom: 15px;">
-            <strong>Circle:</strong> <span>${assetDetails?.circle_name}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Sector:</strong> <span>${assetDetails?.sector_name}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Latitude:</strong> <span>${assetDetails?.latitude}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Longitude:</strong> <span>${assetDetails?.longitude}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Unit Number:</strong> <span>${assetDetails?.unit_no}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Submitted Date:</strong> <span>${moment(
-              assetDetails?.submitted_date
-            ).format("DD-MMM-YYYY  hh:mm A")}</span>
-          </div>
-          <div style="margin-bottom: 15px;">
-            <strong>Remark:</strong> <span>${assetDetails?.remark}</span>
-          </div>
+    
+        <!-- Vendor Info Table -->
+        <div style="margin: 20px;">
+          <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-bottom: 20px;">
+            <tbody>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 50%;"><strong>Vendor Name</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.asset_type_name
+                }</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Circle</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.circle_name
+                }</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Sector</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.sector_name
+                }</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>PTC ID</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${`${assetDetails?.code}-${assetDetails?.unit_no}`}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Submitted Date</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${moment(
+                  assetDetails?.submitted_date
+                ).format("DD-MMM-YYYY  hh:mm A")}</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Remark</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.remark
+                }</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
     
+        <!-- Monitoring Report Table -->
         <div style="margin: 20px;">
           <h3 style="text-align: center; margin-bottom: 30px;">Monitoring Report</h3>
           <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-bottom: 20px;">
             <thead>
-              <tr>
-                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Sr.</th>
-                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (English)</th>
-                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Question (Hindi)</th>
-                <th style="padding: 8px; text-align: left; border-bottom: 2px solid #ddd;">Answer</th>
+              <tr style="background-color: #187bcd; color:white">
+                <th style=" padding: 8px; text-align: center; border-bottom: 2px solid #ddd;">Sr.</th>
+                <th style=" padding: 8px; text-align: center; border-bottom: 2px solid #ddd;">Question (English)</th>
+                <th style=" padding: 8px; text-align: center; border-bottom: 2px solid #ddd;">Question (Hindi)</th>
+                <th style=" padding: 8px; text-align: center; border-bottom: 2px solid #ddd;">Answer</th>
               </tr>
             </thead>
             <tbody>
               ${details
                 .map(
                   (item, index) => `
-                    <tr>
+                    <tr style="background-color: ${
+                      index % 2 === 0 ? "#f0f0f0" : "white"
+                    };">
                       <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
                         index + 1
                       }</td>
@@ -337,14 +357,24 @@ const MonitoringReport = () => {
                       <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
                         item?.answer === "1" ? "Yes" : "No"
                       }</td>
-                    </tr>
-                  `
+                    </tr>`
                 )
                 .join("")}
             </tbody>
           </table>
         </div>
-      </div>
+    
+        <!-- Footer Text (Added after content) -->
+        <div style="margin-top: 40px;">
+          <hr style="border: 0; border-top: 2px solid black; margin-bottom: 10px;">
+          <div style="text-align: center; font-size: 14px; color: #333;">
+            Copyright © 2024-2025 Prayagraj Mela Authority. All Rights Reserved.
+            <br>
+            Hosted by Prayagraj Mela Authority.
+          </div>
+        </div>
+
+     </div>
     `;
 
     // Create a hidden div for the content to be exported as PDF
@@ -356,26 +386,26 @@ const MonitoringReport = () => {
       @page {
         margin: 20mm;
       }
-    
+  
       .table-container {
         margin-bottom: 20px;
       }
-    
+  
       table {
         border-collapse: collapse;
         width: 100%;
         margin-bottom: 20px;
       }
-    
+  
       td, th {
         padding: 8px;
         border: 1px solid #ddd;
       }
-    
+  
       h1 {
         text-align: center;
       }
-    
+  
       .page-break {
         page-break-before: always;
       }

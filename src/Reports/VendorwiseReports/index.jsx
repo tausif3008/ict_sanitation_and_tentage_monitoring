@@ -165,7 +165,7 @@ const VendorReports = () => {
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbh}`,
+      `${IMAGELIST?.kumbhMela}`,
       "JPEG",
       rightImageX,
       rightImageY,
