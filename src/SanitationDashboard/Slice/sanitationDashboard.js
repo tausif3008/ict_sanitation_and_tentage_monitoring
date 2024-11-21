@@ -6,7 +6,7 @@ import URLS from "../../urils/URLS";
 const initialState = {
   loading: false,
   name: null,
-  vendor_list: null,
+  dash_data: null,
 };
 
 export const sanitationDashboard = createSlice({
@@ -18,6 +18,9 @@ export const sanitationDashboard = createSlice({
     },
     postSuccess: (state, action) => {
       state.name = action.payload;
+    },
+    postDash: (state, action) => {
+      state.dash_data = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -46,6 +49,19 @@ export const getSanitationDashData = (data) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postVendor } =
+// get dashboard data
+export const getDashboardData = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.post(`${URLS?.dashboardApi?.path}`);
+    dispatch(postDash(res?.data));
+  } catch (error) {
+    console.error("In get dashboard data error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postDash } =
   sanitationDashboard.actions;
 export default sanitationDashboard.reducer;

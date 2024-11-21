@@ -138,7 +138,11 @@ const URLS = {
   getSettings: { path: "/settings/get", version: 5.43 },
   editSettings: { path: "/settings/edit", version: 5.43 },
 
+  // sanitation dashboard
   sanitationDash: { path: "/dashboard/sanitation", version: 5.43 },
+
+  // dashboard
+  dashboardApi: { path: "/dashboard", version: 5.43 },
 };
 
 export default URLS;

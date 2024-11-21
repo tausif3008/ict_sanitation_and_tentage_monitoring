@@ -97,9 +97,7 @@ const AssetTypeForm = () => {
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl));
 
-    // question
-    const question = URLS?.questions?.path;
-    dispatch(getQuestionList(question));
+    dispatch(getQuestionList()); // get question
 
     // sla types
     const sla_url = URLS?.slaTypes?.path;

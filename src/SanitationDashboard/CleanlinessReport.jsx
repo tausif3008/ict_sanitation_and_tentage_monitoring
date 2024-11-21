@@ -1,18 +1,24 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
+import { useDispatch } from "react-redux";
 import { Button, message, Select, TimePicker } from "antd";
-import URLS from "../urils/URLS";
 import { useOutletContext } from "react-router";
-
+import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getDashboardData } from "./Slice/sanitationDashboard";
+import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
+import { getQuestionList } from "../register/questions/questionSlice";
+import QuestionSelector from "../register/questions/questionSelector";
 
 const CleanlinessReport = () => {
   const [dict, lang] = useOutletContext();
   const [selectedToilet, setSelectedToilet] = useState(null);
   const [selectedQuestion, setSelectedQuestion] = useState(null);
-  const [questionData, setQuestionData] = useState([]);
-  const [sectorData, setSectorData] = useState([]);
-  const [assetData, setAssetData] = useState([]);
-  const toiletData = assetData?.asset_count;
+
+  const dispatch = useDispatch();
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown ( api of this drop call in ToiletDetails component of sanitation dash)
+  const category = SectorListDrop?.map((data) => data?.label);
+  const { Dash_Drop } = SanitationDashSelector(); // dashboard
+  const { QuestionDrop } = QuestionSelector(); // questions
 
   const options = {
     chart: {
@@ -44,7 +50,8 @@ const CleanlinessReport = () => {
       },
     },
     xaxis: {
-      categories: sectorData.map((sector) => sector.name),
+      categories: category || [],
+      // categories: sectorData?.map((sector) => sector?.name),
     },
     yaxis: {
       title: {
@@ -80,89 +87,16 @@ const CleanlinessReport = () => {
     },
   ];
 
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
-
   useEffect(() => {
-    const fetchSectorData = async () => {
-      try {
-        const response = await fetch(
-          `${URLS.baseUrl}/sector`,
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
-        const result = await response.json();
-
-        if (result.success) {
-          setSectorData(result.data.sectors);
-        } else {
-          message.error("Failed to load details.");
-        }
-      } catch (error) {
-        message.error("Error fetching details.");
-      }
-    };
-    fetchSectorData();
-  }, []);
-
-  useEffect(() => {
-    const fetchQuestionData = async () => {
-      try {
-        const response = await fetch(
-          `${URLS.baseUrl}/questions`
-         ,
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
-        const result = await response.json();
-
-        if (result.success) {
-          setQuestionData(result.data.listings);
-        } else {
-          message.error("Failed to load details.");
-        }
-      } catch (error) {
-        message.error("Error fetching details.");
-      }
-    };
-    fetchQuestionData();
-  }, []);
-
-  useEffect(() => {
-    const fetchToiletData = async () => {
-      try {
-        const response = await fetch(
-          `${URLS.baseUrl}/dashboard`,
-          { method: "POST", headers: headers }
-        );
-        const result = await response.json();
-        if (result.success) {
-          setAssetData(result.data);
-        } else {
-          message.error("Failed to load details.");
-        }
-      } catch (error) {
-        message.error("Error fetching details.");
-      }
-    };
-    fetchToiletData();
+    dispatch(getDashboardData()); // get dashboard data
+    dispatch(getQuestionList()); // get question
   }, []);
 
   return (
     <div className="bg-white p-3 rounded-lg mx-auto">
       <div className="flex justify-between items-center mb-2">
         <h3 className="text-xl font-bold">
-        {dict.sectorwise_cleanliness_report[lang]}
-          
+          {dict.sectorwise_cleanliness_report[lang]}
         </h3>
       </div>
       <div className="flex flex-wrap gap-3 mt-0">
@@ -175,9 +109,9 @@ const CleanlinessReport = () => {
           placeholder={dict.select_toilet[lang]}
           style={{ minWidth: "300px" }}
         >
-          {toiletData?.map((toilet) => (
-            <Select.Option key={toilet.asset_type_id} value={toilet.type}>
-              {toilet.type}
+          {Dash_Drop?.map((toilet) => (
+            <Select.Option key={toilet?.value} value={toilet?.value}>
+              {toilet?.label}
             </Select.Option>
           ))}
         </Select>
@@ -187,12 +121,9 @@ const CleanlinessReport = () => {
           placeholder={dict.select_question[lang]}
           style={{ width: "300px" }}
         >
-          {questionData?.map((questions) => (
-            <Select.Option
-              key={questions.question_id}
-              value={questions.question_en}
-            >
-              {questions.question_en}
+          {QuestionDrop?.map((questions) => (
+            <Select.Option key={questions?.value} value={questions?.value}>
+              {questions?.label}
             </Select.Option>
           ))}
         </Select>
@@ -201,7 +132,7 @@ const CleanlinessReport = () => {
           type="primary"
           htmlType="submit"
           className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }} 
+          style={{ flexShrink: 0 }}
         >
           {dict.search[lang]}
         </Button>
@@ -212,4 +143,3 @@ const CleanlinessReport = () => {
 };
 
 export default CleanlinessReport;
-
