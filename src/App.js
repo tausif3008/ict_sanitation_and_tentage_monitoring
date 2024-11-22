@@ -81,6 +81,7 @@ import PrivacyPolicy from "./privacypolicy/privacypolicy";
 import DeleteAccount from "./deleteaccount/deleteaccount";
 import axiosInstance from "./Axios/commonAxios";
 import IncidentReports from "./Reports/Incident-reports";
+import ContactUsPage from "./contactus/contactus";
 
 function App() {
   const navigate = useNavigate();
@@ -402,6 +403,10 @@ function App() {
           <Route
             path="/deleteaccount"
             element={<DeleteAccount></DeleteAccount>}
+          ></Route>
+          <Route
+            path="/contactus"
+            element={<ContactUsPage></ContactUsPage>}
           ></Route>
 
           {/* Report */}
