@@ -121,6 +121,12 @@ const ToiletDetails = () => {
             <Select
               placeholder="Select sector"
               allowClear
+              showSearch
+              filterOption={(input, option) => {
+                return option?.children
+                  ?.toLowerCase()
+                  ?.includes(input?.toLowerCase());
+              }}
               className="rounded-none"
             >
               {SectorListDrop?.map((option) => (
@@ -134,6 +140,12 @@ const ToiletDetails = () => {
             <Select
               placeholder="Select Vendor"
               allowClear
+              showSearch
+              filterOption={(input, option) => {
+                return option?.children
+                  ?.toLowerCase()
+                  ?.includes(input?.toLowerCase());
+              }}
               className="rounded-none"
             >
               {VendorListDrop?.map((option) => (
@@ -147,6 +159,12 @@ const ToiletDetails = () => {
             <Select
               placeholder="Select Toilet"
               allowClear
+              showSearch
+              filterOption={(input, option) => {
+                return option?.children
+                  ?.toLowerCase()
+                  ?.includes(input?.toLowerCase());
+              }}
               className="rounded-none"
             >
               {toiletData?.map((option) => (
