@@ -143,6 +143,9 @@ const URLS = {
 
   // dashboard
   dashboardApi: { path: "/dashboard", version: 5.43 },
+
+  // incidences Report
+  incidencesReport: { path: "/incidences", version: 5.43 },
 };
 
 export default URLS;

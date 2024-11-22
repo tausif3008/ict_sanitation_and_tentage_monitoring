@@ -407,6 +407,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      {
+        key: "6",
+        label: (
+          <Link className="text-black no-underline" to="/incident-report">
+            Incident Report
+          </Link>
+        ),
+      },
     ];
   };
 

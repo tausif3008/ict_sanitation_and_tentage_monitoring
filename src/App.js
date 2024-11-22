@@ -80,6 +80,7 @@ import AssignedRouteList from "./register/route/AssignedRouteList";
 import PrivacyPolicy from "./privacypolicy/privacypolicy";
 import DeleteAccount from "./deleteaccount/deleteaccount";
 import axiosInstance from "./Axios/commonAxios";
+import IncidentReports from "./Reports/Incident-reports";
 
 function App() {
   const navigate = useNavigate();
@@ -138,7 +139,6 @@ function App() {
             element={
               RoleId === "8" && loggedIn ? (
                 <>
-                  {console.log("object")}{" "}
                   <Navigate to={"/vendor-dashboard"}></Navigate>
                 </>
               ) : loggedIn ? (
@@ -402,6 +402,12 @@ function App() {
           <Route
             path="/deleteaccount"
             element={<DeleteAccount></DeleteAccount>}
+          ></Route>
+
+          {/* Report */}
+          <Route
+            path="/incident-report/:page?/:per_page?"
+            element={<IncidentReports></IncidentReports>}
           ></Route>
         </Route>
         <Route path="*" element={<AppError></AppError>}></Route>

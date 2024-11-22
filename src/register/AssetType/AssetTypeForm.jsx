@@ -19,7 +19,7 @@ const AssetTypeForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors();
+  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors(); // asset main type
   const { QuestionDrop } = QuestionSelector();
 
   const assetUpdateElSelector = useSelector(
