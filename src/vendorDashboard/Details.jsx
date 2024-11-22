@@ -27,6 +27,8 @@ const Details = () => {
       };
       const formData = getFormData(finalData);
       dispatch(getSanitationDashData(formData));
+    } else {
+      dispatch(getSanitationDashData());
     }
   }, [RoleId, userId]);
 
