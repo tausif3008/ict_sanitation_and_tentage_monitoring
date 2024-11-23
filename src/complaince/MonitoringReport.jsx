@@ -308,46 +308,32 @@ const MonitoringReport = () => {
           <div className="grid grid-cols-1 md:grid-cols-2">
             <table
               style={{ borderCollapse: "collapse" }}
-              className="w-full text-left"
+              className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
             >
               <tbody>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Category
-                  </td>
-                  <td style={{ border: "none" }}>
+                  <td className="font-semibold w-[40%] border-0">Category</td>
+                  <td className="border-0">
                     : {assetDetails?.asset_main_type_name}
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Type
-                  </td>
-                  <td style={{ border: "none" }}>
+                  <td className="font-semibold w-[40%] border-0">Type</td>
+                  <td className="border-0">
                     : {assetDetails?.asset_type_name}
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Sector
-                  </td>
-                  <td style={{ border: "none" }}>
-                    : {assetDetails?.sector_name}
-                  </td>
+                  <td className="font-semibold w-[40%] border-0">Sector</td>
+                  <td className="border-0">: {assetDetails?.sector_name}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Circle
-                  </td>
-                  <td style={{ border: "none" }}>
-                    : {assetDetails?.circle_name}
-                  </td>
+                  <td className="font-semibold w-[40%] border-0">Circle</td>
+                  <td className="border-0">: {assetDetails?.circle_name}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Remark
-                  </td>
-                  <td style={{ border: "none" }}>:{assetDetails?.remark}</td>
+                  <td className="font-semibold w-[40%] border-0">Remark</td>
+                  <td className="border-0">:{` ${assetDetails?.remark}`}</td>
                 </tr>
               </tbody>
             </table>
@@ -357,32 +343,26 @@ const MonitoringReport = () => {
             >
               <tbody>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Latitude
-                  </td>
-                  <td style={{ border: "none" }}>
-                    : {` ${assetDetails?.latitude}`}
-                  </td>
+                  <td className="font-semibold w-[40%] border-0">Latitude</td>
+                  <td className="border-0">: {` ${assetDetails?.latitude}`}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
-                    Longitude
-                  </td>
-                  <td style={{ border: "none" }}>
+                  <td className="font-semibold w-[40%] border-0">Longitude</td>
+                  <td className="border-0">
                     : {` ${assetDetails?.longitude}`}
                   </td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
+                  <td className="font-semibold w-[40%] border-0">
                     Unit Number
                   </td>
-                  <td style={{ border: "none" }}>: {assetDetails?.unit_no}</td>
+                  <td className="border-0">: {assetDetails?.unit_no}</td>
                 </tr>
                 <tr>
-                  <td style={{ border: "none" }} className="font-semibold">
+                  <td className="font-semibold w-[40%] border-0">
                     Submitted Date
                   </td>
-                  <td style={{ border: "none" }}>
+                  <td className="border-0">
                     :
                     {` ${moment(assetDetails?.submitted_date).format(
                       "DD-MMM-YYYY hh:mm A"
