@@ -30,17 +30,18 @@ const MonitoringReport = () => {
 
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
-      // setDetails({ list: monitoringData.questions || [] });
-      const myexcelData = monitoringData.questions?.map((data, index) => {
-        return {
-          sr: index + 1,
-          question_en: data?.question_en,
-          question_hi: data?.question_hi,
-          description: data?.description,
-          answer: data?.answer,
-          image: data?.image,
-        };
-      });
+      const myexcelData = monitoringData.questions
+        ?.filter((item) => item?.answer === "1" || item?.answer === "2")
+        ?.map((data, index) => {
+          return {
+            sr: index + 1,
+            question_en: data?.question_en,
+            question_hi: data?.question_hi,
+            description: data?.description,
+            answer: data?.answer,
+            image: data?.image,
+          };
+        });
       setDetails(myexcelData);
 
       setAssetDetails({
