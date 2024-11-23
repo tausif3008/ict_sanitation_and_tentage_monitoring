@@ -27,6 +27,7 @@ const URLS = {
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
   addVendorDetails: { path: "/vendor-details/entry", version: "5.43" },
   editVendorDetails: { path: "/vendor-details/edit", version: 5.43 },
+  deleteVendorDetails: { path: "/vendor-details/delete/", version: 5.43 },
   vendorAsset: { path: "/asset-types", version: 5.43 },
   assetMainTypePerPage: {
     path: "/asset-main-types?per_page=100",
