@@ -44,19 +44,20 @@ const MonitoringReport = () => {
       setDetails(myexcelData);
 
       setAssetDetails({
-        sector_name: monitoringData.sector_name || "N/A",
-        circle_name: monitoringData.circle_name || "N/A",
-        latitude: monitoringData.latitude || "N/A",
-        longitude: monitoringData.longitude || "N/A",
-        remark: monitoringData.remark || "No remarks",
-        photo: monitoringData.photo !== "N" ? monitoringData.photo : null,
-        asset_type_name: monitoringData.asset_type_name || "",
-        qrCode: monitoringData.qr_code || null,
-        code: monitoringData.code || null,
-        // qrCode: monitoringData.qr_code !== "N" ? monitoringData.qr_code : null,
-        unit_no: monitoringData.unit_no || "N/A", // Added Unit Number
-        submitted_date: monitoringData.updated_at // Added Submitted Date
-          ? moment(monitoringData.updated_at).format("YYYY-MM-DD HH:mm:ss")
+        asset_main_type_name: monitoringData?.asset_main_type_name || "N/A",
+        vendor_name: monitoringData?.vendor_name || "N/A",
+        sector_name: monitoringData?.sector_name || "N/A",
+        circle_name: monitoringData?.circle_name || "N/A",
+        latitude: monitoringData?.latitude || "N/A",
+        longitude: monitoringData?.longitude || "N/A",
+        remark: monitoringData?.remark || "No remarks",
+        photo: monitoringData?.photo !== "N" ? monitoringData?.photo : null,
+        asset_type_name: monitoringData?.asset_type_name || "",
+        qrCode: monitoringData?.qr_code || null,
+        code: monitoringData?.code || null,
+        unit_no: monitoringData?.unit_no || "N/A",
+        submitted_date: monitoringData?.updated_at
+          ? moment(monitoringData?.updated_at).format("YYYY-MM-DD HH:mm:ss")
           : "N/A",
       });
     } else {
@@ -289,21 +290,33 @@ const MonitoringReport = () => {
           <table style="width: 100%; border: 1px solid #ddd; border-collapse: collapse; margin-bottom: 20px;">
             <tbody>
               <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 50%;"><strong>Vendor Name</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 50%;"><strong>Category</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.asset_main_type_name
+                }</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 50%;"><strong>Type</strong></td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
                   assetDetails?.asset_type_name
                 }</td>
               </tr>
               <tr>
-                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Circle</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd; width: 50%;"><strong>Vendor Name</strong></td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
-                  assetDetails?.circle_name
+                  assetDetails?.vendor_name
                 }</td>
               </tr>
               <tr>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Sector</strong></td>
                 <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
                   assetDetails?.sector_name
+                }</td>
+              </tr>
+              <tr>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Circle</strong></td>
+                <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
+                  assetDetails?.circle_name
                 }</td>
               </tr>
               <tr>
@@ -403,7 +416,7 @@ const MonitoringReport = () => {
       }
   
       td, th {
-        padding: 8px;
+        // padding: 8px;
         border: 1px solid #ddd;
       }
   
@@ -463,38 +476,91 @@ const MonitoringReport = () => {
 
         <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2">
-            <div>
-              Circle:
-              <span className="font-semibold">{assetDetails?.circle_name}</span>
-            </div>
-            <div>
-              Sector:
-              <span className="font-semibold">{assetDetails?.sector_name}</span>
-            </div>
-            <div>
-              Latitude:
-              <span className="font-semibold">{assetDetails?.latitude}</span>
-            </div>
-            <div>
-              Longitude:
-              <span className="font-semibold">{assetDetails?.longitude}</span>
-            </div>
-            <div>
-              Unit Number:
-              <span className="font-semibold">{assetDetails?.unit_no}</span>
-            </div>
-            <div>
-              Submitted Date:
-              <span className="font-semibold">
-                {moment(assetDetails?.submitted_date).format(
-                  "DD-MMM-YYYY  hh:mm A"
-                )}
-              </span>
-            </div>
-            <div>
-              Remark:
-              <span className="font-semibold">{assetDetails?.remark}</span>
-            </div>
+            <table
+              style={{ borderCollapse: "collapse" }}
+              className="w-full text-left"
+            >
+              <tbody>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Category
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {assetDetails?.asset_main_type_name}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Type
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {assetDetails?.asset_type_name}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Sector
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {assetDetails?.sector_name}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Circle
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {assetDetails?.circle_name}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Remark
+                  </td>
+                  <td style={{ border: "none" }}>:{assetDetails?.remark}</td>
+                </tr>
+              </tbody>
+            </table>
+            <table
+              style={{ "border-collapse": "collapse" }}
+              className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
+            >
+              <tbody>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Latitude
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {` ${assetDetails?.latitude}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Longitude
+                  </td>
+                  <td style={{ border: "none" }}>
+                    : {` ${assetDetails?.longitude}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Unit Number
+                  </td>
+                  <td style={{ border: "none" }}>: {assetDetails?.unit_no}</td>
+                </tr>
+                <tr>
+                  <td style={{ border: "none" }} className="font-semibold">
+                    Submitted Date
+                  </td>
+                  <td style={{ border: "none" }}>
+                    :
+                    {` ${moment(assetDetails?.submitted_date).format(
+                      "DD-MMM-YYYY hh:mm A"
+                    )}`}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <div className="flex justify-between mt-2 mb-3">
