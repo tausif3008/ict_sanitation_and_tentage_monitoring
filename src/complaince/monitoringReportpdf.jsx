@@ -188,7 +188,6 @@ export const DownloadPDF = ({ assetDetails, details = [] }) => {
           }
       
           td, th {
-            // padding: 8px;
             border: 1px solid #ddd;
           }
       
@@ -201,9 +200,9 @@ export const DownloadPDF = ({ assetDetails, details = [] }) => {
           }
       
           /* Styling to ensure instructions section is not hidden or cut off */
-          div {
-            page-break-inside: avoid;
-          }
+        //   div {
+        //     page-break-inside: avoid;
+        //   }
         `;
 
   // Add styles to the page to handle margins, breaks, and other layout issues
