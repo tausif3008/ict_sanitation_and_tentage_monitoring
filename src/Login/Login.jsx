@@ -105,9 +105,14 @@ const Login = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const sessionToken = localStorage.getItem("sessionToken");
+      const role_id = localStorage.getItem("role_id");
       if (sessionToken) {
         clearInterval(intervalId);
-        navigate("/sanitation-dashboard");
+        if (role_id === "8") {
+          navigate("/vendor-dashboard"); // vendor login
+        } else {
+          navigate("/sanitation-dashboard");
+        }
       }
     }, 1000);
     return () => clearInterval(intervalId);

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
   BrowserRouter,
+  Navigate,
   Route,
   Routes,
   useLocation,
@@ -89,32 +90,32 @@ function App() {
   const loggedIn = localStorage.getItem("sessionToken");
   const RoleId = localStorage.getItem("role_id");
 
-  useEffect(() => {
-    if (loggedIn) {
-      if (location.pathname.includes("login")) {
-        const link = `/sanitation-dashboard`;
-        navigate(link);
-      } else {
-        if (
-          (location.pathname === "/sanitation-dashboard" ||
-            location.pathname === "/") &&
-          RoleId === "8"
-        ) {
-          const link = `/vendor-dashboard`;
-          navigate(link);
-        } else if (location.pathname === "/") {
-          const link = `/sanitation-dashboard`;
-          navigate(link);
-        } else {
-          const link = `${location.pathname}`;
-          navigate(link);
-        }
-      }
-    } else {
-      const link = `/login`;
-      navigate(link, { replace: true });
-    }
-  }, [loggedIn, RoleId, location.pathname, navigate]);
+  // useEffect(() => {
+  //   if (loggedIn) {
+  //     if (location.pathname.includes("login")) {
+  //       const link = `/sanitation-dashboard`;
+  //       navigate(link);
+  //     } else {
+  //       if (
+  //         (location.pathname === "/sanitation-dashboard" ||
+  //           location.pathname === "/") &&
+  //         RoleId === "8"
+  //       ) {
+  //         const link = `/vendor-dashboard`;
+  //         navigate(link);
+  //       } else if (location.pathname === "/") {
+  //         const link = `/sanitation-dashboard`;
+  //         navigate(link);
+  //       } else {
+  //         const link = `${location.pathname}`;
+  //         navigate(link);
+  //       }
+  //     }
+  //   } else {
+  //     const link = `/login`;
+  //     navigate(link, { replace: true });
+  //   }
+  // }, [loggedIn, RoleId, location.pathname, navigate]);
 
   axiosInstance.interceptors.request.use(
     (config) => {
@@ -135,27 +136,18 @@ function App() {
     <Provider store={store}>
       {/* <BrowserRouter> */}
       <Routes>
-        {/* <Route
-            path="/"
-            element={
-              RoleId === "8" && loggedIn ? (
-                <>
-                  <Navigate to={"/vendor-dashboard"}></Navigate>
-                </>
-              ) : loggedIn ? (
-                <Navigate to={"/sanitation-dashboard"}></Navigate>
-              ) : (
-                <Navigate to={"/login"} />
-              )
-            }
-            // element={
-            //   loggedIn ? (
-            //     <Navigate to={"/sanitation-dashboard"}></Navigate>
-            //   ) : (
-            //     <Navigate to={"/login"} />
-            //   )
-            // }
-          ></Route> */}
+        <Route
+          path="/"
+          element={
+            loggedIn ? (
+              <>
+                <Navigate to={"/vendor-dashboard"}></Navigate>
+              </>
+            ) : (
+              <Navigate to={"/login"} />
+            )
+          }
+        ></Route>
 
         <Route path="/" element={<Layout></Layout>}>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
