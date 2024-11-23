@@ -363,8 +363,14 @@ const MonitoringReport = () => {
             </tbody>
           </table>
         </div>
+  
+       <!-- Instructions Section (Focused part) -->
+        <div style="margin-top: 30px; font-size: 14px; line-height: 1.6; background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
+          <strong>Instructions:</strong>
+          <p>If non-compliance with Operation & Maintenance is found and not resolved within the specified TAT, then a penalty would be imposed as mentioned in RFP.</p>
+        </div>
     
-        <!-- Footer Text (Added after content) -->
+        <!-- Footer Text -->
         <div style="margin-top: 40px;">
           <hr style="border: 0; border-top: 2px solid black; margin-bottom: 10px;">
           <div style="text-align: center; font-size: 14px; color: #333;">
@@ -373,8 +379,7 @@ const MonitoringReport = () => {
             Hosted by Prayagraj Mela Authority.
           </div>
         </div>
-
-     </div>
+      </div>
     `;
 
     // Create a hidden div for the content to be exported as PDF
@@ -408,6 +413,11 @@ const MonitoringReport = () => {
   
       .page-break {
         page-break-before: always;
+      }
+  
+      /* Styling to ensure instructions section is not hidden or cut off */
+      div {
+        page-break-inside: avoid;
       }
     `;
 
