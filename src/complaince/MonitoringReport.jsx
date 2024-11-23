@@ -44,6 +44,7 @@ const MonitoringReport = () => {
       setDetails(myexcelData);
 
       setAssetDetails({
+        asset_main_type_id: monitoringData?.asset_main_type_id,
         asset_main_type_name: monitoringData?.asset_main_type_name || "N/A",
         vendor_name: monitoringData?.vendor_name || "N/A",
         sector_name: monitoringData?.sector_name || "N/A",
@@ -55,6 +56,10 @@ const MonitoringReport = () => {
         asset_type_name: monitoringData?.asset_type_name || "",
         qrCode: monitoringData?.qr_code || null,
         code: monitoringData?.code || null,
+        plot_no: monitoringData?.plot_no || null,
+        mela_road_name: monitoringData?.mela_road_name || null,
+        mela_patri_name: monitoringData?.mela_patri_name || null,
+        sanstha_name_hi: monitoringData?.sanstha_name_hi || null,
         unit_no: monitoringData?.unit_no || "N/A",
         submitted_date: monitoringData?.updated_at
           ? moment(monitoringData?.updated_at).format("YYYY-MM-DD HH:mm:ss")
@@ -314,33 +319,58 @@ const MonitoringReport = () => {
                 <tr>
                   <td className="font-semibold w-[40%] border-0">Category</td>
                   <td className="border-0">
-                    : {assetDetails?.asset_main_type_name}
+                    : {assetDetails?.asset_main_type_name || "NA"}
                   </td>
                 </tr>
                 <tr>
                   <td className="font-semibold w-[40%] border-0">Type</td>
                   <td className="border-0">
-                    : {assetDetails?.asset_type_name}
+                    : {assetDetails?.asset_type_name || "NA"}
                   </td>
                 </tr>
                 <tr>
                   <td className="font-semibold w-[40%] border-0">Sector</td>
-                  <td className="border-0">: {assetDetails?.sector_name}</td>
+                  <td className="border-0">
+                    : {assetDetails?.sector_name || "NA"}
+                  </td>
                 </tr>
-                <tr>
-                  <td className="font-semibold w-[40%] border-0">Circle</td>
-                  <td className="border-0">: {assetDetails?.circle_name}</td>
-                </tr>
+                {/* tentage */}
+                {assetDetails?.asset_main_type_id === "2" ? (
+                  <>
+                    <tr>
+                      <td className="font-semibold w-[40%] border-0">
+                        Sanstha Name
+                      </td>
+                      <td className="border-0">
+                        : {assetDetails?.sanstha_name_hi || "NA"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="font-semibold w-[40%] border-0">
+                        Mela Patri Name
+                      </td>
+                      <td className="border-0">
+                        : {assetDetails?.mela_patri_name || "NA"}
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">Circle</td>
+                    <td className="border-0">
+                      : {assetDetails?.circle_name || "NA"}
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <td className="font-semibold w-[40%] border-0">Remark</td>
-                  <td className="border-0">:{` ${assetDetails?.remark}`}</td>
+                  <td className="border-0">
+                    :{` ${assetDetails?.remark || "NA"}`}
+                  </td>
                 </tr>
               </tbody>
             </table>
-            <table
-              style={{ "border-collapse": "collapse" }}
-              className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
-            >
+            <table className="table-auto w-full text-left border-collapse border-none">
               <tbody>
                 <tr>
                   <td className="font-semibold w-[40%] border-0">Latitude</td>
@@ -354,19 +384,38 @@ const MonitoringReport = () => {
                 </tr>
                 <tr>
                   <td className="font-semibold w-[40%] border-0">
-                    Unit Number
+                    {assetDetails?.asset_main_type_id === "2"
+                      ? "TAF ID"
+                      : "PTC ID"}
                   </td>
-                  <td className="border-0">: {assetDetails?.unit_no}</td>
+                  <td className="border-0">
+                    :{" "}
+                    {`${assetDetails?.code || "NA"}-${
+                      assetDetails?.unit_no || "NA"
+                    }`}
+                  </td>
                 </tr>
+                {assetDetails?.asset_main_type_id === "2" && (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">
+                      Mela Road Name
+                    </td>
+                    <td className="border-0">
+                      : {assetDetails?.mela_road_name || "NA"}
+                    </td>
+                  </tr>
+                )}
                 <tr>
                   <td className="font-semibold w-[40%] border-0">
                     Submitted Date
                   </td>
                   <td className="border-0">
                     :
-                    {` ${moment(assetDetails?.submitted_date).format(
-                      "DD-MMM-YYYY hh:mm A"
-                    )}`}
+                    {assetDetails?.submitted_date
+                      ? ` ${moment(assetDetails?.submitted_date).format(
+                          "DD-MMM-YYYY hh:mm A"
+                        )}`
+                      : "NA"}
                   </td>
                 </tr>
               </tbody>

@@ -47,14 +47,52 @@ export const DownloadPDF = ({ assetDetails, details = [] }) => {
                       assetDetails?.sector_name
                     }</td>
                   </tr>
+                  ${
+                    assetDetails?.asset_main_type_id === "2"
+                      ? `
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        <strong>Sanstha Name</strong>
+                      </td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        ${assetDetails?.sanstha_name_hi || ""}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        <strong>Mela Patri Name</strong>
+                      </td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        ${assetDetails?.mela_patri_name || ""}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        <strong>Mela Road Name</strong>
+                      </td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        ${assetDetails?.mela_road_name || ""}
+                      </td>
+                    </tr>
+                  `
+                      : `
+                    <tr>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        <strong>Circle</strong>
+                      </td>
+                      <td style="padding: 8px; border-bottom: 1px solid #ddd;">
+                        ${assetDetails?.circle_name}
+                      </td>
+                    </tr>
+                  `
+                  }
+                  
                   <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>Circle</strong></td>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;">${
-                      assetDetails?.circle_name
-                    }</td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>PTC ID</strong></td>
+                    <td style="padding: 8px; border-bottom: 1px solid #ddd;"><strong>${
+                      assetDetails?.asset_main_type_id === "2"
+                        ? "TAF ID"
+                        : "PTC ID"
+                    }</strong></td>
                     <td style="padding: 8px; border-bottom: 1px solid #ddd;">${`${assetDetails?.code}-${assetDetails?.unit_no}`}</td>
                   </tr>
                   <tr>
