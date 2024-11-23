@@ -12,7 +12,7 @@ const ToiletDetails = () => {
   const [selectedVendor, setSelectedVendor] = useState(null);
   const [selectedSector, setSelectedSector] = useState(null);
   const [selectedToilet, setSelectedToilet] = useState(null);
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD")); // Default to current date
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD")); 
   const [vendorData, setVendorData] = useState([]);
   const [sectorData, setSectorData] = useState([]);
   const [assetData, setAssetData] = useState([]);
@@ -22,6 +22,12 @@ const ToiletDetails = () => {
 
   const headers = {
     "Content-Type": "application/json",
+    "x-api-key": "YunHu873jHds83hRujGJKd873",
+    "x-api-version": "1.0.1",
+    "x-platform": "Web",
+    "x-access-token": localStorage.getItem("sessionToken") || "",
+  };
+  const headerspost = {
     "x-api-key": "YunHu873jHds83hRujGJKd873",
     "x-api-version": "1.0.1",
     "x-platform": "Web",
@@ -38,6 +44,8 @@ const ToiletDetails = () => {
         const result = await response.json();
         if (result.success) {
           setVendorData(result.data.users);
+          console.log(result.data.users);
+          
         } else {
           message.error("Failed to load vendor details.");
         }
@@ -69,20 +77,13 @@ const ToiletDetails = () => {
   }, []);
 
   const fetchAssetData = async (
-    sectorId = null,
-    vendorId = null,
-    toiletId = null
+   
   ) => {
     try {
       const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
         method: "POST",
         headers: headers,
-        body: JSON.stringify({
-          date: selectedDate, // Include the date in the request
-          sector_id: sectorId || undefined,
-          vendor_id: vendorId || undefined,
-          asset_type_id: toiletId || undefined,
-        }),
+       
       });
       const result = await response.json();
       if (result.success) {
@@ -95,29 +96,55 @@ const ToiletDetails = () => {
     }
   };
 
+  const fetchAsset = async () => {
+    const formData = new FormData();
+    formData.append("date", selectedDate); 
+    formData.append("sector_id", selectedSector); 
+    formData.append("vendor_id", selectedVendor); 
+    formData.append("asset_type_id", selectedToilet); 
+  
+    try {
+      const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
+        method: "POST",
+        headers: headerspost,
+        body: formData,
+      });
+      const result = await response.json();
+      if (result.success) {
+        setAssetData(result.data);
+      } else {
+        message.error("Failed to load asset details.");
+      }
+    } catch (error) {
+      message.error("Error fetching asset details.");
+    }
+  };
+  
+
+
   useEffect(() => {
     fetchAssetData();
   }, []);
 
   const handleSectorChange = (value) => {
     setSelectedSector(value);
-    fetchAssetData(value, selectedVendor, selectedToilet);
+    fetchAsset(value, selectedVendor, selectedToilet);
   };
 
   const handleVendorChange = (value) => {
     setSelectedVendor(value);
-    fetchAssetData(selectedSector, value, selectedToilet);
+    fetchAsset(selectedSector, value, selectedToilet);
   };
 
   const handleToiletChange = (value) => {
     setSelectedToilet(value);
-    fetchAssetData(selectedSector, selectedVendor, value);
+    fetchAsset(selectedSector, selectedVendor, value);
   };
 
   const handleDateChange = (date) => {
     const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
     setSelectedDate(formattedDate);
-    fetchAssetData(selectedSector, selectedVendor, selectedToilet);
+    fetchAsset(selectedSector, selectedVendor, selectedToilet);
   };
 
   const priorityToiletTypes = [
@@ -152,11 +179,11 @@ const ToiletDetails = () => {
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-xl">{dict.clean[lang]}</span>
+            <span className="text-lg">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-xl">{dict.unclean[lang]}</span>
+            <span className="text-lg">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
@@ -259,11 +286,11 @@ const ToiletDetails = () => {
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item.clean}</span>
+                    <span className="text-md font-semibold">{item.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
+                    <span className="text-md font-semibold">
                       {item.unclean}
                     </span>
                   </div>

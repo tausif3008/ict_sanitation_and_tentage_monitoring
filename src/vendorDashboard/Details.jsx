@@ -77,11 +77,11 @@ const Details = () => {
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm">{dict.clean[lang]}</span>
+            <span className="text-lg">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-sm">{dict.unclean[lang]}</span>
+            <span className="text-lg">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@ const Details = () => {
           showAll
             ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
-        } gap-2 sm:gap-3 md:gap-4 lg:gap-4`}
+        } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
         {displayedToilets.length > 0 ? (
           displayedToilets.map((item, index) => (
@@ -111,7 +111,7 @@ const Details = () => {
                   showAll ? "" : "h-40"
                 }`}
                 style={{
-                  minHeight: "100px",
+                  minHeight: "110px",
                 }}
               >
                 <div className="text-start flex-1">
@@ -122,11 +122,11 @@ const Details = () => {
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item.clean}</span>
+                    <span className="text-md font-semibold">{item.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
+                    <span className="text-md font-semibold">
                       {item.unclean}
                     </span>
                   </div>

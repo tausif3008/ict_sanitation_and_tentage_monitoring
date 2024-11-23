@@ -12,6 +12,7 @@ const TentageDetails = () => {
   const [vendorData, setVendorData] = useState([]);
   const [sectorData, setSectorData] = useState([]);
   const [assetData, setAssetData] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
 
   const toiletData = assetData?.asset_types;
 
@@ -73,6 +74,7 @@ const TentageDetails = () => {
         method: "POST",
         headers: headers,
         body: JSON.stringify({
+          date: selectedDate, 
           sector_id: sectorId || undefined,
           vendor_id: vendorId || undefined,
           asset_type_id: toiletId || undefined,
@@ -103,6 +105,11 @@ const TentageDetails = () => {
     fetchAssetData(selectedSector, value);
   };
 
+  const handleDateChange = (date) => {
+    const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
+    setSelectedDate(formattedDate);
+    fetchAssetData(selectedSector, selectedVendor);
+  };
   
 
   return (
@@ -113,17 +120,21 @@ const TentageDetails = () => {
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-            <span className="text-sm">{dict.clean[lang]}</span>
+            <span className="text-lg">{dict.clean[lang]}</span>
           </div>
           <div className="flex items-center mr-6">
             <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-            <span className="text-sm">{dict.unclean[lang]}</span>
+            <span className="text-lg">{dict.unclean[lang]}</span>
           </div>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-3 mt-0">
-        <DatePicker size="middle" defaultValue={dayjs()} />
+      <DatePicker
+          size="middle"
+          defaultValue={dayjs()}
+          onChange={handleDateChange}
+        />
         <Select
           value={selectedSector}
           onChange={handleSectorChange}
@@ -192,11 +203,11 @@ const TentageDetails = () => {
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item.clean}</span>
+                    <span className="text-md font-semibold">{item.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
+                    <span className="text-md font-semibold">
                       {item.unclean}
                     </span>
                   </div>

@@ -30,9 +30,9 @@ const SanitationDashboard = () => {
         <CleanlinessReport {...props}></CleanlinessReport>
       </div>
 
-      <div className="col-span-4 shadow-md bg-white rounded-md">
+      {/* <div className="col-span-4 shadow-md bg-white rounded-md">
         <FileStorageWrapper {...props}></FileStorageWrapper>
-      </div>
+      </div> */}
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <IncidentReportAnalysis {...props}></IncidentReportAnalysis>
       </div>
