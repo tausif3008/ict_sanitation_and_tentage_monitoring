@@ -7,7 +7,7 @@ const FacilityDetails = ({ title, columns, dataSource }) => {
   return (
     <div className="rounded-md">
       <DashboardTitle
-        title={title || "Vehicles and Waste Bins"}
+        title={title || "Vehicles Details"}
       ></DashboardTitle>
       <div className="p-2">
         <FacilityDetailsForm></FacilityDetailsForm>

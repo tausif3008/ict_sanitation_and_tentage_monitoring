@@ -53,7 +53,7 @@ const Compactors = () => {
 
   return (
     <div className="border flex justify-center text-start p-2 flex-col w-full">
-      <div className=" font-semibold -mt-0">45</div>
+      <div className=" font-semibold -mt-0">40</div>
       <div className="text-lg">Compactors</div>
       <ReactApexChart
         options={options}
