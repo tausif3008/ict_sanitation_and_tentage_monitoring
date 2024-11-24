@@ -19,7 +19,7 @@ const AssetTypeForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors();
+  const { AssetMainTypeDrop, SLATypeDrop } = AssetTypeSelectors(); // asset main type
   const { QuestionDrop } = QuestionSelector();
 
   const assetUpdateElSelector = useSelector(
@@ -97,9 +97,7 @@ const AssetTypeForm = () => {
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl));
 
-    // question
-    const question = URLS?.questions?.path;
-    dispatch(getQuestionList(question));
+    dispatch(getQuestionList()); // get question
 
     // sla types
     const sla_url = URLS?.slaTypes?.path;

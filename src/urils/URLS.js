@@ -12,6 +12,7 @@ const URLS = {
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
   allUserType: { path: "/user-types", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },
+  TypeWiseUserList: { path: "/users?user_type_id=", version: "5.43" },
 
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
@@ -20,12 +21,13 @@ const URLS = {
   // vendor
   vendors: { path: "/users?user_type_id=8", version: "5.43" },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
-  vendorwiseSupervisor: { path: "/users?user_type_id=13", version: "5.43" },
+  vendorwiseSupervisor: { path: "/users?vendor_id=", version: "5.43" },
 
   // vendor Details
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
   addVendorDetails: { path: "/vendor-details/entry", version: "5.43" },
   editVendorDetails: { path: "/vendor-details/edit", version: 5.43 },
+  deleteVendorDetails: { path: "/vendor-details/delete/", version: 5.43 },
   vendorAsset: { path: "/asset-types", version: 5.43 },
   assetMainTypePerPage: {
     path: "/asset-main-types?per_page=100",
@@ -115,6 +117,17 @@ const URLS = {
     version: 5.43,
   },
 
+  // allocation sector
+  getAllocate_Sector: { path: "/allocation-sector", version: 5.43 },
+  addAllocate_Sector: {
+    path: "/allocation-sector/entry",
+    version: 5.43,
+  },
+  editAllocate_Sector: {
+    path: "/allocation-sector/edit",
+    version: 5.43,
+  },
+
   // sla types
   slaTypes: { path: "/sla-types", version: 5.43 },
 
@@ -122,8 +135,18 @@ const URLS = {
   getSettings: { path: "/settings/get", version: 5.43 },
   editSettings: { path: "/settings/edit", version: 5.43 },
 
-  routes: { path: "/routes", version: 5.43 },
-  assignroutes: { path: "/assignroutes", version: 5.43 },
+  // config settings
+  getSettings: { path: "/settings/get", version: 5.43 },
+  editSettings: { path: "/settings/edit", version: 5.43 },
+
+  // sanitation dashboard
+  sanitationDash: { path: "/dashboard/sanitation", version: 5.43 },
+
+  // dashboard
+  dashboardApi: { path: "/dashboard", version: 5.43 },
+
+  // incidences Report
+  incidencesReport: { path: "/incidences", version: 5.43 },
 };
 
 export default URLS;

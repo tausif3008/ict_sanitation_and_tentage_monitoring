@@ -43,6 +43,7 @@ const AssetTypeSelectors = () => {
     loading,
     AssetMainTypeDrop,
     AssetTypeDrop,
+    AssetType,
     SLATypeDrop,
     VendorListAssetType,
   };

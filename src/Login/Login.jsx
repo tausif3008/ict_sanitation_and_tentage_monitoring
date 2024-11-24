@@ -105,9 +105,14 @@ const Login = () => {
   useEffect(() => {
     const intervalId = setInterval(() => {
       const sessionToken = localStorage.getItem("sessionToken");
+      const role_id = localStorage.getItem("role_id");
       if (sessionToken) {
         clearInterval(intervalId);
-        navigate("/sanitation-dashboard");
+        if (role_id === "8") {
+          navigate("/vendor-dashboard"); // vendor login
+        } else {
+          navigate("/sanitation-dashboard");
+        }
       }
     }, 1000);
     return () => clearInterval(intervalId);
@@ -185,10 +190,11 @@ const Login = () => {
                       <div className="flex justify-between">
                         <Button
                           type="primary"
+                          size="small" // Make the button smaller
                           onClick={() => setForgotPasswordVisible(true)}
-                          className="bg-orange-400 text-white ml-2"
+                          className="bg-blue-400 text-white ml-2"
                         >
-                          Forget Password ?
+                          Forget Password?
                         </Button>
                         <Button
                           loading={loading}
@@ -208,25 +214,28 @@ const Login = () => {
         </div>
       </div>
 
-      {/* {/ Forgot Password Modal /} */}
       <Modal
         title="Forgot Password"
         visible={forgotPasswordVisible}
         onCancel={() => {
           setForgotPasswordVisible(false);
-          form.resetFields(); // Reset form fields when modal is closed
+          form.resetFields(); 
         }}
         footer={null}
       >
         {!otpStep ? (
           <>
-            <Input
-              title="Phone Number"
-              placeholder="Enter your phone number"
-              value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+            <Form.Item
+              label="Phone Number"
               style={{ marginBottom: "15px" }}
-            />
+              labelCol={{ span: 24 }} 
+            >
+              <Input
+                placeholder="Enter your phone number"
+                value={phone}
+                onChange={(e) => setPhone(e.target.value)}
+              />
+            </Form.Item>
             <Button
               type="primary"
               onClick={handleForgotPassword}
@@ -237,20 +246,28 @@ const Login = () => {
           </>
         ) : (
           <>
-            <Input
-              title="OTP"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
+            <Form.Item
+              label="OTP"
               style={{ marginBottom: "15px" }}
-            />
-            <Input.Password
-              title="New Password"
-              placeholder="Enter new password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
+              labelCol={{ span: 24 }} 
+            >
+              <Input
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+              />
+            </Form.Item>
+            <Form.Item
+              label="New Password"
               style={{ marginBottom: "15px" }}
-            />
+              labelCol={{ span: 24 }} 
+            >
+              <Input.Password
+                placeholder="Enter new password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+              />
+            </Form.Item>
             <Button
               type="primary"
               onClick={handleResetPassword}

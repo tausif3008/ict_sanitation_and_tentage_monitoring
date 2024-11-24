@@ -7,7 +7,10 @@ const VendorSectorSelectors = () => {
   ); // all sector data
   const SuperwiseList = useSelector((state) => state?.vendorSectorSlice.name);
   const loading = useSelector((state) => state?.vendorSectorSlice.loading);
-
+  const TypeUserList = useSelector(
+    (state) => state?.vendorSectorSlice.user_list
+  );
+  // all sector list dropdown
   const SectorListDrop = SectorData?.data?.sectors?.map((data) => {
     return {
       value: data?.sector_id,
@@ -21,7 +24,20 @@ const VendorSectorSelectors = () => {
     };
   });
 
-  return { SectorData, loading, SectorListDrop, SuperwiseListDrop };
+  const UsersDropTypeWise = TypeUserList?.data?.users?.map((data) => {
+    return {
+      value: data?.user_id,
+      label: data?.name,
+    };
+  });
+
+  return {
+    SectorData,
+    loading,
+    SectorListDrop,
+    SuperwiseListDrop,
+    UsersDropTypeWise,
+  };
 };
 
 export default VendorSectorSelectors;

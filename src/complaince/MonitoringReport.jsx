@@ -1,21 +1,25 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Button, Table, Image, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
 import jsPDF from "jspdf";
 import "jspdf-autotable";
+import * as XLSX from "xlsx";
+
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import CoordinatesMap from "../commonComponents/map/map";
+import { DownloadPDF } from "./monitoringReportpdf";
 
 const MonitoringReport = () => {
-  const [details, setDetails] = useState({ list: [] });
+  const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [assetDetails, setAssetDetails] = useState({});
   const params = useParams();
   const navigate = useNavigate();
+  const contentRef = useRef();
 
   // Fetch monitoring details from the API
   const getDetails = async () => {
@@ -26,25 +30,44 @@ const MonitoringReport = () => {
 
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
-      setDetails({ list: monitoringData.questions || [] });
+      const myexcelData = monitoringData.questions
+        ?.filter((item) => item?.answer === "1" || item?.answer === "2")
+        ?.map((data, index) => {
+          return {
+            sr: index + 1,
+            question_en: data?.question_en,
+            question_hi: data?.question_hi,
+            description: data?.description,
+            answer: data?.answer,
+            image: data?.image,
+          };
+        });
+      setDetails(myexcelData);
 
       setAssetDetails({
-        sector_name: monitoringData.sector_name || "N/A",
-        circle_name: monitoringData.circle_name || "N/A",
-        latitude: monitoringData.latitude || "N/A",
-        longitude: monitoringData.longitude || "N/A",
-        remark: monitoringData.remark || "No remarks",
-        photo: monitoringData.photo !== "N" ? monitoringData.photo : null,
-        asset_type_name: monitoringData.asset_type_name || "",
-        qrCode: monitoringData.qr_code || null,
-        // qrCode: monitoringData.qr_code !== "N" ? monitoringData.qr_code : null,
-        unit_no: monitoringData.unit_no || "N/A", // Added Unit Number
-        submitted_date: monitoringData.updated_at // Added Submitted Date
-          ? moment(monitoringData.updated_at).format("YYYY-MM-DD HH:mm:ss")
+        asset_main_type_id: monitoringData?.asset_main_type_id,
+        asset_main_type_name: monitoringData?.asset_main_type_name || "N/A",
+        vendor_name: monitoringData?.vendor_name || "N/A",
+        sector_name: monitoringData?.sector_name || "N/A",
+        circle_name: monitoringData?.circle_name || "N/A",
+        latitude: monitoringData?.latitude || "N/A",
+        longitude: monitoringData?.longitude || "N/A",
+        remark: monitoringData?.remark || "No remarks",
+        photo: monitoringData?.photo !== "N" ? monitoringData?.photo : null,
+        asset_type_name: monitoringData?.asset_type_name || "",
+        qrCode: monitoringData?.qr_code || null,
+        code: monitoringData?.code || null,
+        plot_no: monitoringData?.plot_no || null,
+        mela_road_name: monitoringData?.mela_road_name || null,
+        mela_patri_name: monitoringData?.mela_patri_name || null,
+        sanstha_name_hi: monitoringData?.sanstha_name_hi || null,
+        unit_no: monitoringData?.unit_no || "N/A",
+        submitted_date: monitoringData?.updated_at
+          ? moment(monitoringData?.updated_at).format("YYYY-MM-DD HH:mm:ss")
           : "N/A",
       });
     } else {
-      setDetails({ list: [] });
+      setDetails([]);
     }
     setLoading(false);
   };
@@ -57,9 +80,9 @@ const MonitoringReport = () => {
   const dateColumns = [
     {
       title: "Sr No",
-      dataIndex: "question_id",
-      key: "question_id",
-      width: "8%",
+      dataIndex: "sr",
+      key: "sr",
+      width: "5%",
     },
     {
       title: "Question (EN)",
@@ -85,6 +108,7 @@ const MonitoringReport = () => {
         ) : (
           "-"
         ),
+      width: "15%",
     },
     {
       title: "Answer",
@@ -103,8 +127,26 @@ const MonitoringReport = () => {
           {answer === "1" ? "Yes" : answer === "0" ? "No" : "Maintenance"}
         </div>
       ),
+      width: "10%",
     },
   ];
+
+  // excel
+  const exportToExcel = async () => {
+    if (details && details?.length > 0) {
+      const excelList = details.map((data) => {
+        const { image, answer, ...rest } = data;
+        const modifiedAnswer = answer === "1" ? "Yes" : "No";
+        return { ...rest, answer: modifiedAnswer };
+      });
+      const worksheet = XLSX.utils.json_to_sheet(excelList);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Monitoring Report");
+      XLSX.writeFile(workbook, "MonitoringReport.xlsx");
+    } else {
+      return "";
+    }
+  };
 
   const exportToPDF = () => {
     const doc = new jsPDF();
@@ -138,7 +180,8 @@ const MonitoringReport = () => {
     const rightImageWidth = 30; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbh}`,
+      // `${IMAGELIST?.kumbh}`,
+      `${IMAGELIST?.govt_logo}`,
       "JPEG",
       rightImageX,
       rightImageY,
@@ -210,7 +253,7 @@ const MonitoringReport = () => {
     doc.autoTable({
       head: [["Sr", "Question (EN)", "Answer"]],
       // head: [["Sr", "Question (EN)", "Question (HI)", "Answer"]],
-      body: details?.list?.map((opt, index) => [
+      body: details?.map((opt, index) => [
         index + 1,
         opt?.question_en,
         // opt?.question_hi,
@@ -231,6 +274,11 @@ const MonitoringReport = () => {
     doc.save("Monitoring-Report.pdf");
   };
 
+  // download pdf
+  const downloadPDF = () => {
+    DownloadPDF({ assetDetails, details });
+  };
+
   return (
     <div>
       <div className="mx-auto p-3 pb-3 bg-white shadow-md rounded-lg w-full mt-3">
@@ -248,48 +296,131 @@ const MonitoringReport = () => {
             </span>
           </div>
           <div>
-            <Button type="primary" onClick={exportToPDF}>
+            <Button type="primary" onClick={downloadPDF}>
+              {/* <Button type="primary" onClick={exportToPDF}> */}
               Download PDF
+            </Button>
+          </div>
+          <div>
+            <Button type="primary" onClick={exportToExcel}>
+              Download Excel
             </Button>
           </div>
         </div>
 
         <Divider className="bg-d9 h-2/3 mt-1" />
 
-        <div className="mt-3">
+        <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2">
-            <div>
-              Circle:
-              <span className="font-semibold">{assetDetails?.circle_name}</span>
-            </div>
-            <div>
-              Sector:
-              <span className="font-semibold">{assetDetails?.sector_name}</span>
-            </div>
-            <div>
-              Latitude:
-              <span className="font-semibold">{assetDetails?.latitude}</span>
-            </div>
-            <div>
-              Longitude:
-              <span className="font-semibold">{assetDetails?.longitude}</span>
-            </div>
-            <div>
-              Unit Number:
-              <span className="font-semibold">{assetDetails?.unit_no}</span>
-            </div>
-            <div>
-              Submitted Date:
-              <span className="font-semibold">
-                {moment(assetDetails?.submitted_date).format(
-                  "DD-MMM-YYYY  hh:mm A"
+            <table
+              style={{ borderCollapse: "collapse" }}
+              className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
+            >
+              <tbody>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Category</td>
+                  <td className="border-0">
+                    : {assetDetails?.asset_main_type_name || "NA"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Type</td>
+                  <td className="border-0">
+                    : {assetDetails?.asset_type_name || "NA"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Sector</td>
+                  <td className="border-0">
+                    : {assetDetails?.sector_name || "NA"}
+                  </td>
+                </tr>
+                {/* tentage */}
+                {assetDetails?.asset_main_type_id === "2" ? (
+                  <>
+                    <tr>
+                      <td className="font-semibold w-[40%] border-0">
+                        Sanstha Name
+                      </td>
+                      <td className="border-0">
+                        : {assetDetails?.sanstha_name_hi || "NA"}
+                      </td>
+                    </tr>
+                    <tr>
+                      <td className="font-semibold w-[40%] border-0">
+                        Mela Patri Name
+                      </td>
+                      <td className="border-0">
+                        : {assetDetails?.mela_patri_name || "NA"}
+                      </td>
+                    </tr>
+                  </>
+                ) : (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">Circle</td>
+                    <td className="border-0">
+                      : {assetDetails?.circle_name || "NA"}
+                    </td>
+                  </tr>
                 )}
-              </span>
-            </div>
-            <div>
-              Remark:
-              <span className="font-semibold">{assetDetails?.remark}</span>
-            </div>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Remark</td>
+                  <td className="border-0">
+                    :{` ${assetDetails?.remark || "NA"}`}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="table-auto w-full text-left border-collapse border-none">
+              <tbody>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Latitude</td>
+                  <td className="border-0">: {` ${assetDetails?.latitude}`}</td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Longitude</td>
+                  <td className="border-0">
+                    : {` ${assetDetails?.longitude}`}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">
+                    {assetDetails?.asset_main_type_id === "2"
+                      ? "TAF ID"
+                      : "PTC ID"}
+                  </td>
+                  <td className="border-0">
+                    :{" "}
+                    {`${assetDetails?.code || "NA"}-${
+                      assetDetails?.unit_no || "NA"
+                    }`}
+                  </td>
+                </tr>
+                {assetDetails?.asset_main_type_id === "2" && (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">
+                      Mela Road Name
+                    </td>
+                    <td className="border-0">
+                      : {assetDetails?.mela_road_name || "NA"}
+                    </td>
+                  </tr>
+                )}
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">
+                    Submitted Date
+                  </td>
+                  <td className="border-0">
+                    :
+                    {assetDetails?.submitted_date
+                      ? ` ${moment(assetDetails?.submitted_date).format(
+                          "DD-MMM-YYYY hh:mm A"
+                        )}`
+                      : "NA"}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
 
           <div className="flex justify-between mt-2 mb-3">
@@ -325,11 +456,11 @@ const MonitoringReport = () => {
             </div>
           </div>
         </div>
-        {details?.list?.length ? (
+        {details?.length ? (
           <>
             <Table
               columns={dateColumns || []}
-              dataSource={details?.list}
+              dataSource={details}
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered

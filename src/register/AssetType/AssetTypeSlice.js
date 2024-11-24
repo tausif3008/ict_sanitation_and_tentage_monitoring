@@ -61,7 +61,7 @@ export const getAssetTypes = (url) => async (dispatch) => {
     const res = await axiosInstance.get(`${url}`);
     dispatch(postType(res?.data));
   } catch (error) {
-    console.error("In get asset main type error", error);
+    console.error("In get asset type error", error);
   } finally {
     dispatch(setLoading(false));
   }

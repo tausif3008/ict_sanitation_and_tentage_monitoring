@@ -39,9 +39,9 @@ const SanitationDashboard = () => {
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <VendorPerformance {...props}></VendorPerformance>
       </div>
-      <div className="col-span-4 shadow-md bg-white rounded-md">
+      {/* <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>
-      </div>
+      </div> */}
 
       <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">

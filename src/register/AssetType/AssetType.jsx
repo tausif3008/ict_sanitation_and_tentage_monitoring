@@ -136,10 +136,15 @@ const AssetTypeList = () => {
       const data = response.data;
       if (data.listings.length > 0) {
         setQuestions({
-          list: data.listings,
-          pageLength: data.paging[0].length,
-          currentPage: data.paging[0].currentpage,
-          totalRecords: data.paging[0].totalrecords,
+          unCommonList: data?.listings?.filter((data) => {
+            return data?.is_primary != "1";
+          }),
+          commonList: data?.listings?.filter((data) => {
+            return data?.is_primary === "1";
+          }),
+          pageLength: data?.paging[0].length,
+          currentPage: data?.paging[0].currentpage,
+          totalRecords: data?.paging[0].totalrecords,
         });
       } else {
         setQuestions([]); // If no questions are found
@@ -261,6 +266,19 @@ const AssetTypeList = () => {
     },
   ];
 
+  const questionsColumns = [
+    {
+      title: "Question (EN)",
+      dataIndex: "question_en",
+      key: "question_en",
+    },
+    {
+      title: "Question (HI)",
+      dataIndex: "question_hi",
+      key: "question_hi",
+    },
+  ];
+
   useEffect(() => {
     dispatch(setUpdateAssetEl({ updateElement: null }));
   }, []);
@@ -323,28 +341,36 @@ const AssetTypeList = () => {
         footer={null}
         width={800}
       >
-        {questions?.list?.length > 0 ? (
-          <Table
-            bordered
-            dataSource={questions.list}
-            rowKey="question_id"
-            pagination={false}
-            scroll={{ x: 800, y: 400 }}
-            columns={[
-              {
-                title: "Question (EN)",
-                dataIndex: "question_en",
-                key: "question_en",
-              },
-              {
-                title: "Question (HI)",
-                dataIndex: "question_hi",
-                key: "question_hi",
-              },
-            ]}
-          />
+        {questions?.commonList?.length > 0 ? (
+          <>
+            <h6>Common Questions :</h6>
+            <Table
+              bordered
+              className="mb-4"
+              dataSource={questions?.commonList}
+              rowKey="question_id"
+              pagination={false}
+              scroll={{ x: 800, y: 400 }}
+              columns={questionsColumns || []}
+            />
+          </>
         ) : (
-          <p>No questions found for this type.</p>
+          <p>No Common questions found for this type.</p>
+        )}
+        {questions?.unCommonList?.length > 0 ? (
+          <>
+            <h6>Individual Questions :</h6>
+            <Table
+              bordered
+              dataSource={questions?.unCommonList}
+              rowKey="question_id"
+              pagination={false}
+              scroll={{ x: 800, y: 400 }}
+              columns={questionsColumns || []}
+            />
+          </>
+        ) : (
+          <p>No Individual questions found for this type.</p>
         )}
       </Modal>
 

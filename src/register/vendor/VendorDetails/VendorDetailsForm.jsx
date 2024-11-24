@@ -296,10 +296,7 @@ const VendorDetailsForm = () => {
       if (res.data.success) {
         form.resetFields();
         dispatch(setVendorDetailsListIsUpdated({ isUpdated: true }));
-
-        if (key === "UpdateKey") {
-          navigate("/vendor/add-vendor-details/" + params.id);
-        }
+        navigate("/vendor/add-vendor-details/" + params.id);
       }
     }
     setLoading(false);
