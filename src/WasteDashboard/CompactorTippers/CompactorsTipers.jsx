@@ -10,9 +10,9 @@ const CompactorsTippers = () => {
         <Compactors></Compactors>
         <Tippers></Tippers>
       </div>
-      <div>
+      {/* <div>
         <Wastes></Wastes>
-      </div>
+      </div> */}
     </div>
   );
 };

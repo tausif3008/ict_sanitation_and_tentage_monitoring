@@ -189,14 +189,6 @@ const Login = () => {
                     <Form.Item noStyle>
                       <div className="flex justify-between">
                         <Button
-                          type="primary"
-                          size="small" // Make the button smaller
-                          onClick={() => setForgotPasswordVisible(true)}
-                          className="bg-blue-400 text-white ml-2"
-                        >
-                          Forget Password?
-                        </Button>
-                        <Button
                           loading={loading}
                           type="primary"
                           htmlType="submit"
@@ -204,6 +196,16 @@ const Login = () => {
                         >
                           Login
                         </Button>
+                        <a
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault(); // Prevent default anchor behavior
+                            setForgotPasswordVisible(true);
+                          }}
+                          className="text-blue-500 text-sm underline ml-2"
+                        >
+                          Forgot Password?
+                        </a>
                       </div>
                     </Form.Item>
                   </Form>
@@ -219,7 +221,7 @@ const Login = () => {
         visible={forgotPasswordVisible}
         onCancel={() => {
           setForgotPasswordVisible(false);
-          form.resetFields(); 
+          form.resetFields();
         }}
         footer={null}
       >
@@ -228,7 +230,7 @@ const Login = () => {
             <Form.Item
               label="Phone Number"
               style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }} 
+              labelCol={{ span: 24 }}
             >
               <Input
                 placeholder="Enter your phone number"
@@ -249,7 +251,7 @@ const Login = () => {
             <Form.Item
               label="OTP"
               style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }} 
+              labelCol={{ span: 24 }}
             >
               <Input
                 placeholder="Enter OTP"
@@ -260,7 +262,7 @@ const Login = () => {
             <Form.Item
               label="New Password"
               style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }} 
+              labelCol={{ span: 24 }}
             >
               <Input.Password
                 placeholder="Enter new password"
