@@ -12,22 +12,21 @@ import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/Vend
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
-import { priorityToiletTypes } from "../constant/const";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
+  const validAssetTypes = ["1", "2", "3", "4", "5"];
+
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
-
   const toiletData = assetData?.asset_types || [];
-
-  const [form] = Form.useForm();
 
   // Reset the form
   const handleReset = () => {
@@ -73,20 +72,6 @@ const ToiletDetails = () => {
     dispatch(getVendorList()); // vendor details
     dispatch(getSectorsList()); // all sectors
   }, []);
-
-  const priorityToilets = toiletData?.filter((item) =>
-    priorityToiletTypes.includes(item.type)
-  );
-
-  const otherToilets = toiletData?.filter(
-    (item) => !priorityToiletTypes.includes(item.type)
-  );
-
-  const combinedToilets = [...(priorityToilets || []), ...(otherToilets || [])];
-
-  const displayedToilets = showAll
-    ? combinedToilets
-    : combinedToilets.slice(0, 5);
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
@@ -210,53 +195,59 @@ const ToiletDetails = () => {
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
         } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
-        {displayedToilets.length > 0 ? (
-          displayedToilets?.map((item, index) => (
-            <Tooltip
-              key={index}
-              title={
-                <div>
-                  <strong>{item?.name}</strong>
-                  <div>Total Quantity: {item?.total}</div>
-                  <div>Registered Quantity: {item?.registered}</div>
-                </div>
-              }
-              placement="top"
-              arrowPointAtCenter
-            >
-              <div
-                className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
-                  showAll ? "" : "h-40"
-                }`}
-                style={{
-                  minHeight: "110px",
-                }}
+        {toiletData?.length > 0 ? (
+          toiletData
+            ?.filter((data) =>
+              showAll ? true : validAssetTypes.includes(data?.asset_type_id)
+            )
+            ?.map((item, index) => (
+              <Tooltip
+                key={index}
+                title={
+                  <div>
+                    <strong>{item?.name}</strong>
+                    <div>Total Quantity: {item?.total}</div>
+                    <div>Registered Quantity: {item?.registered}</div>
+                  </div>
+                }
+                placement="top"
+                arrowPointAtCenter
               >
-                <div className="text-start flex-1">
-                  <div className="text-sm text-gray-500 font-bold">
-                    {item?.name}
+                <div
+                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
+                    showAll ? "" : "h-40"
+                  }`}
+                  style={{
+                    minHeight: "110px",
+                  }}
+                >
+                  <div className="text-start flex-1">
+                    <div className="text-sm text-gray-500 font-bold">
+                      {item?.name}
+                    </div>
                   </div>
+                  <div className="absolute bottom-4 left-3 right-3 flex justify-between">
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+                      <span className="text-sm font-semibold">
+                        {item?.clean}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
+                      <span className="text-sm font-semibold">
+                        {item?.unclean}
+                      </span>
+                    </div>
+                  </div>
+                  <img
+                    src={lines}
+                    alt="Card Icon"
+                    className="absolute bottom-0 right-0 h-full w-auto"
+                  />
                 </div>
-                <div className="absolute bottom-4 left-3 right-3 flex justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item?.clean}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
-                      {item?.unclean}
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src={lines}
-                  alt="Card Icon"
-                  className="absolute bottom-0 right-0 h-full w-auto"
-                />
-              </div>
-            </Tooltip>
-          ))
+              </Tooltip>
+            ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
             {dict.no_data_available[lang]}
