@@ -13,6 +13,7 @@ import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
+import QuestionSelector from "../register/questions/questionSelector";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -26,6 +27,7 @@ const ToiletDetails = () => {
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
   const toiletData = assetData?.asset_types || [];
 
@@ -43,6 +45,7 @@ const ToiletDetails = () => {
       ...(values?.sector_id && { sector_id: values?.sector_id }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.question_id && { question_id: values?.question_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     const formData = await getFormData(finalValues);
@@ -104,9 +107,9 @@ const ToiletDetails = () => {
               className="w-full rounded-none"
             />
           </Form.Item>
-          <Form.Item label={`${dict?.sector[lang]}`} name="sector_id">
+          <Form.Item label={`${dict?.select_sector[lang]}`} name="sector_id">
             <Select
-              placeholder={`${dict?.sector[lang]}`}
+              placeholder={`${dict?.select_sector[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -123,9 +126,9 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label={`${dict?.vendor[lang]}`} name="vendor_id">
+          <Form.Item label={`${dict?.select_vendor[lang]}`} name="vendor_id">
             <Select
-              placeholder={`${dict?.vendor[lang]}`}
+              placeholder={`${dict?.select_vendor[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -142,9 +145,12 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label={`${DICT?.toilet[lang]}`} name="asset_type_id">
+          <Form.Item
+            label={`${DICT?.select_toilet[lang]}`}
+            name="asset_type_id"
+          >
             <Select
-              placeholder={`${DICT?.toilet[lang]}`}
+              placeholder={`${DICT?.select_toilet[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -164,29 +170,41 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>{" "}
-        </div>
-        <div className="flex justify-start space-x-2">
-          <div>
-            <Button
-              loading={loading}
-              type="button"
-              // htmlType="submit"
-              className="w-fit rounded-none text-white bg-orange-400"
-              onClick={handleReset}
-            >
-              {langingPage?.reset[lang]}
-            </Button>
-          </div>
-          <div>
-            <Button
-              loading={loading}
-              type="primary"
-              htmlType="submit"
-              className="w-fit rounded-none bg-5c"
-            >
-              {dict?.search[lang]}
-            </Button>
-          </div>
+          <Form.Item
+            label={dict.select_question[lang]}
+            name="question_id" // This is the field name
+          >
+            <Select placeholder={dict.select_question[lang]}>
+              {QuestionDrop?.map((questions) => (
+                <Select.Option key={questions?.value} value={questions?.value}>
+                  {questions?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <div className="flex justify-start my-4 space-x-2">
+            <div>
+              <Button
+                loading={loading}
+                type="button"
+                // htmlType="submit"
+                className="w-fit rounded-none text-white bg-orange-400"
+                onClick={handleReset}
+              >
+                {langingPage?.reset[lang]}
+              </Button>
+            </div>
+            <div>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="w-fit rounded-none bg-5c"
+              >
+                {dict?.search[lang]}
+              </Button>
+            </div>
+          </div>{" "}
         </div>{" "}
       </Form>
 

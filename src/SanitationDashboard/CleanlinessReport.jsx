@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Chart from "react-apexcharts";
 import { useDispatch } from "react-redux";
-import { Button, message, Select, TimePicker } from "antd";
+import { Button, Form, message, Select, TimePicker } from "antd";
 import { useOutletContext } from "react-router";
 import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getDashboardData } from "./Slice/sanitationDashboard";
@@ -11,9 +11,10 @@ import QuestionSelector from "../register/questions/questionSelector";
 
 const CleanlinessReport = () => {
   const [dict, lang] = useOutletContext();
-  const [selectedToilet, setSelectedToilet] = useState(null);
-  const [selectedQuestion, setSelectedQuestion] = useState(null);
+  // const [selectedToilet, setSelectedToilet] = useState(null);
+  // const [selectedQuestion, setSelectedQuestion] = useState(null);
 
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown ( api of this drop call in ToiletDetails component of sanitation dash)
   const category = SectorListDrop?.map((data) => data?.label);
@@ -90,6 +91,13 @@ const CleanlinessReport = () => {
     },
   ];
 
+  // const onFinish = (values) => {
+  //   console.log("Form Values: ", values);
+  //   // You can perform any action with the form values here
+  //   // setSelectedToilet(values.toilet); // Set state if you need
+  //   // setSelectedQuestion(values.question);
+  // };
+
   useEffect(() => {
     dispatch(getDashboardData()); // get dashboard data
     dispatch(getQuestionList()); // get question
@@ -102,44 +110,62 @@ const CleanlinessReport = () => {
           {dict.sectorwise_cleanliness_report[lang]}
         </h3>
       </div>
-      <div className="flex flex-wrap gap-3 mt-0">
-        {/* <div>
-          <TimePicker size="middle"></TimePicker>
-        </div> */}
-        <Select
-          value={selectedToilet}
-          onChange={(value) => setSelectedToilet(value)}
-          placeholder={dict.select_toilet[lang]}
-          style={{ minWidth: "300px" }}
-        >
-          {Dash_Drop?.map((toilet) => (
-            <Select.Option key={toilet?.value} value={toilet?.value}>
-              {toilet?.label}
-            </Select.Option>
-          ))}
-        </Select>
-        <Select
-          value={selectedQuestion}
-          onChange={(value) => setSelectedQuestion(value)}
-          placeholder={dict.select_question[lang]}
-          style={{ width: "300px" }}
-        >
-          {QuestionDrop?.map((questions) => (
-            <Select.Option key={questions?.value} value={questions?.value}>
-              {questions?.label}
-            </Select.Option>
-          ))}
-        </Select>
-        <Button
-          size="medium"
-          type="primary"
-          htmlType="submit"
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-        >
-          {dict.search[lang]}
-        </Button>
-      </div>
+      {/* <Form
+        form={form}
+        onFinish={onFinish}
+        layout="inline"
+        style={{ width: "100%" }}
+      >
+        <div className="flex flex-wrap gap-3 mt-0">
+          <Form.Item
+            name="asset_type_id"
+            initialValue={selectedToilet}
+            style={{ minWidth: "300px" }}
+          >
+            <Select
+              placeholder={dict.select_toilet[lang]}
+              onChange={(value) => setSelectedToilet(value)}
+              style={{ minWidth: "300px" }}
+            >
+              {Dash_Drop?.map((toilet) => (
+                <Select.Option key={toilet?.value} value={toilet?.value}>
+                  {toilet?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item
+            name="question_id" // This is the field name
+            initialValue={selectedQuestion}
+            style={{ width: "300px" }}
+          >
+            <Select
+              placeholder={dict.select_question[lang]}
+              onChange={(value) => setSelectedQuestion(value)}
+              style={{ width: "300px" }}
+            >
+              {QuestionDrop?.map((questions) => (
+                <Select.Option key={questions?.value} value={questions?.value}>
+                  {questions?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+
+          <Form.Item>
+            <Button
+              size="medium"
+              type="primary"
+              htmlType="submit"
+              className="w-32 bg-orange-400 font-semibold"
+              style={{ flexShrink: 0 }}
+            >
+              {dict.search[lang]}
+            </Button>
+          </Form.Item>
+        </div>
+      </Form> */}
       <Chart options={options} series={series} type="bar" height={300} />
     </div>
   );

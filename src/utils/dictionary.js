@@ -469,6 +469,10 @@ export const DICT = {
     en: "Toilet",
     hi: "शौचालय",
   },
+  question: {
+    en: "Question",
+    hi: "सवाल",
+  },
   location_of_sanitation: {
     en: "Locations Of Sanitation",
     hi: "स्वच्छता स्थान",
@@ -487,7 +491,7 @@ export const DICT = {
   },
   select_toilet: {
     en: "Select Toilet",
-    hi: "टॉयलेट चयन करें",
+    hi: "शौचालय चयन करें",
   },
   select_question: {
     en: "Select Question",
