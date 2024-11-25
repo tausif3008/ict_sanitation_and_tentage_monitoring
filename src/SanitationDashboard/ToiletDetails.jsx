@@ -14,10 +14,10 @@ import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
 import QuestionSelector from "../register/questions/questionSelector";
+import { priorityToiletTypes_Id } from "../constant/const";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
-  const validAssetTypes = ["1", "2", "3", "4", "5"];
 
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
@@ -218,7 +218,9 @@ const ToiletDetails = () => {
         {toiletData?.length > 0 ? (
           toiletData
             ?.filter((data) =>
-              showAll ? true : validAssetTypes.includes(data?.asset_type_id)
+              showAll
+                ? true
+                : priorityToiletTypes_Id.includes(data?.asset_type_id)
             )
             ?.map((item, index) => (
               <Tooltip

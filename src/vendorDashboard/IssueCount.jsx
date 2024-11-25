@@ -3,56 +3,22 @@ import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
 import card_red from "../assets/Dashboard/card_red.png";
 import card_purple from "../assets/Dashboard/card_purple.png";
-import { message } from "antd";
-import URLS from "../urils/URLS";
 import { useOutletContext } from "react-router";
+import SanitationDashSelector from "../SanitationDashboard/Slice/sanitationDashboardSelector";
 
 const IssueCount = () => {
   const [dict, lang] = useOutletContext();
-  const [totalAssets, setTotalAssets] = useState(0);
-  const [registeredAssets, setRegisteredAssets] = useState(0);
-  const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
-  const [assetsOffMonitoring, setAssetsOffMonitoring] = useState(0);
-
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
+  const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard ( api call in details page of vendor dashboard)
+  const {
+    off_monitoring = 0,
+    under_monitoring = 0,
+    total = 0,
+    registered = 0,
+  } = SanitationDash_data?.data?.asset_counts || {};
 
   const formatNumber = (number) => {
     return new Intl.NumberFormat("en-IN").format(number);
   };
-
-  useEffect(() => {
-    const fetchAssetData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/dashboard/sanitation`, {
-          method: "POST",
-          headers: headers,
-        });
-        const result = await response.json();
-
-        if (result.success && result.data) {
-          const { total, registered, under_monitoring, off_monitoring } =
-            result.data.asset_counts;
-
-          setTotalAssets(total || 0);
-          setRegisteredAssets(registered || 0);
-          setAssetsUnderMonitoring(under_monitoring || 0);
-          setAssetsOffMonitoring(off_monitoring || 0);
-        } else {
-          message.error("Failed to load details.");
-        }
-      } catch (error) {
-        message.error("Error fetching details.");
-      }
-    };
-
-    fetchAssetData();
-  }, []);
 
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
@@ -63,7 +29,7 @@ const IssueCount = () => {
               <span className="text-green-600">
                 {dict.number_of_toilets_cesspool[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(totalAssets)}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(total)}</h2>
             </div>
           </div>
           <img
@@ -79,7 +45,7 @@ const IssueCount = () => {
               <span className="text-[#eab308]">
                 {dict.number_of_toilets_jetspray[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(registeredAssets)}</h2>
+              <h2 className="text-2xl font-bold">{formatNumber(registered)}</h2>
             </div>
           </div>
           <img
@@ -95,7 +61,9 @@ const IssueCount = () => {
               <span className="text-[#db2777]">
                 {dict.number_of_toilets_manpower[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(assetsUnderMonitoring)}</h2>
+              <h2 className="text-2xl font-bold">
+                {formatNumber(under_monitoring)}
+              </h2>
             </div>
           </div>
           <img
@@ -111,7 +79,9 @@ const IssueCount = () => {
               <span className="text-purple-600">
                 {dict.number_of_toilets_odor_free[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(assetsOffMonitoring)}</h2>
+              <h2 className="text-2xl font-bold">
+                {formatNumber(off_monitoring)}
+              </h2>
             </div>
           </div>
           <img

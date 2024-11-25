@@ -24,6 +24,8 @@ export const dateOptions = [
   },
 ];
 
+export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
+
 // dashboard
 export const priorityToiletTypes = [
   "Type-1 FRP Septic Tank",
