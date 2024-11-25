@@ -34,6 +34,7 @@ import {
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
+import moment from "moment";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -123,11 +124,21 @@ const IncidentReports = () => {
         (data, index) => {
           return {
             sr: index + 1,
-            agent_name: data?.agent_name,
-            asset_name: data?.asset_name,
-            vendor_name: data?.vendor_name,
-            code: `${data?.code}-${data?.unit_code || ""}`,
+            code: data?.code,
+            unit_no: data?.unit_no,
             question_en: data?.question_en,
+            answer: "No",
+            date: moment(data?.incidence_at).format("DD-MMM-YYYY HH:MM A"),
+            category:
+              data?.asset_main_type_id === "1" ? "Sanitation" : "Tentage",
+            asset_types_name: data?.asset_types_name,
+            vendor_name: data?.vendor_name,
+            sector_name: data?.sector_name,
+            circle_name: data?.circle_name,
+            sanstha_name_hi: data?.sanstha_name_hi,
+            // agent_name: data?.agent_name,
+            // asset_name: data?.asset_name,
+            // code: `${data?.code}-${data?.unit_code || ""}`,
             sla: data?.sla,
           };
         }
@@ -158,7 +169,7 @@ const IncidentReports = () => {
       key: "code",
       width: "7%",
       render: (text, record) => {
-        return text ? `${text} -${record?.unit_number || ""}` : "";
+        return text ? `${text} -${record?.unit_no || ""}` : "";
       },
     },
     {
