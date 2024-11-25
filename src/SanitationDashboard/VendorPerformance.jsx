@@ -4,23 +4,8 @@ import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 
 const VendorPerformance = () => {
   const [dict, lang] = useOutletContext();
-
   const { SanitationDash_data } = SanitationDashSelector(); // sanitation dashboard
-  const performanceData = SanitationDash_data?.data;
-
-  console.log("performanceData", performanceData);
-
-  // const highPerformingVendors = [
-  //   { name: "Vendor A", tasksDone: 80, tasksOverdue: 5 },
-  //   { name: "Vendor B", tasksDone: 75, tasksOverdue: 2 },
-  //   { name: "Vendor E", tasksDone: 30, tasksOverdue: 15 },
-  // ];
-
-  // const lowPerformingVendors = [
-  //   { name: "Vendor C", tasksDone: 40, tasksOverdue: 10 },
-  //   { name: "Vendor D", tasksDone: 30, tasksOverdue: 15 },
-  //   { name: "Vendor F", tasksDone: 30, tasksOverdue: 15 },
-  // ];
+  const performanceData = SanitationDash_data?.data || [];
 
   return (
     <div className="bg-white p-2 rounded-md">
@@ -30,7 +15,6 @@ const VendorPerformance = () => {
         </div>
         <span className="text-gray-500">{dict.last_24_hrs[lang]}</span>
       </div>
-
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">

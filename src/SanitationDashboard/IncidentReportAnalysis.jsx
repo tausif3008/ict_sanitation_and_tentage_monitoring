@@ -4,21 +4,8 @@ import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 
 const IncidentReportAnalysis = () => {
   const [dict, lang] = useOutletContext();
-
   const { SanitationDash_data } = SanitationDashSelector(); // sanitation dashboard
-  const performanceData = SanitationDash_data?.data;
-
-  // const highFrequencySectors = [
-  //   { sector: "Sector A", circle: "Circle 1", count: 50 },
-  //   { sector: "Sector B", circle: "Circle 2", count: 35 },
-  //   { sector: "Sector C", circle: "Circle 3", count: 70 },
-  // ];
-
-  // const lowFrequencySectors = [
-  //   { sector: "Sector D", circle: "Circle 4", count: 10 },
-  //   { sector: "Sector E", circle: "Circle 5", count: 5 },
-  //   { sector: "Sector F", circle: "Circle 6", count: 15 },
-  // ];
+  const performanceData = SanitationDash_data?.data ||[];
 
   return (
     <div className="bg-white p-2 rounded-md">
@@ -28,7 +15,6 @@ const IncidentReportAnalysis = () => {
         </div>
         <span className="text-gray-500">{dict.last_24_hrs[lang]}</span>
       </div>
-
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">

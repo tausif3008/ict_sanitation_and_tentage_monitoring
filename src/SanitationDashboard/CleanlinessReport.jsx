@@ -17,8 +17,9 @@ const CleanlinessReport = () => {
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown ( api of this drop call in ToiletDetails component of sanitation dash)
   const category = SectorListDrop?.map((data) => data?.label);
-  const { Dash_Drop } = SanitationDashSelector(); // dashboard
+  const { Dash_Drop, SanitationDash_data } = SanitationDashSelector(); // dashboard
   const { QuestionDrop } = QuestionSelector(); // questions
+  const sectorOptions = SanitationDash_data?.data?.sectorgraph || [];
 
   const options = {
     chart: {
@@ -73,17 +74,19 @@ const CleanlinessReport = () => {
   const series = [
     {
       name: "Sanitized",
-      data: [
-        60, 80, 75, 50, 49, 60, 70, 57, 78, 86, 47, 75, 86, 67, 98, 56, 75, 56,
-        87, 46, 55, 77, 66, 88, 76,
-      ],
+      // data: [
+      //   60, 80, 75, 50, 49, 60, 70, 57, 78, 86, 47, 75, 86, 67, 98, 56, 75, 56,
+      //   87, 46, 55, 77, 66, 88, 76,
+      // ],
+      data: sectorOptions?.map((item) => Number(item?.yes) || 0),
     },
     {
       name: "Non Sanitized",
-      data: [
-        29, 30, 35, 20, 30, 24, 50, 30, 40, 55, 30, 66, 44, 55, 66, 44, 55, 44,
-        65, 45, 46, 37, 47, 54, 66,
-      ],
+      // data: [
+      //   29, 30, 35, 20, 30, 24, 50, 30, 40, 55, 30, 66, 44, 55, 66, 44, 55, 44,
+      //   65, 45, 46, 37, 47, 54, 66,
+      // ],
+      data: sectorOptions?.map((item) => Number(item?.no) || 0),
     },
   ];
 

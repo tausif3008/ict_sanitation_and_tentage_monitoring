@@ -57,6 +57,7 @@ const ToiletDetails = () => {
     });
     const finalData = {
       date: newDate,
+      question_id: 1,
     };
     const formData = await getFormData(finalData);
     dispatch(getSanitationDashData(formData));
