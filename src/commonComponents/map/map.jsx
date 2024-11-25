@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { Modal } from "antd";
+import L from "leaflet";
 
 const CoordinatesMap = ({
   coordinates,
@@ -23,6 +24,19 @@ const CoordinatesMap = ({
       mapRef.invalidateSize();
     }
   }, [mapRef, open]);
+
+  if (!coordinates || isNaN(lat) || isNaN(long)) {
+    return <div>Invalid coordinates</div>;
+  }
+
+  // Create a custom icon if desired
+  const customIcon = new L.Icon({
+    iconUrl:
+      "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png", // Default marker icon URL, replace with your own image if needed
+    iconSize: [25, 41], // Size of the marker
+    iconAnchor: [12, 41], // Anchor point of the marker
+    popupAnchor: [1, -34], // Position of the popup
+  });
 
   return (
     <>
@@ -59,7 +73,7 @@ const CoordinatesMap = ({
                   maxZoom={20}
                   subdomains={["mt1", "mt2", "mt3"]}
                 /> */}
-                <Marker position={[lat, long]}>
+                <Marker position={[lat, long]} icon={customIcon}>
                   <Popup>
                     Latitude: {Number(lat)?.toFixed(3)}, Longitude:{" "}
                     {Number(long)?.toFixed(3)}
