@@ -12,6 +12,7 @@ import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/Vend
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
+import { DICT, langingPage } from "../utils/dictionary";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -94,7 +95,7 @@ const ToiletDetails = () => {
 
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          <Form.Item label="Date" name="date">
+          <Form.Item label={`${langingPage?.date[lang]}`} name="date">
             <DatePicker
               allowClear={false}
               format={dateFormat}
@@ -102,9 +103,9 @@ const ToiletDetails = () => {
               className="w-full rounded-none"
             />
           </Form.Item>
-          <Form.Item label="Sector" name="sector_id">
+          <Form.Item label={`${dict?.sector[lang]}`} name="sector_id">
             <Select
-              placeholder="Select sector"
+              placeholder={`${dict?.sector[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -121,9 +122,9 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Select Vendor" name="vendor_id">
+          <Form.Item label={`${dict?.vendor[lang]}`} name="vendor_id">
             <Select
-              placeholder="Select Vendor"
+              placeholder={`${dict?.vendor[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -140,9 +141,9 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Select Toilet" name="asset_type_id">
+          <Form.Item label={`${DICT?.toilet[lang]}`} name="asset_type_id">
             <Select
-              placeholder="Select Toilet"
+              placeholder={`${DICT?.toilet[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -172,7 +173,7 @@ const ToiletDetails = () => {
               className="w-fit rounded-none text-white bg-orange-400"
               onClick={handleReset}
             >
-              Reset{" "}
+              {langingPage?.reset[lang]}
             </Button>
           </div>
           <div>
@@ -182,7 +183,7 @@ const ToiletDetails = () => {
               htmlType="submit"
               className="w-fit rounded-none bg-5c"
             >
-              Search{" "}
+              {dict?.search[lang]}
             </Button>
           </div>
         </div>{" "}
@@ -205,7 +206,9 @@ const ToiletDetails = () => {
                 key={index}
                 title={
                   <div>
-                    <strong>{item?.name}</strong>
+                    <strong>
+                      {lang === "en" ? item?.name : item?.name_hi}
+                    </strong>
                     <div>Total Quantity: {item?.total}</div>
                     <div>Registered Quantity: {item?.registered}</div>
                   </div>
@@ -223,7 +226,7 @@ const ToiletDetails = () => {
                 >
                   <div className="text-start flex-1">
                     <div className="text-sm text-gray-500 font-bold">
-                      {item?.name}
+                      {lang === "en" ? item?.name : item?.name_hi}
                     </div>
                   </div>
                   <div className="absolute bottom-4 left-3 right-3 flex justify-between">
