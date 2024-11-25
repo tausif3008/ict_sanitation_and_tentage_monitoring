@@ -12,10 +12,10 @@ import card_orange from "../assets/Dashboard/card_orange.png";
 import card_red from "../assets/Dashboard/card_red.png";
 import card_purple from "../assets/Dashboard/card_purple.png";
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
-import ViewTableData from "../commonComponents/View/ViewTableData";
 import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
+import ViewVendorsSectors from "../register/AssetType/viewVendors";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
@@ -53,6 +53,10 @@ const ToiletsCount = () => {
   const handleCancel = () => {
     setShowTable(false);
   };
+
+  const allQuantity = showTableList?.list?.reduce((data, data2) => {
+    return data + (Number(data2?.total_quantity) || 0);
+  }, 0);
 
   const tableColumn = [
     {
@@ -164,13 +168,13 @@ const ToiletsCount = () => {
         </div>
       </div>
 
-      <ViewTableData
+      <ViewVendorsSectors
         title={"Toilet List"}
         openModal={showTable}
         handleCancel={handleCancel}
-        tableData={showTableList || []}
+        tableData={showTableList?.list || []}
         column={tableColumn || []}
-        // footer={`Total Allotted Quantity : ${allQuantity}`}
+        footer={`Total Quantity : ${allQuantity}`}
       />
     </div>
   );
