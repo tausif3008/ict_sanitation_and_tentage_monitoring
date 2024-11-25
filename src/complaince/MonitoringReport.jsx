@@ -330,6 +330,14 @@ const MonitoringReport = () => {
                   </td>
                 </tr>
                 <tr>
+                  <td className="font-semibold w-[40%] border-0">
+                    Vendor Name
+                  </td>
+                  <td className="border-0">
+                    : {assetDetails?.vendor_name || "NA"}
+                  </td>
+                </tr>
+                <tr>
                   <td className="font-semibold w-[40%] border-0">Sector</td>
                   <td className="border-0">
                     : {assetDetails?.sector_name || "NA"}
@@ -363,12 +371,6 @@ const MonitoringReport = () => {
                     </td>
                   </tr>
                 )}
-                <tr>
-                  <td className="font-semibold w-[40%] border-0">Remark</td>
-                  <td className="border-0">
-                    :{` ${assetDetails?.remark || "NA"}`}
-                  </td>
-                </tr>
               </tbody>
             </table>
             <table className="table-auto w-full text-left border-collapse border-none">
@@ -417,6 +419,12 @@ const MonitoringReport = () => {
                           "DD-MMM-YYYY hh:mm A"
                         )}`
                       : "NA"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Remark</td>
+                  <td className="border-0">
+                    :{` ${assetDetails?.remark || "NA"}`}
                   </td>
                 </tr>
               </tbody>
@@ -483,14 +491,13 @@ const MonitoringReport = () => {
         </div>
         {details?.length ? (
           <>
-            <p className="my-0 font-bold text-xl">Questions :</p>
             <Table
               columns={dateColumns || []}
               dataSource={details}
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered
-              className="rounded-none"
+              className="rounded-none mt-2"
               loading={loading}
             />
           </>

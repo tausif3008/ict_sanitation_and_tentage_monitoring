@@ -58,7 +58,12 @@ const CoordinatesMap = ({
               )}
             </div>
           </div>
-          <Modal visible={open} onCancel={closeModal} title={"View Location"}>
+          <Modal
+            visible={open}
+            onCancel={closeModal}
+            title={"View Location"}
+            footer={null}
+          >
             <div className="">
               <MapContainer
                 center={[lat, long]}
