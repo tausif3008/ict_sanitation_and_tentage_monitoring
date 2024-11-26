@@ -422,7 +422,7 @@ const Monitoring = () => {
                         <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
                           <Form.Item name={"from_date"} label={"From Date"}>
                             <DatePicker
-                              className="rounded-none"
+                              className="rounded-none w-full"
                               format="DD/MM/YYYY"
                             />
                           </Form.Item>
@@ -431,7 +431,7 @@ const Monitoring = () => {
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
                           <Form.Item name={"to_date"} label={"To Date"}>
                             <DatePicker
-                              className="rounded-none"
+                              className="rounded-none w-full"
                               format="DD/MM/YYYY"
                             />
                           </Form.Item>

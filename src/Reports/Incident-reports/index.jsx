@@ -35,10 +35,14 @@ import {
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
 import moment from "moment";
+import { dateOptions, dateWeekOptions } from "../../constant/const";
+import dayjs from "dayjs";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
   const [excelData, setExcelData] = useState([]);
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [startDate, setStartDate] = useState(null);
   const [incidentData, setIncidentData] = useState({
     list: [],
     pageLength: 25,
@@ -63,7 +67,26 @@ const IncidentReports = () => {
 
   // fiter finish
   const onFinishForm = (values) => {
-    const searchParams = generateSearchQuery(values);
+    const finalData = {
+      ...values,
+    };
+    if (values?.date_format === "Today") {
+      finalData.from_date = moment().format("YYYY-MM-DD");
+      finalData.to_date = moment().format("YYYY-MM-DD");
+    } else if (values?.date_format === "Week") {
+      finalData.from_date = moment().subtract(8, "days").format("YYYY-MM-DD");
+      finalData.to_date = moment().format("YYYY-MM-DD");
+    } else if (values?.from_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.from_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.from_date = values?.from_date ? start : end;
+      finalData.to_date = values?.to_date ? end : start;
+    }
+    const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
     }
@@ -74,6 +97,7 @@ const IncidentReports = () => {
   const resetForm = () => {
     form.resetFields();
     setSearchQuery("&");
+    setShowDateRange(false);
   };
 
   // handle asset main type
@@ -85,19 +109,46 @@ const IncidentReports = () => {
     dispatch(getAssetTypes(url)); // get assset type
   };
 
-  const getData = async () => {
-    let uri = URLS?.incidencesReport?.path + "?";
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
+  // handle date select
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
     } else {
-      uri = URLS?.incidencesReport?.path;
+      form.setFieldsValue({
+        from_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
     }
+  };
+
+  // const minDate = form.getFieldValue("from_date");
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
+  };
+  const getData = async () => {
+    let uri = URLS?.incidencesReport?.path;
+    let isFirstParam = true;
+
+    if (params?.page) {
+      uri += isFirstParam ? "?" + params?.page : "&" + params?.page;
+      isFirstParam = false;
+    } else if (params?.per_page) {
+      uri += isFirstParam ? "?" + params?.per_page : "&" + params?.per_page;
+      isFirstParam = false;
+    }
+
     if (searchQuery) {
-      uri = uri + searchQuery;
+      uri += isFirstParam ? "?" + searchQuery : "&" + searchQuery;
     }
-    dispatch(getIncidentReportData(basicUrl + uri)); // get incident reports data
+
+    dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
   };
 
   useEffect(() => {
@@ -426,6 +477,101 @@ const IncidentReports = () => {
                         />
                       </Form.Item>
                     </Col>
+
+                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                      >
+                        <Select
+                          placeholder="Select Date Type"
+                          className="rounded-none"
+                          allowClear
+                          showSearch
+                          filterOption={(input, option) => {
+                            return option?.children
+                              ?.toLowerCase()
+                              ?.includes(input?.toLowerCase());
+                          }}
+                          onSelect={handleDateSelect}
+                        >
+                          {dateWeekOptions?.map((option) => (
+                            <Select.Option
+                              key={option?.value}
+                              value={option?.value}
+                            >
+                              {option?.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    {showDateRange && (
+                      <>
+                        <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
+                          <Form.Item
+                            name={"from_date"}
+                            label={"From Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                          >
+                            <DatePicker
+                              className="rounded-none w-full"
+                              format="DD/MM/YYYY"
+                              onChange={(date) => {
+                                const dayjsObjectFrom = dayjs(date?.$d);
+                                const startDate = dayjsObjectFrom;
+
+                                const dayjsObjectTo = dayjs(
+                                  form.getFieldValue("to_date")?.$d
+                                );
+                                const endDate = dayjsObjectTo;
+
+                                // Condition 1: If startDate is after endDate, set end_time to null
+                                if (startDate.isAfter(endDate)) {
+                                  form.setFieldValue("to_date", null);
+                                }
+
+                                // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                                const daysDifference = endDate.diff(
+                                  startDate,
+                                  "days"
+                                );
+                                if (daysDifference > 7) {
+                                  form.setFieldValue("to_date", null);
+                                } else {
+                                  // If the difference is within the allowed range, you can keep the value or process further if needed.
+                                }
+
+                                setStartDate(startDate.format("YYYY-MM-DD"));
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                          <Form.Item
+                            name={"to_date"}
+                            label={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                          >
+                            <DatePicker
+                              className="rounded-none w-full"
+                              disabledDate={disabledDate}
+                              format="DD/MM/YYYY"
+                            />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    )}
 
                     <Col
                       xs={24}
