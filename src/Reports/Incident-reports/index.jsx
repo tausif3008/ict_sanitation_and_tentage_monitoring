@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { useDispatch } from "react-redux";
 import {
   Collapse,
   Form,
@@ -17,6 +17,8 @@ import {
 import jsPDF from "jspdf";
 import "jspdf-autotable";
 import * as XLSX from "xlsx";
+import moment from "moment";
+import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
 import { IMAGELIST } from "../../assets/Images/exportImages";
@@ -24,7 +26,6 @@ import URLS from "../../urils/URLS";
 import { basicUrl } from "../../Axios/commonAxios";
 import { getIncidentReportData } from "./Slice/IncidentReportSlice";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
-// import search from "../../assets";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
@@ -34,9 +35,7 @@ import {
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-import moment from "moment";
-import { dateOptions, dateWeekOptions } from "../../constant/const";
-import dayjs from "dayjs";
+import { dateWeekOptions } from "../../constant/const";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -122,16 +121,14 @@ const IncidentReports = () => {
     }
   };
 
-  // const minDate = form.getFieldValue("from_date");
-
   const disabledDate = (current) => {
     const maxDate = moment(startDate).clone().add(8, "days");
-
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
     );
   };
+
   const getData = async () => {
     let uri = URLS?.incidencesReport?.path;
     let isFirstParam = true;
