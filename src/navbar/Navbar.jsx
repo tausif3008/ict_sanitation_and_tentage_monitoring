@@ -415,6 +415,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      {
+        key: "7",
+        label: (
+          <Link className="text-black no-underline" to="/inspection-report">
+            Inspection Report
+          </Link>
+        ),
+      },
     ];
   };
 

@@ -148,6 +148,9 @@ const URLS = {
 
   // incidences Report
   incidencesReport: { path: "/incidences", version: 5.43 },
+
+  // inspection Report
+  inspectionReport: { path: "/reporting/report-format-one", version: 5.43 },
 };
 
 export default URLS;

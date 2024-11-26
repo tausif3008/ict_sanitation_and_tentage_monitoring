@@ -83,6 +83,7 @@ import DeleteAccount from "./deleteaccount/deleteaccount";
 import axiosInstance from "./Axios/commonAxios";
 import IncidentReports from "./Reports/Incident-reports";
 import ContactUsPage from "./contactus/contactus";
+import InspectionReports from "./Reports/Inspection-reports";
 
 function App() {
   const navigate = useNavigate();
@@ -405,6 +406,10 @@ function App() {
           <Route
             path="/incident-report/:page?/:per_page?"
             element={<IncidentReports></IncidentReports>}
+          ></Route>
+          <Route
+            path="/inspection-report/:page?/:per_page?"
+            element={<InspectionReports></InspectionReports>}
           ></Route>
         </Route>
         <Route path="*" element={<AppError></AppError>}></Route>

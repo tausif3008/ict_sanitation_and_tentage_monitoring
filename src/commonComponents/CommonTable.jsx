@@ -2,7 +2,14 @@ import { Pagination, Table } from "antd";
 import React from "react";
 import { useNavigate } from "react-router";
 
-const CommonTable = ({ columns, uri, details, loading, scroll }) => {
+const CommonTable = ({
+  columns,
+  uri,
+  details,
+  loading,
+  scroll,
+  ...paginationRest
+}) => {
   const navigate = useNavigate();
 
   const handlePageChange = (pageNumber, page) => {
@@ -36,6 +43,7 @@ const CommonTable = ({ columns, uri, details, loading, scroll }) => {
             total={details.totalRecords}
             pageSize={details.pageLength}
             onChange={handlePageChange}
+            {...paginationRest}
           />
         </div>
       )}
