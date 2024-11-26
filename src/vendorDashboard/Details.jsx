@@ -37,6 +37,14 @@ const Details = () => {
     }
   }, [SanitationDash_data]);
 
+  const sortedArray =
+    toiletData
+      ?.map((item) => ({
+        ...item,
+        asset_type_id: Number(item?.asset_type_id),
+      }))
+      ?.sort((a, b) => a?.asset_type_id - b?.asset_type_id) || []; // Sort in ascending order
+
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
       <div className="text-xl font-bold">
@@ -62,12 +70,14 @@ const Details = () => {
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
         } gap-2 sm:gap-3 md:gap-4 lg:gap-4`}
       >
-        {toiletData?.length > 0 ? (
-          toiletData
+        {sortedArray?.length > 0 ? (
+          sortedArray
             ?.filter((data) =>
               showAll
                 ? true
-                : priorityToiletTypes_Id?.includes(data?.asset_type_id)
+                : priorityToiletTypes_Id?.includes(
+                    data?.asset_type_id?.toString()
+                  )
             )
             ?.map((item, index) => (
               <Tooltip
