@@ -60,7 +60,7 @@ const InspectionReports = () => {
     const finalData = {
       ...values,
     };
-    if (values?.date_range === "Today") {
+    if (values?.date_format === "Today") {
       finalData.form_date = moment().format("YYYY-MM-DD");
       finalData.to_date = moment().format("YYYY-MM-DD");
     } else if (values?.form_date || values?.to_date) {
@@ -116,9 +116,11 @@ const InspectionReports = () => {
     const perPage = rrr.get("per_page"); // "50"
 
     const finalData = {
-      ...searchQuery,
-      page: page?.toString(),
-      per_page: perPage?.toString(),
+      form_date: searchQuery?.form_date,
+      to_date: searchQuery?.to_date,
+      date_format: "Date Range",
+      page: page?.toString() || "1",
+      per_page: perPage?.toString() || "100",
     };
 
     setColumnDate(() => ({
@@ -235,8 +237,11 @@ const InspectionReports = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="date_range" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"date_range"} label={"Select Date Type"}>
+                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                      >
                         <Select
                           placeholder="Select Date Type"
                           className="rounded-none"

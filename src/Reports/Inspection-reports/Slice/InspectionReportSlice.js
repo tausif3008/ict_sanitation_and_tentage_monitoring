@@ -30,7 +30,12 @@ export const getInspectionReportData = (data) => async (dispatch) => {
     dispatch(setLoading(true));
     const res = await axiosInstance.post(
       `${URLS?.inspectionReport?.path}`,
-      data
+      data,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
     );
     dispatch(postSuccess(res?.data));
   } catch (error) {

@@ -3,6 +3,10 @@ import axios from "axios";
 
 export const basicUrl = "https://kumbhtsmonitoring.in/php-api";
 
+// headers: {
+//   "Content-Type": "multipart/form-data",
+// },
+
 // Create an instance of axios
 const axiosInstance = axios.create({
   baseURL: basicUrl,
