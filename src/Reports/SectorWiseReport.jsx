@@ -6,6 +6,7 @@ import jsPDF from "jspdf";
 import "jspdf-autotable";
 import CommonDivider from "../commonComponents/CommonDivider";
 import { IMAGELIST } from "../assets/Images/exportImages";
+import moment from "moment/moment";
 
 const { Title } = Typography;
 
@@ -66,19 +67,18 @@ const SectorWiseReport = () => {
     XLSX.writeFile(workbook, "SectorWiseReport.xlsx");
   };
 
-  // pdf
   const exportToPDF = () => {
     const doc = new jsPDF();
 
     // Centered ICT heading
-    const ictHeading = "ICT Sanitation and Tentage Monitoring System";
+    const ictHeading = "Maha Kumbh 2025  ";
     const pageWidth = doc.internal.pageSize.getWidth();
     const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(14);
+    doc.setFontSize(24);
     doc.setFont("bold");
-    doc.text(ictHeading, ictX, 10); // Heading position
+    doc.text(ictHeading, ictX - 15, 10); // Heading position
 
-    // // Image on the Left (Company Logo or similar image)
+    // Image on the Left (Company Logo or similar image)
     const leftImageX = 10; // X position (from the left)
     const leftImageY = 10; // Y position (from the top)
     const leftImageWidth = 30; // Image width (adjust as needed)
@@ -95,7 +95,7 @@ const SectorWiseReport = () => {
       "FAST" // Adds compression for smaller file size
     );
 
-    // // Image on the Right (Another logo or image)
+    // Image on the Right (Another logo or image)
     const rightImageX = pageWidth - 40; // X position (from the right)
     const rightImageY = 10; // Y position (from the top)
     const rightImageWidth = 30; // Image width (adjust as needed)
@@ -112,27 +112,35 @@ const SectorWiseReport = () => {
       "FAST" // Adds compression for smaller file size
     );
 
-    // Add report title and date on the same line
+    // Add subheading centered between the images
+    const subHeading = "ICT Sanitation and Tentage Monitoring System";
+    const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
+    doc.setFontSize(14);
+    doc.setFont("bold");
+    doc.text(subHeading, subHeadingX + 30, 25); // Position it below the images (Y position is adjusted)
+
+    // Add report title and date on the same line, below the subheading
     const title = "Sector-Wise Report";
-    const date = new Date();
-    const dateString = date.toLocaleString(); // Format the date and time
+    // const date = new Date();
+    const dateString = moment().format("DD-MMM-YYYY HH:MM A");
+    // const dateString = date.toLocaleString(); // Format the date and time
 
     // Calculate positions for the title and date
-    const titleX = 44; // Left align title
+    const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
-    // Add title and date
+    // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX, 25); // Title position
+    doc.text(title, titleX - 10, 40); // Title position (Y position adjusted to be below the subheading)
     doc.setFont("normal");
     doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX, 25); // Date position
+    doc.text(dateString, dateX + 10, 40); // Date position (Y position adjusted to be below the title)
 
-    // Add a horizontal line below the textBetweenImages, but only up to the edges of the images
-    const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
-    const lineEndX = rightImageX - 5; // End before the right image
-    doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
+    // Add a horizontal line below the title and date, but only up to the edges of the images
+    // const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
+    // const lineEndX = rightImageX - 5; // End before the right image
+    // doc.line(lineStartX, 45, lineEndX, 45); // x1, y1, x2, y2 (Y position adjusted)
 
     // Table header and content
     doc.autoTable({
@@ -144,7 +152,7 @@ const SectorWiseReport = () => {
         sector?.clean,
         sector?.unclean,
       ]),
-      startY: 40, // Start after the header and new text
+      startY: 45, // Start after the horizontal line and other content (Y position adjusted)
     });
 
     // Add footer
