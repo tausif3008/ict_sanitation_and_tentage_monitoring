@@ -69,21 +69,25 @@ const IncidentReports = () => {
     const finalData = {
       ...values,
     };
-    if (values?.date_format === "Today") {
-      finalData.from_date = moment().format("YYYY-MM-DD");
-      finalData.to_date = moment().format("YYYY-MM-DD");
-    } else if (values?.date_format === "Week") {
-      finalData.from_date = moment().subtract(8, "days").format("YYYY-MM-DD");
-      finalData.to_date = moment().format("YYYY-MM-DD");
-    } else if (values?.from_date || values?.to_date) {
-      const dayjsObjectFrom = dayjs(values?.from_date?.$d);
-      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+    // if (values?.incidence_at === "Today") {
+    //   finalData.incidence_form_date = moment().format("YYYY-MM-DD");
+    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
+    // } else if (values?.incidence_at === "Week") {
+    //   finalData.incidence_form_date = moment()
+    //     .subtract(8, "days")
+    //     .format("YYYY-MM-DD");
+    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
+    // } else
+
+    if (values?.incidence_form_date || values?.incidence_to_date) {
+      const dayjsObjectFrom = dayjs(values?.incidence_form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.incidence_to_date?.$d);
 
       // Format the date as 'YYYY-MM-DD'
       const start = dayjsObjectFrom.format("YYYY-MM-DD");
       const end = dayjsObjectTo.format("YYYY-MM-DD");
-      finalData.from_date = values?.from_date ? start : end;
-      finalData.to_date = values?.to_date ? end : start;
+      finalData.incidence_form_date = values?.incidence_form_date ? start : end;
+      finalData.incidence_to_date = values?.incidence_to_date ? end : start;
     }
     const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
@@ -102,7 +106,7 @@ const IncidentReports = () => {
   // handle asset main type
   const handleSelect = (value) => {
     form.setFieldsValue({
-      assets_id: null,
+      asset_type_id: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
@@ -114,8 +118,8 @@ const IncidentReports = () => {
       setShowDateRange(true);
     } else {
       form.setFieldsValue({
-        from_date: null,
-        to_date: null,
+        incidence_form_date: null,
+        incidence_to_date: null,
       });
       setShowDateRange(false);
     }
@@ -210,6 +214,25 @@ const IncidentReports = () => {
       title: "Vendor Name",
       dataIndex: "vendor_name",
       key: "vendor_name",
+    },
+    {
+      title: "Incidence Date",
+      dataIndex: "incidence_at",
+      key: "incidence_at",
+      width: "8%",
+      render: (text, record) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
+    },
+    {
+      title: "Resolved Date",
+      dataIndex: "resolved_at",
+      key: "resolved_at",
+      width: "8%",
+      render: (text, record) => {
+        const date = moment(text).format("DD-MMM-YYYY");
+        return text ? (date === "Invalid date" ? "NA" : date) : "";
+      },
     },
     {
       title: "Code",
@@ -387,8 +410,8 @@ const IncidentReports = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"vendor_id"} label={"Select Vendor"}>
+                    <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"to_user_id"} label={"Select Vendor"}>
                         <Select
                           placeholder="Select Vendor"
                           className="rounded-none"
@@ -412,9 +435,9 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item
-                        name={"assetmaintypes"}
+                        name={"asset_main_type_id"}
                         label={"Asset Main Type"}
                       >
                         <Select
@@ -441,8 +464,8 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="assets_id" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"assets_id"} label={"Asset Type"}>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"asset_type_id"} label={"Asset Type"}>
                         <Select
                           placeholder="Select Asset Type"
                           className="rounded-none"
@@ -466,8 +489,8 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"asset_code"} label={"Asset Code"}>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"code"} label={"Asset Code"}>
                         <Input
                           placeholder={"Asset Code"}
                           className="rounded-none w-full"
@@ -475,9 +498,9 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="incidence_at" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item
-                        name={"date_format"}
+                        name={"incidence_at"}
                         label={"Select Date Type"}
                       >
                         <Select
@@ -505,10 +528,16 @@ const IncidentReports = () => {
                     </Col>
                     {showDateRange && (
                       <>
-                        <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
+                        <Col
+                          key="incidence_form_date"
+                          xs={24}
+                          sm={12}
+                          md={6}
+                          lg={5}
+                        >
                           <Form.Item
-                            name={"from_date"}
-                            label={"From Date"}
+                            name={"incidence_form_date"}
+                            label={"From Date (Incidence Date)"}
                             rules={[
                               {
                                 required: true,
@@ -524,13 +553,13 @@ const IncidentReports = () => {
                                 const startDate = dayjsObjectFrom;
 
                                 const dayjsObjectTo = dayjs(
-                                  form.getFieldValue("to_date")?.$d
+                                  form.getFieldValue("incidence_to_date")?.$d
                                 );
                                 const endDate = dayjsObjectTo;
 
                                 // Condition 1: If startDate is after endDate, set end_time to null
                                 if (startDate.isAfter(endDate)) {
-                                  form.setFieldValue("to_date", null);
+                                  form.setFieldValue("incidence_to_date", null);
                                 }
 
                                 // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
@@ -539,7 +568,7 @@ const IncidentReports = () => {
                                   "days"
                                 );
                                 if (daysDifference > 7) {
-                                  form.setFieldValue("to_date", null);
+                                  form.setFieldValue("incidence_to_date", null);
                                 } else {
                                   // If the difference is within the allowed range, you can keep the value or process further if needed.
                                 }
@@ -549,9 +578,15 @@ const IncidentReports = () => {
                             />
                           </Form.Item>
                         </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                        <Col
+                          key="incidence_to_date"
+                          xs={24}
+                          sm={12}
+                          md={6}
+                          lg={5}
+                        >
                           <Form.Item
-                            name={"to_date"}
+                            name={"incidence_to_date"}
                             label={"To Date"}
                             rules={[
                               {

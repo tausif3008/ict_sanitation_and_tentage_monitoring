@@ -29,10 +29,10 @@ export const dateWeekOptions = [
     label: "Today",
     value: "Today",
   },
-  {
-    label: "Week",
-    value: "Week",
-  },
+  // {
+  //   label: "Week",
+  //   value: "Week",
+  // },
   {
     label: "From Date - to Date",
     value: "Date Range",
