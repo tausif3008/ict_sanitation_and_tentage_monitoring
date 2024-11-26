@@ -55,6 +55,7 @@ const URLS = {
 
   // monitoring
   asset: { path: "/asset", version: 5.43 },
+  monitoringAgent: { path: "/users?user_type_id=6", version: "5.43" },
   monitoring: { path: "/monitoring", version: 5.43 },
   monitoringDetails: { path: "/monitoring/details?id=", version: 5.43 },
 

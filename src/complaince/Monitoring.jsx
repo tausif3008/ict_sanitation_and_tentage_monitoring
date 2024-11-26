@@ -14,6 +14,7 @@ import {
 } from "antd";
 import dayjs from "dayjs";
 import {
+  getMonitoringAgent,
   setAssetInfo,
   setMonitoringListIsUpdated,
   setUpdateMonitoringEl,
@@ -36,6 +37,7 @@ import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice
 import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
 import CircleSelector from "../Reports/CircleSlice/circleSelector";
+import MonitoringSelector from "./monitoringSelector";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -52,6 +54,7 @@ const Monitoring = () => {
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
   const { CircleListDrop } = CircleSelector(); // circle
+  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
@@ -134,6 +137,7 @@ const Monitoring = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    dispatch(getMonitoringAgent()); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     dispatch(getAllCircleList()); // all circle list
@@ -245,11 +249,19 @@ const Monitoring = () => {
       },
     },
     {
+      title: "Agent Name",
+      dataIndex: "created_by",
+      key: "created_by",
+      render: (text) => {
+        return getValueLabel(text, monitoringAgentDrop, "Agent Name");
+      },
+    },
+    {
       title: "Vendor Name",
       dataIndex: "vendor_id",
       key: "vendor_id",
       render: (text) => {
-        return getValueLabel(text, VendorListDrop, "user");
+        return getValueLabel(text, VendorListDrop, "Vendor Name");
       },
     },
     {
@@ -326,6 +338,27 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item
+                        name={"created_by"}
+                        label={"Select Monitoring Agent"}
+                      >
+                        <Select
+                          placeholder="Select Monitoring Agent"
+                          className="rounded-none"
+                        >
+                          {monitoringAgentDrop?.map((option) => (
+                            <Select.Option
+                              key={option?.value}
+                              value={option?.value}
+                            >
+                              {option?.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+
                     {userRoleId != "8" && (
                       <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                         <Form.Item name={"vendor_id"} label={"Select Vendor"}>
