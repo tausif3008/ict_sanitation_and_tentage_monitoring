@@ -41,6 +41,7 @@ const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [searchQuery, setSearchQuery] = useState();
   const [loading, setLoading] = useState(false);
+  const [totalUnit, setTotalUnit] = useState(0); // unit count
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -48,8 +49,6 @@ const AssetsList = () => {
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [excelData, setExcelData] = useState([]); // excel data
-
-  console.log("details.list", details?.list);
 
   const dispatch = useDispatch();
   const params = useParams();
@@ -147,6 +146,11 @@ const AssetsList = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
+
+      const unitCount = data?.listings?.reduce((acc, listing) => {
+        return acc + (listing?.units?.length || 0);
+      }, 0);
+      setTotalUnit(unitCount);
 
       const myexcelData = data?.listings?.map((data, index) => {
         return {
@@ -439,6 +443,9 @@ const AssetsList = () => {
         details={details}
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
+        totalName="Total"
+        subtotalName={"Register Unit"}
+        subtotalCount={totalUnit || 0}
       ></CommonTable>
 
       <Modal

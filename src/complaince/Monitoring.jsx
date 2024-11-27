@@ -216,7 +216,6 @@ const Monitoring = () => {
       key: "assetsName",
       width: 210,
     },
-
     {
       title: "Assets Code",
       dataIndex: "asset_code",
