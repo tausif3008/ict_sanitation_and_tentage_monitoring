@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
-import * as XLSX from "xlsx";
 import {
   Collapse,
   Form,
@@ -12,8 +11,6 @@ import {
   Row,
   Col,
   DatePicker,
-  Space,
-  message,
 } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -26,6 +23,7 @@ import { dateWeekOptions } from "../../constant/const";
 import InspectionReportSelector from "./Slice/InspectionReportSelector";
 import { getInspectionReportData } from "./Slice/InspectionReportSlice";
 import { getFormData } from "../../urils/getFormData";
+import ExportToExcel from "../ExportToExcel";
 
 const InspectionReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -202,20 +200,17 @@ const InspectionReports = () => {
     },
   ];
 
-  // excel
-  const exportToExcel = () => {
-    if (excelData && excelData?.length > 0) {
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Inspection Report");
-      XLSX.writeFile(workbook, "Inspection-Report.xlsx");
-    } else {
-      return "";
-    }
-  };
-
   return (
     <div className="">
+      <CommonDivider label={"Inspection Report "}></CommonDivider>
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={"Inspection-Report"}
+          />
+        </div>
+      </div>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -357,35 +352,6 @@ const InspectionReports = () => {
         />
         {contextHolder}
       </div>
-      <CommonDivider label={"Inspection Report "}></CommonDivider>
-      <Space style={{ marginBottom: 16, float: "right" }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading excel, it might take some time...");
-              exportToExcel();
-            } else {
-              message.error("Data is not available.");
-            }
-          }}
-        >
-          Download Excel
-        </Button>
-        {/* <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading pdf, it might take some time...");
-              exportToPDF();
-            } else {
-              message.error("Data is not available.");
-            }
-          }}
-        >
-          Download PDF
-        </Button> */}
-      </Space>
       <CommonTable
         columns={columns}
         uri={"inspection-report"}

@@ -2,11 +2,15 @@ import React from "react";
 import { jsPDF } from "jspdf";
 import moment from "moment";
 import "jspdf-autotable";
-import { Button } from "antd";
+import { Button, message } from "antd";
 import { IMAGELIST } from "../assets/Images/exportImages";
 
 const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
   const exportToPDF = () => {
+    if (rows && rows?.length === 0) {
+      message?.error("Data is not available");
+      return "";
+    }
     const doc = new jsPDF();
 
     // Centered ICT heading
@@ -60,7 +64,7 @@ const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
-    const dateString = moment().format("DD-MMM-YYYY hh:mm A");
+    const dateString = moment().format("DD-MMM-YYYY HH:MM A");
 
     // Calculate positions for the title and date
     const titleX = 54; // Left align title

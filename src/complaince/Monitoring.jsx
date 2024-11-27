@@ -4,7 +4,6 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Collapse,
   Form,
-  Input,
   Button,
   notification,
   Row,
@@ -38,9 +37,10 @@ import CircleSelector from "../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
+import ExportToExcel from "../Reports/ExportToExcel";
+import ExportToPDF from "../Reports/reportFile";
 
 const Monitoring = () => {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
@@ -51,6 +51,8 @@ const Monitoring = () => {
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
+  const [excelData, setExcelData] = useState([]); // excel data
+
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
   const { CircleListDrop } = CircleSelector(); // circle
@@ -60,6 +62,7 @@ const Monitoring = () => {
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
 
+  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -118,6 +121,23 @@ const Monitoring = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
+
+      const myexcelData = data?.listings?.map((data, index) => {
+        return {
+          sr: index + 1,
+          "Asset Type Name": data?.asset_type_name,
+          Code: data?.asset_code,
+          Unit: data?.unit_no,
+          "Monitoring Agent Name": data?.created_by,
+          "Vendor Name": data?.vendor_name,
+          Sector: data?.sector_name,
+          Circle: data?.circle_name,
+          Date: data?.created_at
+            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        };
+      });
+      setExcelData(myexcelData);
     }
   };
 
@@ -225,12 +245,6 @@ const Monitoring = () => {
         return text ? `${text}-${record?.unit_no}` : "";
       },
     },
-    // {
-    //   title: "Index Number",
-    //   dataIndex: "index_no",
-    //   key: "assetsCode",
-    //   width: 110,
-    // },
     {
       title: "QR",
       dataIndex: "asset_qr_code",
@@ -312,9 +326,53 @@ const Monitoring = () => {
     },
   ];
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Assets Type Name",
+    "Code",
+    "Unit",
+    "Monitoring Agent Name",
+    "Vendor Name",
+    "Sector",
+    "Circle",
+    "Date",
+  ];
+
+  // pdf data
+  const pdfData = details?.list?.map((data, index) => [
+    index + 1,
+    data?.asset_type_name,
+    data?.asset_code,
+    data?.unit_no,
+    data?.created_by,
+    data?.vendor_name,
+    data?.sector_name,
+    data?.circle_name,
+    data?.created_at
+      ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+      : "",
+  ]);
+
   return (
     <div className="">
-      <CommonDivider label={"Asset Type Monitoring "}></CommonDivider>
+      <CommonDivider label={"Asset Type Monitoring"}></CommonDivider>
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <ExportToPDF
+            titleName={"Asset Type Monitoring"}
+            pdfName={"Asset-Type-Monitoring"}
+            headerData={pdfHeader}
+            rows={pdfData}
+          />
+        </div>
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={"Asset-Type-Monitoring"}
+          />
+        </div>
+      </div>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
