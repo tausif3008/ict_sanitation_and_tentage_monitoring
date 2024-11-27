@@ -1,18 +1,19 @@
-
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { EditOutlined } from "@ant-design/icons";
+import { useDispatch, useSelector } from "react-redux";
+
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { EditOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import { setRouteListIsUpdated, setUpdateRoute } from "./routeSlice";
+import RouteSelector from "./routeSelector";
 
 const columns = [
   {
-    title: "Sr. No", 
+    title: "Sr. No",
     dataIndex: "sr",
     key: "sr",
     width: 80,
@@ -55,7 +56,7 @@ const columns = [
 const RouteList = () => {
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
+  // const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -63,6 +64,7 @@ const RouteList = () => {
   });
 
   const dispatch = useDispatch();
+  const { RouteList, loading } = RouteSelector();
 
   const isUpdatedSelector = useSelector(
     (state) => state.vehicleUpdateEl?.isUpdated
@@ -71,21 +73,21 @@ const RouteList = () => {
   const params = useParams();
 
   const getUsers = async () => {
-    setLoading(true);
+    // setLoading(true);
 
-    let uri = URLS.routes.path + "/?";
+    let uri = URLS?.routes?.path + "/?";
     if (params.page) {
       uri = uri + params.page;
     } else if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
 
-    const extraHeaders = { "x-api-version": URLS.routes.version };
+    const extraHeaders = { "x-api-version": URLS?.routes?.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {
       const data = res.data;
-      setLoading(false);
+      // setLoading(false);
 
       const list = data.routes?.map((el, index) => {
         return {

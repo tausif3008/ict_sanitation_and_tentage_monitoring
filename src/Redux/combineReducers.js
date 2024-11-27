@@ -19,6 +19,7 @@ import circleWiseSlice from "../Reports/CircleSlice/circleSlices";
 import sanitationDashboard from "../SanitationDashboard/Slice/sanitationDashboard";
 import IncidentReportSlice from "../Reports/Incident-reports/Slice/IncidentReportSlice";
 import InspectionReportSlice from "../Reports/Inspection-reports/Slice/InspectionReportSlice";
+import routeSlice from "../register/route/routeSlice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -44,6 +45,9 @@ const rootReducer = combineReducers({
   // Reports
   IncidentReportSlice: IncidentReportSlice,
   InspectionReportSlice: InspectionReportSlice,
+
+  // route
+  routeSlice: routeSlice,
 });
 
 export default rootReducer;
