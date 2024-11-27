@@ -364,6 +364,7 @@ const Monitoring = () => {
             pdfName={"Asset-Type-Monitoring"}
             headerData={pdfHeader}
             rows={pdfData}
+            landscape={true}
           />
         </div>
         <div>

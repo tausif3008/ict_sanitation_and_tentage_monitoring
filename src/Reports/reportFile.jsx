@@ -5,26 +5,32 @@ import "jspdf-autotable";
 import { Button, message } from "antd";
 import { IMAGELIST } from "../assets/Images/exportImages";
 
-const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
+const ExportToPDF = ({
+  titleName,
+  pdfName,
+  headerData,
+  rows,
+  landscape = false,
+}) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
       message?.error("Data is not available");
       return "";
     }
-    const doc = new jsPDF();
+    const doc = new jsPDF(landscape ? "landscape" : "");
 
     // Centered ICT heading
     const ictHeading = "Maha Kumbh 2025";
     const pageWidth = doc.internal.pageSize.getWidth();
     const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(24);
-    doc.setFont("bold");
-    doc.text(ictHeading, ictX - 15, 10); // Heading position
+    doc.setFontSize(23); // Increase font size for better prominence
+    doc.setFont("helvetica", "bold");
+    doc.text(ictHeading, ictX - 12, 15); // Heading position
 
     // Image on the Left (Company Logo or similar image)
     const leftImageX = 10; // X position (from the left)
-    const leftImageY = 10; // Y position (from the top)
-    const leftImageWidth = 30; // Image width (adjust as needed)
+    const leftImageY = 7; // Y position (from the top)
+    const leftImageWidth = 25; // Image width (adjust as needed)
     const leftImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
       `${IMAGELIST?.govt_logo}`,
@@ -39,9 +45,9 @@ const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
     );
 
     // Image on the Right (Another logo or image)
-    const rightImageX = pageWidth - 40; // X position (from the right)
-    const rightImageY = 10; // Y position (from the top)
-    const rightImageWidth = 30; // Image width (adjust as needed)
+    const rightImageX = pageWidth - 35; // X position (from the right)
+    const rightImageY = 7; // Y position (from the top)
+    const rightImageWidth = 25; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
       `${IMAGELIST?.kumbhMela}`,
@@ -58,9 +64,9 @@ const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
     const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
-    doc.setFontSize(14);
+    doc.setFontSize(16);
     doc.setFont("bold");
-    doc.text(subHeading, subHeadingX + 30, 25); // Position it below the images (Y position is adjusted)
+    doc.text(subHeading, subHeadingX + 30, 30); // Position it below the images (Y position is adjusted)
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
@@ -73,10 +79,10 @@ const ExportToPDF = ({ titleName, pdfName, headerData, rows }) => {
     // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX - 10, 40); // Title position (Y position adjusted to be below the subheading)
+    doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
     doc.setFont("normal");
     doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX + 10, 40); // Date position (Y position adjusted to be below the title)
+    doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
 
     // Table header and content
     doc.autoTable({
