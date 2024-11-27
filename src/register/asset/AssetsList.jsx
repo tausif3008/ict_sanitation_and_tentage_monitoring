@@ -1,18 +1,45 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Button, Image, message, Modal, Table } from "antd";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Image,
+  Modal,
+  Collapse,
+  Form,
+  notification,
+  Row,
+  Col,
+} from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router";
+
 import CommonTable from "../../commonComponents/CommonTable";
+import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { useNavigate, useParams } from "react-router";
 import { getData } from "../../Fetch/Axios";
-import { useDispatch, useSelector } from "react-redux";
 import { setAssetListIsUpdated, setUpdateAssetEl } from "./AssetsSlice";
-import CommonSearchForm from "../../commonComponents/CommonSearchForm";
-import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
+import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import CircleSelector from "../../Reports/CircleSlice/circleSelector";
+import MonitoringSelector from "../../complaince/monitoringSelector";
+import CustomInput from "../../commonComponents/CustomInput";
+import { getMonitoringAgent } from "../../complaince/monitoringSlice";
+import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../AssetType/assetTypeSelectors";
+import { generateSearchQuery } from "../../urils/getSearchQuery";
+import { getValueLabel } from "../../constant/const";
+import moment from "moment";
+import CoordinatesMap from "../../commonComponents/map/map";
+import ExportToExcel from "../../Reports/ExportToExcel";
+import ShowCode from "./showCode";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  const dispatch = useDispatch();
+  const [searchQuery, setSearchQuery] = useState();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
@@ -20,20 +47,63 @@ const AssetsList = () => {
     currentPage: 1,
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [excelData, setExcelData] = useState([]); // excel data
 
+  console.log("details.list", details?.list);
+
+  const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
+  const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification({ top: 100 });
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: "Note",
+      duration: 7,
+      description: "Please enter some information to perform the search.",
+    });
+  };
+
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { SectorListDrop } = VendorSectorSelectors(); // sector
+  const { CircleListDrop } = CircleSelector(); // circle
+  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const isUpdatedSelector = useSelector(
     (state) => state.assetsSlice?.isUpdated
   );
 
-  const params = useParams();
-  const navigate = useNavigate();
+  // handle category
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+  };
 
-  const [searchQuery, setSearchQuery] = useState();
+  // fiter finish
+  const onFinishForm = (values) => {
+    const finalData = {
+      ...values,
+    };
+    const searchParams = generateSearchQuery(finalData);
+    if (searchParams === "&") {
+      openNotificationWithIcon("info");
+    }
+    setSearchQuery(searchParams);
+  };
+
+  // reset
+  const resetForm = () => {
+    form.resetFields();
+    setSearchQuery("&");
+  };
 
   const getDetails = async () => {
     setLoading(true);
 
-    let uri = URLS.assetList.path + "/?";
+    let uri = URLS.assetList.path + "?";
     if (params.page) {
       uri = uri + params.page;
     }
@@ -57,15 +127,6 @@ const AssetsList = () => {
           ...el,
           sr: index + 1,
           action: (
-            // <Button
-            //   className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-            //   key={el.name + index}
-            //   onClick={() => {
-            //     navigate("/asset-registration");
-            //   }}
-            // >
-            //   Edit
-            // </Button>
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
@@ -78,7 +139,6 @@ const AssetsList = () => {
           ),
         };
       });
-
       setDetails(() => {
         return {
           list,
@@ -87,6 +147,25 @@ const AssetsList = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
+
+      const myexcelData = data?.listings?.map((data, index) => {
+        return {
+          sr: index + 1,
+          Category: data?.asset_main_type_name,
+          "Toilets & Tentage Type": data?.asset_main_type_name,
+          "Vendor Name": data?.vendor_name,
+          "Monitoring Agent Name": data?.created_by,
+          Sector: data?.sector_name,
+          Circle: data?.circle_name,
+          "Vendor Asset Code": data?.vendor_asset_code,
+          Code: data?.code,
+          Unit: data?.unit,
+          "Register Date": data?.tagged_at
+            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        };
+      });
+      setExcelData(myexcelData);
     }
   };
 
@@ -97,24 +176,34 @@ const AssetsList = () => {
     }
   }, [params, isUpdatedSelector, searchQuery]);
 
+  useEffect(() => {
+    dispatch(setUpdateAssetEl({ updateElement: null }));
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    dispatch(getMonitoringAgent()); // monitoring agent list
+    dispatch(getVendorList()); // vendor list
+    dispatch(getSectorsList()); // all sectors list
+    dispatch(getAllCircleList()); // all circle list
+  }, []);
+
   const columns = [
     {
-      title: "Sr. No",
+      title: "Sr.No",
       dataIndex: "sr",
       key: "sr",
-      width: 80,
+      width: 55,
     },
     {
       title: "Category",
       dataIndex: "asset_main_type_name",
       key: "asset_main_type_name",
-      width: 140,
+      width: 100,
     },
     {
       title: "Toilets & Tentage Type",
       dataIndex: "asset_type_name",
       key: "asset_type_name",
-      width: 220,
+      width: 200,
     },
     {
       title: "Vendor Name",
@@ -123,9 +212,12 @@ const AssetsList = () => {
       width: 200,
     },
     {
-      title: "Vendor Asset Code",
-      dataIndex: "vendor_asset_code",
-      key: "vendor_asset_code",
+      title: "Monitoring Agent Name",
+      dataIndex: "created_by",
+      key: "created_by",
+      render: (text) => {
+        return getValueLabel(text, monitoringAgentDrop, "GSD");
+      },
     },
     {
       title: "Sector",
@@ -140,10 +232,35 @@ const AssetsList = () => {
       width: 100,
     },
     {
+      title: "Vendor Asset Code",
+      dataIndex: "vendor_asset_code",
+      key: "vendor_asset_code",
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      render: (text, record) => {
+        return (
+          <ShowCode
+            showData={`${text}-${record?.unit}`}
+            tableData={record?.units}
+          />
+        );
+      },
+    },
+    {
       title: "Location",
-      render: (text, record) =>
-        `${record.latitude || "N/A"}, ${record.longitude || "N/A"}`,
-      key: "location",
+      render: (text, record) => {
+        return record?.longitude && record?.latitude ? (
+          <CoordinatesMap
+            coordinates={[record?.longitude, record?.latitude]}
+            showLocation={false}
+          />
+        ) : (
+          "NA"
+        );
+      },
     },
     {
       title: "QR Code",
@@ -175,15 +292,14 @@ const AssetsList = () => {
       key: "photo",
     },
     {
-      title: "Tagged At",
+      title: "Register At",
       dataIndex: "tagged_at",
       key: "tagged_at",
+      render: (text, record) => {
+        return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
+      },
     },
   ];
-
-  useEffect(() => {
-    dispatch(setUpdateAssetEl({ updateElement: null }));
-  }, []);
 
   return (
     <div className="">
@@ -200,24 +316,122 @@ const AssetsList = () => {
         //   </Button>
         // }
       ></CommonDivider>
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={"Toilets & Tentage List"}
+          />
+        </div>
+      </div>
 
-      <CommonSearchForm
-        setSearchQuery={setSearchQuery}
-        searchQuery={searchQuery}
-        dropdown={
-          <CommonFormDropDownMaker
-            uri={"assetMainTypePerPage"}
-            responseListName="assetmaintypes"
-            responseLabelName="name"
-            responseIdName="asset_main_type_id"
-            selectLabel={"Category"}
-            selectName={"asset_main_type_id"}
-            required={false}
-            // RequiredMessage={"Main type is required!"}
-          ></CommonFormDropDownMaker>
-        }
-        // fields={[{ name: "vendor_asset_code", label: "" }]}
-      ></CommonSearchForm>
+      <div>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <Row gutter={[16, 16]} align="middle">
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"created_by"}
+                        label={"Select Monitoring Agent"}
+                        placeholder={"Select Monitoring Agent"}
+                        options={monitoringAgentDrop || []}
+                      />
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"assetmaintypes"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Asset Type"}
+                        placeholder={"Select Asset Type"}
+                        options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"sector_id"}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        options={SectorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"circle_id"}
+                        label={"Select Circle"}
+                        placeholder={"Select Circle"}
+                        options={CircleListDrop || []}
+                      />
+                    </Col>
+                    <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name={"vendor_asset_code"}
+                        label={"Vendor Asset Code"}
+                        placeholder={"Vendor Asset Code"}
+                      />
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={12}
+                      md={6}
+                      lg={4}
+                      className="flex justify-end gap-2"
+                    >
+                      <Button
+                        type="primary"
+                        className="rounded-none bg-5c"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="rounded-none bg-green-300 text-black"
+                      >
+                        Search
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              ),
+            },
+          ]}
+        />
+        {contextHolder}
+      </div>
 
       <CommonTable
         columns={columns}

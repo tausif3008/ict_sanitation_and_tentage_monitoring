@@ -59,7 +59,7 @@ const CoordinatesMap = ({
             </div>
           </div>
           <Modal
-            visible={open}
+            open={open}
             onCancel={closeModal}
             title={"View Location"}
             footer={null}

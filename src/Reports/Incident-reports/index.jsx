@@ -180,7 +180,7 @@ const IncidentReports = () => {
             unit_no: data?.unit_no,
             question_en: data?.question_en,
             answer: "No",
-            date: moment(data?.incidence_at).format("DD-MMM-YYYY HH:MM A"),
+            date: moment(data?.incidence_at).format("DD-MMM-YYYY hh:mm A"),
             category:
               data?.asset_main_type_id === "1" ? "Sanitation" : "Tentage",
             asset_types_name: data?.asset_types_name,

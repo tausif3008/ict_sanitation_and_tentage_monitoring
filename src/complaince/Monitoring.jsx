@@ -60,6 +60,8 @@ const Monitoring = () => {
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
 
+  const params = useParams();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
@@ -73,11 +75,6 @@ const Monitoring = () => {
   const isUpdatedSelector = useSelector(
     (state) => state.monitoringSlice?.isUpdated
   );
-
-  const params = useParams();
-  const navigate = useNavigate();
-
-  // qr
 
   const getDetails = async () => {
     setLoading(true);
@@ -254,7 +251,7 @@ const Monitoring = () => {
       dataIndex: "created_by",
       key: "created_by",
       render: (text) => {
-        return getValueLabel(text, monitoringAgentDrop, "Agent Name");
+        return getValueLabel(text, monitoringAgentDrop, "GSD");
       },
     },
     {
@@ -318,6 +315,7 @@ const Monitoring = () => {
 
   return (
     <div className="">
+      <CommonDivider label={"Asset Type Monitoring "}></CommonDivider>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -458,7 +456,6 @@ const Monitoring = () => {
         />
         {contextHolder}
       </div>
-      <CommonDivider label={"Asset Type Monitoring "}></CommonDivider>
 
       <CommonTable
         columns={columns}
