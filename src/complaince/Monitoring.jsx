@@ -154,7 +154,8 @@ const Monitoring = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    dispatch(getMonitoringAgent()); // monitoring agent list
+    const urls = URLS?.monitoringAgent?.path;
+    dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     dispatch(getAllCircleList()); // all circle list
@@ -187,6 +188,18 @@ const Monitoring = () => {
       "?asset_main_type_id=" + value,
       "asset_type_id"
     );
+  };
+
+  // handle monitoring agent
+  let timeoutId = null;
+  const handleSelectChange = (value) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      const urls = URLS?.monitoringAgent?.path;
+      dispatch(getMonitoringAgent(`${urls}&keywords=${value}`));
+    }, 500);
   };
 
   // fiter finish
@@ -401,6 +414,9 @@ const Monitoring = () => {
                         label={"Select Monitoring Agent"}
                         placeholder={"Select Monitoring Agent"}
                         options={monitoringAgentDrop || []}
+                        onSearch={(value) => {
+                          handleSelectChange(value);
+                        }}
                       />
                     </Col>
                     {userRoleId != "8" && (

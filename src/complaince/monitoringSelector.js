@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const MonitoringSelector = () => {
@@ -7,12 +7,14 @@ const MonitoringSelector = () => {
   ); // monitoring agent
   const loading = useSelector((state) => state?.monitoringSlice.loading);
 
-  const monitoringAgentDrop = monitoringAgentData?.data?.users?.map((data) => {
-    return {
-      value: data?.user_id,
-      label: data?.name,
-    };
-  });
+  const monitoringAgentDrop = useMemo(() => {
+    return monitoringAgentData?.data?.users?.map((data) => {
+      return {
+        value: data?.user_id,
+        label: data?.name,
+      };
+    });
+  }, [monitoringAgentData]); // monitoring agent dropdown
 
   return { monitoringAgentData, loading, monitoringAgentDrop };
 };

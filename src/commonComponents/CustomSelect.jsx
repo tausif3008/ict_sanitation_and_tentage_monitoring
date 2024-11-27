@@ -7,6 +7,7 @@ const CustomSelect = ({
   placeholder,
   className,
   handleSelect,
+  onSearch,
   rules = [],
   options = [],
   search = true,
@@ -34,6 +35,11 @@ const CustomSelect = ({
           onSelect={(value) => {
             if (handleSelect) {
               handleSelect(value);
+            }
+          }}
+          onSearch={(value) => {
+            if (onSearch) {
+              onSearch(value);
             }
           }}
           disabled={disabled}

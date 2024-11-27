@@ -66,10 +66,10 @@ export const monitoringSlice = createSlice({
 });
 
 // get monitoring agent list
-export const getMonitoringAgent = () => async (dispatch) => {
+export const getMonitoringAgent = (url) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.get(`${URLS?.monitoringAgent?.path}`);
+    const res = await axiosInstance.get(`${url}`);
     dispatch(postAgent(res?.data));
   } catch (error) {
     console.error("In get monitoring agent list error", error);

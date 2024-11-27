@@ -81,6 +81,18 @@ const AssetsList = () => {
     dispatch(getAssetTypes(url)); // get assset type
   };
 
+  // handle monitoring agent
+  let timeoutId = null;
+  const handleSelectChange = (value) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      const urls = URLS?.monitoringAgent?.path;
+      dispatch(getMonitoringAgent(`${urls}&keywords=${value}`));
+    }, 500);
+  };
+
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
@@ -184,7 +196,8 @@ const AssetsList = () => {
     dispatch(setUpdateAssetEl({ updateElement: null }));
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    dispatch(getMonitoringAgent()); // monitoring agent list
+    const urls = URLS?.monitoringAgent?.path;
+    dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     dispatch(getAllCircleList()); // all circle list
@@ -356,6 +369,9 @@ const AssetsList = () => {
                         label={"Select Monitoring Agent"}
                         placeholder={"Select Monitoring Agent"}
                         options={monitoringAgentDrop || []}
+                        onSearch={(value) => {
+                          handleSelectChange(value);
+                        }}
                       />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
