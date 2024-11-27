@@ -37,6 +37,7 @@ import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
 import CircleSelector from "../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
+import CustomInput from "../commonComponents/CustomInput";
 
 const Monitoring = () => {
   const dispatch = useDispatch();
@@ -374,12 +375,11 @@ const Monitoring = () => {
                       />
                     </Col>
                     <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"asset_code"} label={"Asset Code"}>
-                        <Input
-                          placeholder={"Asset Code"}
-                          className="rounded-none w-full"
-                        />
-                      </Form.Item>
+                      <CustomInput
+                        name={"asset_code"}
+                        label={"Asset Code"}
+                        placeholder={"Asset Code"}
+                      />
                     </Col>
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
