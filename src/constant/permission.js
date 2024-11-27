@@ -46,7 +46,7 @@ export const sanitationDash_param = [
 export const tentageDash_param = ["1", "2"];
 export const wasteDash_param = ["1", "2"];
 export const incidentDash_param = ["1", "2"];
-export const vendorDash_param = ["1", "2", "8"];
+export const vendorDash_param = ["8"]; // vendor dashboard
 export const SLADash_param = ["1", "2"];
 
 // user access and registration
