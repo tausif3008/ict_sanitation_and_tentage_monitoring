@@ -152,6 +152,8 @@ function App() {
 
         <Route path="/" element={<Layout></Layout>}>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
+
+          {/* dashboard */}
           <Route
             path="/sanitation-dashboard"
             element={<SanitationDashboard></SanitationDashboard>}
@@ -176,6 +178,7 @@ function App() {
             path="/SLA-dashboard"
             element={<SLADashboard></SLADashboard>}
           ></Route>
+
           <Route path="/home" element={<LandingPage></LandingPage>}></Route>
           <Route
             path="users/:page?/:per_page?"
@@ -313,6 +316,7 @@ function App() {
           ></Route>
           <Route path="parking" element={<ParkingList></ParkingList>}></Route>
 
+          {/* report */}
           <Route
             path="sector-wise-report"
             element={<SectorWiseReport></SectorWiseReport>}

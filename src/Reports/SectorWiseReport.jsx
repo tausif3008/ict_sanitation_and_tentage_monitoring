@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Table, Button, Space } from "antd";
-import * as XLSX from "xlsx";
+import { Table } from "antd";
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
+import ExportToExcel from "./ExportToExcel";
 
 const SectorWiseReport = () => {
   const [sectors, setSectors] = useState([]);
@@ -55,40 +55,37 @@ const SectorWiseReport = () => {
     { title: "Unclean", dataIndex: "unclean", key: "unclean" },
   ];
 
-  const exportToExcel = () => {
-    const worksheet = XLSX.utils.json_to_sheet(sectors);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Sector Report");
-    XLSX.writeFile(workbook, "SectorWiseReport.xlsx");
-  };
+  // pdf header
+  const pdfHeader = ["Sector Name", "Total", "Registered", "Clean", "Unclean"];
+
+  // pdf data
+  const pdfData = sectors?.map((sector) => [
+    sector?.name,
+    sector?.total,
+    sector?.registered,
+    sector?.clean,
+    sector?.unclean,
+  ]);
 
   return (
     <div style={{ padding: "24px" }}>
       <CommonDivider label={"Sector-Wise Report"} />
-      <Space style={{ marginBottom: 16, float: "right" }}>
-        <Button type="primary" onClick={exportToExcel}>
-          Download Excel
-        </Button>
-        <ExportToPDF
-          titleName={"Sector-Wise Report"}
-          pdfName={"Sector-Wise Report"}
-          rows={sectors?.map((sector) => [
-            sector?.name,
-            sector?.total,
-            sector?.registered,
-            sector?.clean,
-            sector?.unclean,
-          ])}
-          headerData={[
-            "Sector Name",
-            "Total",
-            "Registered",
-            "Clean",
-            "Unclean",
-          ]}
-        />
-        ;
-      </Space>
+      <div className="flex justify-end gap-2 mb-4 font-semibold">
+        <div>
+          <ExportToPDF
+            titleName={"Sector-Wise Report"}
+            pdfName={"Sector-Wise-Report"}
+            headerData={pdfHeader}
+            rows={pdfData}
+          />
+        </div>
+        <div>
+          <ExportToExcel
+            excelData={sectors || []}
+            fileName={"Sector-Wise-Report"}
+          />
+        </div>
+      </div>
       <Table
         columns={columns}
         dataSource={sectors}

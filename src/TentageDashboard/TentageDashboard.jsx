@@ -132,14 +132,14 @@ const TentageDashboard = () => {
       <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md">
         <TentageDetails {...props}></TentageDetails>
       </div>
-     
-      <div className="col-span-4 shadow-md bg-white rounded-md">
+
+      {/* <div className="col-span-4 shadow-md bg-white rounded-md">
       <FurnitureCount {...props}></FurnitureCount>
       </div>
       <div className="lg:col-span-4 col-span-4 border shadow-md bg-white rounded-md">
         <FurnitureDetails {...props}></FurnitureDetails>
-      </div>
-      
+      </div> */}
+
       <div className="col-span-4 shadow-md bg-white rounded-md">
         {/* <CleanlinessReport {...props}></CleanlinessReport> */}
       </div>
