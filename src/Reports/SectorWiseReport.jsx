@@ -1,50 +1,38 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { useDispatch } from "react-redux";
 import { Table } from "antd";
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
 import ExportToExcel from "./ExportToExcel";
+import { getSectorReports } from "./SectorSlice/sectorSlice";
+import URLS from "../urils/URLS";
+import SectorReportSelectors from "./SectorSlice/sectorSelector";
 
 const SectorWiseReport = () => {
   const [sectors, setSectors] = useState([]);
-  const [totalSectors, setTotalSectors] = useState(0);
   const [totalQuantity, setTotalQuantity] = useState(0);
 
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
+  const dispatch = useDispatch();
+  const { SectorReports, loading } = SectorReportSelectors();
+  const sectorData = SectorReports?.data?.sectors || [];
+
+  console.log("sectorData", sectorData);
 
   useEffect(() => {
-    const fetchSectorData = async () => {
-      try {
-        const response = await axios.post(
-          "https://kumbhtsmonitoring.in/php-api/reporting/sector",
-          {},
-          { headers }
-        );
+    if (SectorReports) {
+      setSectors(sectorData);
+      const totalQty = sectorData?.reduce(
+        (acc, sector) => acc + sector.total,
+        0
+      );
+      setTotalQuantity(totalQty);
+    }
+  }, [SectorReports]);
 
-        if (response.data.success) {
-          const sectorData = response.data.data.sectors;
-          setSectors(sectorData);
-          setTotalSectors(sectorData.length);
-          const totalQty = sectorData.reduce(
-            (acc, sector) => acc + sector.total,
-            0
-          );
-          setTotalQuantity(totalQty);
-        } else {
-          console.error("Failed to fetch sector data:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching sector data:", error);
-      }
-    };
-
-    fetchSectorData();
+  useEffect(() => {
+    const url = URLS?.sector_wise_report?.path;
+    dispatch(getSectorReports(url));
+    return () => {};
   }, []);
 
   const columns = [
@@ -87,6 +75,7 @@ const SectorWiseReport = () => {
         </div>
       </div>
       <Table
+        loading={loading}
         columns={columns}
         dataSource={sectors}
         rowKey="sector_id"
@@ -95,7 +84,7 @@ const SectorWiseReport = () => {
         footer={() => (
           <div style={{ display: "flex", justifyContent: "space-between" }}>
             <span>
-              <strong>Total Sectors: {totalSectors}</strong> |{" "}
+              <strong>Total Sectors: {sectorData?.length}</strong> |{" "}
               <strong>Total Quantity: {totalQuantity}</strong>
             </span>
             <span></span> {/* Empty span to maintain structure */}
