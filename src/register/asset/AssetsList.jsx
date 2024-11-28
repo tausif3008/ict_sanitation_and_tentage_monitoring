@@ -161,7 +161,7 @@ const AssetsList = () => {
           "Monitoring Agent Name": data?.created_by,
           Sector: data?.sector_name,
           Circle: data?.circle_name,
-          "Vendor Asset Code": data?.vendor_asset_code,
+          "Vendor Item Code": data?.vendor_asset_code,
           Code: data?.code,
           Unit: data?.unit,
           "Register Date": data?.tagged_at
@@ -217,7 +217,7 @@ const AssetsList = () => {
       width: 200,
     },
     {
-      title: "Monitoring Agent Name",
+      title: "GSD Name",
       dataIndex: "created_by",
       key: "created_by",
       render: (text) => {
@@ -237,7 +237,7 @@ const AssetsList = () => {
       width: 100,
     },
     {
-      title: "Vendor Asset Code",
+      title: "Vendor Item Code",
       dataIndex: "vendor_asset_code",
       key: "vendor_asset_code",
     },
@@ -354,8 +354,8 @@ const AssetsList = () => {
                     <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"created_by"}
-                        label={"Select Monitoring Agent"}
-                        placeholder={"Select Monitoring Agent"}
+                        label={"Select GSD"}
+                        placeholder={"Select GSD"}
                         options={monitoringAgentDrop || []}
                         // search dropdown
                         isOnSearchFind={true}
@@ -383,8 +383,8 @@ const AssetsList = () => {
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_id"}
-                        label={"Select Asset Type"}
-                        placeholder={"Select Asset Type"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
                         options={AssetTypeDrop || []}
                       />
                     </Col>
@@ -407,8 +407,8 @@ const AssetsList = () => {
                     <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"vendor_asset_code"}
-                        label={"Vendor Asset Code"}
-                        placeholder={"Vendor Asset Code"}
+                        label={"Vendor Item Code"}
+                        placeholder={"Vendor Item Code"}
                       />
                     </Col>
                     <Col

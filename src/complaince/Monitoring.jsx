@@ -232,13 +232,13 @@ const Monitoring = () => {
 
   const columns = [
     {
-      title: "Assets Type Name",
+      title: "Name",
       dataIndex: "asset_type_name",
       key: "assetsName",
       width: 210,
     },
     {
-      title: "Assets Code",
+      title: "PTC / TAF Code ",
       dataIndex: "asset_code",
       key: "asset_code",
       width: 110,
@@ -261,7 +261,7 @@ const Monitoring = () => {
       },
     },
     {
-      title: "Agent Name",
+      title: "GSD Name",
       dataIndex: "agent_name",
       key: "agent_name",
     },
@@ -303,7 +303,7 @@ const Monitoring = () => {
       key: "remark",
     },
     {
-      title: "Action",
+      title: "View Monitoring Details",
       key: "action",
       fixed: "right",
       width: 130,
@@ -327,10 +327,10 @@ const Monitoring = () => {
   // pdf header
   const pdfHeader = [
     "Sr No",
-    "Assets Type Name",
+    "Type Name",
     "Code",
     "Unit",
-    "Monitoring Agent Name",
+    "GSD Name",
     "Vendor Name",
     "Sector",
     "Circle",
@@ -354,12 +354,12 @@ const Monitoring = () => {
 
   return (
     <div className="">
-      <CommonDivider label={"Asset Type Monitoring"}></CommonDivider>
+      <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToPDF
-            titleName={"Asset Type Monitoring"}
-            pdfName={"Asset-Type-Monitoring"}
+            titleName={"Toilet & Tentage Monitoring"}
+            pdfName={"Monitoring Report"}
             headerData={pdfHeader}
             rows={pdfData}
             landscape={true}
@@ -368,7 +368,7 @@ const Monitoring = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={"Asset-Type-Monitoring"}
+            fileName={"Monitoring Report"}
           />
         </div>
       </div>
@@ -396,8 +396,8 @@ const Monitoring = () => {
                     <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"created_by"}
-                        label={"Select Monitoring Agent"}
-                        placeholder={"Select Monitoring Agent"}
+                        label={"Select GSD"}
+                        placeholder={"Select GSD"}
                         options={monitoringAgentDrop || []}
                         // search dropdown
                         isOnSearchFind={true}
@@ -418,8 +418,8 @@ const Monitoring = () => {
                     <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"assetmaintypes"}
-                        label={"Select Asset Main Type"}
-                        placeholder={"Select Asset Main Type"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
                         onSelect={handleSelect}
                         options={assetMainType || []}
                       />
@@ -427,16 +427,16 @@ const Monitoring = () => {
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_id"}
-                        label={"Select Asset Type"}
-                        placeholder={"Select Asset Type"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
                         options={assetTypes || []}
                       />
                     </Col>
                     <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"asset_code"}
-                        label={"Asset Code"}
-                        placeholder={"Asset Code"}
+                        label={" Item QR Code"}
+                        placeholder={" Item QR Code"}
                       />
                     </Col>
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
