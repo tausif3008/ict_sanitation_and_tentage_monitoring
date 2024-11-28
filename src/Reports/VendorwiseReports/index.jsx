@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
 
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
@@ -10,18 +11,25 @@ import VendorSelectors from "./vendorSelectors";
 import CommonTable from "../../commonComponents/CommonTable";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
+import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 
 const VendorReports = () => {
-  const dispatch = useDispatch();
-  const { loading, vendorReports } = VendorSelectors();
-  const params = useParams();
   const [excelData, setExcelData] = useState([]);
-
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
+
+  const params = useParams();
+  const dateFormat = "YYYY-MM-DD";
+  const [form] = Form.useForm();
+  const dispatch = useDispatch();
+  const { loading, vendorReports } = VendorSelectors(); // vendor reports
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const categoryType = form.getFieldValue("asset_main_type_id");
 
   useEffect(() => {
     if (vendorReports) {
@@ -123,14 +131,18 @@ const VendorReports = () => {
   ];
 
   // pdf data
-  const pdfData = excelData?.map((opt) => [
-    opt?.sr,
-    opt?.name,
-    opt?.total,
-    opt?.registered,
-    opt?.clean,
-    opt?.unclean,
-  ]);
+  const pdfData = useMemo(() => {
+    return (
+      excelData?.map((opt) => [
+        opt?.sr,
+        opt?.name,
+        opt?.total,
+        opt?.registered,
+        opt?.clean,
+        opt?.unclean,
+      ]) || []
+    );
+  }, [excelData]);
 
   return (
     <div>

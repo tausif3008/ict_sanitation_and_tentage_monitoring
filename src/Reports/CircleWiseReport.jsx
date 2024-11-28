@@ -29,7 +29,7 @@ const CircleWiseReport = () => {
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { CircleReports } = CircleSelector(); // circle reports
+  const { CircleReports, loading } = CircleSelector(); // circle reports
   const CircleData = CircleReports?.data?.circles || [];
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
@@ -236,6 +236,7 @@ const CircleWiseReport = () => {
       </div>
 
       <Table
+        loading={loading}
         columns={columns}
         dataSource={CircleData || []}
         rowKey="circle_id"

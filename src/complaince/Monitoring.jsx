@@ -128,7 +128,7 @@ const Monitoring = () => {
           "Asset Type Name": data?.asset_type_name,
           Code: data?.asset_code,
           Unit: data?.unit_no,
-          "Monitoring Agent Name": data?.created_by,
+          "Monitoring Agent Name": data?.agent_name,
           "Vendor Name": data?.vendor_name,
           Sector: data?.sector_name,
           Circle: data?.circle_name,
@@ -262,11 +262,8 @@ const Monitoring = () => {
     },
     {
       title: "Agent Name",
-      dataIndex: "created_by",
-      key: "created_by",
-      render: (text) => {
-        return getValueLabel(text, monitoringAgentDrop, "GSD");
-      },
+      dataIndex: "agent_name",
+      key: "agent_name",
     },
     {
       title: "Vendor Name",
@@ -346,7 +343,7 @@ const Monitoring = () => {
     data?.asset_type_name,
     data?.asset_code,
     data?.unit_no,
-    data?.created_by,
+    data?.agent_name,
     data?.vendor_name,
     data?.sector_name,
     data?.circle_name,
