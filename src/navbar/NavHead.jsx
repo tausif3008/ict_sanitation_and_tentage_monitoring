@@ -6,7 +6,7 @@ import loginIcon from "../assets/Dashboard/logInIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
 import img1 from "../assets/Images/UPGovLatestLogo.png";
-import img2 from "../assets/Images/MahaKumbhLogo.png";
+import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 import { langingPage } from "../utils/dictionary";
 
 const NavHead = ({ lang, setLang }) => {
