@@ -24,7 +24,7 @@ import { getValueLabel } from "../constant/const";
 
 const SectorWiseReport = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
-  const [filesName, setFilesName] = useState("Wise"); // files Name
+  const [filesName, setFilesName] = useState(null); // files Name
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
@@ -72,7 +72,7 @@ const SectorWiseReport = () => {
   const resetForm = () => {
     form.resetFields();
     getCurrentData();
-    setFilesName("Wise");
+    setFilesName(null);
   };
 
   // file name
@@ -138,8 +138,16 @@ const SectorWiseReport = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={`Sector-${filesName}-Report`}
-            pdfName={`Sector-${filesName}-Report`}
+            titleName={
+              filesName
+                ? `Sector-Wise-${filesName} Report`
+                : `Sector-Wise Report`
+            }
+            pdfName={
+              filesName
+                ? `Sector-Wise-${filesName}-Report`
+                : `Sector-Wise-Report`
+            }
             headerData={pdfHeader}
             rows={pdfData}
           />
@@ -147,7 +155,11 @@ const SectorWiseReport = () => {
         <div>
           <ExportToExcel
             excelData={sectorData || []}
-            fileName={`Sector-${filesName}-Report`}
+            fileName={
+              filesName
+                ? `Sector-Wise-${filesName}-Report`
+                : `Sector-Wise-Report`
+            }
           />
         </div>
       </div>
