@@ -45,7 +45,6 @@ const CircleWiseReport = () => {
 
   // fiter finish
   const onFinishForm = async (values) => {
-    const { vendor_id, asset_main_type_id, asset_type_id } = values;
     const dayjsDate = new Date(values?.date);
     const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
     const finalValues = {
@@ -56,12 +55,13 @@ const CircleWiseReport = () => {
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
+    callApi(finalValues);
+  };
 
-    const formData = await getFormData(finalValues);
+  const callApi = async (data) => {
+    const formData = await getFormData(data);
     const url = URLS?.circle_wise_report?.path;
-    if (asset_type_id || asset_main_type_id || vendor_id) {
-      dispatch(getCircleReports(url, formData)); // circle reports
-    }
+    dispatch(getCircleReports(url, formData)); // circle reports
   };
 
   // reset form
@@ -96,8 +96,10 @@ const CircleWiseReport = () => {
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
     });
-    const url = URLS?.circle_wise_report?.path;
-    dispatch(getCircleReports(url)); // circle reports
+    const finalValues = {
+      date: newDate,
+    };
+    callApi(finalValues);
   };
 
   useEffect(() => {

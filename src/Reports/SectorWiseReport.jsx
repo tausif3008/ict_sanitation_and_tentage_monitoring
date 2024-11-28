@@ -56,16 +56,13 @@ const SectorWiseReport = () => {
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
+    callApi(finalValues);
+  };
 
-    const formData = await getFormData(finalValues);
+  const callApi = async (data) => {
+    const formData = await getFormData(data);
     const url = URLS?.sector_wise_report?.path;
-    if (
-      values?.asset_type_id ||
-      values?.asset_main_type_id ||
-      values?.vendor_id
-    ) {
-      dispatch(getSectorReports(url, formData)); // circle reports
-    }
+    dispatch(getSectorReports(url, formData)); // sector reports
   };
 
   // reset form
@@ -99,8 +96,10 @@ const SectorWiseReport = () => {
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
     });
-    const url = URLS?.sector_wise_report?.path;
-    dispatch(getSectorReports(url)); // sector reports
+    const finalValues = {
+      date: newDate,
+    };
+    callApi(finalValues);
   };
 
   useEffect(() => {

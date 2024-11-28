@@ -24,10 +24,14 @@ export const vendorWiseSlice = createSlice({
 });
 
 // get vendor reports
-export const getVendorReports = (url) => async (dispatch) => {
+export const getVendorReports = (url, data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${url}`);
+    const res = await axiosInstance.post(`${url}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     dispatch(postSuccess(res?.data));
   } catch (error) {
     console.error("In get vendor reports error", error);
