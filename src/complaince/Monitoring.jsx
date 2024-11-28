@@ -190,18 +190,6 @@ const Monitoring = () => {
     );
   };
 
-  // handle monitoring agent
-  let timeoutId = null;
-  const handleSelectChange = (value) => {
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
-    timeoutId = setTimeout(() => {
-      const urls = URLS?.monitoringAgent?.path;
-      dispatch(getMonitoringAgent(`${urls}&keywords=${value}`));
-    }, 500);
-  };
-
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
@@ -414,9 +402,10 @@ const Monitoring = () => {
                         label={"Select Monitoring Agent"}
                         placeholder={"Select Monitoring Agent"}
                         options={monitoringAgentDrop || []}
-                        onSearch={(value) => {
-                          handleSelectChange(value);
-                        }}
+                        // search dropdown
+                        isOnSearchFind={true}
+                        apiAction={getMonitoringAgent}
+                        onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                       />
                     </Col>
                     {userRoleId != "8" && (

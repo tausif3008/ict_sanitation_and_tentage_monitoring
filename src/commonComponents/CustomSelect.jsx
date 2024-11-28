@@ -1,5 +1,6 @@
 import React from "react";
 import { Form, Select } from "antd";
+import { useDispatch } from "react-redux";
 
 const CustomSelect = ({
   name,
@@ -12,9 +13,28 @@ const CustomSelect = ({
   options = [],
   search = true,
   disabled = false,
+
+  // use for search find in dropdown
+  isOnSearchFind = false,
+  apiAction,
+  onSearchUrl,
+  dispatchTime = 500,
+
   size = "default",
   ...rest
 }) => {
+  const dispatch = useDispatch();
+  let timeoutId = null;
+
+  // handle search dropdown
+  const handleSelectChange = (value) => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+    timeoutId = setTimeout(() => {
+      dispatch(apiAction(`${onSearchUrl}${value}`));
+    }, dispatchTime);
+  };
   return (
     <>
       <Form.Item label={label} name={name} rules={rules}>
@@ -38,6 +58,9 @@ const CustomSelect = ({
             }
           }}
           onSearch={(value) => {
+            if (isOnSearchFind) {
+              handleSelectChange(value);
+            }
             if (onSearch) {
               onSearch(value);
             }
