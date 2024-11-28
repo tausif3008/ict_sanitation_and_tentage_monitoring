@@ -77,7 +77,6 @@ const URLS = {
   circle_wise_report: { path: "/reporting/circle", version: 5.43 },
 
   // sector wise report
-  // allCircleList: { path: "/sector", version: 5.43 },
   sector_wise_report: { path: "/reporting/sector", version: 5.43 },
 
   // parking

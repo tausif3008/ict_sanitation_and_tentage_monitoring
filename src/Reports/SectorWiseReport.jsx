@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
 import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
 import ExportToExcel from "./ExportToExcel";
@@ -58,7 +59,13 @@ const SectorWiseReport = () => {
 
     const formData = await getFormData(finalValues);
     const url = URLS?.sector_wise_report?.path;
-    dispatch(getSectorReports(url, formData)); // sector reports
+    if (
+      values?.asset_type_id ||
+      values?.asset_main_type_id ||
+      values?.vendor_id
+    ) {
+      dispatch(getSectorReports(url, formData)); // circle reports
+    }
   };
 
   // reset form
@@ -79,7 +86,7 @@ const SectorWiseReport = () => {
   useEffect(() => {
     if (SectorReports) {
       const totalQty = sectorData?.reduce(
-        (acc, sector) => acc + sector.total,
+        (acc, sector) => acc + Number(sector?.total),
         0
       );
       setTotalQuantity(totalQty);
