@@ -362,7 +362,7 @@ const VendorReports = () => {
         columns={columns}
         dataSource={vendorDetails?.list || []}
         rowKey="sector_id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 50 }}
         bordered
         footer={() => (
           <div className="flex justify-between">
