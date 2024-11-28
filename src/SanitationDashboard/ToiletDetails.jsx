@@ -12,22 +12,24 @@ import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/Vend
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
-import { priorityToiletTypes } from "../constant/const";
+import { DICT, langingPage } from "../utils/dictionary";
+import QuestionSelector from "../register/questions/questionSelector";
+import { priorityToiletTypes_Id } from "../constant/const";
 
 const ToiletDetails = () => {
   const dateFormat = "YYYY-MM-DD";
+
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
-
   const toiletData = assetData?.asset_types || [];
-
-  const [form] = Form.useForm();
 
   // Reset the form
   const handleReset = () => {
@@ -43,6 +45,7 @@ const ToiletDetails = () => {
       ...(values?.sector_id && { sector_id: values?.sector_id }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.question_id && { question_id: values?.question_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     const formData = await getFormData(finalValues);
@@ -57,6 +60,7 @@ const ToiletDetails = () => {
     });
     const finalData = {
       date: newDate,
+      question_id: 1,
     };
     const formData = await getFormData(finalData);
     dispatch(getSanitationDashData(formData));
@@ -74,19 +78,13 @@ const ToiletDetails = () => {
     dispatch(getSectorsList()); // all sectors
   }, []);
 
-  const priorityToilets = toiletData?.filter((item) =>
-    priorityToiletTypes.includes(item.type)
-  );
-
-  const otherToilets = toiletData?.filter(
-    (item) => !priorityToiletTypes.includes(item.type)
-  );
-
-  const combinedToilets = [...(priorityToilets || []), ...(otherToilets || [])];
-
-  const displayedToilets = showAll
-    ? combinedToilets
-    : combinedToilets.slice(0, 5);
+  const sortedArray =
+    toiletData
+      ?.map((item) => ({
+        ...item,
+        asset_type_id: Number(item?.asset_type_id),
+      }))
+      ?.sort((a, b) => a?.asset_type_id - b?.asset_type_id) || []; // Sort in ascending order
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
@@ -109,7 +107,7 @@ const ToiletDetails = () => {
 
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          <Form.Item label="Date" name="date">
+          <Form.Item label={`${langingPage?.date[lang]}`} name="date">
             <DatePicker
               allowClear={false}
               format={dateFormat}
@@ -117,9 +115,9 @@ const ToiletDetails = () => {
               className="w-full rounded-none"
             />
           </Form.Item>
-          <Form.Item label="Sector" name="sector_id">
+          <Form.Item label={`${dict?.select_sector[lang]}`} name="sector_id">
             <Select
-              placeholder="Select sector"
+              placeholder={`${dict?.select_sector[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -136,9 +134,9 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Select Vendor" name="vendor_id">
+          <Form.Item label={`${dict?.select_vendor[lang]}`} name="vendor_id">
             <Select
-              placeholder="Select Vendor"
+              placeholder={`${dict?.select_vendor[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -155,9 +153,12 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>
-          <Form.Item label="Select Toilet" name="asset_type_id">
+          <Form.Item
+            label={`${DICT?.select_toilet[lang]}`}
+            name="asset_type_id"
+          >
             <Select
-              placeholder="Select Toilet"
+              placeholder={`${DICT?.select_toilet[lang]}`}
               allowClear
               showSearch
               filterOption={(input, option) => {
@@ -177,29 +178,41 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>{" "}
-        </div>
-        <div className="flex justify-start space-x-2">
-          <div>
-            <Button
-              loading={loading}
-              type="button"
-              // htmlType="submit"
-              className="w-fit rounded-none text-white bg-orange-400"
-              onClick={handleReset}
-            >
-              Reset{" "}
-            </Button>
-          </div>
-          <div>
-            <Button
-              loading={loading}
-              type="primary"
-              htmlType="submit"
-              className="w-fit rounded-none bg-5c"
-            >
-              Search{" "}
-            </Button>
-          </div>
+          <Form.Item
+            label={dict.select_question[lang]}
+            name="question_id" // This is the field name
+          >
+            <Select placeholder={dict.select_question[lang]}>
+              {QuestionDrop?.map((questions) => (
+                <Select.Option key={questions?.value} value={questions?.value}>
+                  {questions?.label}
+                </Select.Option>
+              ))}
+            </Select>
+          </Form.Item>
+          <div className="flex justify-start my-4 space-x-2">
+            <div>
+              <Button
+                loading={loading}
+                type="button"
+                // htmlType="submit"
+                className="w-fit rounded-none text-white bg-orange-400"
+                onClick={handleReset}
+              >
+                {langingPage?.reset[lang]}
+              </Button>
+            </div>
+            <div>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="w-fit rounded-none bg-5c"
+              >
+                {dict?.search[lang]}
+              </Button>
+            </div>
+          </div>{" "}
         </div>{" "}
       </Form>
 
@@ -210,53 +223,65 @@ const ToiletDetails = () => {
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
         } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
-        {displayedToilets.length > 0 ? (
-          displayedToilets?.map((item, index) => (
-            <Tooltip
-              key={index}
-              title={
-                <div>
-                  <strong>{item?.name}</strong>
-                  <div>Total Quantity: {item?.total}</div>
-                  <div>Registered Quantity: {item?.registered}</div>
-                </div>
-              }
-              placement="top"
-              arrowPointAtCenter
-            >
-              <div
-                className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
-                  showAll ? "" : "h-40"
-                }`}
-                style={{
-                  minHeight: "110px",
-                }}
+        {sortedArray?.length > 0 ? (
+          sortedArray
+            ?.filter((data) =>
+              showAll
+                ? true
+                : priorityToiletTypes_Id.includes(
+                    data?.asset_type_id?.toString()
+                  )
+            )
+            ?.map((item, index) => (
+              <Tooltip
+                key={index}
+                title={
+                  <div>
+                    <strong>
+                      {lang === "en" ? item?.name : item?.name_hi}
+                    </strong>
+                    <div>Total Quantity: {item?.total}</div>
+                    <div>Registered Quantity: {item?.registered}</div>
+                  </div>
+                }
+                placement="top"
+                arrowPointAtCenter
               >
-                <div className="text-start flex-1">
-                  <div className="text-sm text-gray-500 font-bold">
-                    {item?.name}
+                <div
+                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
+                    showAll ? "" : "h-40"
+                  }`}
+                  style={{
+                    minHeight: "110px",
+                  }}
+                >
+                  <div className="text-start flex-1">
+                    <div className="text-sm text-gray-500 font-bold">
+                      {lang === "en" ? item?.name : item?.name_hi}
+                    </div>
                   </div>
+                  <div className="absolute bottom-4 left-3 right-3 flex justify-between">
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+                      <span className="text-sm font-semibold">
+                        {item?.clean}
+                      </span>
+                    </div>
+                    <div className="flex items-center">
+                      <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
+                      <span className="text-sm font-semibold">
+                        {item?.unclean}
+                      </span>
+                    </div>
+                  </div>
+                  <img
+                    src={lines}
+                    alt="Card Icon"
+                    className="absolute bottom-0 right-0 h-full w-auto"
+                  />
                 </div>
-                <div className="absolute bottom-4 left-3 right-3 flex justify-between">
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">{item?.clean}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-sm font-semibold">
-                      {item?.unclean}
-                    </span>
-                  </div>
-                </div>
-                <img
-                  src={lines}
-                  alt="Card Icon"
-                  className="absolute bottom-0 right-0 h-full w-auto"
-                />
-              </div>
-            </Tooltip>
-          ))
+              </Tooltip>
+            ))
         ) : (
           <div className="col-span-full flex justify-center items-center h-32">
             {dict.no_data_available[lang]}

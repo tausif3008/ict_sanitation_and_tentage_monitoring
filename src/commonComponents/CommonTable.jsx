@@ -1,8 +1,18 @@
-import { Pagination, Table } from "antd";
 import React from "react";
 import { useNavigate } from "react-router";
+import { Pagination, Table } from "antd";
 
-const CommonTable = ({ columns, uri, details, loading, scroll }) => {
+const CommonTable = ({
+  columns,
+  uri,
+  details,
+  loading,
+  scroll,
+  totalName = "Total",
+  subtotalName = undefined,
+  subtotalCount = 0,
+  ...paginationRest
+}) => {
   const navigate = useNavigate();
 
   const handlePageChange = (pageNumber, page) => {
@@ -18,24 +28,33 @@ const CommonTable = ({ columns, uri, details, loading, scroll }) => {
     <div>
       <Table
         loading={loading}
-        columns={columns}
+        columns={columns || []}
         bordered
         scroll={scroll || { x: 1600, y: 400 }}
-        dataSource={details.list || []}
+        dataSource={details?.list || []}
         pagination={false}
       />
 
-      {details.pageLength && (
+      {details?.pageLength && (
         <div className="mt-2 flex justify-between items-center">
-          {<div>Total: {details.totalRecords}</div>}
+          <div>
+            {totalName} : {details?.totalRecords}
+          </div>
+          {subtotalName && (
+            <div>
+              {subtotalName} : {subtotalCount}
+            </div>
+          )}
+
           <Pagination
             align="end"
             showSizeChanger
             showQuickJumper
-            current={details.currentPage}
-            total={details.totalRecords}
-            pageSize={details.pageLength}
+            current={details?.currentPage}
+            total={details?.totalRecords}
+            pageSize={details?.pageLength}
             onChange={handlePageChange}
+            {...paginationRest}
           />
         </div>
       )}

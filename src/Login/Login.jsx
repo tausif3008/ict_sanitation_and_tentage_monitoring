@@ -18,16 +18,18 @@ const headers = {
 
 const Login = () => {
   const localLang = localStorage.getItem("lang");
+
   const [lang, setLang] = useState(localLang || "en");
   const [canProceed, setCanProceed] = useState(false);
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [forgotPasswordVisible, setForgotPasswordVisible] = useState(false);
   const [phone, setPhone] = useState("");
-  const [otp, setOtp] = useState("");
-  const [newPassword, setNewPassword] = useState("");
   const [otpStep, setOtpStep] = useState(false);
+
+  const [form] = Form.useForm();
+  const [forgotForm] = Form.useForm(); // forgot
+  const [resetForm] = Form.useForm(); // set new password
+  const navigate = useNavigate();
 
   const onFinish = async (values) => {
     const formData = new FormData();
@@ -45,14 +47,12 @@ const Login = () => {
     }
   };
 
-  const handleForgotPassword = async () => {
+  // forgot password
+  const handleForgotPassword = async (value) => {
+    setPhone(value?.phone);
     try {
       const formData = new FormData();
-      formData.append("phone", phone);
-
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
+      formData.append("phone", value);
 
       const response = await fetch(`${URLS.baseUrl}/resetpasswordrequest`, {
         method: "POST",
@@ -74,12 +74,13 @@ const Login = () => {
     }
   };
 
-  const handleResetPassword = async () => {
+  // reset password
+  const handleResetPassword = async (value) => {
     try {
       const formData = new FormData();
       formData.append("phone", phone);
-      formData.append("otp", otp);
-      formData.append("password", newPassword);
+      formData.append("otp", value?.otp);
+      formData.append("password", value?.newPassword);
 
       const response = await fetch(`${URLS.baseUrl}/resetpassword`, {
         method: "POST",
@@ -139,7 +140,7 @@ const Login = () => {
                   </div>
                 </div>
               </div>
-              <div className="w-10/12">
+              <div className="w-8/12">
                 <div className="flex w-full gap-4">
                   <Form
                     className="w-full gap-5"
@@ -151,7 +152,6 @@ const Login = () => {
                     autoComplete="off"
                   >
                     <BeforeLoginUserTypeDropDown form={form} />
-
                     <Form.Item
                       name="username"
                       rules={[
@@ -160,7 +160,7 @@ const Login = () => {
                           message: "Please enter your mobile number!",
                         },
                       ]}
-                      style={{ marginTop: "15px", marginBottom: "30px" }}
+                      className="my-8"
                     >
                       <Input
                         autoComplete="off"
@@ -169,7 +169,6 @@ const Login = () => {
                         className="rounded-none"
                       />
                     </Form.Item>
-
                     <Form.Item
                       name="password"
                       rules={[
@@ -199,6 +198,7 @@ const Login = () => {
                         <a
                           href="#"
                           onClick={(e) => {
+                            forgotForm.resetFields();
                             e.preventDefault(); // Prevent default anchor behavior
                             setForgotPasswordVisible(true);
                           }}
@@ -217,68 +217,86 @@ const Login = () => {
       </div>
 
       <Modal
-        title="Forgot Password"
+        title={
+          <h5 className="font-semibold mb-2">
+            {!otpStep ? "Forgot Password" : "Set New Password"}
+          </h5>
+        }
         visible={forgotPasswordVisible}
         onCancel={() => {
           setForgotPasswordVisible(false);
-          form.resetFields();
+          forgotForm.resetFields();
+          setOtpStep(false); // Reset OTP step
         }}
+        width={400}
         footer={null}
       >
-        {!otpStep ? (
-          <>
-            <Form.Item
-              label="Phone Number"
-              style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }}
-            >
-              <Input
-                placeholder="Enter your phone number"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
-            </Form.Item>
-            <Button
-              type="primary"
-              onClick={handleForgotPassword}
-              className="w-full"
-            >
-              Get OTP
-            </Button>
-          </>
-        ) : (
-          <>
-            <Form.Item
-              label="OTP"
-              style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }}
-            >
-              <Input
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item
-              label="New Password"
-              style={{ marginBottom: "15px" }}
-              labelCol={{ span: 24 }}
-            >
-              <Input.Password
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
-              />
-            </Form.Item>
-            <Button
-              type="primary"
-              onClick={handleResetPassword}
-              className="w-full"
-            >
-              Save
-            </Button>
-          </>
-        )}
+        <Form
+          form={otpStep ? resetForm : forgotForm}
+          onFinish={otpStep ? handleResetPassword : handleForgotPassword}
+          layout="vertical"
+        >
+          {!otpStep ? (
+            <>
+              <Form.Item
+                label="Phone Number"
+                name="phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter your phone number!",
+                  },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Please enter a valid 10-digit phone number!",
+                  },
+                ]}
+              >
+                <Input
+                  placeholder="Enter your phone number"
+                  type="Number"
+                  className="rounded-none"
+                />
+              </Form.Item>
+              <div className="text-center mt-2">
+                <Button type="primary" htmlType="submit" className="w-[30%]">
+                  Get OTP
+                </Button>
+              </div>
+            </>
+          ) : (
+            <>
+              <Form.Item
+                label="One Time Password (OTP)"
+                name="otp"
+                rules={[{ required: true, message: "Please enter OTP!" }]}
+              >
+                <Input placeholder="Enter OTP" className="rounded-none" />
+              </Form.Item>
+              <Form.Item
+                label="New Password"
+                name="newPassword"
+                rules={[
+                  { required: true, message: "Please enter a new password!" },
+                  {
+                    min: 6,
+                    message: "Password must be at least 6 characters.",
+                  },
+                ]}
+              >
+                <Input.Password
+                  placeholder="Enter new password"
+                  className="rounded-none"
+                />
+              </Form.Item>
+              <div className="text-center">
+                <Button type="primary" htmlType="submit" className="w-[30%]">
+                  Save
+                </Button>
+              </div>
+            </>
+          )}
+        </Form>
       </Modal>
     </div>
   );

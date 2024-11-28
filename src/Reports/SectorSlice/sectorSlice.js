@@ -7,8 +7,8 @@ const initialState = {
   name: null,
 };
 
-export const vendorWiseSlice = createSlice({
-  name: "vendorWiseSlice",
+export const SectorReportSlice = createSlice({
+  name: "SectorReportSlice",
   initialState,
   reducers: {
     setLoading: (state, action) => {
@@ -23,8 +23,8 @@ export const vendorWiseSlice = createSlice({
   },
 });
 
-// get vendor reports
-export const getVendorReports = (url, data) => async (dispatch) => {
+// get Sector reports
+export const getSectorReports = (url, data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const res = await axiosInstance.post(`${url}`, data, {
@@ -34,11 +34,11 @@ export const getVendorReports = (url, data) => async (dispatch) => {
     });
     dispatch(postSuccess(res?.data));
   } catch (error) {
-    console.error("In get vendor reports error", error);
+    console.error("In get Sector reports error", error);
   } finally {
     dispatch(setLoading(false));
   }
 };
 
-export const { setLoading, postSuccess } = vendorWiseSlice.actions;
-export default vendorWiseSlice.reducer;
+export const { setLoading, postSuccess } = SectorReportSlice.actions;
+export default SectorReportSlice.reducer;

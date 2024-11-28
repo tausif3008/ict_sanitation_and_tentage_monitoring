@@ -31,7 +31,7 @@ const MonitoringReport = () => {
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
       const myexcelData = monitoringData.questions
-        ?.filter((item) => item?.answer === "1" || item?.answer === "2")
+        ?.filter((item) => item?.answer != "N")
         ?.map((data, index) => {
           return {
             sr: index + 1,
@@ -311,7 +311,7 @@ const MonitoringReport = () => {
         <Divider className="bg-d9 h-2/3 mt-1" />
 
         <div className="mt-3" ref={contentRef}>
-          <div className="grid grid-cols-1 md:grid-cols-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[40%,40%,20%]">
             <table
               style={{ borderCollapse: "collapse" }}
               className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
@@ -327,6 +327,14 @@ const MonitoringReport = () => {
                   <td className="font-semibold w-[40%] border-0">Type</td>
                   <td className="border-0">
                     : {assetDetails?.asset_type_name || "NA"}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">
+                    Vendor Name
+                  </td>
+                  <td className="border-0">
+                    : {assetDetails?.vendor_name || "NA"}
                   </td>
                 </tr>
                 <tr>
@@ -363,12 +371,6 @@ const MonitoringReport = () => {
                     </td>
                   </tr>
                 )}
-                <tr>
-                  <td className="font-semibold w-[40%] border-0">Remark</td>
-                  <td className="border-0">
-                    :{` ${assetDetails?.remark || "NA"}`}
-                  </td>
-                </tr>
               </tbody>
             </table>
             <table className="table-auto w-full text-left border-collapse border-none">
@@ -419,11 +421,41 @@ const MonitoringReport = () => {
                       : "NA"}
                   </td>
                 </tr>
+                <tr>
+                  <td className="font-semibold w-[40%] border-0">Remark</td>
+                  <td className="border-0">
+                    :{` ${assetDetails?.remark || "NA"}`}
+                  </td>
+                </tr>
               </tbody>
             </table>
+            <div className="grid md:grid-cols-2">
+              <div className="w-full">
+                <div>Asset Image</div>
+                {assetDetails?.photo ? (
+                  <Image
+                    width={125}
+                    height={125}
+                    src={`${URLS?.baseUrl}/${assetDetails?.photo}`}
+                    alt="Asset"
+                  />
+                ) : (
+                  <span>No Image Available</span>
+                )}
+              </div>
+              <div className="flex justify-center items-center w-full">
+                <CoordinatesMap
+                  coordinates={[
+                    assetDetails?.longitude,
+                    assetDetails?.latitude,
+                  ]}
+                  showLocation={false}
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-between mt-2 mb-3">
+          {/* <div className="flex justify-between mt-2 mb-3">
             <div className="flex flex-col text-center font-semibold">
               <span>QR Code</span>
               {assetDetails?.qrCode ? (
@@ -439,6 +471,7 @@ const MonitoringReport = () => {
             <div className="flex flex-col text-center font-semibold mt-6">
               <CoordinatesMap
                 coordinates={[assetDetails?.longitude, assetDetails?.latitude]}
+                showLocation={false}
               />
             </div>
             <div className="flex flex-col text-center font-semibold">
@@ -454,7 +487,7 @@ const MonitoringReport = () => {
                 <span>No Image Available</span>
               )}
             </div>
-          </div>
+          </div> */}
         </div>
         {details?.length ? (
           <>
@@ -464,7 +497,7 @@ const MonitoringReport = () => {
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered
-              className="rounded-none"
+              className="rounded-none mt-2"
               loading={loading}
             />
           </>

@@ -24,6 +24,23 @@ export const dateOptions = [
   },
 ];
 
+export const dateWeekOptions = [
+  {
+    label: "Today",
+    value: "Today",
+  },
+  // {
+  //   label: "Week",
+  //   value: "Week",
+  // },
+  {
+    label: "From Date - to Date",
+    value: "Date Range",
+  },
+];
+
+export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
+
 // dashboard
 export const priorityToiletTypes = [
   "Type-1 FRP Septic Tank",
@@ -32,3 +49,5 @@ export const priorityToiletTypes = [
   "Type-4 Prefab Steel Septic Tank",
   "Type-5 Prefab Steel Soak Pit",
 ];
+
+

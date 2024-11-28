@@ -6,6 +6,7 @@ import URLS from "../../urils/URLS";
 const initialState = {
   loading: false,
   name: null,
+  report_data: null,
 };
 
 export const circleWiseSlice = createSlice({
@@ -18,11 +19,31 @@ export const circleWiseSlice = createSlice({
     postSuccess: (state, action) => {
       state.name = action.payload;
     },
+    postCircle: (state, action) => {
+      state.report_data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
   },
 });
+
+// get Circle reports
+export const getCircleReports = (url, data) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.post(`${url}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    dispatch(postCircle(res?.data));
+  } catch (error) {
+    console.error("In get Circle reports error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
 
 // get circle list
 export const getAllCircleList = () => async (dispatch) => {
@@ -37,5 +58,5 @@ export const getAllCircleList = () => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess } = circleWiseSlice.actions;
+export const { setLoading, postSuccess, postCircle } = circleWiseSlice.actions;
 export default circleWiseSlice.reducer;

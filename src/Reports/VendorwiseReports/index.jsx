@@ -1,30 +1,110 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import * as XLSX from "xlsx";
-import { Button, Space, message } from "antd";
+import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+import moment from "moment";
+import dayjs from "dayjs";
 
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { basicUrl } from "../../Axios/commonAxios";
 import { getVendorReports } from "./vendorslice";
 import VendorSelectors from "./vendorSelectors";
 import CommonTable from "../../commonComponents/CommonTable";
-import { IMAGELIST } from "../../assets/Images/exportImages";
+import ExportToPDF from "../reportFile";
+import ExportToExcel from "../ExportToExcel";
+import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import { getValueLabel } from "../../constant/const";
+import { getFormData } from "../../urils/getFormData";
+import {
+  getAssetMainTypes,
+  getAssetTypes,
+} from "../../register/AssetType/AssetTypeSlice";
+import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import search from "../../assets/Dashboard/icon-search.png";
 
 const VendorReports = () => {
-  const dispatch = useDispatch();
-  const { loading, vendorReports } = VendorSelectors();
-  const params = useParams();
   const [excelData, setExcelData] = useState([]);
-
+  const [filesName, setFilesName] = useState(null); // files Name
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
+
+  const dateFormat = "YYYY-MM-DD";
+  const [form] = Form.useForm();
+  const dispatch = useDispatch();
+  const { loading, vendorReports } = VendorSelectors(); // vendor reports
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const categoryType = form.getFieldValue("asset_main_type_id");
+
+  // handle category
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+  };
+
+  // fiter finish
+  const onFinishForm = async (values) => {
+    const dayjsDate = new Date(values?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
+    const finalValues = {
+      ...(values?.asset_main_type_id && {
+        asset_main_type_id: values?.asset_main_type_id,
+      }),
+      ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+    };
+    callApi(finalValues);
+  };
+
+  const callApi = async (data) => {
+    const formData = await getFormData(data);
+    const url = URLS?.vendorReporting?.path;
+    dispatch(getVendorReports(url, formData)); // vendor reports
+  };
+
+  // current data
+  const getCurrentData = () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+    });
+    const finalValues = {
+      date: newDate,
+    };
+    callApi(finalValues);
+  };
+
+  // reset form
+  const resetForm = () => {
+    form.resetFields();
+    getCurrentData();
+    setFilesName(null);
+  };
+
+  // file name
+  useEffect(() => {
+    if (categoryType) {
+      const value = getValueLabel(categoryType, AssetMainTypeDrop, "");
+      setFilesName(value);
+    }
+  }, [categoryType, AssetMainTypeDrop]);
+
+  useEffect(() => {
+    getCurrentData(); // current data
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    dispatch(getVendorList()); // vendor list
+
+    return () => {};
+  }, []);
 
   useEffect(() => {
     if (vendorReports) {
@@ -55,19 +135,6 @@ const VendorReports = () => {
       setExcelData(myexcelData);
     }
   }, [vendorReports]);
-
-  useEffect(() => {
-    let uri = URLS.vendorReporting.path + "?";
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    } else {
-      uri = URLS.vendorReporting.path;
-    }
-    dispatch(getVendorReports(basicUrl + uri));
-    return () => {};
-  }, [params]);
 
   const columns = [
     {
@@ -115,167 +182,147 @@ const VendorReports = () => {
     // },
   ];
 
-  // excel
-  const exportToExcel = () => {
-    if (excelData && excelData?.length > 0) {
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Vendor Report");
-      XLSX.writeFile(workbook, "VendorWiseReport.xlsx");
-    } else {
-      return "";
-    }
-  };
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Vendor Name",
+    "Total",
+    "Registered",
+    "Clean",
+    "Unclean",
+  ];
 
-  // pdf
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    // const doc = new jsPDF("landscape", undefined, undefined, {
-    //   compress: true,
-    // });
-
-    // Centered ICT heading
-    const ictHeading = "ICT Sanitation and Tentage Monitoring System";
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(14);
-    doc.setFont("bold");
-    doc.text(ictHeading, ictX, 10); // Heading position
-
-    // // Image on the Left (Company Logo or similar image)
-    const leftImageX = 10; // X position (from the left)
-    const leftImageY = 10; // Y position (from the top)
-    const leftImageWidth = 30; // Image width (adjust as needed)
-    const leftImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      `${IMAGELIST?.govt_logo}`,
-      "JPEG",
-      leftImageX,
-      leftImageY,
-      leftImageWidth,
-      leftImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    // // Image on the Right (Another logo or image)
-    const rightImageX = pageWidth - 40; // X position (from the right)
-    const rightImageY = 10; // Y position (from the top)
-    const rightImageWidth = 30; // Image width (adjust as needed)
-    const rightImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      `${IMAGELIST?.kumbhMela}`,
-      "JPEG",
-      rightImageX,
-      rightImageY,
-      rightImageWidth,
-      rightImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    // Add report title and date on the same line
-    const title = "Vendor-Wise Report";
-    const date = new Date();
-    const dateString = date.toLocaleString(); // Format the date and time
-
-    // Calculate positions for the title and date
-    const titleX = 44; // Left align title
-    const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
-
-    // Add title and date
-    doc.setFontSize(12);
-    doc.setFont("bold");
-    doc.text(title, titleX, 25); // Title position
-    doc.setFont("normal");
-    doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX, 25); // Date position
-
-    // Add a horizontal line below the textBetweenImages, but only up to the edges of the images
-    const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
-    const lineEndX = rightImageX - 5; // End before the right image
-    doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
-
-    // Table header and content
-    doc.autoTable({
-      head: [
-        [
-          "Sr No",
-          "Vendor Name",
-          // "Email",
-          // "Phone",
-          // "Address",
-          // "Pin code",
-          // "Company",
-          // "Language",
-          "Total",
-          "Registered",
-          "Clean",
-          "Unclean",
-        ],
-      ],
-      body: excelData.map((opt) => [
+  // pdf data
+  const pdfData = useMemo(() => {
+    return (
+      excelData?.map((opt) => [
         opt?.sr,
         opt?.name,
-        // opt?.email,
-        // opt?.phone,
-        // opt?.address,
-        // opt?.pin,
-        // opt?.company,
-        // opt?.language,
         opt?.total,
         opt?.registered,
         opt?.clean,
         opt?.unclean,
-      ]),
-      startY: 40, // Start after the header and new text
-    });
-
-    // Add footer
-    const footerText1 = "Maha Kumbh Mela 2025, Prayagraj Mela Authority.";
-    const footerX = (pageWidth - doc.getTextWidth(footerText1)) / 2; // Center footer
-    const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
-
-    doc.setFontSize(10);
-    doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
-
-    // Save the PDF
-    doc.save("Vendor-Wise-Report.pdf");
-  };
+      ]) || []
+    );
+  }, [excelData]);
 
   return (
     <div>
       <CommonDivider label={"Vendor-Wise Report"} />
-      <Space style={{ marginBottom: 16, float: "right" }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading excel, it might take some time...");
-              exportToExcel();
-            } else {
-              message.error("Data is not available.");
+      <div className="flex justify-end gap-2 mb-4 font-semibold">
+        <div>
+          <ExportToPDF
+            titleName={
+              filesName
+                ? `Vendor-Wise-${filesName} Report`
+                : `Vendor-Wise Report`
             }
-          }}
-        >
-          Download Excel
-        </Button>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading pdf, it might take some time...");
-              exportToPDF();
-            } else {
-              message.error("Data is not available.");
+            pdfName={
+              filesName
+                ? `Vendor-Wise-${filesName}-Report`
+                : `Vendor-Wise-Report`
             }
-          }}
-        >
-          Download PDF
-        </Button>
-      </Space>
+            headerData={pdfHeader}
+            rows={pdfData}
+          />
+        </div>
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={
+              filesName
+                ? `Vendor-Wise-${filesName} Report`
+                : `Vendor-Wise Report`
+            }
+          />
+        </div>
+      </div>
+
+      <div>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <Row gutter={[16, 16]} align="middle">
+                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"date"} label={"Date"}>
+                        <DatePicker
+                          className="rounded-none w-full"
+                          format="DD/MM/YYYY"
+                          allowClear={false}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Asset Type"}
+                        placeholder={"Select Asset Type"}
+                        options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={12}
+                      md={6}
+                      lg={4}
+                      className="flex justify-end gap-2"
+                    >
+                      <Button
+                        type="primary"
+                        className="rounded-none bg-5c"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="rounded-none bg-green-300 text-black"
+                      >
+                        Search
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              ),
+            },
+          ]}
+        />
+      </div>
+
       <CommonTable
         loading={loading}
         uri={`vendor-wise-report`}

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useParams } from "react-router";
+import { useDispatch } from "react-redux";
 import {
   Collapse,
   Form,
@@ -11,20 +11,15 @@ import {
   Row,
   Col,
   DatePicker,
-  Space,
-  message,
 } from "antd";
-import jsPDF from "jspdf";
-import "jspdf-autotable";
-import * as XLSX from "xlsx";
+import moment from "moment";
+import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
-import { IMAGELIST } from "../../assets/Images/exportImages";
 import URLS from "../../urils/URLS";
 import { basicUrl } from "../../Axios/commonAxios";
 import { getIncidentReportData } from "./Slice/IncidentReportSlice";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
-// import search from "../../assets";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
@@ -34,10 +29,14 @@ import {
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
+import { dateWeekOptions } from "../../constant/const";
+import ExportToExcel from "../ExportToExcel";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
   const [excelData, setExcelData] = useState([]);
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [startDate, setStartDate] = useState(null);
   const [incidentData, setIncidentData] = useState({
     list: [],
     pageLength: 25,
@@ -62,7 +61,30 @@ const IncidentReports = () => {
 
   // fiter finish
   const onFinishForm = (values) => {
-    const searchParams = generateSearchQuery(values);
+    const finalData = {
+      ...values,
+    };
+    // if (values?.incidence_at === "Today") {
+    //   finalData.incidence_form_date = moment().format("YYYY-MM-DD");
+    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
+    // } else if (values?.incidence_at === "Week") {
+    //   finalData.incidence_form_date = moment()
+    //     .subtract(8, "days")
+    //     .format("YYYY-MM-DD");
+    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
+    // } else
+
+    if (values?.incidence_form_date || values?.incidence_to_date) {
+      const dayjsObjectFrom = dayjs(values?.incidence_form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.incidence_to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.incidence_form_date = values?.incidence_form_date ? start : end;
+      finalData.incidence_to_date = values?.incidence_to_date ? end : start;
+    }
+    const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
     }
@@ -73,30 +95,56 @@ const IncidentReports = () => {
   const resetForm = () => {
     form.resetFields();
     setSearchQuery("&");
+    setShowDateRange(false);
   };
 
   // handle asset main type
   const handleSelect = (value) => {
     form.setFieldsValue({
-      assets_id: null,
+      asset_type_id: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
   };
 
-  const getData = async () => {
-    let uri = URLS?.incidencesReport?.path + "?";
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
+  // handle date select
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
     } else {
-      uri = URLS?.incidencesReport?.path;
+      form.setFieldsValue({
+        incidence_form_date: null,
+        incidence_to_date: null,
+      });
+      setShowDateRange(false);
     }
+  };
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
+  };
+
+  const getData = async () => {
+    let uri = URLS?.incidencesReport?.path;
+    let isFirstParam = true;
+
+    if (params?.page) {
+      uri += isFirstParam ? "?" + params?.page : "&" + params?.page;
+      isFirstParam = false;
+    } else if (params?.per_page) {
+      uri += isFirstParam ? "?" + params?.per_page : "&" + params?.per_page;
+      isFirstParam = false;
+    }
+
     if (searchQuery) {
-      uri = uri + searchQuery;
+      uri += isFirstParam ? "?" + searchQuery : "&" + searchQuery;
     }
-    dispatch(getIncidentReportData(basicUrl + uri)); // get incident reports data
+
+    dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
   };
 
   useEffect(() => {
@@ -123,11 +171,21 @@ const IncidentReports = () => {
         (data, index) => {
           return {
             sr: index + 1,
-            agent_name: data?.agent_name,
-            asset_name: data?.asset_name,
-            vendor_name: data?.vendor_name,
-            code: `${data?.code}-${data?.unit_code || ""}`,
+            code: data?.code,
+            unit_no: data?.unit_no,
             question_en: data?.question_en,
+            answer: "No",
+            date: moment(data?.incidence_at).format("DD-MMM-YYYY HH:MM A"),
+            category:
+              data?.asset_main_type_id === "1" ? "Sanitation" : "Tentage",
+            asset_types_name: data?.asset_types_name,
+            vendor_name: data?.vendor_name,
+            sector_name: data?.sector_name,
+            circle_name: data?.circle_name,
+            sanstha_name_hi: data?.sanstha_name_hi,
+            // agent_name: data?.agent_name,
+            // asset_name: data?.asset_name,
+            // code: `${data?.code}-${data?.unit_code || ""}`,
             sla: data?.sla,
           };
         }
@@ -153,12 +211,31 @@ const IncidentReports = () => {
       key: "vendor_name",
     },
     {
+      title: "Incidence Date",
+      dataIndex: "incidence_at",
+      key: "incidence_at",
+      width: "8%",
+      render: (text, record) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
+    },
+    {
+      title: "Resolved Date",
+      dataIndex: "resolved_at",
+      key: "resolved_at",
+      width: "8%",
+      render: (text, record) => {
+        const date = moment(text).format("DD-MMM-YYYY");
+        return text ? (date === "Invalid date" ? "NA" : date) : "";
+      },
+    },
+    {
       title: "Code",
       dataIndex: "code",
       key: "code",
       width: "7%",
       render: (text, record) => {
-        return text ? `${text} -${record?.unit_number || ""}` : "";
+        return text ? `${text} -${record?.unit_no || ""}` : "";
       },
     },
     {
@@ -175,138 +252,17 @@ const IncidentReports = () => {
     },
   ];
 
-  // excel
-  const exportToExcel = () => {
-    if (excelData && excelData?.length > 0) {
-      const worksheet = XLSX.utils.json_to_sheet(excelData);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Incident Report");
-      XLSX.writeFile(workbook, "Incident-Report.xlsx");
-    } else {
-      return "";
-    }
-  };
-
-  // pdf
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-    // const doc = new jsPDF("landscape", undefined, undefined, {
-    //   compress: true,
-    // });
-
-    // Centered ICT heading
-    const ictHeading = "ICT Sanitation and Tentage Monitoring System";
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(14);
-    doc.setFont("bold");
-    doc.text(ictHeading, ictX, 10); // Heading position
-
-    // // Image on the Left (Company Logo or similar image)
-    const leftImageX = 10; // X position (from the left)
-    const leftImageY = 10; // Y position (from the top)
-    const leftImageWidth = 30; // Image width (adjust as needed)
-    const leftImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      `${IMAGELIST?.govt_logo}`,
-      "JPEG",
-      leftImageX,
-      leftImageY,
-      leftImageWidth,
-      leftImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    // // Image on the Right (Another logo or image)
-    const rightImageX = pageWidth - 40; // X position (from the right)
-    const rightImageY = 10; // Y position (from the top)
-    const rightImageWidth = 30; // Image width (adjust as needed)
-    const rightImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      `${IMAGELIST?.kumbhMela}`,
-      "JPEG",
-      rightImageX,
-      rightImageY,
-      rightImageWidth,
-      rightImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    // Add report title and date on the same line
-    const title = "Incident Report";
-    const date = new Date();
-    const dateString = date.toLocaleString(); // Format the date and time
-
-    // Calculate positions for the title and date
-    const titleX = 44; // Left align title
-    const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
-
-    // Add title and date
-    doc.setFontSize(12);
-    doc.setFont("bold");
-    doc.text(title, titleX, 25); // Title position
-    doc.setFont("normal");
-    doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX, 25); // Date position
-
-    // Add a horizontal line below the textBetweenImages, but only up to the edges of the images
-    const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
-    const lineEndX = rightImageX - 5; // End before the right image
-    doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
-
-    // Table header and content
-    doc.autoTable({
-      head: [
-        [
-          "Sr No",
-          "Vendor Name",
-          // "Email",
-          // "Phone",
-          // "Address",
-          // "Pin code",
-          // "Company",
-          // "Language",
-          "Total",
-          "Registered",
-          "Clean",
-          "Unclean",
-        ],
-      ],
-      body: excelData.map((opt) => [
-        opt?.sr,
-        opt?.name,
-        // opt?.email,
-        // opt?.phone,
-        // opt?.address,
-        // opt?.pin,
-        // opt?.company,
-        // opt?.language,
-        opt?.total,
-        opt?.registered,
-        opt?.clean,
-        opt?.unclean,
-      ]),
-      startY: 40, // Start after the header and new text
-    });
-
-    // Add footer
-    const footerText1 = "Maha Kumbh Mela 2025, Prayagraj Mela Authority.";
-    const footerX = (pageWidth - doc.getTextWidth(footerText1)) / 2; // Center footer
-    const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
-
-    doc.setFontSize(10);
-    doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
-
-    // Save the PDF
-    doc.save("Incident-Report.pdf");
-  };
-
   return (
     <div>
+      <CommonDivider label={"Incident-Report"} />
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={"Incident-Report"}
+          />
+        </div>
+      </div>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -328,8 +284,8 @@ const IncidentReports = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"vendor_id"} label={"Select Vendor"}>
+                    <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"to_user_id"} label={"Select Vendor"}>
                         <Select
                           placeholder="Select Vendor"
                           className="rounded-none"
@@ -353,9 +309,9 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <Form.Item
-                        name={"assetmaintypes"}
+                        name={"asset_main_type_id"}
                         label={"Asset Main Type"}
                       >
                         <Select
@@ -382,8 +338,8 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="assets_id" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"assets_id"} label={"Asset Type"}>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"asset_type_id"} label={"Asset Type"}>
                         <Select
                           placeholder="Select Asset Type"
                           className="rounded-none"
@@ -407,14 +363,121 @@ const IncidentReports = () => {
                       </Form.Item>
                     </Col>
 
-                    <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"asset_code"} label={"Asset Code"}>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"code"} label={"Asset Code"}>
                         <Input
                           placeholder={"Asset Code"}
                           className="rounded-none w-full"
                         />
                       </Form.Item>
                     </Col>
+
+                    <Col key="incidence_at" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item
+                        name={"incidence_at"}
+                        label={"Select Date Type"}
+                      >
+                        <Select
+                          placeholder="Select Date Type"
+                          className="rounded-none"
+                          allowClear
+                          showSearch
+                          filterOption={(input, option) => {
+                            return option?.children
+                              ?.toLowerCase()
+                              ?.includes(input?.toLowerCase());
+                          }}
+                          onSelect={handleDateSelect}
+                        >
+                          {dateWeekOptions?.map((option) => (
+                            <Select.Option
+                              key={option?.value}
+                              value={option?.value}
+                            >
+                              {option?.label}
+                            </Select.Option>
+                          ))}
+                        </Select>
+                      </Form.Item>
+                    </Col>
+                    {showDateRange && (
+                      <>
+                        <Col
+                          key="incidence_form_date"
+                          xs={24}
+                          sm={12}
+                          md={6}
+                          lg={5}
+                        >
+                          <Form.Item
+                            name={"incidence_form_date"}
+                            label={"From Date (Incidence Date)"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                          >
+                            <DatePicker
+                              className="rounded-none w-full"
+                              format="DD/MM/YYYY"
+                              onChange={(date) => {
+                                const dayjsObjectFrom = dayjs(date?.$d);
+                                const startDate = dayjsObjectFrom;
+
+                                const dayjsObjectTo = dayjs(
+                                  form.getFieldValue("incidence_to_date")?.$d
+                                );
+                                const endDate = dayjsObjectTo;
+
+                                // Condition 1: If startDate is after endDate, set end_time to null
+                                if (startDate.isAfter(endDate)) {
+                                  form.setFieldValue("incidence_to_date", null);
+                                }
+
+                                // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                                const daysDifference = endDate.diff(
+                                  startDate,
+                                  "days"
+                                );
+                                if (daysDifference > 7) {
+                                  form.setFieldValue("incidence_to_date", null);
+                                } else {
+                                  // If the difference is within the allowed range, you can keep the value or process further if needed.
+                                }
+
+                                setStartDate(startDate.format("YYYY-MM-DD"));
+                              }}
+                            />
+                          </Form.Item>
+                        </Col>
+                        <Col
+                          key="incidence_to_date"
+                          xs={24}
+                          sm={12}
+                          md={6}
+                          lg={5}
+                        >
+                          <Form.Item
+                            name={"incidence_to_date"}
+                            label={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                          >
+                            <DatePicker
+                              className="rounded-none w-full"
+                              disabledDate={disabledDate}
+                              format="DD/MM/YYYY"
+                            />
+                          </Form.Item>
+                        </Col>
+                      </>
+                    )}
 
                     <Col
                       xs={24}
@@ -446,35 +509,6 @@ const IncidentReports = () => {
         />
         {contextHolder}
       </div>
-      <CommonDivider label={"Incident-Report"} />
-      <Space style={{ marginBottom: 16, float: "right" }}>
-        <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading excel, it might take some time...");
-              exportToExcel();
-            } else {
-              message.error("Data is not available.");
-            }
-          }}
-        >
-          Download Excel
-        </Button>
-        {/* <Button
-          type="primary"
-          onClick={() => {
-            if (excelData && excelData?.length > 0) {
-              message.success("Downloading pdf, it might take some time...");
-              exportToPDF();
-            } else {
-              message.error("Data is not available.");
-            }
-          }}
-        >
-          Download PDF
-        </Button> */}
-      </Space>
       <CommonTable
         loading={loading}
         uri={`incident-report`}

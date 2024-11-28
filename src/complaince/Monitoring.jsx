@@ -4,16 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   Collapse,
   Form,
-  Input,
   Button,
-  Select,
   notification,
   Row,
   Col,
   DatePicker,
 } from "antd";
 import dayjs from "dayjs";
+import moment from "moment/moment";
 import {
+  getMonitoringAgent,
   setAssetInfo,
   setMonitoringListIsUpdated,
   setUpdateMonitoringEl,
@@ -26,19 +26,21 @@ import optionsMaker from "../urils/OptionMaker";
 import { dateOptions, getValueLabel } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
-import {} from "../register/AssetType/AssetTypeSlice";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
 import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import moment from "moment/moment";
 import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
 import CircleSelector from "../Reports/CircleSlice/circleSelector";
+import MonitoringSelector from "./monitoringSelector";
+import CustomSelect from "../commonComponents/CustomSelect";
+import CustomInput from "../commonComponents/CustomInput";
+import ExportToExcel from "../Reports/ExportToExcel";
+import ExportToPDF from "../Reports/reportFile";
 
 const Monitoring = () => {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
@@ -49,14 +51,20 @@ const Monitoring = () => {
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
+  const [excelData, setExcelData] = useState([]); // excel data
+
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
   const { CircleListDrop } = CircleSelector(); // circle
+  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
 
+  const dispatch = useDispatch();
+  const params = useParams();
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
@@ -70,11 +78,6 @@ const Monitoring = () => {
   const isUpdatedSelector = useSelector(
     (state) => state.monitoringSlice?.isUpdated
   );
-
-  const params = useParams();
-  const navigate = useNavigate();
-
-  // qr
 
   const getDetails = async () => {
     setLoading(true);
@@ -118,6 +121,23 @@ const Monitoring = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
+
+      const myexcelData = data?.listings?.map((data, index) => {
+        return {
+          sr: index + 1,
+          "Asset Type Name": data?.asset_type_name,
+          Code: data?.asset_code,
+          Unit: data?.unit_no,
+          "Monitoring Agent Name": data?.agent_name,
+          "Vendor Name": data?.vendor_name,
+          Sector: data?.sector_name,
+          Circle: data?.circle_name,
+          Date: data?.created_at
+            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        };
+      });
+      setExcelData(myexcelData);
     }
   };
 
@@ -134,6 +154,8 @@ const Monitoring = () => {
   }, [dispatch]);
 
   useEffect(() => {
+    const urls = URLS?.monitoringAgent?.path;
+    dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     dispatch(getAllCircleList()); // all circle list
@@ -193,6 +215,7 @@ const Monitoring = () => {
   const resetForm = () => {
     form.resetFields();
     setSearchQuery("&");
+    setShowDateRange(false);
   };
 
   const handleDateSelect = (value) => {
@@ -209,14 +232,13 @@ const Monitoring = () => {
 
   const columns = [
     {
-      title: "Assets Type Name",
+      title: "Name",
       dataIndex: "asset_type_name",
       key: "assetsName",
       width: 210,
     },
-
     {
-      title: "Assets Code",
+      title: "PTC / TAF Code ",
       dataIndex: "asset_code",
       key: "asset_code",
       width: 110,
@@ -224,12 +246,6 @@ const Monitoring = () => {
         return text ? `${text}-${record?.unit_no}` : "";
       },
     },
-    // {
-    //   title: "Index Number",
-    //   dataIndex: "index_no",
-    //   key: "assetsCode",
-    //   width: 110,
-    // },
     {
       title: "QR",
       dataIndex: "asset_qr_code",
@@ -245,11 +261,16 @@ const Monitoring = () => {
       },
     },
     {
+      title: "GSD Name",
+      dataIndex: "agent_name",
+      key: "agent_name",
+    },
+    {
       title: "Vendor Name",
       dataIndex: "vendor_id",
       key: "vendor_id",
       render: (text) => {
-        return getValueLabel(text, VendorListDrop, "user");
+        return getValueLabel(text, VendorListDrop, "Vendor Name");
       },
     },
     {
@@ -282,7 +303,7 @@ const Monitoring = () => {
       key: "remark",
     },
     {
-      title: "Action",
+      title: "View Monitoring Details",
       key: "action",
       fixed: "right",
       width: 130,
@@ -303,8 +324,54 @@ const Monitoring = () => {
     },
   ];
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Type Name",
+    "Code",
+    "Unit",
+    "GSD Name",
+    "Vendor Name",
+    "Sector",
+    "Circle",
+    "Date",
+  ];
+
+  // pdf data
+  const pdfData = details?.list?.map((data, index) => [
+    index + 1,
+    data?.asset_type_name,
+    data?.asset_code,
+    data?.unit_no,
+    data?.agent_name,
+    data?.vendor_name,
+    data?.sector_name,
+    data?.circle_name,
+    data?.created_at
+      ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+      : "",
+  ]);
+
   return (
     <div className="">
+      <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <ExportToPDF
+            titleName={"Toilet & Tentage Monitoring"}
+            pdfName={"Monitoring Report"}
+            headerData={pdfHeader}
+            rows={pdfData}
+            landscape={true}
+          />
+        </div>
+        <div>
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={"Monitoring Report"}
+          />
+        </div>
+      </div>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -326,119 +393,99 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"created_by"}
+                        label={"Select GSD"}
+                        placeholder={"Select GSD"}
+                        options={monitoringAgentDrop || []}
+                        // search dropdown
+                        isOnSearchFind={true}
+                        apiAction={getMonitoringAgent}
+                        onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
+                      />
+                    </Col>
                     {userRoleId != "8" && (
                       <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                        <Form.Item name={"vendor_id"} label={"Select Vendor"}>
-                          <Select
-                            placeholder="Select Vendor"
-                            className="rounded-none"
-                          >
-                            {VendorListDrop?.map((option) => (
-                              <Select.Option
-                                key={option?.value}
-                                value={option?.value}
-                              >
-                                {option?.label}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
+                        <CustomSelect
+                          name={"vendor_id"}
+                          label={"Select Vendor"}
+                          placeholder={"Select Vendor"}
+                          options={VendorListDrop || []}
+                        />
                       </Col>
                     )}
-
                     <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item
+                      <CustomSelect
                         name={"assetmaintypes"}
-                        label={"Asset Main Type"}
-                      >
-                        <Select
-                          placeholder="Select Asset Main Type"
-                          className="rounded-none"
-                          onSelect={handleSelect}
-                        >
-                          {assetMainType?.map((option) => (
-                            <Select.Option
-                              key={option?.value}
-                              value={option?.value}
-                            >
-                              {option?.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={assetMainType || []}
+                      />
                     </Col>
-
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"asset_type_id"} label={"Asset Type"}>
-                        <Select
-                          placeholder="Select Asset Type"
-                          className="rounded-none"
-                        >
-                          {assetTypes?.map((option) => (
-                            <Select.Option
-                              key={option?.value}
-                              value={option?.value}
-                            >
-                              {option?.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={assetTypes || []}
+                      />
                     </Col>
-
                     <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"asset_code"} label={"Asset Code"}>
-                        <Input
-                          placeholder={"Asset Code"}
-                          className="rounded-none w-full"
-                        />
-                      </Form.Item>
+                      <CustomInput
+                        name={"asset_code"}
+                        label={" Item QR Code"}
+                        placeholder={" Item QR Code"}
+                      />
                     </Col>
-
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item
+                      <CustomSelect
                         name={"date_format"}
                         label={"Select Date Type"}
-                      >
-                        <Select
-                          placeholder="Select Date Type"
-                          className="rounded-none"
-                          onSelect={handleDateSelect}
-                        >
-                          {dateOptions?.map((option) => (
-                            <Select.Option
-                              key={option?.value}
-                              value={option?.value}
-                            >
-                              {option?.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
+                        placeholder={"Select Date Type"}
+                        onSelect={handleDateSelect}
+                        options={dateOptions || []}
+                      />
                     </Col>
-
                     {showDateRange && (
                       <>
                         <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item name={"from_date"} label={"From Date"}>
+                          <Form.Item
+                            name={"from_date"}
+                            label={"From Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                          >
                             <DatePicker
-                              className="rounded-none"
+                              className="rounded-none w-full"
                               format="DD/MM/YYYY"
                             />
                           </Form.Item>
                         </Col>
-
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item name={"to_date"} label={"To Date"}>
+                          <Form.Item
+                            name={"to_date"}
+                            label={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                          >
                             <DatePicker
-                              className="rounded-none"
+                              className="rounded-none w-full"
                               format="DD/MM/YYYY"
                             />
                           </Form.Item>
                         </Col>
                       </>
                     )}
-
                     <Col
                       xs={24}
                       sm={12}
@@ -469,7 +516,6 @@ const Monitoring = () => {
         />
         {contextHolder}
       </div>
-      <CommonDivider label={"Asset Type Monitoring "}></CommonDivider>
 
       <CommonTable
         columns={columns}

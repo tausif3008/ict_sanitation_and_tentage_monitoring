@@ -16,10 +16,13 @@ const URLS = {
 
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
-  ModulePermissionEdit: { path: "//module-permission/edit", version: 5.43 },
+  ModulePermissionEdit: { path: "/module-permission/edit", version: 5.43 },
 
   // vendor
-  vendors: { path: "/users?user_type_id=8", version: "5.43" },
+  vendors: {
+    path: "/users?page=1&per_page=100&user_type_id=8",
+    version: "5.43",
+  },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
   vendorwiseSupervisor: { path: "/users?vendor_id=", version: "5.43" },
 
@@ -55,6 +58,10 @@ const URLS = {
 
   // monitoring
   asset: { path: "/asset", version: 5.43 },
+  monitoringAgent: {
+    path: "/users?page=1&per_page=100&user_type_id=6",
+    version: "5.43",
+  },
   monitoring: { path: "/monitoring", version: 5.43 },
   monitoringDetails: { path: "/monitoring/details?id=", version: 5.43 },
 
@@ -68,6 +75,9 @@ const URLS = {
   // circle wise report
   allCircleList: { path: "/circle", version: 5.43 },
   circle_wise_report: { path: "/reporting/circle", version: 5.43 },
+
+  // sector wise report
+  sector_wise_report: { path: "/reporting/sector", version: 5.43 },
 
   // parking
   parking: { path: "/parking", version: 5.43 },
@@ -147,6 +157,9 @@ const URLS = {
 
   // incidences Report
   incidencesReport: { path: "/incidences", version: 5.43 },
+
+  // inspection Report
+  inspectionReport: { path: "/reporting/report-format-one", version: 5.43 },
 };
 
 export default URLS;

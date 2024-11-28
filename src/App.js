@@ -83,6 +83,7 @@ import DeleteAccount from "./deleteaccount/deleteaccount";
 import axiosInstance from "./Axios/commonAxios";
 import IncidentReports from "./Reports/Incident-reports";
 import ContactUsPage from "./contactus/contactus";
+import InspectionReports from "./Reports/Inspection-reports";
 
 function App() {
   const navigate = useNavigate();
@@ -151,6 +152,8 @@ function App() {
 
         <Route path="/" element={<Layout></Layout>}>
           <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
+
+          {/* dashboard */}
           <Route
             path="/sanitation-dashboard"
             element={<SanitationDashboard></SanitationDashboard>}
@@ -175,6 +178,7 @@ function App() {
             path="/SLA-dashboard"
             element={<SLADashboard></SLADashboard>}
           ></Route>
+
           <Route path="/home" element={<LandingPage></LandingPage>}></Route>
           <Route
             path="users/:page?/:per_page?"
@@ -312,6 +316,7 @@ function App() {
           ></Route>
           <Route path="parking" element={<ParkingList></ParkingList>}></Route>
 
+          {/* report */}
           <Route
             path="sector-wise-report"
             element={<SectorWiseReport></SectorWiseReport>}
@@ -405,6 +410,10 @@ function App() {
           <Route
             path="/incident-report/:page?/:per_page?"
             element={<IncidentReports></IncidentReports>}
+          ></Route>
+          <Route
+            path="/inspection-report/:page?/:per_page?"
+            element={<InspectionReports></InspectionReports>}
           ></Route>
         </Route>
         <Route path="*" element={<AppError></AppError>}></Route>
