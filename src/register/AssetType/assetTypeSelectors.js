@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const AssetTypeSelectors = () => {
@@ -10,33 +10,41 @@ const AssetTypeSelectors = () => {
     (state) => state?.assetTypeUpdateEl.vendor_assetType
   ); // asset type wise vendor list
 
-  const AssetMainTypeDrop = AssetMainType?.data?.assetmaintypes?.map((data) => {
-    // asset main type dropdown
+  // asset main type dropdown
+  const AssetMainTypeDrop = useMemo(() => {
     return (
-      {
-        value: data?.asset_main_type_id,
-        label: data?.name,
-      } || []
+      AssetMainType?.data?.assetmaintypes?.map((data) => {
+        return {
+          value: data?.asset_main_type_id,
+          label: data?.name,
+        };
+      }) || []
     );
-  });
-  const AssetTypeDrop = AssetType?.data?.assettypes?.map((data) => {
-    // asset type dropdown
+  }, [AssetMainType]);
+
+  // asset type dropdown
+  const AssetTypeDrop = useMemo(() => {
     return (
-      {
-        value: data?.asset_type_id,
-        label: data?.name,
-      } || []
+      AssetType?.data?.assettypes?.map((data) => {
+        return {
+          value: data?.asset_type_id,
+          label: data?.name,
+        };
+      }) || []
     );
-  });
-  const SLATypeDrop = SlaData?.data?.slatypes?.map((data) => {
-    // Sla dropdown
+  }, [AssetType]);
+
+  // SLA dropdown
+  const SLATypeDrop = useMemo(() => {
     return (
-      {
-        value: data?.sla_type_id,
-        label: data?.name,
-      } || []
+      SlaData?.data?.slatypes?.map((data) => {
+        return {
+          value: data?.sla_type_id,
+          label: data?.name,
+        };
+      }) || []
     );
-  });
+  }, [SlaData]);
 
   return {
     AssetMainType,

@@ -1,26 +1,83 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Table } from "antd";
+import dayjs from "dayjs";
+import moment from "moment";
+import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
 import ExportToExcel from "./ExportToExcel";
 import { getSectorReports } from "./SectorSlice/sectorSlice";
 import URLS from "../urils/URLS";
 import SectorReportSelectors from "./SectorSlice/sectorSelector";
+import search from "../assets/Dashboard/icon-search.png";
+import CustomSelect from "../commonComponents/CustomSelect";
+import {
+  getAssetMainTypes,
+  getAssetTypes,
+} from "../register/AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
+import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import { getFormData } from "../urils/getFormData";
+import { getValueLabel } from "../constant/const";
 
 const SectorWiseReport = () => {
-  const [sectors, setSectors] = useState([]);
   const [totalQuantity, setTotalQuantity] = useState(0);
+  const [filesName, setFilesName] = useState("Wise"); // files Name
 
+  const dateFormat = "YYYY-MM-DD";
+  const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { SectorReports, loading } = SectorReportSelectors();
+  const { SectorReports, loading } = SectorReportSelectors(); // sector reports
   const sectorData = SectorReports?.data?.sectors || [];
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const categoryType = form.getFieldValue("asset_main_type_id");
 
-  console.log("sectorData", sectorData);
+  // handle category
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+  };
+
+  // fiter finish
+  const onFinishForm = async (values) => {
+    const dayjsDate = new Date(values?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
+    const finalValues = {
+      ...(values?.asset_main_type_id && {
+        asset_main_type_id: values?.asset_main_type_id,
+      }),
+      ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+    };
+
+    const formData = await getFormData(finalValues);
+    const url = URLS?.sector_wise_report?.path;
+    dispatch(getSectorReports(url, formData)); // sector reports
+  };
+
+  // reset form
+  const resetForm = () => {
+    form.resetFields();
+    getCurrentData();
+    setFilesName("Wise");
+  };
+
+  // file name
+  useEffect(() => {
+    if (categoryType) {
+      const value = getValueLabel(categoryType, AssetMainTypeDrop, "");
+      setFilesName(value);
+    }
+  }, [categoryType, AssetMainTypeDrop]);
 
   useEffect(() => {
     if (SectorReports) {
-      setSectors(sectorData);
       const totalQty = sectorData?.reduce(
         (acc, sector) => acc + sector.total,
         0
@@ -29,9 +86,22 @@ const SectorWiseReport = () => {
     }
   }, [SectorReports]);
 
-  useEffect(() => {
+  // current data
+  const getCurrentData = () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+    });
     const url = URLS?.sector_wise_report?.path;
-    dispatch(getSectorReports(url));
+    dispatch(getSectorReports(url)); // sector reports
+  };
+
+  useEffect(() => {
+    getCurrentData(); // current data
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    dispatch(getVendorList()); // vendor list
+
     return () => {};
   }, []);
 
@@ -47,7 +117,7 @@ const SectorWiseReport = () => {
   const pdfHeader = ["Sector Name", "Total", "Registered", "Clean", "Unclean"];
 
   // pdf data
-  const pdfData = sectors?.map((sector) => [
+  const pdfData = sectorData?.map((sector) => [
     sector?.name,
     sector?.total,
     sector?.registered,
@@ -61,23 +131,108 @@ const SectorWiseReport = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={"Sector-Wise Report"}
-            pdfName={"Sector-Wise-Report"}
+            titleName={`Sector-${filesName}-Report`}
+            pdfName={`Sector-${filesName}-Report`}
             headerData={pdfHeader}
             rows={pdfData}
           />
         </div>
         <div>
           <ExportToExcel
-            excelData={sectors || []}
-            fileName={"Sector-Wise-Report"}
+            excelData={sectorData || []}
+            fileName={`Sector-${filesName}-Report`}
           />
         </div>
+      </div>
+
+      <div>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <Row gutter={[16, 16]} align="middle">
+                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                      <Form.Item name={"date"} label={"Date"}>
+                        <DatePicker
+                          className="rounded-none w-full"
+                          format="DD/MM/YYYY"
+                          allowClear={false}
+                        />
+                      </Form.Item>
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Asset Type"}
+                        placeholder={"Select Asset Type"}
+                        options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={12}
+                      md={6}
+                      lg={4}
+                      className="flex justify-end gap-2"
+                    >
+                      <Button
+                        type="primary"
+                        className="rounded-none bg-5c"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="rounded-none bg-green-300 text-black"
+                      >
+                        Search
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              ),
+            },
+          ]}
+        />
       </div>
       <Table
         loading={loading}
         columns={columns}
-        dataSource={sectors}
+        dataSource={sectorData || []}
         rowKey="sector_id"
         pagination={{ pageSize: 10 }}
         bordered

@@ -24,10 +24,14 @@ export const SectorReportSlice = createSlice({
 });
 
 // get Sector reports
-export const getSectorReports = (url) => async (dispatch) => {
+export const getSectorReports = (url, data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${url}`);
+    const res = await axiosInstance.post(`${url}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     dispatch(postSuccess(res?.data));
   } catch (error) {
     console.error("In get Sector reports error", error);
