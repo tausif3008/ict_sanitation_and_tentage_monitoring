@@ -55,8 +55,6 @@ const IncidentReports = () => {
   const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
 
-  console.log("incidentData", incidentData?.list);
-
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
@@ -215,6 +213,7 @@ const IncidentReports = () => {
       render: (text, record) => {
         return text ? text : "GSD";
       },
+      width: "10%",
     },
     {
       title: "Asset Type Name",
@@ -232,7 +231,7 @@ const IncidentReports = () => {
       key: "incidence_at",
       width: "8%",
       render: (text, record) => {
-        return text ? moment(text).format("DD-MMM-YYYY") : "";
+        return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
     },
     {
@@ -264,7 +263,7 @@ const IncidentReports = () => {
       title: "SLA Time",
       dataIndex: "sla",
       key: "sla",
-      width: "7%",
+      width: "5%",
     },
   ];
 

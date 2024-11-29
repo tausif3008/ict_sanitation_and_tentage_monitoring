@@ -172,6 +172,11 @@ const InspectionReports = () => {
       },
     },
     {
+      title: "Asset Type Name",
+      dataIndex: "asset_type_name",
+      key: "asset_type_name",
+    },
+    {
       title: "Week",
       dataIndex: "date",
       key: "date",
