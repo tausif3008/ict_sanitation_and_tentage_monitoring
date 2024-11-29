@@ -252,7 +252,7 @@ const SectorWiseReport = () => {
         columns={columns}
         dataSource={sectorData || []}
         rowKey="sector_id"
-        pagination={{ pageSize: 10 }}
+        pagination={{ pageSize: 30 }}
         bordered
         footer={() => (
           <div style={{ display: "flex", justifyContent: "space-between" }}>
