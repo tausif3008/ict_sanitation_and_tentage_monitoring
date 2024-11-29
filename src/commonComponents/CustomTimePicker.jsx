@@ -11,7 +11,7 @@ const CustomTimepicker = ({
   allowClear = false,
   disabled = false,
   size = "default",
-  format = "HH:mm", // Format for time only
+  format = "hh:mm:ss A", // Format for time only
   ...rest
 }) => {
   return (

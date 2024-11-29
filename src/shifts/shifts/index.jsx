@@ -49,12 +49,12 @@ const Shift = () => {
   }, [params]);
 
   const columns = [
-    {
-      title: "Sr. No", // Asset main type
-      dataIndex: "sr",
-      key: "sr",
-      width: 80,
-    },
+    // {
+    //   title: "Sr. No", // Asset main type
+    //   dataIndex: "sr",
+    //   key: "sr",
+    //   width: 80,
+    // },
     {
       title: "Shift Name",
       dataIndex: "name",
