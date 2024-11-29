@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+import { Table, Collapse, Form, Button, Row, Col } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
 
@@ -21,6 +21,7 @@ import {
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import search from "../../assets/Dashboard/icon-search.png";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const VendorReports = () => {
   const [totalRegistered, setTotalRegistered] = useState(0);
@@ -196,24 +197,6 @@ const VendorReports = () => {
       dataIndex: "unclean",
       key: "unclean",
     },
-    // {
-    //   title: "Address",
-    //   dataIndex: "address",
-    //   key: "address",
-    //   render: (text, record) => {
-    //     return `${text}, Pincode -${record?.pin}`;
-    //   },
-    // },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    // },
-    // {
-    //   title: "Company",
-    //   dataIndex: "company",
-    //   key: "company",
-    // },
   ];
 
   // pdf header
@@ -294,13 +277,12 @@ const VendorReports = () => {
                 >
                   <Row gutter={[16, 16]} align="middle">
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"date"} label={"Date"}>
-                        <DatePicker
-                          className="rounded-none w-full"
-                          format="DD/MM/YYYY"
-                          allowClear={false}
-                        />
-                      </Form.Item>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
