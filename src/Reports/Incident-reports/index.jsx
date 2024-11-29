@@ -116,14 +116,10 @@ const IncidentReports = () => {
 
   // handle asset type
   const handleTypeSelect = (value) => {
-    console.log("value", value);
     form.setFieldsValue({
       to_user_id: null,
     });
     value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
-
-    // const url = URLS?.assetType?.path + value;
-    // dispatch(getAssetTypes(url)); // get assset type
   };
 
   // handle date select
@@ -214,11 +210,15 @@ const IncidentReports = () => {
       title: "Agent Name",
       dataIndex: "agent_name",
       key: "agent_name",
+      render: (text, record) => {
+        return text ? text : "GSD";
+      },
+      width: "10%",
     },
     {
-      title: "Asset Name",
-      dataIndex: "asset_name",
-      key: "asset_name",
+      title: "Asset Type Name",
+      dataIndex: "asset_types_name",
+      key: "asset_types_name",
     },
     {
       title: "Vendor Name",
@@ -231,7 +231,7 @@ const IncidentReports = () => {
       key: "incidence_at",
       width: "8%",
       render: (text, record) => {
-        return text ? moment(text).format("DD-MMM-YYYY") : "";
+        return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
     },
     {
@@ -263,7 +263,7 @@ const IncidentReports = () => {
       title: "SLA Time",
       dataIndex: "sla",
       key: "sla",
-      width: "7%",
+      width: "5%",
     },
   ];
 
