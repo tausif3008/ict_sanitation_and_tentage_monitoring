@@ -1,9 +1,7 @@
-import group from "./UPGovLatestLogo.png";
-import kumbh from "./MahaKumbhLogo.png";
+import gvt_logo from "./UPGovLatestLogo.png";
 import kumbhMela from "./kumbh_mela_img.png";
 
 export const IMAGELIST = {
-  govt_logo: group,
-  kumbh: kumbh,
+  govt_logo: gvt_logo,
   kumbhMela: kumbhMela,
 };
