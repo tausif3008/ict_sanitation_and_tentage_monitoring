@@ -264,6 +264,9 @@ const Monitoring = () => {
       title: "GSD Name",
       dataIndex: "agent_name",
       key: "agent_name",
+      render: (text) => {
+        return text ? text : "GSD";
+      },
     },
     {
       title: "Vendor Name",
@@ -343,7 +346,7 @@ const Monitoring = () => {
     data?.asset_type_name,
     data?.asset_code,
     data?.unit_no,
-    data?.agent_name,
+    data?.agent_name ? data?.agent_name : "GSD",
     data?.vendor_name,
     data?.sector_name,
     data?.circle_name,
@@ -432,9 +435,9 @@ const Monitoring = () => {
                         options={assetTypes || []}
                       />
                     </Col>
-                    <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
-                        name={"asset_code"}
+                        name={"code"}
                         label={" Item QR Code"}
                         placeholder={" Item QR Code"}
                       />
