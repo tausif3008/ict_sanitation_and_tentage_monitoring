@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const VendorSectorSelectors = () => {
@@ -10,26 +10,34 @@ const VendorSectorSelectors = () => {
   const TypeUserList = useSelector(
     (state) => state?.vendorSectorSlice.user_list
   );
-  // all sector list dropdown
-  const SectorListDrop = SectorData?.data?.sectors?.map((data) => {
-    return {
-      value: data?.sector_id,
-      label: data?.name,
-    };
-  });
-  const SuperwiseListDrop = SuperwiseList?.data?.users?.map((data) => {
-    return {
-      value: data?.user_id,
-      label: data?.name,
-    };
-  });
 
-  const UsersDropTypeWise = TypeUserList?.data?.users?.map((data) => {
-    return {
-      value: data?.user_id,
-      label: data?.name,
-    };
-  });
+  // all sector list dropdown
+  const SectorListDrop = useMemo(() => {
+    return (
+      SectorData?.data?.sectors?.map(({ sector_id, name }) => ({
+        value: sector_id,
+        label: name,
+      })) || []
+    );
+  }, [SectorData]);
+
+  const SuperwiseListDrop = useMemo(() => {
+    return (
+      SuperwiseList?.data?.users?.map(({ user_id, name }) => ({
+        value: user_id,
+        label: name,
+      })) || []
+    );
+  }, [SuperwiseList]);
+
+  const UsersDropTypeWise = useMemo(() => {
+    return (
+      TypeUserList?.data?.users?.map(({ user_id, name }) => ({
+        value: user_id,
+        label: name,
+      })) || []
+    );
+  }, [TypeUserList]);
 
   return {
     SectorData,

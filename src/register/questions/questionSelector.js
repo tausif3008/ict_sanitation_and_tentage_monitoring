@@ -1,19 +1,21 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const QuestionSelector = () => {
   const QuestionList = useSelector((state) => state?.questionSlice.name); // question
   const loading = useSelector((state) => state?.questionSlice.loading);
 
-  const QuestionDrop = QuestionList?.data?.listings?.map((data) => {
-    // question Dropdown
-    return (
-      {
-        value: data?.question_id,
-        label: data?.question_en,
-      } || []
-    );
-  });
+  // question Dropdown
+  const QuestionDrop = useMemo(() => {
+    return QuestionList?.data?.listings?.map((data) => {
+      return (
+        {
+          value: data?.question_id,
+          label: data?.question_en,
+        } || []
+      );
+    });
+  }, [QuestionList]);
 
   return { QuestionList, QuestionDrop, loading };
 };

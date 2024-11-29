@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const VendorSupervisorSelector = () => {
@@ -8,12 +8,14 @@ const VendorSupervisorSelector = () => {
   );
   const loading = useSelector((state) => state?.vendorSupervisorSlice.loading);
 
-  const VendorListDrop = VendorList?.data?.users?.map((data) => {
-    return {
-      value: data?.user_id,
-      label: data?.name,
-    };
-  });
+  const VendorListDrop = useMemo(() => {
+    return (
+      VendorList?.data?.users?.map((data) => ({
+        value: data?.user_id,
+        label: data?.name,
+      })) || []
+    );
+  }, [VendorList]);
 
   return { ShiftData, loading, VendorList, VendorListDrop };
 };
