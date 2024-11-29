@@ -11,6 +11,7 @@ import {
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
+import moment from "moment";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import search from "../../assets/Dashboard/icon-search.png";
@@ -31,8 +32,6 @@ import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../AssetType/assetTypeSelectors";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-import { getValueLabel } from "../../constant/const";
-import moment from "moment";
 import CoordinatesMap from "../../commonComponents/map/map";
 import ExportToExcel from "../../Reports/ExportToExcel";
 import ShowCode from "./showCode";
@@ -218,10 +217,10 @@ const AssetsList = () => {
     },
     {
       title: "GSD Name",
-      dataIndex: "created_by",
-      key: "created_by",
+      dataIndex: "agent_name",
+      key: "agent_name",
       render: (text) => {
-        return getValueLabel(text, monitoringAgentDrop, "GSD");
+        return text ? text : "GSD";
       },
     },
     {
@@ -409,6 +408,13 @@ const AssetsList = () => {
                         name={"vendor_asset_code"}
                         label={"Vendor Item Code"}
                         placeholder={"Vendor Item Code"}
+                      />
+                    </Col>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name={"code"}
+                        label={"Code"}
+                        placeholder={"Code"}
                       />
                     </Col>
                     <Col

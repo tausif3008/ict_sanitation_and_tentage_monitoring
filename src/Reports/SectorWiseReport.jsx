@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
-import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+import { Table, Collapse, Form, Button, Row, Col } from "antd";
 
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
@@ -21,6 +21,7 @@ import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/Vend
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getFormData } from "../urils/getFormData";
 import { getValueLabel } from "../constant/const";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const SectorWiseReport = () => {
   const [totalQuantity, setTotalQuantity] = useState(0);
@@ -185,13 +186,12 @@ const SectorWiseReport = () => {
                 >
                   <Row gutter={[16, 16]} align="middle">
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"date"} label={"Date"}>
-                        <DatePicker
-                          className="rounded-none w-full"
-                          format="DD/MM/YYYY"
-                          allowClear={false}
-                        />
-                      </Form.Item>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect

@@ -1,16 +1,20 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const ParkingSelector = () => {
   const parkingData = useSelector((state) => state?.parkingSlice.name);
   const loading = useSelector((state) => state?.parkingSlice.loading);
 
-  const parkingDrop = parkingData?.data?.parkings?.map((data) => {
-    return {
-      value: data?.parking_id,
-      label: data?.name,
-    };
-  });
+  const parkingDrop = useMemo(() => {
+    return parkingData?.data?.parkings?.map((data) => {
+      return (
+        {
+          value: data?.parking_id,
+          label: data?.name,
+        } || []
+      );
+    });
+  }, [parkingData]);
 
   return { parkingData, loading, parkingDrop };
 };

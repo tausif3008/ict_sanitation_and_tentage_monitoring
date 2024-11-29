@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Collapse,
-  Form,
-  Button,
-  notification,
-  Row,
-  Col,
-  DatePicker,
-} from "antd";
+import { Collapse, Form, Button, notification, Row, Col } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 import {
@@ -39,6 +31,7 @@ import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
 import ExportToExcel from "../Reports/ExportToExcel";
 import ExportToPDF from "../Reports/reportFile";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -454,38 +447,32 @@ const Monitoring = () => {
                     {showDateRange && (
                       <>
                         <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                          <CustomDatepicker
                             name={"from_date"}
                             label={"From Date"}
+                            className="w-full"
+                            placeholder={"From Date"}
                             rules={[
                               {
                                 required: true,
                                 message: "Please select a start date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
+                          />
                         </Col>
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                          <CustomDatepicker
                             name={"to_date"}
                             label={"To Date"}
+                            className="w-full"
+                            placeholder={"To Date"}
                             rules={[
                               {
                                 required: true,
                                 message: "Please select a end date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
+                          />
                         </Col>
                       </>
                     )}

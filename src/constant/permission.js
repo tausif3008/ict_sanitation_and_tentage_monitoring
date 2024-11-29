@@ -43,7 +43,7 @@ export const sanitationDash_param = [
   "19",
   "20",
 ];
-export const tentageDash_param = ["1", "2"];
+export const tentageDash_param = ["1", "2", "8"];
 export const wasteDash_param = ["1", "2"];
 export const incidentDash_param = ["1", "2"];
 export const vendorDash_param = ["8"]; // vendor dashboard

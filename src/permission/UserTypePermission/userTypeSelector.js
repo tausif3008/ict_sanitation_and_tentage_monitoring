@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const UserTypeSelector = () => {
@@ -9,23 +9,23 @@ const UserTypeSelector = () => {
     (state) => state?.userTypeSlice.module_list || []
   ); // module list
 
-
-  const UserListDrop = UserList?.data?.user_type?.map((data) => {
+  const UserListDrop = useMemo(() => {
     return (
-      {
+      UserList?.data?.user_type?.map((data) => ({
         label: data?.user_type,
         value: data?.user_type_id,
-      } || []
+      })) || []
     );
-  });
-  const ModuleListDrop = ModuleList?.data?.modules?.map((data) => {
+  }, [UserList]);
+
+  const ModuleListDrop = useMemo(() => {
     return (
-      {
+      ModuleList?.data?.modules?.map((data) => ({
         label: data?.name,
         value: data?.module_id,
-      } || []
+      })) || []
     );
-  });
+  }, [ModuleList]);
 
   return {
     UserList,

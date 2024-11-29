@@ -9,6 +9,11 @@ export const getValueLabel = (dataId, List, defaultName) => {
   }
 };
 
+export const statusOptions = [
+  { value: 1, label: "Active" },
+  { value: 2, label: "Deactive" },
+];
+
 export const dateOptions = [
   {
     label: "Today",
@@ -49,5 +54,3 @@ export const priorityToiletTypes = [
   "Type-4 Prefab Steel Septic Tank",
   "Type-5 Prefab Steel Soak Pit",
 ];
-
-
