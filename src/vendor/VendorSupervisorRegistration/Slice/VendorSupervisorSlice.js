@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   name: null,
   vendor_list: null,
+  type_vendor_list: null,
 };
 
 export const vendorSupervisorSlice = createSlice({
@@ -21,6 +22,9 @@ export const vendorSupervisorSlice = createSlice({
     },
     postVendor: (state, action) => {
       state.vendor_list = action.payload;
+    },
+    postTypeVendor: (state, action) => {
+      state.type_vendor_list = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -54,6 +58,21 @@ export const getVendorList = () => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postVendor } =
+// get asset type wise vendor list
+export const getAssetTypeWiseVendorList = (Id) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(
+      `${URLS?.AssetTypeWiseVendors?.path}${Id}`
+    );
+    dispatch(postTypeVendor(res?.data));
+  } catch (error) {
+    console.error("In asset type wise vendor list error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postVendor, postTypeVendor } =
   vendorSupervisorSlice.actions;
 export default vendorSupervisorSlice.reducer;

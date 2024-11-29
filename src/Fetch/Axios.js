@@ -28,7 +28,7 @@ const loginFetch = async (data, setCanProceed) => {
       localStorage.setItem("userId", sessionData.id);
       setCanProceed(true);
 
-      return response.data.success;
+      return response.data;
     } else {
       message.info(response.data.message);
       return "error";
