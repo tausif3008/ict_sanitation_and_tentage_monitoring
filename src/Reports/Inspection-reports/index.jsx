@@ -167,6 +167,9 @@ const InspectionReports = () => {
       title: "Unit",
       dataIndex: "unit_no",
       key: "unit_no",
+      render: (text, record) => {
+        return text ? `${record?.asset_code}-${text}` : "";
+      },
     },
     {
       title: "Week",
