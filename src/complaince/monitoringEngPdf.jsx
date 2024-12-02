@@ -20,13 +20,17 @@ const MonitoringEngPdf = ({
     }
     const doc = new jsPDF(landscape ? "landscape" : "");
 
+    doc.y = 15; // Start from a specific Y position
+
     // Centered ICT heading
     const ictHeading = "Maha Kumbh 2025";
     const pageWidth = doc.internal.pageSize.getWidth();
     const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
     doc.setFontSize(23); // Increase font size for better prominence
     doc.setFont("helvetica", "bold");
-    doc.text(ictHeading, ictX - 12, 15); // Heading position
+    doc.text(ictHeading, ictX - 12, doc.y); // Heading position
+
+    doc.y += 15;
 
     // Image on the Left (Company Logo or similar image)
     const leftImageX = 10; // X position (from the left)
@@ -62,12 +66,14 @@ const MonitoringEngPdf = ({
       "FAST" // Adds compression for smaller file size
     );
 
+    doc.y = Math.max(doc.y, rightImageY + rightImageHeight); // Ensure Y is at least below the image
+
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
     const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
     doc.setFontSize(16);
     doc.setFont("bold");
-    doc.text(subHeading, subHeadingX + 30, 30); // Position it below the images (Y position is adjusted)
+    doc.text(subHeading, subHeadingX + 30, doc.y); // Position it below the images (Y position is adjusted)
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
@@ -77,13 +83,15 @@ const MonitoringEngPdf = ({
     const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
+    doc.y += 8;
+
     // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
+    doc.text(title, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
     doc.setFont("normal");
     doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
+    doc.text(dateString, dateX + 30, doc.y); // Date position (Y position adjusted to be below the title)
 
     // Table for dynamic fields (label-value pairs)
     const tableData = [
@@ -117,17 +125,35 @@ const MonitoringEngPdf = ({
       // Add more fields as needed
     ];
 
+    const tableStyles = {
+      fontSize: 12,
+      cellPadding: 3,
+      margin: { left: 10, right: 20 },
+    };
+
+    const getTableHeight = (rows) => {
+      const rowHeight = 10; // Approximate row height (you can adjust based on your styles)
+      const headerHeight = 15; // Optional header row height
+      const rowCount = rows.length;
+
+      // Calculate total table height
+      return headerHeight + rowHeight * rowCount;
+    };
+
+    doc.y += 5;
+
     // Add the first table (dynamic fields)
     doc.autoTable({
-      startY: 45, // Start the table after the header
+      startY: doc.y, // 45 Start the table after the header
       body: tableData, // Table body
       theme: "plain", // Table style
-      styles: {
-        fontSize: 12,
-        cellPadding: 3,
+      styles: tableStyles,
+      didDrawPage: function (data) {
+        const dynamicHeight = getTableHeight(tableData);
       },
-      margin: { left: 10, right: 20 }, // Set margins
     });
+
+    doc.y += getTableHeight(tableData);
 
     const instructionData =
       "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
@@ -138,24 +164,69 @@ const MonitoringEngPdf = ({
       instructionData,
       pageWidth - 40
     ); // Adjust width to leave space for margins (20px left and right)
-    const instructionDataY = 150; // Adjust Y position as needed
+    doc.y += 10;
+
     const backgroundHeight = 35; // Adjust height of the background box if necessary
     doc.setFillColor(220, 220, 220);
-    doc.rect(10, instructionDataY - 7, pageWidth - 20, backgroundHeight, "F");
-    doc.text(instructionDataLines, 15, instructionDataY); // Adjust X position to leave some space between text and the left edge
+    doc.rect(10, doc.y - 7, pageWidth - 20, backgroundHeight, "F");
+    doc.text(instructionDataLines, 15, doc.y); // Adjust X position to leave some space between text and the left edge
+
+    doc.y += 45;
 
     const tableTitle = "Monitoring Report";
     const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2; // Center the subheading
     doc.setFontSize(16);
     doc.setFont("bold");
-    doc.text(tableTitle, tableTitleIndex - 20, 195);
+    doc.text(tableTitle, tableTitleIndex - 20, doc.y);
+
+    doc.y += 10;
+
+    let currentY = doc.y;
+
+    let totalHeight = 0;
+    let newPageHeight = 30;
+    let remainRow = [];
+    const rowHeight = 10; // Example row height in units (this can be adjusted)
+    const pageHeight = doc.internal.pageSize.height; // Get the height of the page
+    const availableHeight = pageHeight - currentY; // Height available for rows
+    const rowsPerPage = Math.floor(availableHeight / rowHeight);
 
     // Table header and content
     doc.autoTable({
       head: [headerData],
       body: rows,
-      startY: tableObject?.asset_main_type_id === "2" ? 180 : 200, // Start after the horizontal line and other content (Y position adjusted)
+      startY: doc.y, // Start after the horizontal line and other content (Y position adjusted)
+      didDrawPage: function (data) {
+        // Get the Y position after drawing the table rows
+        let currentPageY = data.cursor.y;
+
+        // Calculate the height of the rows that were drawn on the current page
+        let heightCoveredOnCurrentPage = currentPageY - currentY; // This is the height used on the current page
+
+        totalHeight += heightCoveredOnCurrentPage; // Add to the total height covered by the table rows
+
+        // If we have a new page (i.e., the table overflowed), the currentY is reset
+        if (currentPageY > doc.internal.pageSize.height - 20) {
+          // doc.addPage(); // Add a new page if the table exceeds the current page's height
+          currentY = 10; // Start from the top of the new page
+          const remainingRows = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
+          remainRow = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
+        } else {
+          currentY = currentPageY; // Update currentY to the Y position at the end of the table rows
+        }
+      },
     });
+
+    // console.log("doc.y", doc.y);
+    // console.log("remainRow?.length", remainRow?.length);
+
+    if (remainRow?.length > 0) {
+      newPageHeight += remainRow?.length * 10;
+    } else {
+      newPageHeight += doc.y;
+    }
+    // console.log("newPageHeight KKK", newPageHeight);
+    // console.log("Page height:", pageHeight); // This will print the page height in points
 
     const introduction2 =
       " If non-compliance with Operation & Maintenance found and not resolved within specified TAT then penalty would be imposed as mentioned in RFP.";
@@ -165,8 +236,23 @@ const MonitoringEngPdf = ({
       introduction2,
       pageWidth - 40
     );
-    const instructionDataY2 = 200; // Adjust Y position as needed
+    let instructionDataY2 = newPageHeight; // Adjust Y position as needed
+    // const instructionDataY2 = 90; // Adjust Y position as needed
     const backgroundHeight2 = 20; // Adjust height of the background box if necessary
+
+    const lineHeight = 12 * 1.2; // Assuming a line height of 1.2 times the font size (adjust as needed)
+    const contentHeight =
+      newPageHeight +
+      backgroundHeight2 +
+      instructionDataLines2.length * lineHeight;
+    const spaceRemaining = pageHeight - contentHeight;
+
+    if (spaceRemaining < 50) {
+      instructionDataY2 = 15;
+      // If the remaining space is less than 30 points (adjust as needed)
+      doc.addPage(); // Add a new page if not enough space for the footer
+    }
+
     doc.setFillColor(220, 220, 220);
     doc.rect(10, instructionDataY2 - 7, pageWidth - 20, backgroundHeight2, "F");
     doc.text(instructionDataLines2, 15, instructionDataY2); // Adjust X position to leave some space between text and the left edge
@@ -181,8 +267,8 @@ const MonitoringEngPdf = ({
     const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
 
     doc.setFontSize(10);
-    doc.text(footerText1, footerX + 30, footerY + 5); // Adjust for footer spacing
-    doc.text(footerText2, footerX2 + 20, footerY + 10); // Adjust for footer spacing
+    doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
+    doc.text(footerText2, footerX2, footerY + 10); // Adjust for footer spacing
 
     // Save the PDF
     doc.save(`${pdfName}.pdf`);
@@ -190,7 +276,6 @@ const MonitoringEngPdf = ({
 
   return (
     <Button type="primary" onClick={exportToPDF}>
-      {/* <Button type="primary" onClick={exportToPDF}> */}
       Download PDF
     </Button>
   );

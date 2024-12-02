@@ -290,8 +290,6 @@ const MonitoringReport = () => {
     opt?.answer === "1" ? "Yes" : "No",
   ]);
 
-  console.log("assetDetails", assetDetails);
-
   return (
     <div>
       <div className="mx-auto p-3 pb-3 bg-white shadow-md rounded-lg w-full mt-3">
@@ -310,9 +308,9 @@ const MonitoringReport = () => {
           </div>
           <div>
             {/* <Button type="primary" onClick={exportToPDF}> */}
-            <Button type="primary" onClick={downloadPDF}>
+            {/* <Button type="primary" onClick={downloadPDF}>
               Download PDF
-            </Button>
+            </Button> */}
             <MonitoringEngPdf
               titleName={`Monitoring Report`}
               pdfName={`Monitoring Report`}
