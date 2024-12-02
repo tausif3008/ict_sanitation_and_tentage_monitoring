@@ -22,7 +22,7 @@ const ParkingList = () => {
     const fetchParkingData = async () => {
       try {
         const response = await axios.get(
-          `https://kumbhtsmonitoring.in/php-api/parking`,
+          `https://13.201.196.2/php-api/index.php/parking`,
           {
             headers,
           }

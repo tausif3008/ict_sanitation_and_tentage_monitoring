@@ -34,7 +34,7 @@ const UserProfile = () => {
     const fetchUserData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/profile",
+          "https://13.201.196.2/php-api/index.php/profile",
           {
             method: "GET",
             headers: headers,
@@ -58,7 +58,7 @@ const UserProfile = () => {
     const fetchCountries = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/country",
+          "https://13.201.196.2/php-api/index.php/country",
           {
             method: "GET",
             headers: headers,
@@ -86,7 +86,7 @@ const UserProfile = () => {
       if (userData.country_id) {
         try {
           const response = await fetch(
-            `https://kumbhtsmonitoring.in/php-api/state?country_id=${userData.country_id}`,
+            `https://13.201.196.2/php-api/index.php/state?country_id=${userData.country_id}`,
             {
               method: "GET",
               headers: headers,
@@ -112,7 +112,7 @@ const UserProfile = () => {
       if (userData.state_id) {
         try {
           const response = await fetch(
-            `https://kumbhtsmonitoring.in/php-api/city?country_id=${userData.country_id}&state_id=${userData.state_id}`,
+            `https://13.201.196.2/php-api/index.php/city?country_id=${userData.country_id}&state_id=${userData.state_id}`,
             {
               method: "GET",
               headers: headers,
@@ -166,7 +166,7 @@ const UserProfile = () => {
 
     try {
       const response = await fetch(
-        "https://kumbhtsmonitoring.in/php-api/profile",
+        "https://13.201.196.2/php-api/index.php/profile",
         {
           method: "POST",
           headers: headerstopost,
@@ -209,8 +209,8 @@ const UserProfile = () => {
   };
 
   const displayProfilePic = profilePic.includes("blob:")
-  ? profilePic
-  : `https://kumbhtsmonitoring.in/php-api/${profilePic}`;
+    ? profilePic
+    : `https://13.201.196.2/php-api/index.php/${profilePic}`;
 
   return (
     <div className="mt-3 mx-auto p-3 bg-white shadow-md rounded-lg w-full relative">

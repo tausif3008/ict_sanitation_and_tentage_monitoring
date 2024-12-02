@@ -42,7 +42,7 @@ const SectorsListing = () => {
     const fetchSectorData = async () => {
       try {
         const response = await fetch(
-          "https://kumbhtsmonitoring.in/php-api/sector",
+          "https://13.201.196.2/php-api/index.php/sector",
           {
             method: "GET",
             headers: headers,

@@ -25,10 +25,10 @@ export const GetToilets = () => async (dispatch) => {
       };
   try {
     const res = await axios({
-        method: "GET",
-        url: "https://kumbhtsmonitoring.in/php-api/dashboard/sanitation",
-        headers: localHeader,
-      });
+      method: "GET",
+      url: "https://13.201.196.2/php-api/index.php/dashboard/sanitation",
+      headers: localHeader,
+    });
     dispatch(postGet(res?.data));
   } catch (error) {
     console.log('In get Location function error', error);
