@@ -26,6 +26,7 @@ const loginFetch = async (data, setCanProceed) => {
         JSON.stringify(response.data.data.sessionData[0])
       );
       localStorage.setItem("userId", sessionData.id);
+      localStorage.setItem("ImageUrl", sessionData?.s3path);
       setCanProceed(true);
 
       return response.data;

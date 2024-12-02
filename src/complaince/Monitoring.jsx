@@ -51,6 +51,7 @@ const Monitoring = () => {
   const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
+  const ImageUrl = localStorage.getItem("ImageUrl") || "";
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -246,7 +247,7 @@ const Monitoring = () => {
       render: (qr) => {
         return (
           <Image
-            src={URLS.baseUrl + "/" + qr}
+            src={ImageUrl + qr}
             alt="QR Code"
             style={{ maxWidth: "50px" }}
           />

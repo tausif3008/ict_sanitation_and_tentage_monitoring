@@ -3,13 +3,10 @@ import { Button, Table, Image, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
-import jsPDF from "jspdf";
-import "jspdf-autotable";
 import * as XLSX from "xlsx";
 
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
-import { IMAGELIST } from "../assets/Images/exportImages";
 import CoordinatesMap from "../commonComponents/map/map";
 import { DownloadPDF } from "./monitoringReportpdf";
 import MonitoringEngPdf from "./monitoringEngPdf";
@@ -21,6 +18,7 @@ const MonitoringReport = () => {
   const params = useParams();
   const navigate = useNavigate();
   const contentRef = useRef();
+  const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
   // Fetch monitoring details from the API
   const getDetails = async () => {
@@ -101,11 +99,7 @@ const MonitoringReport = () => {
       key: "image",
       render: (image) =>
         image !== "N" ? (
-          <Image
-            width={130}
-            src={`${URLS.baseUrl}/${image}`}
-            alt="Question Image"
-          />
+          <Image width={130} src={`${ImageUrl}${image}`} alt="Question Image" />
         ) : (
           "-"
         ),
@@ -149,132 +143,6 @@ const MonitoringReport = () => {
     }
   };
 
-  const exportToPDF = () => {
-    const doc = new jsPDF();
-
-    // Centered ICT heading
-    const ictHeading = "ICT Sanitation and Tentage Monitoring System";
-    const pageWidth = doc.internal.pageSize.getWidth();
-    const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(14);
-    doc.setFont("bold");
-    doc.text(ictHeading, ictX, 10); // Heading position
-
-    const leftImageX = 10; // X position (from the left)
-    const leftImageY = 10; // Y position (from the top)
-    const leftImageWidth = 30; // Image width (adjust as needed)
-    const leftImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      `${IMAGELIST?.govt_logo}`,
-      "JPEG",
-      leftImageX,
-      leftImageY,
-      leftImageWidth,
-      leftImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    const rightImageX = pageWidth - 40; // X position (from the right)
-    const rightImageY = 10; // Y position (from the top)
-    const rightImageWidth = 30; // Image width (adjust as needed)
-    const rightImageHeight = 25; // Image height (adjust as needed)
-    doc.addImage(
-      // `${IMAGELIST?.kumbh}`,
-      `${IMAGELIST?.govt_logo}`,
-      "JPEG",
-      rightImageX,
-      rightImageY,
-      rightImageWidth,
-      rightImageHeight,
-      undefined,
-      undefined,
-      "FAST" // Adds compression for smaller file size
-    );
-
-    // Add report title and date on the same line
-    const title = "Monitoring Report";
-    const date = new Date();
-    const dateString = moment(date).format("DD-MMM-YYYY hh:mm A");
-    // const dateString = date.toLocaleString(); // Format the date and time
-
-    // Calculate positions for the title and date
-    const titleX = 44; // Left align title
-    const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
-
-    // Add title and date
-    doc.setFontSize(12);
-    doc.setFont("bold");
-    doc.text(title, titleX, 25); // Title position
-    doc.setFont("normal");
-    doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX, 25); // Date position
-
-    // Add a horizontal line below the textBetweenImages, but only up to the edges of the images
-    const lineStartX = leftImageX + leftImageWidth + 5; // Start after the left image
-    const lineEndX = rightImageX - 5; // End before the right image
-    doc.line(lineStartX, 30, lineEndX, 30); // x1, y1, x2, y2
-
-    const str = assetDetails?.qrCode;
-    const regex = /\/(\d+)\.png$/;
-    const match = str.match(regex);
-
-    // Table for dynamic fields (label-value pairs)
-    const tableData = [
-      ["Circle Name", `: ${assetDetails?.circle_name || ""}`],
-      ["Sector Name", `: ${assetDetails?.sector_name || ""}`],
-      ["Latitude", `: ${assetDetails?.latitude || ""}`],
-      ["Longitude", `: ${assetDetails?.longitude || ""}`],
-      [
-        "Submitted  Date",
-        `: ${
-          moment(assetDetails?.updated_at).format("YYYY-MM-DD HH:mm:ss") || ""
-        }`,
-      ],
-      ["Unit Number", `: ${assetDetails?.unit_no || ""}`],
-      ["QR Code", `: ${match[1] || ""}`],
-      ["Remark", `: ${assetDetails?.remark || ""}`],
-      // Add more fields as needed
-    ];
-
-    // Add the first table (dynamic fields)
-    doc.autoTable({
-      startY: 40, // Start the table after the header
-      body: tableData, // Table body
-      theme: "plain", // Table style
-      styles: {
-        fontSize: 12,
-        cellPadding: 3,
-      },
-      margin: { left: 10, right: 10 }, // Set margins
-    });
-
-    // Table header and content
-    doc.autoTable({
-      head: [["Sr", "Question (EN)", "Answer"]],
-      // head: [["Sr", "Question (EN)", "Question (HI)", "Answer"]],
-      body: details?.map((opt, index) => [
-        index + 1,
-        opt?.question_en,
-        // opt?.question_hi,
-        opt?.answer === "1" ? "Yes" : "No",
-      ]),
-      startY: 130, // Start after the header and new text
-    });
-
-    // Add footer
-    const footerText1 = "Maha Kumbh Mela 2025, Prayagraj Mela Authority.";
-    const footerX = (pageWidth - doc.getTextWidth(footerText1)) / 2; // Center footer
-    const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
-
-    doc.setFontSize(10);
-    doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
-
-    // Save the PDF
-    doc.save("Monitoring-Report.pdf");
-  };
-
   // download pdf
   const downloadPDF = () => {
     DownloadPDF({ assetDetails, details });
@@ -307,7 +175,6 @@ const MonitoringReport = () => {
             </span>
           </div>
           <div>
-            {/* <Button type="primary" onClick={exportToPDF}> */}
             {/* <Button type="primary" onClick={downloadPDF}>
               Download PDF
             </Button> */}
@@ -454,7 +321,7 @@ const MonitoringReport = () => {
                   <Image
                     width={125}
                     height={125}
-                    src={`${URLS?.baseUrl}/${assetDetails?.photo}`}
+                    src={`${ImageUrl}${assetDetails?.photo}`}
                     alt="Asset"
                   />
                 ) : (
@@ -479,7 +346,7 @@ const MonitoringReport = () => {
               {assetDetails?.qrCode ? (
                 <Image
                   width={130}
-                  src={`${URLS.baseUrl}/${assetDetails?.qrCode}`}
+                  src={`${ImageUrl}/${assetDetails?.qrCode}`}
                   alt="QR Code"
                 />
               ) : (
@@ -498,7 +365,7 @@ const MonitoringReport = () => {
                 <Image
                   width={125}
                   height={125}
-                  src={`${URLS.baseUrl}/${assetDetails?.photo}`}
+                  src={`${ImageUrl}/${assetDetails?.photo}`}
                   alt="Asset"
                 />
               ) : (

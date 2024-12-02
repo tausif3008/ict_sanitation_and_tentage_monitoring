@@ -11,6 +11,10 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
     {
       key: "1",
       facilityId: "T1023",
+      route_name: "Pune_chakan",
+      start_point: "Pune",
+      middle_point: "Dehu",
+      end_point: "Chakan",
       location: "Section 5, Zone B",
       type: "Toilet with Septic Tank",
       currentStatus: (
@@ -26,6 +30,10 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
     {
       key: "2",
       facilityId: "T1024",
+      route_name: "Pune Mumbai",
+      start_point: "Pune",
+      middle_point: "Lonavala",
+      end_point: "Mumbai",
       location: "Section 4, Zone A",
       type: "Composting Toilet",
       currentStatus: (
@@ -41,6 +49,10 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
     {
       key: "3",
       facilityId: "T1028",
+      route_name: "Pune Solapur",
+      start_point: "Pune",
+      middle_point: "Hadapsar",
+      end_point: "Solapur",
       location: "Section 4, Zone B",
       type: "Smart Toilet",
       currentStatus: (
@@ -56,6 +68,10 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
     {
       key: "4",
       facilityId: "T1030",
+      route_name: "Delhi",
+      start_point: "Agra",
+      middle_point: "Lucknow",
+      end_point: "Chakan",
       location: "Section 3, Zone D",
       type: "Squat Toilet",
       currentStatus: (
@@ -71,6 +87,10 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
     {
       key: "5",
       facilityId: "T1032",
+      route_name: "Kolkatta",
+      start_point: "Uti",
+      middle_point: "Benglore",
+      end_point: "Chakan",
       location: "Section 5, Zone D",
       type: "Portable Chemical Toilet",
       currentStatus: (
@@ -240,6 +260,26 @@ const FacilityDetailsTable = ({ columnss, dataSourcee }) => {
       title: "Facility ID",
       dataIndex: "facilityId",
       key: "facilityId",
+    },
+    {
+      title: "Route Name",
+      dataIndex: "route_name",
+      key: "route_name",
+    },
+    {
+      title: "Start Point",
+      dataIndex: "start_point",
+      key: "start_point",
+    },
+    {
+      title: "Middle Point",
+      dataIndex: "middle_point",
+      key: "middle_point",
+    },
+    {
+      title: "End Point",
+      dataIndex: "end_point",
+      key: "end_point",
     },
     {
       title: "Location",
