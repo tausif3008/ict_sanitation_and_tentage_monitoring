@@ -12,6 +12,7 @@ import URLS from "../urils/URLS";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import CoordinatesMap from "../commonComponents/map/map";
 import { DownloadPDF } from "./monitoringReportpdf";
+import MonitoringEngPdf from "./monitoringEngPdf";
 
 const MonitoringReport = () => {
   const [details, setDetails] = useState([]);
@@ -279,6 +280,18 @@ const MonitoringReport = () => {
     DownloadPDF({ assetDetails, details });
   };
 
+  // pdf header
+  const pdfHeader = ["Sr no", "Question (Eng)", "Answer"];
+
+  // pdf data
+  const pdfData = details?.map((opt, index) => [
+    index + 1,
+    opt?.question_en,
+    opt?.answer === "1" ? "Yes" : "No",
+  ]);
+
+  console.log("assetDetails", assetDetails);
+
   return (
     <div>
       <div className="mx-auto p-3 pb-3 bg-white shadow-md rounded-lg w-full mt-3">
@@ -296,10 +309,17 @@ const MonitoringReport = () => {
             </span>
           </div>
           <div>
+            {/* <Button type="primary" onClick={exportToPDF}> */}
             <Button type="primary" onClick={downloadPDF}>
-              {/* <Button type="primary" onClick={exportToPDF}> */}
               Download PDF
             </Button>
+            <MonitoringEngPdf
+              titleName={`Monitoring Report`}
+              pdfName={`Monitoring Report`}
+              headerData={pdfHeader || []}
+              rows={pdfData || []}
+              tableObject={assetDetails || {}}
+            />
           </div>
           <div>
             <Button type="primary" onClick={exportToExcel}>
