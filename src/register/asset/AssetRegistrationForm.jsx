@@ -49,7 +49,7 @@ const AssetRegistrationForm = () => {
 
     try {
       const response = await fetch(
-        "https://kumbhtsmonitoring.in/php-api/asset/entry/",
+        "https://13.201.196.2/php-api/index.php/asset/entry/",
         {
           method: "POST",
           headers: {

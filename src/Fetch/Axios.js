@@ -3,7 +3,6 @@ import axios from "axios";
 import { Navigate } from "react-router";
 
 const baseUrl = "https://13.201.196.2/php-api/index.php";
-// const baseUrl = "https://kumbhtsmonitoring.in/php-api";
 
 const loginFetch = async (data, setCanProceed) => {
   const url = baseUrl + "/login";

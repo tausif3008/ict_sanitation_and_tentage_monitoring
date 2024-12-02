@@ -1,5 +1,4 @@
 const URLS = {
-  // baseUrl: "https://kumbhtsmonitoring.in/php-api",
   baseUrl: "https://13.201.196.2/php-api/index.php",
 
   // user
