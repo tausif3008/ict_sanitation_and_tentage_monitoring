@@ -48,6 +48,7 @@ const AssetsList = () => {
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [excelData, setExcelData] = useState([]); // excel data
+  const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
   const dispatch = useDispatch();
   const params = useParams();
@@ -271,7 +272,7 @@ const AssetsList = () => {
       width: 100,
       render: (text, record) => (
         <Image
-          src={URLS.baseUrl + "/" + record.qr_code}
+          src={ImageUrl + record.qr_code}
           width={60}
           height={60}
           alt={record.qr_code}
@@ -287,7 +288,7 @@ const AssetsList = () => {
           <Image
             width={60}
             height={60}
-            src={`https://kumbhtsmonitoring.in/php-api/${record.photo}`}
+            src={ImageUrl + record?.photo}
             alt="Assets Photo"
           />
         ) : (
