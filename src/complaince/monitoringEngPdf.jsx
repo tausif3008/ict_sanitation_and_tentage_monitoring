@@ -129,24 +129,32 @@ const MonitoringEngPdf = ({
       margin: { left: 10, right: 20 }, // Set margins
     });
 
-    const instruction1 = "Instructions :";
-    doc.setFontSize(14);
-    doc.setFont("bold");
-    doc.setFillColor(220, 220, 220); // Set gray background color
-    doc.rect(10, doc.lastAutoTable.finalY + 10, pageWidth - 20, 10, "F"); // Draw gray background
-    doc.text(instruction1, 20, doc.lastAutoTable.finalY + 10);
+    // const instruction1 = "Instructions :";
+    // doc.setFontSize(14);
+    // doc.setFont("bold");
+    // doc.setFillColor(220, 220, 220); // Set gray background color
+    // doc.rect(10, doc.lastAutoTable.finalY + 10, pageWidth - 20, 20, "F"); // Draw gray background
+    // doc.text(instruction1, 10, doc.lastAutoTable.finalY + 10);
 
     const instructionData =
-      "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service. :";
+      "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
     doc.setFontSize(12);
     doc.setFont("normal");
-    doc.text(instructionData, 20, 150);
+    const instructionDataLines = doc.splitTextToSize(
+      instructionData,
+      pageWidth - 20
+    );
+    const instructionDataY = 150;
+    const backgroundHeight = 35; // Height of the background box (adjust if necessary)
+    doc.setFillColor(220, 220, 220); // Set gray color for background
+    doc.rect(10, instructionDataY - 7, pageWidth - 20, backgroundHeight, "F");
+    doc.text(instructionDataLines, 10, instructionDataY);
 
     const tableTitle = "Monitoring Report";
     const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2; // Center the subheading
     doc.setFontSize(16);
     doc.setFont("bold");
-    doc.text(tableTitle, tableTitleIndex - 20, 175);
+    doc.text(tableTitle, tableTitleIndex - 20, 195);
 
     // Table header and content
     doc.autoTable({
@@ -154,6 +162,20 @@ const MonitoringEngPdf = ({
       body: rows,
       startY: tableObject?.asset_main_type_id === "2" ? 180 : 200, // Start after the horizontal line and other content (Y position adjusted)
     });
+
+    // const instruction2Data =
+    //   "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
+    // doc.setFontSize(12);
+    // doc.setFont("normal");
+    // const instructionData2Lines = doc.splitTextToSize(
+    //   instruction2Data,
+    //   pageWidth - 20
+    // );
+    // const instruction2DataY = 250;
+    // const backgroundHeight2 = 25; // Height of the background box (adjust if necessary)
+    // doc.setFillColor(220, 220, 220); // Set gray color for background
+    // doc.rect(10, instructionDataY - 7, pageWidth - 20, backgroundHeight2, "F");
+    // doc.text(instructionData2Lines, 10, instruction2DataY);
 
     // Add footer
     const footerText1 =
@@ -165,8 +187,8 @@ const MonitoringEngPdf = ({
     const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
 
     doc.setFontSize(10);
-    doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
-    doc.text(footerText2, footerX2, footerY + 10); // Adjust for footer spacing
+    doc.text(footerText1, footerX + 30, footerY + 5); // Adjust for footer spacing
+    doc.text(footerText2, footerX2 + 20, footerY + 10); // Adjust for footer spacing
 
     // Save the PDF
     doc.save(`${pdfName}.pdf`);
