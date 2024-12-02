@@ -129,26 +129,20 @@ const MonitoringEngPdf = ({
       margin: { left: 10, right: 20 }, // Set margins
     });
 
-    // const instruction1 = "Instructions :";
-    // doc.setFontSize(14);
-    // doc.setFont("bold");
-    // doc.setFillColor(220, 220, 220); // Set gray background color
-    // doc.rect(10, doc.lastAutoTable.finalY + 10, pageWidth - 20, 20, "F"); // Draw gray background
-    // doc.text(instruction1, 10, doc.lastAutoTable.finalY + 10);
-
     const instructionData =
       "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
+
     doc.setFontSize(12);
-    doc.setFont("normal");
+    doc.setFont("normal"); // Set the font style to normal (not bold)
     const instructionDataLines = doc.splitTextToSize(
       instructionData,
-      pageWidth - 20
-    );
-    const instructionDataY = 150;
-    const backgroundHeight = 35; // Height of the background box (adjust if necessary)
-    doc.setFillColor(220, 220, 220); // Set gray color for background
+      pageWidth - 40
+    ); // Adjust width to leave space for margins (20px left and right)
+    const instructionDataY = 150; // Adjust Y position as needed
+    const backgroundHeight = 35; // Adjust height of the background box if necessary
+    doc.setFillColor(220, 220, 220);
     doc.rect(10, instructionDataY - 7, pageWidth - 20, backgroundHeight, "F");
-    doc.text(instructionDataLines, 10, instructionDataY);
+    doc.text(instructionDataLines, 15, instructionDataY); // Adjust X position to leave some space between text and the left edge
 
     const tableTitle = "Monitoring Report";
     const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2; // Center the subheading
@@ -163,19 +157,19 @@ const MonitoringEngPdf = ({
       startY: tableObject?.asset_main_type_id === "2" ? 180 : 200, // Start after the horizontal line and other content (Y position adjusted)
     });
 
-    // const instruction2Data =
-    //   "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
-    // doc.setFontSize(12);
-    // doc.setFont("normal");
-    // const instructionData2Lines = doc.splitTextToSize(
-    //   instruction2Data,
-    //   pageWidth - 20
-    // );
-    // const instruction2DataY = 250;
-    // const backgroundHeight2 = 25; // Height of the background box (adjust if necessary)
-    // doc.setFillColor(220, 220, 220); // Set gray color for background
-    // doc.rect(10, instructionDataY - 7, pageWidth - 20, backgroundHeight2, "F");
-    // doc.text(instructionData2Lines, 10, instruction2DataY);
+    const introduction2 =
+      " If non-compliance with Operation & Maintenance found and not resolved within specified TAT then penalty would be imposed as mentioned in RFP.";
+    doc.setFontSize(12);
+    doc.setFont("normal"); // Set the font style to normal (not bold)
+    const instructionDataLines2 = doc.splitTextToSize(
+      introduction2,
+      pageWidth - 40
+    );
+    const instructionDataY2 = 200; // Adjust Y position as needed
+    const backgroundHeight2 = 20; // Adjust height of the background box if necessary
+    doc.setFillColor(220, 220, 220);
+    doc.rect(10, instructionDataY2 - 7, pageWidth - 20, backgroundHeight2, "F");
+    doc.text(instructionDataLines2, 15, instructionDataY2); // Adjust X position to leave some space between text and the left edge
 
     // Add footer
     const footerText1 =
