@@ -760,10 +760,6 @@ const langingPage = {
     en: "Name",
     hi: "नाम",
   },
-  email: {
-    en: "Email",
-    hi: "ईमेल",
-  },
   phone: {
     en: "Phone",
     hi: "फ़ोन",
