@@ -26,11 +26,6 @@ const TentageCount = () => {
     return new Intl.NumberFormat("en-IN").format(number);
   };
 
-  useEffect(() => {
-    dispatch(getTentageDashboardData()); // tentage dashboard
-    return () => {};
-  }, []);
-
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
       <div className="text-xl font-bold mb-4">{dict.tentage_count[lang]}</div>

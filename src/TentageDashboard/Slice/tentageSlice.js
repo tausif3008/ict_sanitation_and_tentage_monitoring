@@ -27,10 +27,14 @@ export const tentageSlice = createSlice({
 });
 
 // get tentage dashboard data
-export const getTentageDashboardData = () => async (dispatch) => {
+export const getTentageDashboardData = (data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${URLS?.tentageDash?.path}`);
+    const res = await axiosInstance.post(`${URLS?.tentageDash?.path}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     dispatch(postSuccess(res?.data));
   } catch (error) {
     message.error("Error fetching details.");
