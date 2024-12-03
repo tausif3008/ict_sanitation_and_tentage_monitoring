@@ -236,11 +236,11 @@ const AssetsList = () => {
       key: "circle_name",
       width: 100,
     },
-    {
-      title: "Vendor Item Code",
-      dataIndex: "vendor_asset_code",
-      key: "vendor_asset_code",
-    },
+    // {
+    //   title: "Vendor Item Code",
+    //   dataIndex: "vendor_asset_code",
+    //   key: "vendor_asset_code",
+    // },
     {
       title: "Code",
       dataIndex: "code",
@@ -267,19 +267,19 @@ const AssetsList = () => {
         );
       },
     },
-    {
-      title: "QR Code",
-      width: 100,
-      render: (text, record) => (
-        <Image
-          src={ImageUrl + record.qr_code}
-          width={60}
-          height={60}
-          alt={record.qr_code}
-        ></Image>
-      ),
-      key: "qrCode",
-    },
+    // {
+    //   title: "QR Code",
+    //   width: 100,
+    //   render: (text, record) => (
+    //     <Image
+    //       src={ImageUrl + record.qr_code}
+    //       width={60}
+    //       height={60}
+    //       alt={record.qr_code}
+    //     ></Image>
+    //   ),
+    //   key: "qrCode",
+    // },
     {
       title: "Photo",
       width: 100,

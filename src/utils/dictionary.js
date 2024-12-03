@@ -297,7 +297,7 @@ export const DICT = {
     hi: "उम्र",
   },
   emmergency_no: {
-    en: "Emmergency No.",
+    en: "Emergency No.",
     hi: "आपातकालीन नंबर",
   },
   ambulance: { hi: "एम्बुलेंस", en: "Ambulance" },

@@ -48,18 +48,17 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      tentageDash_param?.includes(userRoleId) &&
-        tentageIdUser === "2" && {
-          key: "3",
-          label: (
-            <Link
-              className="text-black no-underline hover:text-green"
-              to="/tentage-dashboard"
-            >
-              Tentage Dashboard
-            </Link>
-          ),
-        },
+      (tentageDash_param?.includes(userRoleId) || tentageIdUser === "2") && {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/tentage-dashboard"
+          >
+            Tentage Dashboard
+          </Link>
+        ),
+      },
       wasteDash_param?.includes(userRoleId) && {
         key: "4",
         label: (
