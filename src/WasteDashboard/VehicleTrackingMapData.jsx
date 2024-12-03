@@ -4,6 +4,7 @@ import L from "leaflet";
 import { message } from "antd";
 import "leaflet/dist/leaflet.css";
 import Tippers from "../assets/Dashboard/Tippers.png";
+import { basicUrl } from "../Axios/commonAxios";
 
 const vehicleIcon = new L.Icon({
   iconUrl: Tippers,
@@ -26,7 +27,7 @@ const VehicleMap = () => {
   const fetchVehicleData = async () => {
     try {
       const response = await fetch(
-        "https://13.201.196.2/php-api/index.php/vehicle-tracking?page=1&per_page=200&date_format=Today",
+        `${basicUrl}/vehicle-tracking?page=1&per_page=200&date_format=Today`,
         {
           method: "GET",
           headers: headers,

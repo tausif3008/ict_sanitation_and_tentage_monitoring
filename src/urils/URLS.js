@@ -1,5 +1,7 @@
+import { basicUrl } from "../Axios/commonAxios";
+
 const URLS = {
-  baseUrl: "https://13.201.196.2/php-api/index.php",
+  baseUrl: basicUrl,
 
   // user
   register: { path: "/users/entry", version: "5.43" },

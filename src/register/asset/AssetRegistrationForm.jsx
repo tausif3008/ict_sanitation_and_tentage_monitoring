@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, Select, Divider, message, Modal } from "antd";
 import optionsMaker from "../../urils/OptionMaker";
+import { basicUrl } from "../../Axios/commonAxios";
 
 const { Option } = Select;
 const { TextArea } = Input;
@@ -48,16 +49,13 @@ const AssetRegistrationForm = () => {
     delete values.assetSubType;
 
     try {
-      const response = await fetch(
-        "https://13.201.196.2/php-api/index.php/asset/entry/",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
-        }
-      );
+      const response = await fetch(`${basicUrl}/asset/entry/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      });
 
       if (response.ok) {
         const result = await response.json();

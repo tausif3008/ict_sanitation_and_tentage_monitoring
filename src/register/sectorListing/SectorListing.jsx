@@ -3,6 +3,7 @@ import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { message } from "antd";
 import { useParams } from "react-router-dom";
+import { basicUrl } from "../../Axios/commonAxios";
 
 const columns = [
   {
@@ -41,13 +42,10 @@ const SectorsListing = () => {
   useEffect(() => {
     const fetchSectorData = async () => {
       try {
-        const response = await fetch(
-          "https://13.201.196.2/php-api/index.php/sector",
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
+        const response = await fetch(`${basicUrl}/sector`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
 
         if (result.success) {

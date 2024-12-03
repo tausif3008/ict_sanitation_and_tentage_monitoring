@@ -1,11 +1,9 @@
 import { message } from "antd";
 import axios from "axios";
-import { Navigate } from "react-router";
-
-const baseUrl = "https://13.201.196.2/php-api/index.php";
+import { basicUrl } from "../Axios/commonAxios";
 
 const loginFetch = async (data, setCanProceed) => {
-  const url = baseUrl + "/login";
+  const url = basicUrl + "/login";
 
   const headers = {
     "Content-Type": "multipart/form-data",
@@ -44,7 +42,7 @@ const logoutFetch = async () => {
   try {
     const sessionToken = localStorage.getItem("sessionToken");
     if (sessionToken) {
-      const response = await axios.delete(baseUrl + "/logout", {
+      const response = await axios.delete(basicUrl + "/logout", {
         headers: {
           "x-api-key": "YunHu873jHds83hRujGJKd873",
           "x-api-version": "1.0.1",
@@ -66,7 +64,7 @@ const logoutFetch = async () => {
 };
 
 const postData = async (formData, urlLast = "", extraHeaders) => {
-  const url = baseUrl + urlLast;
+  const url = basicUrl + urlLast;
 
   const headers = {
     "Content-Type": "multipart/form-data",
@@ -95,7 +93,7 @@ const postData = async (formData, urlLast = "", extraHeaders) => {
 };
 
 const putData = async (formData, urlLast = "", extraHeaders) => {
-  const url = baseUrl + urlLast;
+  const url = basicUrl + urlLast;
 
   const headers = {
     "Content-Type": "multipart/form-data",
@@ -124,7 +122,7 @@ const putData = async (formData, urlLast = "", extraHeaders) => {
 };
 
 const getData = async (urlLast, extraHeaders, params = "") => {
-  const url = baseUrl + urlLast + params;
+  const url = basicUrl + urlLast + params;
 
   const headers = {
     "x-api-key": "YunHu873jHds83hRujGJKd873",

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Typography, Input } from "antd";
 import CommonDivider from "../../commonComponents/CommonDivider"; // Adjust path as necessary
+import { basicUrl } from "../../Axios/commonAxios";
 
 const { Title } = Typography;
 const { Search } = Input; // Import Search component from antd
@@ -21,12 +22,9 @@ const ParkingList = () => {
   useEffect(() => {
     const fetchParkingData = async () => {
       try {
-        const response = await axios.get(
-          `https://13.201.196.2/php-api/index.php/parking`,
-          {
-            headers,
-          }
-        );
+        const response = await axios.get(`${basicUrl}/parking`, {
+          headers,
+        });
 
         if (response.data.success) {
           const parkingData = response.data.data.parkings;

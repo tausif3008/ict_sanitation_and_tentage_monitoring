@@ -1,11 +1,12 @@
-import { createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { createSlice } from "@reduxjs/toolkit";
+import axios from "axios";
+import { basicUrl } from "../Axios/commonAxios";
 const initialState = {
-    sanitationData: null,
+  sanitationData: null,
 };
 
 export const sanitationSlice = createSlice({
-  name: 'sanitationSlice',
+  name: "sanitationSlice",
   initialState,
   reducers: {
     postGet: (state, action) => {
@@ -15,23 +16,22 @@ export const sanitationSlice = createSlice({
 });
 
 export const GetToilets = () => async (dispatch) => {
-  
-    const localHeader = {
-        "Content-Type": "application/json",
-        "x-api-key": "YunHu873jHds83hRujGJKd873",
-        "x-api-version": "1.0.1",
-        "x-platform": "Web",
-        "x-access-token": localStorage.getItem("sessionToken") || "",
-      };
+  const localHeader = {
+    "Content-Type": "application/json",
+    "x-api-key": "YunHu873jHds83hRujGJKd873",
+    "x-api-version": "1.0.1",
+    "x-platform": "Web",
+    "x-access-token": localStorage.getItem("sessionToken") || "",
+  };
   try {
     const res = await axios({
       method: "GET",
-      url: "https://13.201.196.2/php-api/index.php/dashboard/sanitation",
+      url: `${basicUrl}/dashboard/sanitation`,
       headers: localHeader,
     });
     dispatch(postGet(res?.data));
   } catch (error) {
-    console.log('In get Location function error', error);
+    console.log("In get Location function error", error);
   }
 };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, Button, Upload, message, Input, Select, Form } from "antd";
 import { UploadOutlined, EditOutlined } from "@ant-design/icons";
+import { basicUrl } from "../Axios/commonAxios";
 
 const { Option } = Select;
 
@@ -33,20 +34,16 @@ const UserProfile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(
-          "https://13.201.196.2/php-api/index.php/profile",
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
+        const response = await fetch(`${basicUrl}/profile`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
 
         if (result.success) {
           setUserData(result.data);
           setOriginalUserData(result.data);
           setProfilePic(result.data.image || "https://via.placeholder.com/150");
-          
         } else {
           message.error("Failed to load details.");
         }
@@ -57,13 +54,10 @@ const UserProfile = () => {
 
     const fetchCountries = async () => {
       try {
-        const response = await fetch(
-          "https://13.201.196.2/php-api/index.php/country",
-          {
-            method: "GET",
-            headers: headers,
-          }
-        );
+        const response = await fetch(`${basicUrl}/country`, {
+          method: "GET",
+          headers: headers,
+        });
         const result = await response.json();
         if (result.success) {
           setCountries(result.data.countries || []);
@@ -86,7 +80,7 @@ const UserProfile = () => {
       if (userData.country_id) {
         try {
           const response = await fetch(
-            `https://13.201.196.2/php-api/index.php/state?country_id=${userData.country_id}`,
+            `${basicUrl}/state?country_id=${userData?.country_id}`,
             {
               method: "GET",
               headers: headers,
@@ -112,7 +106,7 @@ const UserProfile = () => {
       if (userData.state_id) {
         try {
           const response = await fetch(
-            `https://13.201.196.2/php-api/index.php/city?country_id=${userData.country_id}&state_id=${userData.state_id}`,
+            `${basicUrl}/city?country_id=${userData.country_id}&state_id=${userData.state_id}`,
             {
               method: "GET",
               headers: headers,
@@ -143,7 +137,7 @@ const UserProfile = () => {
     setIsEditing(false);
   };
 
-  const handleImageChange = (info)=> {
+  const handleImageChange = (info) => {
     const file = info.file.originFileObj;
     const previewUrl = URL.createObjectURL(file);
     setSelectedImage(file);
@@ -165,14 +159,11 @@ const UserProfile = () => {
     }
 
     try {
-      const response = await fetch(
-        "https://13.201.196.2/php-api/index.php/profile",
-        {
-          method: "POST",
-          headers: headerstopost,
-          body: formData,
-        }
-      );
+      const response = await fetch(`${basicUrl}/profile`, {
+        method: "POST",
+        headers: headerstopost,
+        body: formData,
+      });
 
       const result = await response.json();
 
@@ -210,7 +201,7 @@ const UserProfile = () => {
 
   const displayProfilePic = profilePic.includes("blob:")
     ? profilePic
-    : `https://13.201.196.2/php-api/index.php/${profilePic}`;
+    : `${basicUrl}/${profilePic}`;
 
   return (
     <div className="mt-3 mx-auto p-3 bg-white shadow-md rounded-lg w-full relative">
@@ -228,7 +219,7 @@ const UserProfile = () => {
         <div className="flex ml-6 flex-col items-center">
           <Avatar
             size={250}
-           src={displayProfilePic || "https://via.placeholder.com/150"}
+            src={displayProfilePic || "https://via.placeholder.com/150"}
             alt="Profile Picture"
           />
           {isEditing && (
@@ -368,10 +359,20 @@ const UserProfile = () => {
       {isEditing && (
         <div className="flex justify-end">
           <Form.Item>
-          <Button type="primary" onClick={handleSave} className="w-fit rounded-none bg-5c">
-            Save Changes
-          </Button>
-          <Button type="danger" onClick={handleCancel} className="w-fit rounded-none">Cancel</Button>
+            <Button
+              type="primary"
+              onClick={handleSave}
+              className="w-fit rounded-none bg-5c"
+            >
+              Save Changes
+            </Button>
+            <Button
+              type="danger"
+              onClick={handleCancel}
+              className="w-fit rounded-none"
+            >
+              Cancel
+            </Button>
           </Form.Item>
         </div>
       )}
