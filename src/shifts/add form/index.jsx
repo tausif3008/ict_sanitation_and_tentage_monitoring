@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router";
-import moment from "moment";
 import dayjs from "dayjs";
-import { Form, Input, Button, Select, Divider, TimePicker } from "antd";
+import { Form, Button, Divider } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
+import CustomTimepicker from "../../commonComponents/CustomTimePicker";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import CustomInput from "../../commonComponents/CustomInput";
+import { statusOptions } from "../../constant/const";
 
 const AddShiftForm = () => {
   const [form] = Form.useForm();
@@ -15,11 +18,6 @@ const AddShiftForm = () => {
   const location = useLocation();
   const key = location.state?.key;
   const record = location.state?.record;
-
-  const statusOptions = [
-    { value: 1, label: "Active" },
-    { value: 2, label: "Deactive" },
-  ];
 
   // API
   const onFinish = async (values) => {
@@ -55,8 +53,8 @@ const AddShiftForm = () => {
         shift_id: Number(record?.shift_id),
         name: record?.name,
         status: Number(record?.status) === 2 ? "Deactive" : "Active",
-        from_time: moment(record?.from_time, "HH:mm:ss"), // Set as 24-hour format
-        to_time: moment(record?.to_time, "HH:mm:ss"),
+        from_time: dayjs(record?.from_time, "HH:mm:ss"), // Convert to dayjs object
+        to_time: dayjs(record?.to_time, "HH:mm:ss"), // Convert to dayjs object
       });
     }
   }, [record, key]);
@@ -82,64 +80,48 @@ const AddShiftForm = () => {
           <Divider className="bg-d9 h-2/3 mt-1" />
           <Form form={form} layout="vertical" onFinish={onFinish}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              <Form.Item
-                label="Shift Name"
+              <CustomInput
                 name="name"
+                label="Shift Name"
+                placeholder="Shift Name"
                 rules={[
                   {
                     required: true,
                     message: "Please enter the Shift Name",
                   },
                 ]}
-              >
-                <Input
-                  placeholder="Enter Shift Name"
-                  className="rounded-none"
-                />
-              </Form.Item>
-              <Form.Item
+              />
+              <CustomTimepicker
                 label="Start Time"
                 name="from_time"
+                className="w-full"
+                placeholder={"Date"}
                 rules={[
                   {
                     required: true,
-                    message: "Please enter the start time",
+                    message: "Please select a start time!",
                   },
                 ]}
-              >
-                <TimePicker
-                  className="rounded-none"
-                  format="h:mm A" // Display format for 12-hour with AM/PM
-                />
-              </Form.Item>
-              <Form.Item
+              />
+              <CustomTimepicker
                 label="End Time"
                 name="to_time"
+                className="w-full"
+                placeholder={"Date"}
                 rules={[
                   {
                     required: true,
-                    message: "Please enter the end time",
+                    message: "Please select a end time!",
                   },
                 ]}
-              >
-                <TimePicker
-                  className="rounded-none"
-                  format="h:mm A" // Display format for 12-hour with AM/PM
-                />
-              </Form.Item>
-              <Form.Item
-                label="Status"
-                name="status"
+              />
+              <CustomSelect
+                name={"status"}
+                label={"Select Status"}
+                placeholder={"Select Status"}
+                options={statusOptions || []}
                 rules={[{ required: true, message: "Please select an option" }]}
-              >
-                <Select placeholder="Select status" className="rounded-none">
-                  {statusOptions?.map((option) => (
-                    <Select.Option key={option?.value} value={option?.value}>
-                      {option?.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
+              />
             </div>
             <Form.Item>
               <div className="flex w-full justify-end">

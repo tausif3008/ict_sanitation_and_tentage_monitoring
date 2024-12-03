@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const SanitationDashSelector = () => {
@@ -10,17 +10,17 @@ const SanitationDashSelector = () => {
   ); //  dashboard
   const loading = useSelector((state) => state?.sanitationDashboard.loading);
 
-  const Dash_Drop = DashboardData?.data?.asset_count?.map((data) => {
-    // dashboard Dropdown
+  // dashboard Dropdown
+  const Dash_Drop = useMemo(() => {
     return (
-      {
-        value: data?.asset_type_id,
-        label: data?.type,
-      } || []
+      DashboardData?.data?.asset_count?.map(({ asset_type_id, type }) => ({
+        value: asset_type_id,
+        label: type,
+      })) || []
     );
-  });
+  }, [DashboardData]);
 
-  return { SanitationDash_data, loading, DashboardData,Dash_Drop };
+  return { SanitationDash_data, loading, DashboardData, Dash_Drop };
 };
 
 export default SanitationDashSelector;

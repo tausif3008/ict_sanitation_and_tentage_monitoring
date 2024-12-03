@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+import { Table, Collapse, Form, Button, Row, Col } from "antd";
 import "jspdf-autotable";
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
@@ -20,6 +20,7 @@ import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import CustomSelect from "../commonComponents/CustomSelect";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import search from "../assets/Dashboard/icon-search.png";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const CircleWiseReport = () => {
   const [totalRegistered, setTotalRegistered] = useState(0);
@@ -173,14 +174,13 @@ const CircleWiseReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"date"} label={"Date"}>
-                        <DatePicker
-                          className="rounded-none w-full"
-                          format="DD/MM/YYYY"
-                          allowClear={false}
-                        />
-                      </Form.Item>
+                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect

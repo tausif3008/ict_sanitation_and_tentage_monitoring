@@ -6,7 +6,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
 import img1 from "../assets/Images/UPGovLatestLogo.png";
-import img2 from "../assets/Images/MahaKumbhLogo.png";
+import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 
 import { logoutFetch } from "../Fetch/Axios";
 import {
@@ -26,6 +26,10 @@ const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
   const loggedIn = localStorage.getItem("sessionToken");
+  const sessionData = localStorage.getItem("sessionData");
+  const jsonObject = JSON.parse(sessionData);
+  const tentageIdUser = jsonObject?.allocatedmaintype?.[0]?.asset_main_type_id;
+
   const [open, setOpen] = useState(false);
 
   const userRoleId = localStorage.getItem("role_id");
@@ -44,17 +48,18 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      tentageDash_param?.includes(userRoleId) && {
-        key: "3",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/tentage-dashboard"
-          >
-            Tentage Dashboard
-          </Link>
-        ),
-      },
+      tentageDash_param?.includes(userRoleId) &&
+        tentageIdUser === "2" && {
+          key: "3",
+          label: (
+            <Link
+              className="text-black no-underline hover:text-green"
+              to="/tentage-dashboard"
+            >
+              Tentage Dashboard
+            </Link>
+          ),
+        },
       wasteDash_param?.includes(userRoleId) && {
         key: "4",
         label: (
@@ -77,17 +82,18 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      vendorDash_param.includes(userRoleId) && {
-        key: "6",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/vendor-dashboard"
-          >
-            Vendor Dashboard
-          </Link>
-        ),
-      },
+      vendorDash_param.includes(userRoleId) &&
+        tentageIdUser != "2" && {
+          key: "6",
+          label: (
+            <Link
+              className="text-black no-underline hover:text-green"
+              to="/vendor-dashboard"
+            >
+              Vendor Dashboard
+            </Link>
+          ),
+        },
       SLADash_param?.includes(userRoleId) && {
         key: "7",
         label: (

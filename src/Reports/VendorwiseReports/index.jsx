@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Table, Collapse, Form, Button, Row, Col, DatePicker } from "antd";
+import { Table, Collapse, Form, Button, Row, Col } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
 
@@ -8,7 +8,6 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getVendorReports } from "./vendorslice";
 import VendorSelectors from "./vendorSelectors";
-import CommonTable from "../../commonComponents/CommonTable";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
@@ -22,8 +21,14 @@ import {
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import search from "../../assets/Dashboard/icon-search.png";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const VendorReports = () => {
+  const [totalRegistered, setTotalRegistered] = useState(0);
+  const [totalClean, setTotalClean] = useState(0);
+  const [totalUnclean, setTotalUnclean] = useState(0);
+  const [total, setTotal] = useState(0);
+
   const [excelData, setExcelData] = useState([]);
   const [filesName, setFilesName] = useState(null); // files Name
   const [vendorDetails, setVendorDetails] = useState({
@@ -36,6 +41,8 @@ const VendorReports = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { loading, vendorReports } = VendorSelectors(); // vendor reports
+  const vendorsData = vendorReports?.data?.vendors || [];
+
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
@@ -85,9 +92,37 @@ const VendorReports = () => {
   // reset form
   const resetForm = () => {
     form.resetFields();
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
     getCurrentData();
     setFilesName(null);
   };
+
+  useEffect(() => {
+    if (vendorReports) {
+      const total = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.total),
+        0
+      );
+      const totalReg = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.registered),
+        0
+      );
+      const totalClean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.clean),
+        0
+      );
+      const totalUnclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.unclean),
+        0
+      );
+      setTotal(total);
+      setTotalRegistered(totalReg);
+      setTotalClean(totalClean);
+      setTotalUnclean(totalUnclean);
+    }
+  }, [vendorReports]);
 
   // file name
   useEffect(() => {
@@ -162,24 +197,6 @@ const VendorReports = () => {
       dataIndex: "unclean",
       key: "unclean",
     },
-    // {
-    //   title: "Address",
-    //   dataIndex: "address",
-    //   key: "address",
-    //   render: (text, record) => {
-    //     return `${text}, Pincode -${record?.pin}`;
-    //   },
-    // },
-    // {
-    //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
-    // },
-    // {
-    //   title: "Company",
-    //   dataIndex: "company",
-    //   key: "company",
-    // },
   ];
 
   // pdf header
@@ -260,13 +277,12 @@ const VendorReports = () => {
                 >
                   <Row gutter={[16, 16]} align="middle">
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item name={"date"} label={"Date"}>
-                        <DatePicker
-                          className="rounded-none w-full"
-                          format="DD/MM/YYYY"
-                          allowClear={false}
-                        />
-                      </Form.Item>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
@@ -323,13 +339,25 @@ const VendorReports = () => {
         />
       </div>
 
-      <CommonTable
+      <Table
         loading={loading}
-        uri={`vendor-wise-report`}
-        columns={columns || []}
-        details={vendorDetails || []}
-        scroll={{ x: 300, y: 400 }}
-      ></CommonTable>
+        columns={columns}
+        dataSource={vendorDetails?.list || []}
+        rowKey="sector_id"
+        pagination={{ pageSize: 50 }}
+        bordered
+        footer={() => (
+          <div className="flex justify-between">
+            <span>
+              <strong>Total Vendors: {vendorsData?.length}</strong> |{" "}
+              <strong>Total : {total}</strong> |{" "}
+              <strong>Total Registered: {totalRegistered}</strong> |{" "}
+              <strong>Total Clean : {totalClean}</strong> |{" "}
+              <strong>Total Unclean: {totalUnclean}</strong> |{" "}
+            </span>
+          </div>
+        )}
+      />
     </div>
   );
 };

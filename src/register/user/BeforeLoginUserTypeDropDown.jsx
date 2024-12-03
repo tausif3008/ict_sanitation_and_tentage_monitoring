@@ -27,7 +27,12 @@ const BeforeLoginUserTypeDropDown = ({ form, required = true, showLabel }) => {
       <Select
         placeholder="Select a User Type"
         className="rounded-none w-full" // Ensure full width
-        options={userTypesOnLogin}
+        options={userTypesOnLogin || []}
+        allowClear
+        showSearch={true}
+        filterOption={(input, option) => {
+          return option?.label?.toLowerCase()?.includes(input?.toLowerCase());
+        }}
       />
     </Form.Item>
   );

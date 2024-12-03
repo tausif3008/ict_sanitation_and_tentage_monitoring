@@ -1,15 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  Collapse,
-  Form,
-  Button,
-  notification,
-  Row,
-  Col,
-  DatePicker,
-} from "antd";
+import { Collapse, Form, Button, notification, Row, Col } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 import {
@@ -39,6 +31,7 @@ import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
 import ExportToExcel from "../Reports/ExportToExcel";
 import ExportToPDF from "../Reports/reportFile";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -264,6 +257,9 @@ const Monitoring = () => {
       title: "GSD Name",
       dataIndex: "agent_name",
       key: "agent_name",
+      render: (text) => {
+        return text ? text : "GSD";
+      },
     },
     {
       title: "Vendor Name",
@@ -343,7 +339,7 @@ const Monitoring = () => {
     data?.asset_type_name,
     data?.asset_code,
     data?.unit_no,
-    data?.agent_name,
+    data?.agent_name ? data?.agent_name : "GSD",
     data?.vendor_name,
     data?.sector_name,
     data?.circle_name,
@@ -432,9 +428,9 @@ const Monitoring = () => {
                         options={assetTypes || []}
                       />
                     </Col>
-                    <Col key="asset_code" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
-                        name={"asset_code"}
+                        name={"code"}
                         label={" Item QR Code"}
                         placeholder={" Item QR Code"}
                       />
@@ -451,38 +447,32 @@ const Monitoring = () => {
                     {showDateRange && (
                       <>
                         <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                          <CustomDatepicker
                             name={"from_date"}
                             label={"From Date"}
+                            className="w-full"
+                            placeholder={"From Date"}
                             rules={[
                               {
                                 required: true,
                                 message: "Please select a start date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
+                          />
                         </Col>
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                          <CustomDatepicker
                             name={"to_date"}
                             label={"To Date"}
+                            className="w-full"
+                            placeholder={"To Date"}
                             rules={[
                               {
                                 required: true,
                                 message: "Please select a end date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
+                          />
                         </Col>
                       </>
                     )}

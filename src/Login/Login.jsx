@@ -40,10 +40,21 @@ const Login = () => {
     setLoading(true);
 
     const res = await loginFetch(formData, setCanProceed);
-    console.log(res);
+    const resData = res?.data?.sessionData?.[0];
 
-    if (res) {
-      setLoading(false);
+    setLoading(false);
+    if (resData) {
+      if (resData) {
+        if (resData?.user_type_id === "8") {
+          if (resData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
+            navigate("/tentage-dashboard"); // vendor login tentage
+          } else {
+            navigate("/vendor-dashboard"); // vendor login
+          }
+        } else {
+          navigate("/sanitation-dashboard");
+        }
+      }
     }
   };
 
@@ -53,6 +64,7 @@ const Login = () => {
     try {
       const formData = new FormData();
       formData.append("phone", value);
+      
 
       const response = await fetch(`${URLS.baseUrl}/resetpasswordrequest`, {
         method: "POST",
@@ -103,21 +115,21 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      const sessionToken = localStorage.getItem("sessionToken");
-      const role_id = localStorage.getItem("role_id");
-      if (sessionToken) {
-        clearInterval(intervalId);
-        if (role_id === "8") {
-          navigate("/vendor-dashboard"); // vendor login
-        } else {
-          navigate("/sanitation-dashboard");
-        }
-      }
-    }, 1000);
-    return () => clearInterval(intervalId);
-  }, [canProceed, navigate]);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     const sessionToken = localStorage.getItem("sessionToken");
+  //     const role_id = localStorage.getItem("role_id");
+  //     if (sessionToken) {
+  //       clearInterval(intervalId);
+  //       if (role_id === "8") {
+  //         navigate("/vendor-dashboard"); // vendor login
+  //       } else {
+  //         navigate("/sanitation-dashboard");
+  //       }
+  //     }
+  //   }, 1000);
+  //   return () => clearInterval(intervalId);
+  // }, [canProceed, navigate]);
 
   return (
     <div className="flex m-auto bg-gray-100">
