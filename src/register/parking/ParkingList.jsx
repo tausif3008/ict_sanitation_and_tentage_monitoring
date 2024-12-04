@@ -1,43 +1,22 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { Table, Typography, Input } from "antd";
+import { useDispatch } from "react-redux";
+import { Table, Input } from "antd";
 import CommonDivider from "../../commonComponents/CommonDivider"; // Adjust path as necessary
-import { basicUrl } from "../../Axios/commonAxios";
+import { getParkingData } from "./parkingSlice";
+import URLS from "../../urils/URLS";
+import ParkingSelector from "./parkingSelector";
 
-const { Title } = Typography;
 const { Search } = Input; // Import Search component from antd
 
 const ParkingList = () => {
-  const [parkings, setParkings] = useState([]);
   const [searchText, setSearchText] = useState(""); // State for search input
 
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
+  const dispatch = useDispatch();
+  const { parkingData } = ParkingSelector(); // parking data
 
   useEffect(() => {
-    const fetchParkingData = async () => {
-      try {
-        const response = await axios.get(`${basicUrl}/parking`, {
-          headers,
-        });
-
-        if (response.data.success) {
-          const parkingData = response.data.data.parkings;
-          setParkings(parkingData);
-        } else {
-          console.error("Failed to fetch parking data:", response.data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching parking data:", error);
-      }
-    };
-
-    fetchParkingData();
+    const url = URLS?.parking?.path;
+    dispatch(getParkingData(url)); // get parking data
   }, []);
 
   const columns = [
@@ -51,8 +30,8 @@ const ParkingList = () => {
     { title: "Parking Name", dataIndex: "name", key: "name" },
   ];
 
-  const filteredParkings = parkings.filter((parking) =>
-    parking.name.toLowerCase().includes(searchText.toLowerCase())
+  const filteredParkings = parkingData?.data?.parkings?.filter((parking) =>
+    parking?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
 
   const footer = () => (
@@ -63,7 +42,7 @@ const ParkingList = () => {
         padding: "8px 16px",
       }}
     >
-      <strong>Total Parking Count: {filteredParkings.length}</strong>
+      <strong>Total Parking Count: {filteredParkings?.length}</strong>
     </div>
   );
 
