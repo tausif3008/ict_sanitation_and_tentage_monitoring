@@ -31,7 +31,7 @@ const ExportToExcel = ({
     const totalCountRow = worksheet.addRow({});
 
     // Place "Total Rows" in column A and make it bold
-    totalCountRow.getCell(1).value = `Total Counts: ${excelData?.length}`;
+    totalCountRow.getCell(1).value = `Total Rows: ${excelData?.length}`;
     totalCountRow.getCell(1).font = { bold: true }; // Make "Total Rows" bold
     totalCountRow.getCell(1).alignment = { horizontal: "center" };
 
