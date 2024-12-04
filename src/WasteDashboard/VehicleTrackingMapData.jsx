@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import L from "leaflet";
-import { message } from "antd";
+import { useDispatch } from "react-redux";
 import "leaflet/dist/leaflet.css";
 import Tippers from "../assets/Dashboard/Tippers.png";
-import { basicUrl } from "../Axios/commonAxios";
+import WasteDashSelector from "./Slice/wasteDashSelector";
+import { getWasteDashData } from "./Slice/wasteDashboardSlice";
 
 const vehicleIcon = new L.Icon({
   iconUrl: Tippers,
@@ -15,48 +16,30 @@ const vehicleIcon = new L.Icon({
 
 const VehicleMap = () => {
   const [vehicleData, setVehicleData] = useState([]);
-
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
-
-  const fetchVehicleData = async () => {
-    try {
-      const response = await fetch(
-        `${basicUrl}/vehicle-tracking?page=1&per_page=200&date_format=Today`,
-        {
-          method: "GET",
-          headers: headers,
-        }
-      );
-      const result = await response.json();
-      // console.log("Fetched vehicle data:", result);
-
-      if (result.success && result.data && result.data.listings) {
-        const listings = result.data.listings.map((vehicle) => ({
-          ...vehicle,
-          lat: parseFloat(vehicle.lat),
-          lng: parseFloat(vehicle.lng),
-        }));
-        setVehicleData(listings);
-      } else {
-        message.error("Failed to load vehicle details.");
-      }
-    } catch (error) {
-      message.error("Error fetching vehicle details.");
-      console.error("Fetch error:", error);
-    }
-  };
+  const { wasteDash_data } = WasteDashSelector();
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    fetchVehicleData();
-    const intervalId = setInterval(fetchVehicleData, 5000); // Refresh data every 5 seconds
+    if (wasteDash_data) {
+      const myDashData = wasteDash_data?.data?.listings;
+      const listings = myDashData?.map((vehicle) => ({
+        ...vehicle,
+        lat: parseFloat(vehicle?.lat),
+        lng: parseFloat(vehicle?.lng),
+      }));
+      setVehicleData(listings);
+    }
+  }, [wasteDash_data]);
 
-    return () => clearInterval(intervalId);
+  useEffect(() => {
+    dispatch(getWasteDashData()); // waste dash data
+    const intervalId = setInterval(() => {
+      dispatch(getWasteDashData()); // waste dash data
+    }, [5000]);
+
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   return (

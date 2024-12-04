@@ -169,6 +169,12 @@ const URLS = {
 
   // tentage dashboard
   tentageDash: { path: "/dashboard/tentage", version: 5.43 },
+
+  // waste dashboard
+  wasteDash: {
+    path: "/vehicle-tracking?page=1&per_page=200&date_format=Today",
+    version: 5.43,
+  },
 };
 
 export default URLS;

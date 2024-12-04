@@ -22,6 +22,7 @@ import InspectionReportSlice from "../Reports/Inspection-reports/Slice/Inspectio
 import routeSlice from "../register/route/routeSlice";
 import SectorReportSlice from "../Reports/SectorSlice/sectorSlice";
 import tentageSlice from "../TentageDashboard/Slice/tentageSlice";
+import wasteDashboardSlice from "../WasteDashboard/Slice/wasteDashboardSlice";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -44,6 +45,7 @@ const rootReducer = combineReducers({
   // dashboard
   sanitationDashboard: sanitationDashboard,
   tentageSlice: tentageSlice,
+  wasteDashboardSlice: wasteDashboardSlice,
 
   // Reports
   IncidentReportSlice: IncidentReportSlice,
