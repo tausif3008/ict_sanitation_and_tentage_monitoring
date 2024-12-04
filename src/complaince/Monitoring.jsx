@@ -240,20 +240,20 @@ const Monitoring = () => {
         return text ? `${text}-${record?.unit_no}` : "";
       },
     },
-    {
-      title: "QR",
-      dataIndex: "asset_qr_code",
-      width: 80,
-      render: (qr) => {
-        return (
-          <Image
-            src={ImageUrl + qr}
-            alt="QR Code"
-            style={{ maxWidth: "50px" }}
-          />
-        );
-      },
-    },
+    // {
+    //   title: "QR",
+    //   dataIndex: "asset_qr_code",
+    //   width: 80,
+    //   render: (qr) => {
+    //     return (
+    //       <Image
+    //         src={ImageUrl + qr}
+    //         alt="QR Code"
+    //         style={{ maxWidth: "50px" }}
+    //       />
+    //     );
+    //   },
+    // },
     {
       title: "GSD Name",
       dataIndex: "agent_name",

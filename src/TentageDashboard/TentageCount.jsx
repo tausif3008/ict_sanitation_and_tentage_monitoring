@@ -2,9 +2,9 @@ import React from "react";
 import { useOutletContext } from "react-router";
 import {
   CheckCircleOutlined,
-  SyncOutlined,
   ExclamationCircleOutlined,
   EyeOutlined,
+  CheckOutlined,
 } from "@ant-design/icons";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
@@ -49,10 +49,7 @@ const TentageCount = () => {
           <div className="text-start">
             <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
               <div className="flex items-center gap-2">
-                <SyncOutlined
-                  className="text-orange-600 absolute right-[5px]"
-                  spin
-                />
+                <CheckOutlined className="text-orange-600 absolute right-[5px]" />
                 <span className="text-[#eab308]">
                   {dict.registered_tentage[lang]}
                 </span>
