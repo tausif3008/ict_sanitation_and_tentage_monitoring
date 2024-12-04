@@ -128,9 +128,9 @@ const AssetsList = () => {
           action: (
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
+              key={el?.name + index}
               onClick={() => {
-                navigate(`/asset-details/${el.assets_id}`);
+                navigate(`/asset-details/${el?.assets_id}`);
               }}
             >
               Details
@@ -156,9 +156,9 @@ const AssetsList = () => {
         return {
           sr: index + 1,
           Category: data?.asset_main_type_name,
-          "Toilets & Tentage Type": data?.asset_main_type_name,
+          "Toilets & Tentage Type": data?.asset_type_name,
           "Vendor Name": data?.vendor_name,
-          "Monitoring Agent Name": data?.created_by,
+          "GSD Name": data?.agent_name,
           Sector: data?.sector_name,
           Circle: data?.circle_name,
           "Vendor Item Code": data?.vendor_asset_code,
@@ -404,20 +404,20 @@ const AssetsList = () => {
                         options={CircleListDrop || []}
                       />
                     </Col>
-                    <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
+                    {/* <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"vendor_asset_code"}
                         label={"Vendor Item Code"}
                         placeholder={"Vendor Item Code"}
                       />
-                    </Col>
-                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                    </Col> */}
+                    {/* <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"code"}
                         label={"Code"}
                         placeholder={"Code"}
                       />
-                    </Col>
+                    </Col> */}
                     <Col
                       xs={24}
                       sm={12}
