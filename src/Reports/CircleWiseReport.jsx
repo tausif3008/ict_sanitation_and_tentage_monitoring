@@ -31,7 +31,16 @@ const CircleWiseReport = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { CircleReports, loading } = CircleSelector(); // circle reports
-  const CircleData = CircleReports?.data?.circles || [];
+
+  const CircleData = useMemo(() => {
+    return CircleReports?.data?.circles?.map((item) => ({
+      ...item,
+      registered: Number(item?.registered),
+      sector_id: Number(item?.sector_id),
+      clean: Number(item?.clean),
+      unclean: Number(item?.unclean),
+    }));
+  }, [CircleReports]);
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
 
@@ -127,9 +136,12 @@ const CircleWiseReport = () => {
     return (
       CircleData?.map((circle) => [
         circle?.name,
-        circle?.registered,
-        circle?.clean,
-        circle?.unclean,
+        // circle?.registered,
+        // circle?.clean,
+        // circle?.unclean,
+        Number(circle?.registered),
+        Number(circle?.clean),
+        Number(circle?.unclean),
       ]) || []
     );
   }, [CircleData]);

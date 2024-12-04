@@ -162,8 +162,8 @@ const AssetsList = () => {
           Sector: data?.sector_name,
           Circle: data?.circle_name,
           "Vendor Item Code": data?.vendor_asset_code,
-          Code: data?.code,
-          Unit: data?.unit,
+          Code: Number(data?.code),
+          Unit: Number(data?.unit),
           "Register Date": data?.tagged_at
             ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
             : "",

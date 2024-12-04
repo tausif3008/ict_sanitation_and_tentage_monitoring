@@ -24,8 +24,32 @@ const ExportToExcel = ({
     }));
     worksheet.columns = columns;
 
+    worksheet.getRow(1).eachCell((cell) => {
+      cell.fill = {
+        type: "pattern",
+        pattern: "solid",
+        // fgColor: { argb: "FB9200" }, // Yellow color
+        fgColor: { argb: "FBB900" }, // Yellow color
+      };
+      cell.font = { bold: true }; // Make header bold
+      cell.alignment = { horizontal: "center" }; // Center-align header text
+    });
+
     // Add rows from the excelData
-    excelData?.forEach((data) => worksheet.addRow(data));
+    excelData?.forEach((data) => {
+      const row = worksheet.addRow(data);
+
+      // For each cell in the row, check if it's a number and align accordingly
+      row.eachCell((cell) => {
+        if (typeof cell.value === "number") {
+          // Align numbers to the center
+          cell.alignment = { horizontal: "center" };
+        } else {
+          // Align non-numeric values to the left
+          cell.alignment = { horizontal: "left" };
+        }
+      });
+    });
 
     // Add a row with the total count (on the same row as dynamic fields)
     const totalCountRow = worksheet.addRow({});

@@ -120,8 +120,8 @@ const Monitoring = () => {
         return {
           sr: index + 1,
           "Asset Type Name": data?.asset_type_name,
-          Code: data?.asset_code,
-          Unit: data?.unit_no,
+          Code: Number(data?.asset_code),
+          Unit: Number(data?.unit_no),
           "Monitoring Agent Name": data?.agent_name,
           "Vendor Name": data?.vendor_name,
           Sector: data?.sector_name,

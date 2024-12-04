@@ -161,10 +161,10 @@ const VendorReports = () => {
           // pin: data?.pin,
           // company: data?.company,
           // language: data?.language,
-          total: data?.total,
-          registered: data?.registered,
-          clean: data?.clean,
-          unclean: data?.unclean,
+          Total: Number(data?.total),
+          Registered: Number(data?.registered),
+          Clean: Number(data?.clean),
+          Unclean: Number(data?.unclean),
         };
       });
       setExcelData(myexcelData);

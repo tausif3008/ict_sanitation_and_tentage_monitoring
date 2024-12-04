@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -31,7 +31,18 @@ const SectorWiseReport = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorReports, loading } = SectorReportSelectors(); // sector reports
-  const sectorData = SectorReports?.data?.sectors || [];
+
+  const sectorData = useMemo(() => {
+    return SectorReports?.data?.sectors?.map((item) => ({
+      ...item,
+      total: Number(item?.total),
+      registered: Number(item?.registered),
+      clean: Number(item?.clean),
+      unclean: Number(item?.unclean),
+    }));
+  }, [SectorReports]);
+
+  // const sectorData = SectorReports?.data?.sectors || [];
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
@@ -126,10 +137,10 @@ const SectorWiseReport = () => {
   // pdf data
   const pdfData = sectorData?.map((sector) => [
     sector?.name,
-    sector?.total,
-    sector?.registered,
-    sector?.clean,
-    sector?.unclean,
+    Number(sector?.total),
+    Number(sector?.registered),
+    Number(sector?.clean),
+    Number(sector?.unclean),
   ]);
 
   return (
