@@ -150,6 +150,11 @@ const CircleWiseReport = () => {
           <ExportToExcel
             excelData={CircleData || []}
             fileName={"Circle-Wise-Report"}
+            dynamicFields={{
+              "Register Unit": totalRegistered,
+              Clean: totalClean,
+              Unclean: totalUnclean,
+            }}
           />
         </div>
       </div>

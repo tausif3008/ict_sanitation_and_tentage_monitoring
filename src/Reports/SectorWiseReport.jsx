@@ -160,6 +160,7 @@ const SectorWiseReport = () => {
                 ? `Sector-Wise-${filesName}-Report`
                 : `Sector-Wise-Report`
             }
+            dynamicFields={{ "Total Quantity": totalQuantity }}
           />
         </div>
       </div>

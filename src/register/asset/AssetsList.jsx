@@ -326,6 +326,7 @@ const AssetsList = () => {
           <ExportToExcel
             excelData={excelData || []}
             fileName={"Toilets & Tentage List"}
+            dynamicFields={{ "Register Unit": totalUnit }}
           />
         </div>
       </div>

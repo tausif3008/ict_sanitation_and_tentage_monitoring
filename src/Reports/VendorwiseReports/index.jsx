@@ -251,6 +251,12 @@ const VendorReports = () => {
                 ? `Vendor-Wise-${filesName} Report`
                 : `Vendor-Wise Report`
             }
+            dynamicFields={{
+              Total: total,
+              "Register Unit": totalRegistered,
+              Clean: totalClean,
+              Unclean: totalUnclean,
+            }}
           />
         </div>
       </div>
