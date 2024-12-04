@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DatePicker, Select, message, Tooltip, Button, Form } from "antd";
+import { Select, Tooltip, Button, Form } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
 import { useOutletContext } from "react-router";
@@ -15,14 +15,15 @@ import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
 import QuestionSelector from "../register/questions/questionSelector";
 import { priorityToiletTypes_Id } from "../constant/const";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
+import CustomSelect from "../commonComponents/CustomSelect";
 
 const ToiletDetails = () => {
-  const dateFormat = "YYYY-MM-DD";
-
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
 
+  const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
@@ -91,7 +92,6 @@ const ToiletDetails = () => {
       <div className="text-xl font-bold">
         {dict.sanitation_toilet_details[lang]}
       </div>
-
       <div className="flex justify-start items-center space-x-6 mb-1">
         <div className="flex items-center mb-4 mr-6">
           <div className="flex items-center mr-6">
@@ -107,52 +107,30 @@ const ToiletDetails = () => {
 
       <Form form={form} layout="vertical" onFinish={onFinish}>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
-          <Form.Item label={`${langingPage?.date[lang]}`} name="date">
-            <DatePicker
-              allowClear={false}
-              format={dateFormat}
-              placeholder="Select Date"
-              className="w-full rounded-none"
-            />
-          </Form.Item>
-          <Form.Item label={`${dict?.select_sector[lang]}`} name="sector_id">
-            <Select
-              placeholder={`${dict?.select_sector[lang]}`}
-              allowClear
-              showSearch
-              filterOption={(input, option) => {
-                return option?.children
-                  ?.toLowerCase()
-                  ?.includes(input?.toLowerCase());
-              }}
-              className="rounded-none"
-            >
-              {SectorListDrop?.map((option) => (
-                <Select.Option key={option?.value} value={option?.value}>
-                  {option?.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label={`${dict?.select_vendor[lang]}`} name="vendor_id">
-            <Select
-              placeholder={`${dict?.select_vendor[lang]}`}
-              allowClear
-              showSearch
-              filterOption={(input, option) => {
-                return option?.children
-                  ?.toLowerCase()
-                  ?.includes(input?.toLowerCase());
-              }}
-              className="rounded-none"
-            >
-              {VendorListDrop?.map((option) => (
-                <Select.Option key={option?.value} value={option?.value}>
-                  {option?.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <CustomDatepicker
+            name={"date"}
+            label={`${langingPage?.date[lang]}`}
+            placeholder={`${langingPage?.date[lang]}`}
+            className="w-full"
+            rules={[
+              {
+                required: true,
+                message: "Please select a date!",
+              },
+            ]}
+          />
+          <CustomSelect
+            name={"sector_id"}
+            label={`${dict?.select_sector[lang]}`}
+            placeholder={`${dict?.select_sector[lang]}`}
+            options={SectorListDrop || []}
+          />
+          <CustomSelect
+            name={"vendor_id"}
+            label={`${dict?.select_vendor[lang]}`}
+            placeholder={`${dict?.select_vendor[lang]}`}
+            options={VendorListDrop || []}
+          />
           <Form.Item
             label={`${DICT?.select_toilet[lang]}`}
             name="asset_type_id"
@@ -178,18 +156,12 @@ const ToiletDetails = () => {
               ))}
             </Select>
           </Form.Item>{" "}
-          <Form.Item
-            label={dict.select_question[lang]}
+          <CustomSelect
             name="question_id" // This is the field name
-          >
-            <Select placeholder={dict.select_question[lang]}>
-              {QuestionDrop?.map((questions) => (
-                <Select.Option key={questions?.value} value={questions?.value}>
-                  {questions?.label}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
+            label={dict.select_question[lang]}
+            placeholder={dict.select_question[lang]}
+            options={QuestionDrop || []}
+          />
           <div className="flex justify-start my-4 space-x-2">
             <div>
               <Button

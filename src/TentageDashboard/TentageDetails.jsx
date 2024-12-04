@@ -97,16 +97,16 @@ const TentageDetails = () => {
             ]}
           />
           <CustomSelect
-            name={"vendor_id"}
-            label={`${dict?.select_vendor[lang]}`}
-            placeholder={`${dict?.select_vendor[lang]}`}
-            options={VendorListDrop || []}
-          />
-          <CustomSelect
             name={"sector_id"}
             label={`${dict?.select_sector[lang]}`}
             placeholder={`${dict?.select_sector[lang]}`}
             options={SectorListDrop || []}
+          />
+          <CustomSelect
+            name={"vendor_id"}
+            label={`${dict?.select_vendor[lang]}`}
+            placeholder={`${dict?.select_vendor[lang]}`}
+            options={VendorListDrop || []}
           />
           <div className="flex justify-start my-4 space-x-2">
             <div>
@@ -141,7 +141,7 @@ const TentageDetails = () => {
               key={index}
               title={
                 <div>
-                  <strong>{item?.name}</strong>
+                  <strong>{lang === "en" ? item?.name : item?.name_hi}</strong>
                   <div>Total Quantity: {item?.total}</div>
                   <div>Registered Quantity: {item?.registered}</div>
                 </div>
@@ -157,7 +157,7 @@ const TentageDetails = () => {
               >
                 <div className="text-start flex-1">
                   <div className="text-sm text-gray-500 font-bold">
-                    {item?.name}
+                    {lang === "en" ? item?.name : item?.name_hi}
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
