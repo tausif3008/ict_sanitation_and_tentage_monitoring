@@ -32,15 +32,15 @@ const assetsSlice = createSlice({
   },
 });
 
-// get Toilet And Tentage Excel Data
-export const getToiletAndTentageExcelData = (url) => async (dispatch) => {
+// get pdf and excel data
+export const getPdfExcelData = (url) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const res = await axiosInstance.get(`${url}`);
     dispatch(postSuccess(res?.data));
     return res?.data;
   } catch (error) {
-    console.error("In get Toilet And Tentage Excel Data error", error);
+    console.error("In get pdf and excel data error", error);
   } finally {
     dispatch(setLoading(false));
   }

@@ -33,7 +33,7 @@ import CustomInput from "../commonComponents/CustomInput";
 // import ExportToPDF from "../Reports/reportFile";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
-import { getToiletAndTentageExcelData } from "../register/asset/AssetsSlice";
+import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
 
 const Monitoring = () => {
@@ -358,7 +358,6 @@ const Monitoring = () => {
   //     : "",
   // ]);
 
-
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
@@ -368,7 +367,7 @@ const Monitoring = () => {
         url = url + `&vendor_id=${sessionData?.id}`;
       }
       const res = await dispatch(
-        getToiletAndTentageExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
       );
 
       if (!res?.data?.listings) {

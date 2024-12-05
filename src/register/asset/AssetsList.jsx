@@ -20,7 +20,7 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
 import {
-  getToiletAndTentageExcelData,
+  getPdfExcelData,
   setAssetListIsUpdated,
   setUpdateAssetEl,
 } from "./AssetsSlice";
@@ -315,7 +315,7 @@ const AssetsList = () => {
     try {
       const url = URLS.assetList.path + "?page=1&per_page=5000";
       const res = await dispatch(
-        getToiletAndTentageExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
       );
 
       if (!res?.data?.listings) {
