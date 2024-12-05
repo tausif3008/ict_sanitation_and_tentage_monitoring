@@ -11,6 +11,7 @@ import {
   Row,
   Col,
   DatePicker,
+  message,
 } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
@@ -37,10 +38,13 @@ import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
+import { exportToExcel } from "../ExportExcelFuntion";
+import { ExportPdfFunction } from "../ExportPdfFunction";
+import { getPdfExcelData } from "../../register/asset/AssetsSlice";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
-  const [excelData, setExcelData] = useState([]);
+  // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [incidentData, setIncidentData] = useState({
@@ -173,35 +177,42 @@ const IncidentReports = () => {
 
   useEffect(() => {
     if (IncidentReport_data) {
+      const unitCount = IncidentReport_data?.data?.incidences?.reduce(
+        (total, item) => {
+          return total + Number(item?.unit_no);
+        },
+        0
+      );
       setIncidentData((prevDetails) => ({
         ...prevDetails,
         list: IncidentReport_data?.data?.incidences || [],
         pageLength: IncidentReport_data?.data?.paging?.[0]?.length || 0,
         currentPage: IncidentReport_data?.data?.paging?.[0]?.currentpage || 1,
         totalRecords: IncidentReport_data?.data?.paging?.[0]?.totalrecords || 0,
+        totalUnits: unitCount || 0,
       }));
 
-      const myexcelData = IncidentReport_data?.data?.incidences?.map(
-        (data, index) => {
-          return {
-            sr: index + 1,
-            code: data?.code,
-            unit_no: data?.unit_no,
-            question_en: data?.question_en,
-            answer: "No",
-            date: moment(data?.incidence_at).format("DD-MMM-YYYY hh:mm A"),
-            category:
-              data?.asset_main_type_id === "1" ? "Sanitation" : "Tentage",
-            asset_types_name: data?.asset_types_name,
-            vendor_name: data?.vendor_name,
-            sector_name: data?.sector_name,
-            circle_name: data?.circle_name,
-            sanstha_name_hi: data?.sanstha_name_hi,
-            sla: data?.sla,
-          };
-        }
-      );
-      setExcelData(myexcelData);
+      // const myexcelData = IncidentReport_data?.data?.incidences?.map(
+      //   (data, index) => {
+      //     return {
+      //       sr: index + 1,
+      //       code: data?.code,
+      //       unit_no: data?.unit_no,
+      //       question_en: data?.question_en,
+      //       answer: "No",
+      //       date: moment(data?.incidence_at).format("DD-MMM-YYYY hh:mm A"),
+      //       category:
+      //         data?.asset_main_type_id === "1" ? "Sanitation" : "Tentage",
+      //       asset_types_name: data?.asset_types_name,
+      //       vendor_name: data?.vendor_name,
+      //       sector_name: data?.sector_name,
+      //       circle_name: data?.circle_name,
+      //       sanstha_name_hi: data?.sanstha_name_hi,
+      //       sla: data?.sla,
+      //     };
+      //   }
+      // );
+      // setExcelData(myexcelData);
     }
   }, [IncidentReport_data]);
 
@@ -267,15 +278,95 @@ const IncidentReports = () => {
     },
   ];
 
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.incidencesReport.path + "?page=1&per_page=5000";
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+      if (!res?.data?.incidences) {
+        throw new Error("No incidences found in the response data.");
+      }
+      // Calculate total units
+      const unitCount = res?.data?.incidences?.reduce((total, item) => {
+        return total + Number(item?.unit_no);
+      }, 0);
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.incidences?.map((data, index) => {
+          const date = moment(data?.resolved_at).format("DD-MMM-YYYY hh:mm A");
+          return {
+            Sr: index + 1,
+            "Asset Type Name": data?.asset_types_name,
+            Code: Number(data?.code),
+            Unit: Number(data?.unit_no),
+            "GSD Name": data?.agent_name || "GSD",
+            "Vendor Name": data?.vendor_name,
+            "Incidence Date": data?.incidence_at
+              ? moment(data?.incidence_at).format("DD-MMM-YYYY hh:mm A")
+              : "",
+            "Resolved Date": date === "Invalid date" ? "NA" : date,
+            Sector: data?.sector_name,
+            Circle: data?.circle_name,
+            Question: data?.question_en,
+          };
+        });
+
+      // const pdfData =
+      //   !isExcel &&
+      //   res?.data?.listings?.map((data, index) => [
+      //     index + 1,
+      //     data?.asset_type_name,
+      //     data?.asset_code,
+      //     data?.unit_no,
+      //     data?.agent_name ? data?.agent_name : "GSD",
+      //     data?.vendor_name,
+      //     data?.sector_name,
+      //     data?.circle_name,
+      //     data?.created_at
+      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+      //       : "",
+      //   ]);
+
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, "Incident-Report", {
+          "Total Unit": unitCount,
+        });
+
+      // Call the export function
+      // !isExcel &&
+      //   ExportPdfFunction(
+      //     "Toilet & Tentage Monitoring",
+      //     "Incident-Report",
+      //     "pdfHeader",
+      //     pdfData,
+      //     true
+      //   );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
   return (
     <div>
       <CommonDivider label={"Incident-Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          <ExportToExcel
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Incident-Report"}
-          />
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
+            Download Excel
+          </Button>
         </div>
       </div>
       <div>
@@ -438,6 +529,8 @@ const IncidentReports = () => {
         columns={columns || []}
         details={incidentData || []}
         scroll={{ x: 300, y: 400 }}
+        subtotalName={"Total Units"}
+        subtotalCount={incidentData?.totalUnits}
       ></CommonTable>
     </div>
   );
