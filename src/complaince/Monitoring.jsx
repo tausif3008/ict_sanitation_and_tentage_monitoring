@@ -39,6 +39,7 @@ const Monitoring = () => {
     list: [],
     pageLength: 25,
     currentPage: 1,
+    totalUnit: 0,
   });
   const [assetMainType, setAssetMainType] = useState([]); // asset main type
   const [assetTypes, setAssetTypes] = useState([]); // asset type
@@ -107,11 +108,16 @@ const Monitoring = () => {
         };
       });
 
+      const totalUnit = data?.listings?.reduce((total, start) => {
+        return total + Number(start?.unit_no);
+      }, 0);
+
       setDetails(() => {
         return {
           list,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentpage,
+          totalUnit,
           totalRecords: data.paging[0].totalrecords,
         };
       });
@@ -366,6 +372,7 @@ const Monitoring = () => {
           <ExportToExcel
             excelData={excelData || []}
             fileName={"Monitoring Report"}
+            dynamicFields={{ "Total Unit": details?.totalUnit }}
           />
         </div>
       </div>
@@ -513,6 +520,8 @@ const Monitoring = () => {
         uri={"monitoring"}
         details={details}
         loading={loading}
+        subtotalName={"Total Unit"}
+        subtotalCount={details?.totalUnit}
         scroll={{ x: 1000, y: 400 }}
       ></CommonTable>
     </div>

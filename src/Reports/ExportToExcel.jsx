@@ -28,10 +28,9 @@ const ExportToExcel = ({
       cell.fill = {
         type: "pattern",
         pattern: "solid",
-        // fgColor: { argb: "FB9200" }, // Yellow color
         fgColor: { argb: "FBB900" }, // Yellow color
       };
-      cell.font = { bold: true }; // Make header bold
+      cell.font = { bold: true, color: { argb: "000000" } }; // Make header text bold and black
       cell.alignment = { horizontal: "center" }; // Center-align header text
     });
 
@@ -42,10 +41,8 @@ const ExportToExcel = ({
       // For each cell in the row, check if it's a number and align accordingly
       row.eachCell((cell) => {
         if (typeof cell.value === "number") {
-          // Align numbers to the center
           cell.alignment = { horizontal: "center" };
         } else {
-          // Align non-numeric values to the left
           cell.alignment = { horizontal: "left" };
         }
       });
@@ -68,9 +65,9 @@ const ExportToExcel = ({
         key.charAt(0).toUpperCase() + key.slice(1)
       }: ${value}`;
       const cell = totalCountRow.getCell(colIndex);
-      cell.font = { bold: true }; // Make each dynamic field bold
-      cell.alignment = { horizontal: "center" }; // Align text to center
-      colIndex++; // Move to the next column for each dynamic field
+      cell.font = { bold: true };
+      cell.alignment = { horizontal: "center" };
+      colIndex++;
     });
 
     // Apply filter to the first row (header row) for all columns
