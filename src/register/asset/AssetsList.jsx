@@ -8,6 +8,7 @@ import {
   notification,
   Row,
   Col,
+  message,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -18,7 +19,11 @@ import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import { setAssetListIsUpdated, setUpdateAssetEl } from "./AssetsSlice";
+import {
+  getToiletAndTentageExcelData,
+  setAssetListIsUpdated,
+  setUpdateAssetEl,
+} from "./AssetsSlice";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
@@ -27,14 +32,13 @@ import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CircleSelector from "../../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
-import CustomInput from "../../commonComponents/CustomInput";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../AssetType/assetTypeSelectors";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
 import CoordinatesMap from "../../commonComponents/map/map";
-import ExportToExcel from "../../Reports/ExportToExcel";
 import ShowCode from "./showCode";
+import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -47,7 +51,7 @@ const AssetsList = () => {
     currentPage: 1,
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [excelData, setExcelData] = useState([]); // excel data
+  // const [excelData, setExcelData] = useState([]); // excel data
   const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
   const dispatch = useDispatch();
@@ -152,24 +156,24 @@ const AssetsList = () => {
       }, 0);
       setTotalUnit(unitCount);
 
-      const myexcelData = data?.listings?.map((data, index) => {
-        return {
-          sr: index + 1,
-          Category: data?.asset_main_type_name,
-          "Toilets & Tentage Type": data?.asset_type_name,
-          "Vendor Name": data?.vendor_name,
-          "GSD Name": data?.agent_name,
-          Sector: data?.sector_name,
-          Circle: data?.circle_name,
-          "Vendor Item Code": data?.vendor_asset_code,
-          Code: Number(data?.code),
-          Unit: Number(data?.unit),
-          "Register Date": data?.tagged_at
-            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
-            : "",
-        };
-      });
-      setExcelData(myexcelData);
+      // const myexcelData = data?.listings?.map((data, index) => {
+      //   return {
+      //     sr: index + 1,
+      //     Category: data?.asset_main_type_name,
+      //     "Toilets & Tentage Type": data?.asset_type_name,
+      //     "Vendor Name": data?.vendor_name,
+      //     "GSD Name": data?.agent_name,
+      //     Sector: data?.sector_name,
+      //     Circle: data?.circle_name,
+      //     "Vendor Item Code": data?.vendor_asset_code,
+      //     Code: Number(data?.code),
+      //     Unit: Number(data?.unit),
+      //     "Register Date": data?.tagged_at
+      //       ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+      //       : "",
+      //   };
+      // });
+      // setExcelData(myexcelData);
     }
   };
 
@@ -306,28 +310,64 @@ const AssetsList = () => {
     },
   ];
 
+  // excel file
+  const exportToExcels = async () => {
+    try {
+      const url = URLS.assetList.path + "?page=1&per_page=5000";
+      const res = await dispatch(
+        getToiletAndTentageExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.listings) {
+        throw new Error("No listings found in the response data.");
+      }
+
+      // Calculate total units
+      const unitCount = res?.data?.listings?.reduce((total, listing) => {
+        return total + (listing?.units?.length || 0);
+      }, 0);
+
+      // Map data for Excel
+      const myexcelData = res?.data?.listings?.map((data, index) => {
+        return {
+          sr: index + 1,
+          Category: data?.asset_main_type_name,
+          "Toilets & Tentage Type": data?.asset_type_name,
+          "Vendor Name": data?.vendor_name,
+          "GSD Name": data?.agent_name,
+          Sector: data?.sector_name,
+          Circle: data?.circle_name,
+          "Vendor Item Code": data?.vendor_asset_code,
+          Code: Number(data?.code),
+          Unit: Number(data?.unit),
+          "Register Date": data?.tagged_at
+            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        };
+      });
+
+      // Call the export function
+      exportToExcel(myexcelData, "Toilets & Tentage List", {
+        "Register Unit": unitCount,
+      });
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
   return (
     <div className="">
-      <CommonDivider
-        label={"Toilets & Tentage List"}
-        // compo={
-        //   <Button
-        //     className="bg-orange-300 mb-1"
-        //     onClick={() => {
-        //       navigate("/asset-registration");
-        //     }}
-        //   >
-        //     Add Asset
-        //   </Button>
-        // }
-      ></CommonDivider>
+      <CommonDivider label={"Toilets & Tentage List"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          <ExportToExcel
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Toilets & Tentage List"}
             dynamicFields={{ "Register Unit": totalUnit }}
-          />
+          /> */}
+          <Button type="primary" onClick={exportToExcels}>
+            Download Excel
+          </Button>
         </div>
       </div>
 
