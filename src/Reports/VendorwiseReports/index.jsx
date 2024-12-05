@@ -215,10 +215,10 @@ const VendorReports = () => {
       excelData?.map((opt) => [
         opt?.sr,
         opt?.name,
-        opt?.total,
-        opt?.registered,
-        opt?.clean,
-        opt?.unclean,
+        opt?.Total,
+        opt?.Registered,
+        opt?.Clean,
+        opt?.Unclean,
       ]) || []
     );
   }, [excelData]);

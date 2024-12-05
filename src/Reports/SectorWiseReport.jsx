@@ -42,7 +42,6 @@ const SectorWiseReport = () => {
     }));
   }, [SectorReports]);
 
-  // const sectorData = SectorReports?.data?.sectors || [];
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
@@ -143,6 +142,19 @@ const SectorWiseReport = () => {
     Number(sector?.unclean),
   ]);
 
+  // excel data
+  const myexcelData = useMemo(() => {
+    return sectorData?.map((data, index) => ({
+      sr: index + 1,
+      Name: data?.name,
+      // "Name In Hindi": data?.name_hi,
+      Quantity: Number(data?.total),
+      Registered: Number(data?.registered),
+      Clean: Number(data?.clean),
+      Unclean: Number(data?.unclean),
+    }));
+  }, [sectorData]);
+
   return (
     <div style={{ padding: "24px" }}>
       <CommonDivider label={"Sector-Wise Report"} />
@@ -165,7 +177,7 @@ const SectorWiseReport = () => {
         </div>
         <div>
           <ExportToExcel
-            excelData={sectorData || []}
+            excelData={myexcelData || []}
             fileName={
               filesName
                 ? `Sector-Wise-${filesName}-Report`

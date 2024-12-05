@@ -146,6 +146,17 @@ const CircleWiseReport = () => {
     );
   }, [CircleData]);
 
+  // excel data
+  const myexcelData = useMemo(() => {
+    return CircleData?.map((data, index) => ({
+      sr: index + 1,
+      Name: data?.name,
+      Registered: Number(data?.registered),
+      Clean: Number(data?.clean),
+      Unclean: Number(data?.unclean),
+    }));
+  }, [CircleData]);
+
   return (
     <div style={{ padding: "24px" }}>
       <CommonDivider label={"Circle-Wise Report"} />
@@ -160,7 +171,7 @@ const CircleWiseReport = () => {
         </div>
         <div>
           <ExportToExcel
-            excelData={CircleData || []}
+            excelData={myexcelData || []}
             fileName={"Circle-Wise-Report"}
             dynamicFields={{
               "Register Unit": totalRegistered,
