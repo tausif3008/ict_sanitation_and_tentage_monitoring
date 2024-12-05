@@ -428,6 +428,28 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      {
+        key: "8",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/gsd-wise-registration-report"
+          >
+            GSD Wise Registration Report
+          </Link>
+        ),
+      },
+      {
+        key: "9",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-wise-registration-report"
+          >
+            Vendor Wise Registration Report
+          </Link>
+        ),
+      },
     ];
   };
 

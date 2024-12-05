@@ -164,6 +164,13 @@ const URLS = {
   // incidences Report
   incidencesReport: { path: "/incidences", version: 5.43 },
 
+  // incidences Report
+  gsdRegistrationReport: { path: "/reporting/agent-tagging", version: 5.43 },
+  vendorRegistrationReport: {
+    path: "/reporting/vendor-tagging",
+    version: 5.43,
+  },
+
   // inspection Report
   inspectionReport: { path: "/reporting/report-format-one", version: 5.43 },
 

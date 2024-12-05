@@ -84,6 +84,8 @@ import axiosInstance from "./Axios/commonAxios";
 import IncidentReports from "./Reports/Incident-reports";
 import ContactUsPage from "./contactus/contactus";
 import InspectionReports from "./Reports/Inspection-reports";
+import GsdRegistrationReport from "./Reports/GSDWiseRegistrationReport";
+import VendorRegistrationReport from "./Reports/VendorWiseRegistrationReport";
 
 function App() {
   const navigate = useNavigate();
@@ -330,6 +332,15 @@ function App() {
             path="vendor-wise-report/:page?/:per_page?"
             element={<VendorReports></VendorReports>}
           ></Route>
+          <Route
+            path="gsd-wise-registration-report/:page?/:per_page?"
+            element={<GsdRegistrationReport></GsdRegistrationReport>}
+          ></Route>
+          <Route
+            path="vendor-wise-registration-report"
+            element={<VendorRegistrationReport></VendorRegistrationReport>}
+          ></Route>
+
           <Route
             path="shift/:page?/:per_page?"
             element={<Shift></Shift>}

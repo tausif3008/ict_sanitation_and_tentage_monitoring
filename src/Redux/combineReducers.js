@@ -23,6 +23,7 @@ import routeSlice from "../register/route/routeSlice";
 import SectorReportSlice from "../Reports/SectorSlice/sectorSlice";
 import tentageSlice from "../TentageDashboard/Slice/tentageSlice";
 import wasteDashboardSlice from "../WasteDashboard/Slice/wasteDashboardSlice";
+import GsdWiseRegistrationReport from "../Reports/GSDWiseRegistrationReport/Slice/gsdWiseRegistrationReport";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -51,6 +52,7 @@ const rootReducer = combineReducers({
   IncidentReportSlice: IncidentReportSlice,
   InspectionReportSlice: InspectionReportSlice,
   SectorReportSlice: SectorReportSlice,
+  GsdWiseRegistrationReport: GsdWiseRegistrationReport,
 
   // route
   routeSlice: routeSlice,
