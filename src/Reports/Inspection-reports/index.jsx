@@ -148,13 +148,15 @@ const InspectionReports = () => {
       const myexcelData = InspectionReport_data?.data?.listings?.map(
         (data, index) => {
           return {
-            sr: index + 1,
-            unit_no: data?.unit_no,
+            Sr: index + 1,
+            Code: Number(data?.asset_code),
+            Unit: Number(data?.unit_no),
+            "Asset Type Name": data?.asset_type_name,
             Week: `${columnDate?.start}  - ${columnDate?.end}`,
-            "Total Inspections": data?.inspections,
-            "Positive Response": data?.count_of_1,
-            "Negative Response": data?.count_of_0,
-            Escalations: data?.escalations,
+            "Total Inspections": Number(data?.inspections),
+            "Positive Response": Number(data?.count_of_1),
+            "Negative Response": Number(data?.count_of_0),
+            Escalations: Number(data?.escalations),
           };
         }
       );
