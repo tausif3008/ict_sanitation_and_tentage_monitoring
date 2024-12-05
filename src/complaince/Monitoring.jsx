@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { Collapse, Form, Button, notification, Row, Col } from "antd";
+import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 import {
@@ -11,7 +11,7 @@ import {
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
 
-import { Image } from "antd";
+// import { Image } from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
@@ -29,9 +29,12 @@ import CircleSelector from "../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
-import ExportToExcel from "../Reports/ExportToExcel";
-import ExportToPDF from "../Reports/reportFile";
+// import ExportToExcel from "../Reports/ExportToExcel";
+// import ExportToPDF from "../Reports/reportFile";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
+import { exportToExcel } from "../Reports/ExportExcelFuntion";
+import { getToiletAndTentageExcelData } from "../register/asset/AssetsSlice";
+import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -45,7 +48,7 @@ const Monitoring = () => {
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
-  const [excelData, setExcelData] = useState([]); // excel data
+  // const [excelData, setExcelData] = useState([]); // excel data
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
@@ -122,22 +125,22 @@ const Monitoring = () => {
         };
       });
 
-      const myexcelData = data?.listings?.map((data, index) => {
-        return {
-          sr: index + 1,
-          "Asset Type Name": data?.asset_type_name,
-          Code: Number(data?.asset_code),
-          Unit: Number(data?.unit_no),
-          "Monitoring Agent Name": data?.agent_name,
-          "Vendor Name": data?.vendor_name,
-          Sector: data?.sector_name,
-          Circle: data?.circle_name,
-          Date: data?.created_at
-            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-            : "",
-        };
-      });
-      setExcelData(myexcelData);
+      // const myexcelData = data?.listings?.map((data, index) => {
+      //   return {
+      //     sr: index + 1,
+      //     "Asset Type Name": data?.asset_type_name,
+      //     Code: Number(data?.asset_code),
+      //     Unit: Number(data?.unit_no),
+      //     "Monitoring Agent Name": data?.agent_name,
+      //     "Vendor Name": data?.vendor_name,
+      //     Sector: data?.sector_name,
+      //     Circle: data?.circle_name,
+      //     Date: data?.created_at
+      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+      //       : "",
+      //   };
+      // });
+      // setExcelData(myexcelData);
     }
   };
 
@@ -341,39 +344,132 @@ const Monitoring = () => {
   ];
 
   // pdf data
-  const pdfData = details?.list?.map((data, index) => [
-    index + 1,
-    data?.asset_type_name,
-    data?.asset_code,
-    data?.unit_no,
-    data?.agent_name ? data?.agent_name : "GSD",
-    data?.vendor_name,
-    data?.sector_name,
-    data?.circle_name,
-    data?.created_at
-      ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-      : "",
-  ]);
+  // const pdfData = details?.list?.map((data, index) => [
+  //   index + 1,
+  //   data?.asset_type_name,
+  //   data?.asset_code,
+  //   data?.unit_no,
+  //   data?.agent_name ? data?.agent_name : "GSD",
+  //   data?.vendor_name,
+  //   data?.sector_name,
+  //   data?.circle_name,
+  //   data?.created_at
+  //     ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+  //     : "",
+  // ]);
+
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.monitoring.path + "?page=1&per_page=5000";
+
+      if (userRoleId === "8") {
+        url = url + `&vendor_id=${sessionData?.id}`;
+      }
+      const res = await dispatch(
+        getToiletAndTentageExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.listings) {
+        throw new Error("No listings found in the response data.");
+      }
+
+      // Calculate total units
+      const unitCount = res?.data?.listings?.reduce((total, item) => {
+        return total + Number(item?.unit_no);
+      }, 0);
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.listings?.map((data, index) => {
+          return {
+            sr: index + 1,
+            "Asset Type Name": data?.asset_type_name,
+            Code: Number(data?.asset_code),
+            Unit: Number(data?.unit_no),
+            "GSD Name": data?.agent_name || "GSD",
+            "Vendor Name": data?.vendor_name,
+            Sector: data?.sector_name,
+            Circle: data?.circle_name,
+            Date: data?.created_at
+              ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+              : "",
+          };
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.listings?.map((data, index) => [
+          index + 1,
+          data?.asset_type_name,
+          data?.asset_code,
+          data?.unit_no,
+          data?.agent_name ? data?.agent_name : "GSD",
+          data?.vendor_name,
+          data?.sector_name,
+          data?.circle_name,
+          data?.created_at
+            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        ]);
+
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, "Monitoring Report", {
+          "Total Unit": unitCount,
+        });
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          "Toilet & Tentage Monitoring",
+          "Monitoring Report",
+          pdfHeader,
+          pdfData,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
 
   return (
     <div className="">
       <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          <ExportToPDF
+          {/* <ExportToPDF
             titleName={"Toilet & Tentage Monitoring"}
             pdfName={"Monitoring Report"}
             headerData={pdfHeader}
             rows={pdfData}
             landscape={true}
-          />
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(false);
+            }}
+          >
+            Download Pdf
+          </Button>
         </div>
         <div>
-          <ExportToExcel
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Monitoring Report"}
             dynamicFields={{ "Total Unit": details?.totalUnit }}
-          />
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
+            Download Excel
+          </Button>
         </div>
       </div>
       <div>
