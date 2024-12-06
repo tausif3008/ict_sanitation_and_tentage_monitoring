@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Table, Image, Button } from "antd";
+import { Table, Image, Button, message } from "antd";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import UserRegistrationForm from "./UserRegistrationForm";
 import CommonTable from "../../commonComponents/CommonTable";
@@ -11,6 +11,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUpdateUserEl, setUserListIsUpdated } from "./userSlice";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import UserTypeDropDown from "./UserTypeDropDown";
+import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
+import { exportToExcel } from "../../Reports/ExportExcelFuntion";
+import { getPdfExcelData } from "../asset/AssetsSlice";
+import moment from "moment";
 
 const getVal = (val) => {
   if (val === "undefined" || val === null) {
@@ -91,15 +95,9 @@ const columns = [
 ];
 
 const UserList = () => {
-
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.userUpdateEl?.isUpdated
-  );
-
+  const [form, setForm] = useState();
   const [loading, setLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState();
   const [userDetails, setUserDetails] = useState({
     list: [],
     pageLength: 25,
@@ -107,7 +105,12 @@ const UserList = () => {
   });
 
   const params = useParams();
-  const [searchQuery, setSearchQuery] = useState();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const isUpdatedSelector = useSelector(
+    (state) => state.userUpdateEl?.isUpdated
+  );
 
   const getUsers = async () => {
     setLoading(true);
@@ -173,7 +176,73 @@ const UserList = () => {
     dispatch(setUpdateUserEl({ updateElement: null }));
   }, []);
 
-  const [form, setForm] = useState();
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "User Type",
+    "Name",
+    "Phone",
+    "Email",
+    "Address",
+    "City",
+    "State",
+    // "Country",
+  ];
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.users.path + "?page=1&per_page=5000";
+
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.users) {
+        throw new Error("No users found in the response data.");
+      }
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.users?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            "User Type": data?.user_type,
+            Name: data?.name,
+            Phone: Number(data?.phone),
+            Email: data?.email,
+            Address: data?.address,
+            City: data?.city_name,
+            State: data?.state_name,
+            Country: data?.country_name,
+          };
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.users?.map((data, index) => [
+          index + 1,
+          data?.user_type,
+          data?.name,
+          data?.phone,
+          data?.email,
+          data?.address,
+          data?.city_name,
+          data?.state_name,
+          // data?.country_name,
+        ]);
+
+      // Call the export function
+      isExcel && exportToExcel(myexcelData, "User List");
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction("User List", "User List", pdfHeader, pdfData, true);
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
 
   return (
     <div className="">
@@ -188,6 +257,28 @@ const UserList = () => {
           </Button>
         }
       ></CommonDivider>
+      <div className="flex justify-end gap-2 font-semibold">
+        <div>
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(false);
+            }}
+          >
+            Download Pdf
+          </Button>
+        </div>
+        <div>
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
+            Download Excel
+          </Button>
+        </div>
+      </div>
       <CommonSearchForm
         setForm={setForm}
         setSearchQuery={setSearchQuery}
