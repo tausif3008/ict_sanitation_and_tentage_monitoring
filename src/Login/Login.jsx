@@ -170,10 +170,16 @@ const Login = () => {
                           required: true,
                           message: "Please enter your mobile number!",
                         },
+                        {
+                          pattern: /^[0-9]{10}$/,
+                          message:
+                            "Please enter a valid 10-digit mobile number",
+                        },
                       ]}
                       className="my-8"
                     >
                       <Input
+                        maxLength={10}
                         autoComplete="off"
                         prefix={<UserOutlined />}
                         placeholder="Mobile Number"

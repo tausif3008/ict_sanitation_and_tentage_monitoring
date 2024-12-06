@@ -172,7 +172,7 @@ const VendorReports = () => {
       key: "name",
     },
     {
-      title: "Total",
+      title: "Total Quantity",
       dataIndex: "total",
       key: "total",
     },
