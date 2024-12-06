@@ -18,7 +18,7 @@ export const exportToExcel = async (
   const worksheet = workbook.addWorksheet("Sheet1");
 
   // Define columns based on the first row of data
-  const columns = Object.keys(excelData[0] || {}).map((key) => ({
+  const columns = Object.keys(excelData?.[0] || {}).map((key) => ({
     header: key,
     key,
   }));

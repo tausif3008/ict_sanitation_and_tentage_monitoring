@@ -39,6 +39,7 @@ import { generateSearchQuery } from "../../urils/getSearchQuery";
 import CoordinatesMap from "../../commonComponents/map/map";
 import ShowCode from "./showCode";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
+import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -310,8 +311,23 @@ const AssetsList = () => {
     },
   ];
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Category",
+    "Toilets & Tentage Type",
+    "Vendor Name",
+    "GSD Name",
+    "Sector",
+    "Circle",
+    "Vendor Item Code",
+    "Code",
+    "Unit",
+    "Register Date",
+  ];
+
   // excel file
-  const exportToExcels = async () => {
+  const exportToFile = async (isExcel) => {
     try {
       const url = URLS.assetList.path + "?page=1&per_page=5000";
       const res = await dispatch(
@@ -328,28 +344,59 @@ const AssetsList = () => {
       }, 0);
 
       // Map data for Excel
-      const myexcelData = res?.data?.listings?.map((data, index) => {
-        return {
-          sr: index + 1,
-          Category: data?.asset_main_type_name,
-          "Toilets & Tentage Type": data?.asset_type_name,
-          "Vendor Name": data?.vendor_name,
-          "GSD Name": data?.agent_name,
-          Sector: data?.sector_name,
-          Circle: data?.circle_name,
-          "Vendor Item Code": data?.vendor_asset_code,
-          Code: Number(data?.code),
-          Unit: Number(data?.unit),
-          "Register Date": data?.tagged_at
-            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
-            : "",
-        };
-      });
+      const myexcelData =
+        isExcel &&
+        res?.data?.listings?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            Category: data?.asset_main_type_name,
+            "Toilets & Tentage Type": data?.asset_type_name,
+            "Vendor Name": data?.vendor_name,
+            "GSD Name": data?.agent_name,
+            Sector: data?.sector_name,
+            Circle: data?.circle_name,
+            "Vendor Item Code": data?.vendor_asset_code,
+            Code: Number(data?.code),
+            Unit: Number(data?.unit),
+            "Register Date": data?.tagged_at
+              ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+              : "",
+          };
+        });
 
       // Call the export function
-      exportToExcel(myexcelData, "Toilets & Tentage List", {
-        "Register Unit": unitCount,
-      });
+      isExcel &&
+        exportToExcel(myexcelData, "Toilets & Tentage List", {
+          "Register Unit": unitCount,
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.listings?.map((data, index) => [
+          index + 1,
+          data?.asset_main_type_name,
+          data?.asset_type_name,
+          data?.vendor_name,
+          data?.agent_name,
+          data?.sector_name,
+          data?.circle_name,
+          data?.vendor_asset_code,
+          Number(data?.code),
+          Number(data?.unit),
+          data?.tagged_at
+            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        ]);
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          "Toilets & Tentage List",
+          "Toilets & Tentage List",
+          pdfHeader,
+          pdfData,
+          true
+        );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
     }
@@ -360,12 +407,27 @@ const AssetsList = () => {
       <CommonDivider label={"Toilets & Tentage List"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(false);
+            }}
+          >
+            Download Pdf
+          </Button>
+        </div>
+        <div>
           {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Toilets & Tentage List"}
             dynamicFields={{ "Register Unit": totalUnit }}
           /> */}
-          <Button type="primary" onClick={exportToExcels}>
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
             Download Excel
           </Button>
         </div>
