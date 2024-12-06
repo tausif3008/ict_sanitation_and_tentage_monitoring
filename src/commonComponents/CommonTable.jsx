@@ -11,6 +11,7 @@ const CommonTable = ({
   totalName = "Total",
   subtotalName = undefined,
   subtotalCount = 0,
+  tableSubheading = [],
   ...paginationRest
 }) => {
   const navigate = useNavigate();
@@ -23,6 +24,8 @@ const CommonTable = ({
     let path = "/" + uri + "/page=" + pageNumber + "&per_page=" + page;
     navigate(path);
   };
+
+  const tableSubheadingEntries = Object.entries(tableSubheading);
 
   return (
     <div>
@@ -45,6 +48,12 @@ const CommonTable = ({
               {subtotalName} : {subtotalCount}
             </div>
           )}
+          {tableSubheadingEntries?.length > 0 &&
+            tableSubheadingEntries?.map(([key, value]) => (
+              <div key={key}>
+                {key} : {value}
+              </div>
+            ))}
 
           <Pagination
             align="end"

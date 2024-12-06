@@ -273,14 +273,11 @@ const CircleWiseReport = () => {
         pagination={{ pageSize: 10 }}
         bordered
         footer={() => (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              <strong>Total Circles: {CircleData?.length}</strong> |{" "}
-              <strong>Registered: {totalRegistered}</strong> |{" "}
-              <strong>Clean: {totalClean}</strong> |{" "}
-              <strong>Unclean: {totalUnclean}</strong>
-            </span>
-            <span></span> {/* Empty span to maintain structure */}
+          <div className="flex justify-between">
+            <strong>Total Circles: {CircleData?.length}</strong>
+            <strong>Registered: {totalRegistered}</strong>
+            <strong>Clean: {totalClean}</strong>
+            <strong>Unclean: {totalUnclean}</strong>
           </div>
         )}
       />

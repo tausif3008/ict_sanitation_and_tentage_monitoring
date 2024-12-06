@@ -24,7 +24,12 @@ import { getValueLabel } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const SectorWiseReport = () => {
-  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState({
+    totalQnty: 0,
+    registered: 0,
+    clean: 0,
+    unclean: 0,
+  });
   const [filesName, setFilesName] = useState(null); // files Name
 
   const dateFormat = "YYYY-MM-DD";
@@ -97,7 +102,24 @@ const SectorWiseReport = () => {
         (acc, sector) => acc + Number(sector?.total),
         0
       );
-      setTotalQuantity(totalQty);
+      const totalRegister = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.registered),
+        0
+      );
+      const totalClean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.clean),
+        0
+      );
+      const totalUnclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.unclean),
+        0
+      );
+      setTotalQuantity({
+        totalQnty: totalQty,
+        registered: totalRegister,
+        clean: totalClean,
+        unclean: totalUnclean,
+      });
     }
   }, [SectorReports]);
 
@@ -145,7 +167,7 @@ const SectorWiseReport = () => {
   // excel data
   const myexcelData = useMemo(() => {
     return sectorData?.map((data, index) => ({
-      sr: index + 1,
+      Sr: index + 1,
       Name: data?.name,
       // "Name In Hindi": data?.name_hi,
       Quantity: Number(data?.total),
@@ -183,7 +205,12 @@ const SectorWiseReport = () => {
                 ? `Sector-Wise-${filesName}-Report`
                 : `Sector-Wise-Report`
             }
-            dynamicFields={{ "Total Quantity": totalQuantity }}
+            dynamicFields={{
+              "Total Quantity": totalQuantity?.totalQnty,
+              "Total Register": totalQuantity?.registered,
+              "Total Clean": totalQuantity?.clean,
+              "Total Unclean": totalQuantity?.unclean,
+            }}
           />
         </div>
       </div>
@@ -279,12 +306,12 @@ const SectorWiseReport = () => {
         pagination={{ pageSize: 30 }}
         bordered
         footer={() => (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              <strong>Total Sectors: {sectorData?.length}</strong> |{" "}
-              <strong>Total Quantity: {totalQuantity}</strong>
-            </span>
-            <span></span> {/* Empty span to maintain structure */}
+          <div className="flex justify-between">
+            <strong>Total Sectors: {sectorData?.length}</strong>
+            <strong>Total Quantity: {totalQuantity?.totalQnty}</strong>
+            <strong>Total Register: {totalQuantity?.registered}</strong>
+            <strong>Total Clean: {totalQuantity?.clean}</strong>
+            <strong>Total Unclean: {totalQuantity?.unclean}</strong>
           </div>
         )}
       />

@@ -153,14 +153,8 @@ const VendorReports = () => {
 
       const myexcelData = vendorReports?.data?.vendors?.map((data, index) => {
         return {
-          sr: index + 1,
-          name: data?.name,
-          // email: data?.email,
-          // phone: data?.phone,
-          // address: data?.address,
-          // pin: data?.pin,
-          // company: data?.company,
-          // language: data?.language,
+          Sr: index + 1,
+          Name: data?.name,
           Total: Number(data?.total),
           Registered: Number(data?.registered),
           Clean: Number(data?.clean),
@@ -354,13 +348,11 @@ const VendorReports = () => {
         bordered
         footer={() => (
           <div className="flex justify-between">
-            <span>
-              <strong>Total Vendors: {vendorsData?.length}</strong> |{" "}
-              <strong>Total : {total}</strong> |{" "}
-              <strong>Total Registered: {totalRegistered}</strong> |{" "}
-              <strong>Total Clean : {totalClean}</strong> |{" "}
-              <strong>Total Unclean: {totalUnclean}</strong> |{" "}
-            </span>
+            <strong>Total Vendors: {vendorsData?.length}</strong>
+            <strong>Total : {total}</strong>
+            <strong>Total Registered: {totalRegistered}</strong>
+            <strong>Total Clean : {totalClean}</strong>
+            <strong>Total Unclean: {totalUnclean}</strong>
           </div>
         )}
       />

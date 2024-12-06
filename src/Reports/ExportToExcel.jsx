@@ -3,6 +3,13 @@ import { Button, message } from "antd";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
+// dynamicFields={{
+//   Total: total,
+//   "Register Unit": totalRegistered,
+//   Clean: totalClean,
+//   Unclean: totalUnclean,
+// }}
+
 const ExportToExcel = ({
   excelData = [],
   fileName = "excel_file",

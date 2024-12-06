@@ -38,6 +38,12 @@ const InspectionReports = () => {
     list: [],
     pageLength: 25,
     currentPage: 1,
+    totalRecords: 0,
+    totalInspections: 0, // Add default values for all required properties
+    PositiveResponse: 0,
+    NegativeResponse: 0,
+    Escalations: 0,
+    UnitCount: 0,
   });
   const { InspectionReport_data, loading } = InspectionReportSelector(); // inspectation report data
 
@@ -136,6 +142,36 @@ const InspectionReports = () => {
 
   useEffect(() => {
     if (InspectionReport_data) {
+      const totalInspections = InspectionReport_data?.data?.listings?.reduce(
+        (total, start) => {
+          return total + Number(start?.inspections);
+        },
+        0
+      );
+      const PositiveResponse = InspectionReport_data?.data?.listings?.reduce(
+        (total, start) => {
+          return total + Number(start?.count_of_1);
+        },
+        0
+      );
+      const NegativeResponse = InspectionReport_data?.data?.listings?.reduce(
+        (total, start) => {
+          return total + Number(start?.count_of_0);
+        },
+        0
+      );
+      const Escalations = InspectionReport_data?.data?.listings?.reduce(
+        (total, start) => {
+          return total + Number(start?.escalations);
+        },
+        0
+      );
+      const UnitCount = InspectionReport_data?.data?.listings?.reduce(
+        (total, start) => {
+          return total + Number(start?.unit_no);
+        },
+        0
+      );
       setInspectionData((prevDetails) => ({
         ...prevDetails,
         list: InspectionReport_data?.data?.listings || [],
@@ -143,6 +179,11 @@ const InspectionReports = () => {
         currentPage: InspectionReport_data?.data?.paging?.[0]?.currentpage || 1,
         totalRecords:
           InspectionReport_data?.data?.paging?.[0]?.totalrecords || 0,
+        totalInspections,
+        PositiveResponse,
+        NegativeResponse,
+        Escalations,
+        UnitCount,
       }));
 
       const myexcelData = InspectionReport_data?.data?.listings?.map(
@@ -218,6 +259,13 @@ const InspectionReports = () => {
           <ExportToExcel
             excelData={excelData || []}
             fileName={"Inspection-Report"}
+            dynamicFields={{
+              "Total Unit": inspectionData?.UnitCount,
+              "Total Inspections": inspectionData?.totalInspections,
+              "Positive Response": inspectionData?.PositiveResponse,
+              "Negative Response": inspectionData?.NegativeResponse,
+              Escalations: inspectionData?.Escalations,
+            }}
           />
         </div>
       </div>
@@ -369,6 +417,12 @@ const InspectionReports = () => {
         loading={loading}
         scroll={{ x: 1000, y: 400 }}
         pageSizeOptions={["100"]} // Available page size options
+        tableSubheading={{
+          "Total Inspections": inspectionData?.totalInspections,
+          "Positive Response": inspectionData?.PositiveResponse,
+          "Negative Response": inspectionData?.NegativeResponse,
+          Escalations: inspectionData?.Escalations,
+        }}
       ></CommonTable>
     </div>
   );
