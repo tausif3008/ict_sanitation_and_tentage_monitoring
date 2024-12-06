@@ -217,16 +217,11 @@ const MonitoringEngPdf = ({
       },
     });
 
-    // console.log("doc.y", doc.y);
-    // console.log("remainRow?.length", remainRow?.length);
-
     if (remainRow?.length > 0) {
       newPageHeight += remainRow?.length * 10;
     } else {
       newPageHeight += doc.y;
     }
-    // console.log("newPageHeight KKK", newPageHeight);
-    // console.log("Page height:", pageHeight); // This will print the page height in points
 
     const introduction2 =
       " If non-compliance with Operation & Maintenance found and not resolved within specified TAT then penalty would be imposed as mentioned in RFP.";

@@ -20,7 +20,8 @@ import ViewVendorsSectors from "../register/AssetType/viewVendors";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
-  const [showTable, setShowTable] = useState(false);
+  const [showTable, setShowTable] = useState(false); // total quantity
+  const [showRegisterTable, setShowRegisterTable] = useState(false); // register quantity
   const [showTableList, setTableList] = useState({ list: [] }); // vendor list
 
   const Role = localStorage.getItem("role");
@@ -47,33 +48,65 @@ const ToiletsCount = () => {
     return new Intl.NumberFormat("en-IN").format(number);
   };
 
+  const url = URLS?.assetType?.path + 1;
+
+  // total quantity
   const handleTotal = async () => {
-    const url = URLS?.assetType?.path + 1;
     dispatch(getAssetTypes(url)); // get assset type
     setShowTable(true);
   };
 
-  // close list
+  // register quantity
+  const handleRegister = async () => {
+    dispatch(getAssetTypes(url)); // get assset type
+    setShowRegisterTable(true);
+  };
+
+  // close module
   const handleCancel = () => {
     setShowTable(false);
+    setShowRegisterTable(false);
   };
 
   const allQuantity = showTableList?.list?.reduce((data, data2) => {
     return data + (Number(data2?.total_quantity) || 0);
-  }, 0);
+  }, 0); // total quantity
 
-  const tableColumn = [
+  const RegisteredQuantity = showTableList?.list?.reduce((data, data2) => {
+    return data + (Number(data2?.registered) || 0);
+  }, 0); // register quantity
+
+  const nameColumn = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
       // width: "10%",
     },
+  ];
+
+  // total quantity
+  const tableColumn = [
+    ...nameColumn,
     {
       title: "Total Quantity",
       dataIndex: "total_quantity",
       key: "total_quantity",
       width: "20%",
+    },
+  ];
+
+  // register quantity
+  const registerColumn = [
+    ...nameColumn,
+    {
+      title: "Registered Quantity",
+      dataIndex: "registered",
+      key: "registered",
+      width: "20%",
+      render: (text) => {
+        return text ? text : 0;
+      },
     },
   ];
 
@@ -128,7 +161,10 @@ const ToiletsCount = () => {
             />
           </div>
 
-          <div className="relative p-3 border rounded-md shadow-md bg-orange-50">
+          <div
+            className="relative p-3 border rounded-md shadow-md bg-orange-50"
+            onClick={handleRegister}
+          >
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
@@ -193,6 +229,7 @@ const ToiletsCount = () => {
           </div>
         </div>
 
+        {/* total quantity */}
         <ViewVendorsSectors
           title={"Toilet List"}
           openModal={showTable}
@@ -200,6 +237,16 @@ const ToiletsCount = () => {
           tableData={showTableList?.list || []}
           column={tableColumn || []}
           footer={`Total Quantity : ${allQuantity}`}
+        />
+
+        {/* Register quantity */}
+        <ViewVendorsSectors
+          title={"Register Toilet List"}
+          openModal={showRegisterTable}
+          handleCancel={handleCancel}
+          tableData={showTableList?.list || []}
+          column={registerColumn || []}
+          footer={`Register Quantity : ${RegisteredQuantity}`}
         />
       </div>
     </>

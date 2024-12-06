@@ -148,12 +148,6 @@ const SectorWiseReport = () => {
     return () => {};
   }, []);
 
-  // useEffect(() => {
-  //   if (AssetMainTypeDrop) {
-  //     console.log("AssetMainTypeDrop", AssetMainTypeDrop);
-  //   }
-  // }, [AssetMainTypeDrop]);
-
   const columns = [
     { title: "Sector Name", dataIndex: "name", key: "name" },
     { title: "Total Quantity", dataIndex: "total", key: "total" },
