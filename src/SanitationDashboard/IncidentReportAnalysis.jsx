@@ -5,7 +5,7 @@ import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 const IncidentReportAnalysis = () => {
   const [dict, lang] = useOutletContext();
   const { SanitationDash_data } = SanitationDashSelector(); // sanitation dashboard
-  const performanceData = SanitationDash_data?.data ||[];
+  const performanceData = SanitationDash_data?.data || [];
 
   return (
     <div className="bg-white p-2 rounded-md">

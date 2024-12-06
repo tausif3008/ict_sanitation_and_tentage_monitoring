@@ -18,6 +18,7 @@ const loginFetch = async (data, setCanProceed) => {
       const sessionData = response.data.data.sessionData[0];
       localStorage.setItem("sessionToken", response.data.sessionToken);
       localStorage.setItem("role", sessionData?.user_type); // Role
+      localStorage.setItem("name", sessionData?.name); // Role
       localStorage.setItem("role_id", sessionData?.user_type_id); // User type id
       localStorage.setItem(
         "sessionData",
