@@ -58,14 +58,14 @@ const AssignedRouteList = () => {
   const getUsers = async () => {
     setLoading(true);
 
-    let uri = URLS.assignroutes.path + "/?";
+    let uri = URLS?.assignroutes?.path + "/?";
     if (params.page) {
       uri = uri + params.page;
     } else if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
 
-    const extraHeaders = { "x-api-version": URLS.assignroutes.version };
+    const extraHeaders = { "x-api-version": URLS?.assignroutes?.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {
