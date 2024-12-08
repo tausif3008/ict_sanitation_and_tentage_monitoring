@@ -144,8 +144,8 @@ function App() {
   // getData(URLS.permission.path);
 
   return (
-    <Provider store={store}>
-      <BrowserRouter>
+    <BrowserRouter>
+      <Provider store={store}>
         <Routes>
           <Route
             path="/"
@@ -441,8 +441,8 @@ function App() {
           <Route path="*" element={<AppError></AppError>}></Route>
           <Route path="login" element={<Login></Login>}></Route>
         </Routes>
-      </BrowserRouter>
-    </Provider>
+      </Provider>
+    </BrowserRouter>
   );
 }
 
