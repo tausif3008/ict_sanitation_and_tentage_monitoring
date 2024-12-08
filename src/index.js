@@ -8,24 +8,22 @@ import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <ConfigProvider
-      theme={{
-        components: {
-          Table: {
-            borderColor: "#b5f5ec",
-            headerBg: "orange",
-            cellPaddingBlock: 5,
-            headerColor: "white",
-            rowHoverBg: "#f6ffed",
-            headerBorderRadius: 0,
-          },
+  <ConfigProvider
+    theme={{
+      components: {
+        Table: {
+          borderColor: "#b5f5ec",
+          headerBg: "orange",
+          cellPaddingBlock: 5,
+          headerColor: "white",
+          rowHoverBg: "#f6ffed",
+          headerBorderRadius: 0,
         },
-      }}
-    >
-      <App /> {/* Your main App component */}
-    </ConfigProvider>
-  </BrowserRouter>
+      },
+    }}
+  >
+    <App /> {/* Your main App component */}
+  </ConfigProvider>
 );
 
 // If you want to start measuring performance in your app, pass a function
