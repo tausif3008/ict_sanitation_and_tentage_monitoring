@@ -27,7 +27,7 @@ const SLADashboard = () => {
         <SLAComplianceRate></SLAComplianceRate>
         <SLAResolution></SLAResolution>
       </div>
-      <div className="col-span-4 lg:col-span-2 flex gap-2 flex-col rounded-md">
+      {/* <div className="col-span-4 lg:col-span-2 flex gap-2 flex-col rounded-md">
         <div className="">
           <TeamPerformance></TeamPerformance>
         </div>
@@ -48,8 +48,8 @@ const SLADashboard = () => {
         >
           <Alerts></Alerts>
         </div>
-      </div>
-      <div
+      </div> */}
+      {/* <div
         className="col-span-4 sm:col-span-2 flex lg:hidden w-full flex-wrap "
         style={{ height: "425px" }}
       >
@@ -59,16 +59,14 @@ const SLADashboard = () => {
       <div className="lg:col-span-1 col-span-4 ">
         <TaskSchedule></TaskSchedule>
       </div>
-      <div className="col-span-4">
-        <MapData></MapData>
-      </div>
       <div className=" col-span-4 lg:col-span-3">
         <NotificationLog></NotificationLog>
-      </div>
+      </div> 
 
       <div className="col-span-4 sm:col-span-2 lg:col-span-1">
         <SLASummary></SLASummary>
       </div>
+      */}
     </div>
   );
 };
