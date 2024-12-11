@@ -42,7 +42,7 @@ import IncidentDashboard from "./IncidentDashborad/IncidentDashboard";
 import AppError from "./AppError";
 import DMSDashboard from "./DMSDashboard/DMSDashboard";
 import SLADashboard from "./SLADashboard/SLADashboard";
-import { Provider } from "react-redux";
+import { Provider, useDispatch } from "react-redux";
 import store from "./Redux/store";
 import VendorDetails from "./register/vendor/VendorDetails/VendorDetails";
 import UserRegistrationForm from "./register/user/UserRegistrationForm";
@@ -86,17 +86,19 @@ import ContactUsPage from "./contactus/contactus";
 import InspectionReports from "./Reports/Inspection-reports";
 import GsdRegistrationReport from "./Reports/GSDWiseRegistrationReport";
 import VendorRegistrationReport from "./Reports/VendorWiseRegistrationReport";
+import { revertAll } from "./Redux/action";
 
 function App() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const location = useLocation();
   const loggedIn = localStorage.getItem("sessionToken");
   const RoleId = localStorage.getItem("role_id");
   const token = localStorage.getItem("sessionToken");
+  const link = `/login`;
 
   useEffect(() => {
     if (!token) {
-      const link = `/login`;
       navigate(link, { replace: true });
     }
   }, [token]);
@@ -128,6 +130,14 @@ function App() {
   //   }
   // }, [loggedIn, RoleId, location.pathname, navigate]);
 
+  // login page call
+  const showLoginPage = () => {
+    dispatch(revertAll());
+    localStorage.clear();
+    navigate(link, { replace: true });
+  };
+
+  // pass the token
   axiosInstance.interceptors.request.use(
     (config) => {
       const token = localStorage.getItem("sessionToken");
@@ -141,7 +151,30 @@ function App() {
     }
   );
 
-  // getData(URLS.permission.path);
+  // if invalid token
+  axiosInstance.interceptors.response.use(
+    (response) => {
+      if (
+        response.data.success === false &&
+        response.data.message === "Invalid access token"
+      ) {
+        showLoginPage(); // show login page
+      }
+
+      return response;
+    },
+    (error) => {
+      if (error.response && error.response.data) {
+        if (
+          error.response.data.success === false &&
+          error.response.data.message === "Invalid access token"
+        ) {
+          showLoginPage(); // show login page
+        }
+      }
+      return Promise.reject(error);
+    }
+  );
 
   return (
     // <Provider store={store}>
