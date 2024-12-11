@@ -11,30 +11,30 @@ import {
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
 
-// import { Image } from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
-import { dateOptions, getValueLabel } from "../constant/const";
+import { dateOptions } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
 import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
-import CircleSelector from "../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
-// import ExportToExcel from "../Reports/ExportToExcel";
-// import ExportToPDF from "../Reports/reportFile";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
+// import { Image } from "antd";
+// import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+// import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+// import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
+// import CircleSelector from "../Reports/CircleSlice/circleSelector";
+// import ExportToExcel from "../Reports/ExportToExcel";
+// import ExportToPDF from "../Reports/reportFile";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -51,11 +51,9 @@ const Monitoring = () => {
   // const [excelData, setExcelData] = useState([]); // excel data
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
-  const { SectorListDrop } = VendorSectorSelectors(); // sector
-  const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
-  const ImageUrl = localStorage.getItem("ImageUrl") || "";
+  // const ImageUrl = localStorage.getItem("ImageUrl") || "";
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -159,9 +157,7 @@ const Monitoring = () => {
   useEffect(() => {
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    dispatch(getVendorList()); // vendor list
-    dispatch(getSectorsList()); // all sectors list
-    dispatch(getAllCircleList()); // all circle list
+    userRoleId != "8" && dispatch(getVendorList()); // vendor list
 
     return () => {};
   }, []);
@@ -273,28 +269,19 @@ const Monitoring = () => {
     },
     {
       title: "Vendor Name",
-      dataIndex: "vendor_id",
-      key: "vendor_id",
-      render: (text) => {
-        return getValueLabel(text, VendorListDrop, "Vendor Name");
-      },
+      dataIndex: "vendor_name",
+      key: "vendor_name",
     },
     {
       title: "Sector Name",
-      dataIndex: "sector_id",
-      key: "sector_id",
-      render: (text) => {
-        return getValueLabel(text, SectorListDrop, "sector");
-      },
+      dataIndex: "sector_name",
+      key: "sector_name",
     },
-    {
-      title: "Circle Name",
-      dataIndex: "circle_id",
-      key: "circle_id",
-      render: (text) => {
-        return getValueLabel(text, CircleListDrop, "circle");
-      },
-    },
+    // {
+    //   title: "Circle Name",
+    //   dataIndex: "circle_name",
+    //   key: "circle_name",
+    // },
     {
       title: "Date",
       dataIndex: "created_at",
@@ -361,7 +348,7 @@ const Monitoring = () => {
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
-      const url = URLS.monitoring.path + "?page=1&per_page=5000";
+      let url = URLS.monitoring.path + "?page=1&per_page=5000";
 
       if (userRoleId === "8") {
         url = url + `&vendor_id=${sessionData?.id}`;
