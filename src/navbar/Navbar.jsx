@@ -608,10 +608,10 @@ const Navbar = ({ lang, setLang }) => {
               )}
 
               {/* <Link className="text-black no-underline " to="/dashboard">
-            <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-              Dashboard{" "}
-            </div>
-          </Link> */}
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  Dashboard{" "}
+                </div>
+              </Link> */}
 
               {loggedIn && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
@@ -650,9 +650,9 @@ const Navbar = ({ lang, setLang }) => {
                   items={schedule_items(lang, dict, navigate)}
                   name="Schedule"
                 ></DropDown>
-              </div> */}
+              </div>
 
-              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={complaince_items(lang, dict)}
@@ -679,12 +679,12 @@ const Navbar = ({ lang, setLang }) => {
               </div>
 
               {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-            <DropDown
-            text="black"
-              items={waste_items(lang, dict)}
-              name="Waste Management"
-            ></DropDown>
-          </div> */}
+                <DropDown
+                  text="black"
+                  items={waste_items(lang, dict)}
+                  name="Waste Management"
+                ></DropDown>
+              </div> */}
 
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
@@ -697,25 +697,25 @@ const Navbar = ({ lang, setLang }) => {
               </div>
 
               {/* {!logName ? (
-            <button onClick={() => handleNavigation("/login")}>
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
-                Login
-              </div>
-            </button>
-          ) : (
-            <div>
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  handleNavigation("/login");
-                }}
-              >
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
-                  Logout
+                <button onClick={() => handleNavigation("/login")}>
+                  <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
+                    Login
+                  </div>
+                </button>
+              ) : (
+                <div>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      handleNavigation("/login");
+                    }}
+                  >
+                    <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
+                      Logout
+                    </div>
+                  </button>
                 </div>
-              </button>
-            </div>
-          )} */}
+              )} */}
             </div>
 
             <div className="flex w-11/12 m-auto justify-between xl:hidden">
