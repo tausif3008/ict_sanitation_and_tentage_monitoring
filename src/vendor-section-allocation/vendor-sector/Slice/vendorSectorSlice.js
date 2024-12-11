@@ -71,6 +71,20 @@ export const getUserTypeWiseUserList = (url) => async (dispatch) => {
   }
 };
 
+// delete Supervisor Sector Allocation
+export const deleteSupervisorSectorAllocation = (url) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.delete(`${url}`);
+    // dispatch(postUser(res?.data));
+    return res?.data?.success;
+  } catch (error) {
+    console.error("In delete Supervisor Sector Allocation error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 export const { setLoading, postSuccess, postSector, postUser } =
   vendorSectorSlice.actions;
 export default vendorSectorSlice.reducer;
