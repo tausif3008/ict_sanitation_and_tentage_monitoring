@@ -396,14 +396,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
-        key: "4",
-        label: (
-          <Link className="text-black no-underline" to="/circle-wise-report">
-            Circle Wise Report
-          </Link>
-        ),
-      },
+      // {
+      //   key: "4",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/circle-wise-report">
+      //       Circle Wise Report
+      //     </Link>
+      //   ),
+      // },
       {
         key: "5",
         label: (
@@ -609,7 +609,7 @@ const Navbar = ({ lang, setLang }) => {
 
               {/* <Link className="text-black no-underline " to="/dashboard">
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  Dashboard{" "}
+                  Dashboard
                 </div>
               </Link> */}
 
@@ -843,7 +843,7 @@ const Navbar = ({ lang, setLang }) => {
                   onClick={handleLang}
                   className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
                 >
-                  A / अ{" "}
+                  A / अ
                 </button> */}
 
                 {/* {!logName ? (

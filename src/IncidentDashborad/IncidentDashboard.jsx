@@ -1,13 +1,14 @@
 import React from "react";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
-import AverageCollectionTimeChart from "./AverageCollectionTime";
 import { Select } from "antd";
+import AverageCollectionTimeChart from "./AverageCollectionTime";
 import IncidentsReport from "./IncidentsReport";
 import FacilityDetails from "../dashboardNew/FacilityDetails/FacilityDetails";
 import IncidentTrends from "./IncidentsTrend";
 import DailyFrequencyHeatmap from "./DailyFrequencyHeatMap";
 import AverageTeamPerformance from "./TeamPerformance";
+import HelplineNo from "../SanitationDashboard/helplineNo";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
 
 const IncidentDashboard = () => {
   return (
@@ -52,7 +53,9 @@ const IncidentDashboard = () => {
           <AverageTeamPerformance></AverageTeamPerformance>
         </div>
 
-        <div className="col-span-4 ">
+        <HelplineNo />
+
+        {/* <div className="col-span-4 ">
           <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
             <span className="mr-8 text-xl font-semibold text-orange-400">
               Prayagraj Kumbh Mela{" "}
@@ -68,7 +71,7 @@ const IncidentDashboard = () => {
               </div>
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
     </div>
   );
