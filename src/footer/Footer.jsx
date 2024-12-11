@@ -1,7 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import QRCode from "qrcode.react";
 import {
   EnvironmentOutlined,
+  LinkOutlined,
   MailOutlined,
   PhoneOutlined,
   RightOutlined,
@@ -23,10 +25,10 @@ const Footer = ({ lang = "en" }) => {
                 <RightOutlined /> {dict.police[lang]} : 100
               </span>
               <span>
-                <RightOutlined /> {dict.ambulance[lang]} : 108{" "}
+                <RightOutlined /> {dict.ambulance[lang]} : 108
               </span>
               <span>
-                <RightOutlined /> {dict.helpline[lang]} : 1098
+                <RightOutlined /> {dict.helpline[lang]} : 1920
               </span>
               <span>
                 <RightOutlined /> {dict.fire[lang]} : 101
@@ -34,8 +36,35 @@ const Footer = ({ lang = "en" }) => {
             </div>
           </div>
         </div>
-
         <div className="flex flex-col items-start md:items-center">
+          <div>
+            <div className="text-base font-semibold mb-2 text-orange-400">
+              {dict.getToKnowUs[lang]}
+            </div>
+            <div className="flex flex-col text-sm font-semibold">
+              <span>
+                <LinkOutlined />
+                <Link
+                  to="/about-us"
+                  className="text-blue-500 hover:underline mx-1"
+                >
+                  {dict.aboutUs[lang]}
+                </Link>
+              </span>
+              <span>
+                <LinkOutlined />
+                <Link
+                  to="/terms-and-conditions"
+                  className="text-blue-500 hover:underline mx-1"
+                >
+                  {dict.termsConditions[lang]}
+                </Link>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        {/* <div className="flex flex-col items-start md:items-center">
           <div>
             <div className=" text-base font-semibold mb-2 text-orange-400">
               {dict.web_links[lang]}
@@ -58,7 +87,8 @@ const Footer = ({ lang = "en" }) => {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
+
         <div className="flex text-sm flex-col w-full items-start">
           <div>
             <div className="text-base font-semibold mb-2 text-orange-400">
@@ -68,7 +98,7 @@ const Footer = ({ lang = "en" }) => {
           <div className="w-full font-semibold">
             <div className="flex gap-2">
               <div className="font-semibold">
-                <EnvironmentOutlined className="text-orange-400 text-lg" />{" "}
+                <EnvironmentOutlined className="text-orange-400 text-lg" />
               </div>
               <div className="break-words w-full">
                 {dict.address_footer[lang]}
@@ -77,14 +107,13 @@ const Footer = ({ lang = "en" }) => {
 
             <div className="flex gap-2">
               <div className="font-semibold">
-                <MailOutlined className="text-orange-400 text-lg" />{" "}
+                <MailOutlined className="text-orange-400 text-lg" />
               </div>
               <div className="break-words w-full inline-block">
                 <a
-                  className="text-black no-underline"                 
+                  className="text-black no-underline"
                   href={`mailto:{dict.email_footer[lang]}`}
                 >
-                  {" "}
                   {dict.email_footer[lang]}
                 </a>
               </div>
@@ -95,14 +124,14 @@ const Footer = ({ lang = "en" }) => {
                 <PhoneOutlined
                   className="text-orange-400 
               xt-lg"
-                />{" "}
+                />
               </div>
               <div className="break-words w-full inline-block">
                 <a
                   className="text-black no-underline"
                   href={`tel:${dict.phone_number[lang]}`}
                 >
-                  {dict.phone_number[lang]}{" "}
+                  {dict.phone_number[lang]}
                 </a>
               </div>
             </div>

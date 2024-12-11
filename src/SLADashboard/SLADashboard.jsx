@@ -12,6 +12,7 @@ import TaskSchedule from "./TaskSchedule.jsx";
 import MapData from "./MapData.jsx";
 import NotificationLog from "./NotificationLog.jsx";
 import SLASummary from "./SLASummary1.jsx";
+import HelplineNo from "../SanitationDashboard/helplineNo.jsx";
 
 const SLADashboard = () => {
   return (
@@ -66,7 +67,7 @@ const SLADashboard = () => {
       <div className="col-span-4 sm:col-span-2 lg:col-span-1">
         <SLASummary></SLASummary>
       </div>
-      */}
+      <HelplineNo />
     </div>
   );
 };

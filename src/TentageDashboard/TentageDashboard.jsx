@@ -111,14 +111,15 @@
 
 // export default TentageDashboard;
 import React, { useState } from "react";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
 import { DICT } from "../utils/dictionary";
 import TentageCount from "./TentageCount";
 import TentageDetails from "./TentageDetails";
-import FurnitureCount from "./FurnitureCount";
-import FurnitureDetails from "./FurnitureDetails";
 import MapData from "./MapData";
+import HelplineNo from "../SanitationDashboard/helplineNo";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
+// import FurnitureCount from "./FurnitureCount";
+// import FurnitureDetails from "./FurnitureDetails";
 
 const TentageDashboard = () => {
   const localLang = localStorage.getItem("lang");
@@ -157,7 +158,9 @@ const TentageDashboard = () => {
         <MapData {...props}></MapData>
       </div>
 
-      <div className="col-span-4 ">
+      <HelplineNo />
+
+      {/* <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">
             Prayagraj Kumbh Mela{" "}
@@ -173,7 +176,7 @@ const TentageDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

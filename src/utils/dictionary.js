@@ -130,7 +130,7 @@ export const DICT = {
       <>
         <li className="hover:text-ec">Sector 14 -Near Bridge No. 14</li>
         <li className="hover:text-ec">
-          Sector 17 - Near Police Chowki Central{" "}
+          Sector 17 - Near Police Chowki Central
         </li>
         <li className="hover:text-ec">Sector 17 - Near Police Post Utari</li>
         <li className="hover:text-ec">Sector 18 - Opposite Parmarth Niketan</li>
@@ -264,8 +264,8 @@ export const DICT = {
     hi: "कुंभ मेला अधिकारी त्रिवेणी भवन, प्रयागराज, उत्तर प्रदेश।",
   },
   email_footer: {
-    en: "helpdesk@kumbhlostandfound.in",
-    hi: "helpdesk@kumbhlostandfound.in",
+    en: "support@kumbhtsmonitoring.com",
+    hi: "support@kumbhtsmonitoring.com",
   },
   phone: { en: "Phone", hi: "फ़ोन" },
   phone_number: {
@@ -554,6 +554,18 @@ export const DICT = {
   good: {
     en: "Good",
     hi: "अच्छा",
+  },
+  getToKnowUs: {
+    en: "Get to Know Us",
+    hi: "हमारे बारे में जानें",
+  },
+  aboutUs: {
+    en: "About Us",
+    hi: "हमारे बारे में",
+  },
+  termsConditions: {
+    en: "Terms & Conditions",
+    hi: "नियम एवं शर्तें",
   },
 };
 

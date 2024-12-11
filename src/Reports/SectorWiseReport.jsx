@@ -37,6 +37,10 @@ const SectorWiseReport = () => {
   const dispatch = useDispatch();
   const { SectorReports, loading } = SectorReportSelectors(); // sector reports
 
+  const userRoleId = localStorage.getItem("role_id");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+
   const sectorData = useMemo(() => {
     return SectorReports?.data?.sectors?.map((item) => ({
       ...item,
@@ -71,6 +75,9 @@ const SectorWiseReport = () => {
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+      ...(userRoleId === "8" && {
+        vendor_id: sessionData?.id,
+      }),
     };
     callApi(finalValues);
   };
@@ -132,9 +139,13 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + "1";
     dispatch(getAssetTypes(url)); // get assset type
+
     const finalValues = {
       date: newDate,
       asset_main_type_id: "1",
+      ...(userRoleId === "8" && {
+        vendor_id: sessionData?.id,
+      }),
     };
     callApi(finalValues);
   };
@@ -143,7 +154,7 @@ const SectorWiseReport = () => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    dispatch(getVendorList()); // vendor list
+    userRoleId != "8" && dispatch(getVendorList()); // vendor list
 
     return () => {};
   }, []);
@@ -257,14 +268,16 @@ const SectorWiseReport = () => {
                         options={AssetTypeDrop || []}
                       />
                     </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                      />
-                    </Col>
+                    {userRoleId != "8" && (
+                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"vendor_id"}
+                          label={"Select Vendor"}
+                          placeholder={"Select Vendor"}
+                          options={VendorListDrop || []}
+                        />
+                      </Col>
+                    )}
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
                       <CustomDatepicker
                         name={"date"}

@@ -88,6 +88,8 @@ import InspectionReports from "./Reports/Inspection-reports";
 import GsdRegistrationReport from "./Reports/GSDWiseRegistrationReport";
 import VendorRegistrationReport from "./Reports/VendorWiseRegistrationReport";
 import { revertAll } from "./Redux/action";
+import TermsAndConditions from "./pages/term-and-conditions";
+import AboutUs from "./pages/about-us";
 
 function App() {
   const navigate = useNavigate();
@@ -455,6 +457,13 @@ function App() {
           path="/inspection-report/:page?/:per_page?"
           element={<InspectionReports></InspectionReports>}
         ></Route>
+
+        {/* pages */}
+        <Route
+          path="/terms-and-conditions"
+          element={<TermsAndConditions></TermsAndConditions>}
+        ></Route>
+        <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
       </Route>
       <Route path="*" element={<AppError></AppError>}></Route>
       <Route path="login" element={<Login></Login>}></Route>

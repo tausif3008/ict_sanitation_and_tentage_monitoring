@@ -1,15 +1,16 @@
 import React, { useState } from "react";
-import MapData from "./MapData";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
 import ToiletsCount from "./ToiletsCount";
 import ToiletDetails from "./ToiletDetails";
 import CleanlinessReport from "./CleanlinessReport";
-import FileStorageWrapper from "./FileStorageWrapper";
 import IncidentReportAnalysis from "./IncidentReportAnalysis";
 import VendorPerformance from "./VendorPerformance";
 import MajorIssuesCount from "./MajorIssuesCount";
 import { DICT } from "../utils/dictionary";
+import HelplineNo from "./helplineNo";
+// import FileStorageWrapper from "./FileStorageWrapper";
+// import MapData from "./MapData";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
 
 const SanitationDashboard = () => {
   const localLang = localStorage.getItem("lang");
@@ -43,7 +44,9 @@ const SanitationDashboard = () => {
         <MapData {...props}></MapData>
       </div> */}
 
-      <div className="col-span-4 ">
+      <HelplineNo />
+
+      {/* <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">
             Prayagraj Kumbh Mela{" "}
@@ -59,7 +62,7 @@ const SanitationDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

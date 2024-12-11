@@ -10,14 +10,22 @@ import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 
 import { logoutFetch } from "../Fetch/Axios";
 import {
+  circle_wise_reports,
   DMS_param,
+  gsd_wise_regi_reports,
+  incident_reports,
   incidentDash_param,
+  inspections_reports,
   masterData_param,
+  monitoring_reports,
   sanitationDash_param,
+  sector_wise_reports,
   SLADash_param,
   superAdmin,
   tentageDash_param,
   userAccess_param,
+  vendor_wise_regi_reports,
+  vendor_wise_reports,
   vendorDash_param,
   wasteDash_param,
 } from "../constant/permission";
@@ -377,7 +385,7 @@ const Navbar = ({ lang, setLang }) => {
   // reports
   const reports_items = (lang, dict) => {
     return [
-      {
+      monitoring_reports?.includes(userRoleId) && {
         key: "2",
         label: (
           <Link
@@ -388,7 +396,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      sector_wise_reports?.includes(userRoleId) && {
         key: "3",
         label: (
           <Link className="text-black no-underline" to="/sector-wise-report">
@@ -396,15 +404,15 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
-        key: "4",
-        label: (
-          <Link className="text-black no-underline" to="/circle-wise-report">
-            Circle Wise Report
-          </Link>
-        ),
-      },
-      {
+      // circle_wise_reports?.includes(userRoleId) && {
+      //   key: "4",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/circle-wise-report">
+      //       Circle Wise Report
+      //     </Link>
+      //   ),
+      // },
+      vendor_wise_reports?.includes(userRoleId) && {
         key: "5",
         label: (
           <Link className="text-black no-underline" to="/vendor-wise-report">
@@ -412,7 +420,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      incident_reports?.includes(userRoleId) && {
         key: "6",
         label: (
           <Link className="text-black no-underline" to="/incident-report">
@@ -420,7 +428,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      inspections_reports?.includes(userRoleId) && {
         key: "7",
         label: (
           <Link className="text-black no-underline" to="/inspection-report">
@@ -428,7 +436,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      gsd_wise_regi_reports?.includes(userRoleId) && {
         key: "8",
         label: (
           <Link
@@ -439,7 +447,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      vendor_wise_regi_reports?.includes(userRoleId) && {
         key: "9",
         label: (
           <Link
@@ -609,7 +617,7 @@ const Navbar = ({ lang, setLang }) => {
 
               {/* <Link className="text-black no-underline " to="/dashboard">
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  Dashboard{" "}
+                  Dashboard
                 </div>
               </Link> */}
 
@@ -843,7 +851,7 @@ const Navbar = ({ lang, setLang }) => {
                   onClick={handleLang}
                   className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
                 >
-                  A / अ{" "}
+                  A / अ
                 </button> */}
 
                 {/* {!logName ? (

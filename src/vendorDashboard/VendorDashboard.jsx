@@ -1,12 +1,11 @@
-
 import React, { useState } from "react";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
 import Counts from "./Counts";
 import Details from "./Details";
 import IssueCount from "./IssueCount";
 import { DICT } from "../utils/dictionary";
-
+import HelplineNo from "../SanitationDashboard/helplineNo";
 
 const VendorDashboard = () => {
   const localLang = localStorage.getItem("lang");
@@ -21,16 +20,14 @@ const VendorDashboard = () => {
         <Details {...props}></Details>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
-        <IssueCount {...props}></IssueCount>  
+        <IssueCount {...props}></IssueCount>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         {/* <CleanlinessReport></CleanlinessReport>  */}
       </div>
-     
+
       <div className="col-span-4 shadow-md bg-white rounded-md">
         {/* <FileStorageWrapper></FileStorageWrapper> */}
-
-        
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         {/* <IncidentReportAnalysis></IncidentReportAnalysis> */}
@@ -42,7 +39,9 @@ const VendorDashboard = () => {
         {/* <MapData></MapData> */}
       </div>
 
-      <div className="col-span-4 ">
+      <HelplineNo />
+
+      {/* <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">
             Prayagraj Kumbh Mela{" "}
@@ -58,7 +57,7 @@ const VendorDashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };
