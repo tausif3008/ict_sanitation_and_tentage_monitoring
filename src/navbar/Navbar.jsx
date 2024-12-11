@@ -538,7 +538,7 @@ const Navbar = ({ lang, setLang }) => {
   //   }
   // };
 
-  const location = useLocation();
+  // const location = useLocation();
   const [title, setTitle] = useState("");
 
   // useEffect(() => {
@@ -756,13 +756,36 @@ const Navbar = ({ lang, setLang }) => {
                     </div>
                   </Link>
                 )}
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                  <DropDown
-                    text="black"
-                    items={register_items(lang, dict)}
-                    name={dict.register[lang]}
-                  ></DropDown>
-                </div>
+                {userAccess_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={register_items(lang, dict)}
+                      name={dict.register[lang]}
+                    ></DropDown>
+                  </div>
+                )}
+
+                {masterData_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={master_items(lang, dict)}
+                      // name={dict.register[lang]}
+                      name="Master Data Creation"
+                    ></DropDown>
+                  </div>
+                )}
+
+                {DMS_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={dms_items(lang, dict)}
+                      name={"DMS"}
+                    ></DropDown>
+                  </div>
+                )}
 
                 {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
@@ -797,54 +820,52 @@ const Navbar = ({ lang, setLang }) => {
                 </div>
 
                 {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-            <DropDown
-            text="black"
-              items={waste_items(lang, dict)}
-              name="Waste Management"
-            ></DropDown>
-          </div> */}
+                  <DropDown
+                    text="black"
+                    items={waste_items(lang, dict)}
+                    name="Waste Management"
+                  ></DropDown>
+                </div>
 
-                {/* <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
-              \{" "}
-              <DropDown
-              text="black"
-                items={setting_item(dict, lang)}
-                name={dict.setting[lang]}
-              ></DropDown>
-            </div> */}
-                {/* 
-            <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
-              {dict.help[lang]}
-            </div> */}
+                <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
+                  <DropDown
+                    text="black"
+                    items={setting_item(dict, lang)}
+                    name={dict.setting[lang]}
+                  ></DropDown>
+                </div>
 
-                {/* 
-            <button
-              onClick={handleLang}
-              className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
-            >
-              A / अ{" "}
-            </button> */}
+                <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
+                  {dict.help[lang]}
+                </div> */}
+
+                {/* <button
+                  onClick={handleLang}
+                  className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
+                >
+                  A / अ{" "}
+                </button> */}
 
                 {/* {!logName ? (
-              <button onClick={() => handleNavigation("/login")}>
-                <div className="h-9 flex items-center hover:bg-lime-300 px-2 text-black font-semibold  ">
-                  {dict.login[lang]}
-                </div>
-              </button>
-            ) : (
-              <div>
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    handleNavigation("/login");
-                  }}
-                >
-                  <div className="h-9 flex text-black font-semibold  items-center hover:b2-lime-300 px-3">
-                    {dict.logout[lang]}
+                  <button onClick={() => handleNavigation("/login")}>
+                    <div className="h-9 flex items-center hover:bg-lime-300 px-2 text-black font-semibold  ">
+                      {dict.login[lang]}
+                    </div>
+                  </button>
+                ) : (
+                  <div>
+                    <button
+                      onClick={() => {
+                        localStorage.clear();
+                        handleNavigation("/login");
+                      }}
+                    >
+                      <div className="h-9 flex text-black font-semibold  items-center hover:b2-lime-300 px-3">
+                        {dict.logout[lang]}
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
-            )} */}
+                )} */}
               </div>
             </Drawer>
           </div>

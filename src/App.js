@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import {
-  BrowserRouter,
+  // BrowserRouter,
   Navigate,
   Route,
   Routes,
-  useLocation,
+  // useLocation,
   useNavigate,
 } from "react-router-dom";
 import LandingPage from "./landingPage/LandingPage";
@@ -42,8 +42,9 @@ import IncidentDashboard from "./IncidentDashborad/IncidentDashboard";
 import AppError from "./AppError";
 import DMSDashboard from "./DMSDashboard/DMSDashboard";
 import SLADashboard from "./SLADashboard/SLADashboard";
-import { Provider, useDispatch } from "react-redux";
-import store from "./Redux/store";
+import { useDispatch } from "react-redux";
+// import { Provider, useDispatch } from "react-redux";
+// import store from "./Redux/store";
 import VendorDetails from "./register/vendor/VendorDetails/VendorDetails";
 import UserRegistrationForm from "./register/user/UserRegistrationForm";
 import VendorDetailsForm from "./register/vendor/VendorDetails/VendorDetailsForm";
@@ -91,15 +92,15 @@ import { revertAll } from "./Redux/action";
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const location = useLocation();
+  // const location = useLocation();
   const loggedIn = localStorage.getItem("sessionToken");
-  const RoleId = localStorage.getItem("role_id");
+  // const RoleId = localStorage.getItem("role_id");
   const token = localStorage.getItem("sessionToken");
   const link = `/login`;
 
   useEffect(() => {
     if (!token) {
-      navigate(link, { replace: true });
+      showLoginPage();
     }
   }, [token]);
 
@@ -134,6 +135,7 @@ function App() {
   const showLoginPage = () => {
     dispatch(revertAll());
     localStorage.clear();
+    sessionStorage.clear();
     navigate(link, { replace: true });
   };
 
