@@ -1,8 +1,13 @@
 // api.js
 import axios from "axios";
 
+<<<<<<< HEAD
 // export const basicUrl = "https://13.201.196.2/php-api/index.php";
 export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php";
+=======
+export const basicUrl = "https://13.201.196.2/php-api/index.php";
+// export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php"; // testing
+>>>>>>> 64b1175990ff4b65e399f7f024a6eca6242d1e6d
 
 // headers: {
 //   "Content-Type": "multipart/form-data",

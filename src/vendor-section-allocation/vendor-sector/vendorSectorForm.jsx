@@ -1,13 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Form, Button, Divider, Select } from "antd";
+import { Form, Button, Divider } from "antd";
 import { useLocation, useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import URLS from "../../urils/URLS";
 import { postData } from "../../Fetch/Axios";
 import { getFormData } from "../../urils/getFormData";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import {
   getSectorsList,
   getUserTypeWiseUserList,
@@ -16,6 +14,7 @@ import {
 import VendorSectorSelectors from "./Slice/vendorSectorSelectors";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
+import CustomSelect from "../../commonComponents/CustomSelect";
 
 // assing sector to user type
 const VendorSectorForm = () => {
@@ -29,7 +28,6 @@ const VendorSectorForm = () => {
   const record = location.state?.record;
 
   const [form] = Form.useForm();
-  const { VendorListDrop } = VendorSupervisorSelector();
   const { SectorListDrop, UsersDropTypeWise, SuperwiseListDrop } =
     VendorSectorSelectors(); // sector
   const { UserListDrop } = UserTypeSelector(); // user type list
@@ -72,9 +70,6 @@ const VendorSectorForm = () => {
   const onFinish = async (values) => {
     const finalData = {
       ...values,
-      user_id:
-        values?.user_type_id === "8" ? values?.Supervisor_id : values?.user_id,
-      vendor_id: values?.user_type_id === "8" ? values?.user_id : null,
       ...(key === "UpdateKey" && {
         allocation_sector_id: record?.allocation_sector_id,
       }),
@@ -101,7 +96,6 @@ const VendorSectorForm = () => {
   };
 
   useEffect(() => {
-    dispatch(getVendorList()); // vendor list
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
     dispatch(getSectorsList()); // all sectors list
@@ -120,9 +114,8 @@ const VendorSectorForm = () => {
         dispatch(getVendorWiseSupervisorList(myUrl)); // vendor list
 
       form.setFieldsValue({
-        user_id:
-          record?.user_type_id === "8" ? record?.vendor_id : record?.user_id,
-        Supervisor_id: record?.user_type_id === "8" ? record?.user_id : null,
+        user_id: record?.user_id,
+        vendor_id: record?.vendor_id,
         user_type_id: record?.user_type_id,
         sector_id: record?.sector_id,
       });
@@ -155,110 +148,76 @@ const VendorSectorForm = () => {
 
           <Form form={form} layout="vertical" onFinish={onFinish}>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-              <Form.Item
+              <CustomSelect
                 name={"user_type_id"}
                 label={"Select User Type"}
+                placeholder="Select User Type"
+                onSelect={handleSelect}
+                options={userType || []}
                 rules={[
                   {
                     required: true,
                     message: "Please select User Type", // Customize the error message
                   },
                 ]}
-              >
-                <Select
-                  placeholder="Select User Type"
-                  className="rounded-none"
-                  onSelect={handleSelect}
-                >
-                  {userType?.map((option) => (
-                    <Select.Option key={option?.value} value={option?.value}>
-                      {option?.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-              <Form.Item
-                name={"user_id"}
-                label={"Select User"}
+              />
+              <CustomSelect
+                name={formValues === "8" ? "vendor_id" : "user_id"}
+                label={
+                  formValues === "8" ? "Select Vendor" : "Select Supervisor"
+                }
+                placeholder={
+                  formValues === "8" ? "Select Vendor" : "Select Supervisor"
+                }
+                onSelect={handleUserSelect}
+                options={UsersDropTypeWise || []}
                 rules={[
                   {
                     required: true,
-                    message: "Please select an User", // Customize the error message
+                    message:
+                      formValues === "8"
+                        ? "Please select Vendor"
+                        : "Please select Supervisor", // Customize the error message
                   },
                 ]}
-              >
-                <Select
-                  placeholder="Select User"
-                  className="rounded-none"
-                  onSelect={handleUserSelect}
-                >
-                  {UsersDropTypeWise?.map((option) => (
-                    <Select.Option key={option?.value} value={option?.value}>
-                      {option?.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
-
+              />
               {formValues === "8" && (
-                <Form.Item
-                  name={"Supervisor_id"}
+                <CustomSelect
+                  name={"user_id"}
                   label={"Select Supervisor"}
+                  placeholder={"Select Supervisor"}
+                  options={SuperwiseListDrop || []}
                   rules={[
                     {
                       required: true,
                       message: "Please select Supervisor", // Customize the error message
                     },
                   ]}
-                >
-                  <Select
-                    placeholder="Select Supervisor"
-                    className="rounded-none"
-                  >
-                    {SuperwiseListDrop?.map((option) => (
-                      <Select.Option key={option?.value} value={option?.value}>
-                        {option?.label}
-                      </Select.Option>
-                    ))}
-                  </Select>
-                </Form.Item>
+                />
               )}
-
-              <Form.Item
+              <CustomSelect
                 name={"sector_id"}
                 label={"Select Sector"}
+                placeholder={"Select Sector"}
+                mode="multiple"
                 rules={[
                   {
                     required: true,
                     message: "Please select sector",
                   },
                 ]}
-              >
-                <Select
-                  placeholder="Select sector"
-                  className="rounded-none"
-                  mode="multiple"
-                >
-                  {SectorListDrop?.map((option) => (
-                    <Select.Option key={option?.value} value={option?.value}>
-                      {option?.label}
-                    </Select.Option>
-                  ))}
-                </Select>
-              </Form.Item>
+                options={SectorListDrop || []}
+              />
             </div>
-
             <div className="flex justify-end">
-              <Form.Item>
-                <Button
-                  loading={loading}
-                  type="primary"
-                  htmlType="submit"
-                  className="w-fit rounded-none bg-5c"
-                >
-                  {key === "UpdateKey" ? "Update" : "Register"}
-                </Button>
-              </Form.Item>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="w-fit rounded-none bg-5c"
+              >
+                {key === "UpdateKey" ? "Update" : "Register"}
+              </Button>
             </div>
           </Form>
         </div>

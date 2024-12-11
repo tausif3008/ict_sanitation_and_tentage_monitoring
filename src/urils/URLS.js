@@ -12,9 +12,12 @@ const URLS = {
   city: { path: "/city", version: 5.43 }, //?country_id=1&state_id=1
   userType: { path: "/user-types?per_page=100", version: 5.43 },
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
-  allUserType: { path: "/user-types", version: 5.43 },
+  allUserType: { path: "/user-types?page=1&per_page=100", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },
-  TypeWiseUserList: { path: "/users?user_type_id=", version: "5.43" },
+  TypeWiseUserList: {
+    path: "/users?page=1&per_page=100&user_type_id=",
+    version: "5.43",
+  },
 
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
@@ -30,7 +33,10 @@ const URLS = {
     version: "5.43",
   },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
-  vendorwiseSupervisor: { path: "/users?vendor_id=", version: "5.43" },
+  vendorwiseSupervisor: {
+    path: "/users?page=1&per_page=100&vendor_id=",
+    version: "5.43",
+  },
 
   // vendor Details
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
@@ -141,6 +147,10 @@ const URLS = {
   },
   editAllocate_Sector: {
     path: "/allocation-sector/edit",
+    version: 5.43,
+  },
+  deleteAllocate_Sector: {
+    path: "/allocation-sector/delete",
     version: 5.43,
   },
 
