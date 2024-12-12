@@ -26,10 +26,33 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [otpStep, setOtpStep] = useState(false);
 
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm(); // forgot
   const [resetForm] = Form.useForm(); // set new password
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (sessionData) {
+      checkLoginAvailability(sessionData);
+    }
+  }, [sessionData]);
+
+  const checkLoginAvailability = (loginData) => {
+    if (loginData) {
+      if (loginData?.user_type_id === "8") {
+        if (loginData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
+          navigate("/tentage-dashboard"); // vendor login tentage
+        } else {
+          navigate("/vendor-dashboard"); // vendor login
+        }
+      } else {
+        navigate("/sanitation-dashboard");
+      }
+    }
+  };
 
   const onFinish = async (values) => {
     const formData = new FormData();
@@ -44,17 +67,18 @@ const Login = () => {
 
     setLoading(false);
     if (resData) {
-      if (resData) {
-        if (resData?.user_type_id === "8") {
-          if (resData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
-            navigate("/tentage-dashboard"); // vendor login tentage
-          } else {
-            navigate("/vendor-dashboard"); // vendor login
-          }
-        } else {
-          navigate("/sanitation-dashboard");
-        }
-      }
+      checkLoginAvailability(resData);
+      // if (resData) {
+      //   if (resData?.user_type_id === "8") {
+      //     if (resData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
+      //       navigate("/tentage-dashboard"); // vendor login tentage
+      //     } else {
+      //       navigate("/vendor-dashboard"); // vendor login
+      //     }
+      //   } else {
+      //     navigate("/sanitation-dashboard");
+      //   }
+      // }
     }
   };
 
@@ -200,6 +224,12 @@ const Login = () => {
                         prefix={<LockOutlined />}
                         placeholder="Password"
                         className="rounded-none"
+                        onKeyDown={(event) => {
+                          const invalidChars = ["'", '"', ";", "-", "\\"];
+                          if (invalidChars.includes(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
                       />
                     </Form.Item>
                     <Form.Item noStyle>
