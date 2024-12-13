@@ -1,11 +1,12 @@
 import React, { useState } from "react";
-import { Button, Form, Input, message } from "antd";
+import { Button, Form, message } from "antd";
 import URLS from "../urils/URLS";
+import CustomInput from "../commonComponents/CustomInput";
 
 const ChangePassword = () => {
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
+
+  const [form] = Form.useForm();
 
   const headers = {
     "x-api-key": "YunHu873jHds83hRujGJKd873",
@@ -14,22 +15,15 @@ const ChangePassword = () => {
     "x-access-token": localStorage.getItem("sessionToken") || "",
   };
 
-  const handleChangePassword = async () => {
+  const handleChangePassword = async (data) => {
     try {
-      if (!newPassword || !confirmPassword) {
-        message.error("Please enter both password fields.");
-        return;
-      }
-
-      if (newPassword !== confirmPassword) {
+      if (data?.confirmPassword !== data?.newPassword) {
         message.error("Passwords do not match.");
         return;
       }
-
       setLoading(true);
-
       const formData = new FormData();
-      formData.append("password", newPassword);
+      formData.append("password", data?.confirmPassword);
 
       const response = await fetch(`${URLS.baseUrl}/change-password`, {
         method: "POST",
@@ -38,11 +32,9 @@ const ChangePassword = () => {
       });
 
       const result = await response.json();
-
       if (result.success) {
         message.success("Password changed successfully!");
-        setNewPassword("");
-        setConfirmPassword("");
+        form.resetFields();
       } else {
         message.error("Failed to change password.");
       }
@@ -58,12 +50,51 @@ const ChangePassword = () => {
       <div className="text-2xl font-bold mb-4">Change Password</div>
 
       <Form
+        form={form}
         onFinish={handleChangePassword}
         layout="vertical"
         autoComplete="off"
       >
         <div className="grid grid-cols-2 gap-x-10 gap-y-4">
-          <div>
+          <CustomInput
+            name="newPassword"
+            label={"New Password:"}
+            placeholder="Password"
+            maxLength={15}
+            autoComplete="off"
+            isPassword={true}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your password!",
+              },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters.",
+              },
+            ]}
+            className={"mt-2"}
+          />
+          <CustomInput
+            name="confirmPassword"
+            label={"Confirm Password:"}
+            placeholder="Password"
+            maxLength={15}
+            autoComplete="off"
+            isPassword={true}
+            rules={[
+              {
+                required: true,
+                message: "Please enter your password!",
+              },
+              {
+                min: 6,
+                message: "Password must be at least 6 characters.",
+              },
+            ]}
+            className={"mt-2"}
+          />
+          {/* <div>
             <span className="font-semibold">New Password:</span>
             <Input.Password
               className="rounded-none"
@@ -81,7 +112,7 @@ const ChangePassword = () => {
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
             />
-          </div>
+          </div> */}
         </div>
         <br></br>
         <div className="flex justify-end">
