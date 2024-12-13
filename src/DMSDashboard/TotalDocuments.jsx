@@ -5,8 +5,8 @@ const TotalDocuments = () => {
   const totalDocuments = 70000;
   const categories = [
     { name: "Email", count: 25000, color: "#FF5733" },
-    { name: "Photo", count: 30000, color: "#FFC300" },
-    { name: "Video", count: 15000, color: "#DAF7A6" },
+    { name: "SMS", count: 30000, color: "#FFC300" },
+    { name: "Photo", count: 15000, color: "#DAF7A6" },
   ];
 
   const chartOptions = {

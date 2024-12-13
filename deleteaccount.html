@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Account</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            text-align: center;
+        }
+        button {
+            background-color: red;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h3>Delete Account</h3>
+    <p>Deleting your account is permanent and cannot be undone.</p>
+    <label>
+        <input type="checkbox" id="confirmCheckbox">
+        I understand the consequences of deleting my account.
+    </label>
+    <br>
+    <button id="deleteButton" disabled>Delete Account</button>
+
+    <script>
+    const confirmCheckbox = document.getElementById('confirmCheckbox');
+    const deleteButton = document.getElementById('deleteButton');
+
+    confirmCheckbox.addEventListener('change', () => {
+        deleteButton.disabled = !confirmCheckbox.checked;
+    });
+
+    deleteButton.addEventListener('click', () => {
+        if (!confirmCheckbox.checked) {
+            alert('Please confirm that you want to delete your account.');
+            return;
+        }
+
+        deleteButton.disabled = true;
+        deleteButton.textContent = 'Deleting...';
+
+        // Simulate an asynchronous operation
+        setTimeout(() => {
+            alert('Your account has been deleted successfully.');
+            // Redirect to the home page
+            window.location.href = 'https://kumbhtsmonitoring.in/';
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>

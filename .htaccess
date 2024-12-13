@@ -1,0 +1,33 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Redirect HTTP to HTTPS
+    RewriteCond %{HTTPS} !=on
+    RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+
+    # Redirect all SPA routes to index.html
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteRule ^ index.html [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+    # CORS Policy for Specific Origin
+    SetEnvIf Origin "https://13.201.196.2$" CORS_ALLOW_ORIGIN=$0
+    Header set Access-Control-Allow-Origin "%{CORS_ALLOW_ORIGIN}e" env=CORS_ALLOW_ORIGIN
+
+    Header set Access-Control-Allow-Methods "GET, POST, PATCH"
+    Header set Access-Control-Allow-Headers "Content-Type"
+</IfModule>
+
+# Disable access to /static directory
+<IfModule mod_authz_core.c>
+    <Directory "/var/www/html/static">
+        Require all denied
+    </Directory>
+</IfModule>
+
+# Disable directory indexing globally
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>

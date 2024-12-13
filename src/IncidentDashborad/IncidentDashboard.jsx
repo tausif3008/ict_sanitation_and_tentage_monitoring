@@ -29,25 +29,25 @@ const IncidentDashboard = () => {
         </option>
       </Select>
       <div className="grid grid-cols-4 mt-2 gap-3">
-        <div className="col-span-4 grid lg:grid-cols-7 gap-3">
+        {/* <div className="col-span-4 grid lg:grid-cols-7 gap-3">
           <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md w-full">
             <IncidentsReport></IncidentsReport>
           </div>
           <div className="w-full border lg:col-span-4 col-span-4 shadow-md bg-white rounded-md">
             <AverageCollectionTimeChart></AverageCollectionTimeChart>
           </div>
-        </div>
+        </div> */}
         <div className="col-span-4 shadow-md bg-white h-auto rounded-md">
           <FacilityDetails></FacilityDetails>
         </div>
 
-        <div className="lg:col-span-1  lg:flex col-span-4 bg-white shadow-md mb-3 lg:mb-0 rounded-md">
+        {/* <div className="lg:col-span-1  lg:flex col-span-4 bg-white shadow-md mb-3 lg:mb-0 rounded-md">
           <IncidentTrends></IncidentTrends>
         </div>
 
         <div className="lg:col-span-3  lg:flex col-span-4 bg-white shadow-md mb-3 lg:mb-0  rounded-md">
           <DailyFrequencyHeatmap></DailyFrequencyHeatmap>
-        </div>
+        </div> */}
 
         <div className=" lg:flex col-span-4 bg-white shadow-md mb-3 lg:mb-0  rounded-md">
           <AverageTeamPerformance></AverageTeamPerformance>
