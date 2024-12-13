@@ -9,6 +9,7 @@ export const getValueLabel = (dataId, List, defaultName) => {
   }
 };
 
+export const userId = localStorage.getItem("userId");
 export const userRoleId = localStorage.getItem("role_id");
 export const sessionDataString = localStorage.getItem("sessionData");
 export const sessionData = sessionDataString

@@ -218,10 +218,10 @@ const Login = () => {
                           required: true,
                           message: "Please enter your password!",
                         },
-                        {
-                          min: 6,
-                          message: "Password must be at least 6 characters.",
-                        },
+                        // {
+                        //   min: 6,
+                        //   message: "Password must be at least 6 characters.",
+                        // },
                       ]}
                       className={"mt-2"}
                     />
