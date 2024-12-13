@@ -1,14 +1,11 @@
+import React, { useEffect, useState } from "react";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Button } from "antd";
-import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
-import img1 from "../assets/Images/UPGovLatestLogo.png";
-import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 
-import { logoutFetch } from "../Fetch/Axios";
 import {
   circle_wise_reports,
   DMS_param,
@@ -29,6 +26,8 @@ import {
   vendorDash_param,
   wasteDash_param,
 } from "../constant/permission";
+import { logoutFetch } from "../constant/const";
+import { IMAGELIST } from "../assets/Images/exportImages";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
@@ -572,7 +571,7 @@ const Navbar = ({ lang, setLang }) => {
             className="no-underline d-flex"
           >
             <img
-              src={img1}
+              src={IMAGELIST?.govt_logo}
               className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
                 isNavbarTransition ? "h-10" : "h-14"
               }`}
@@ -580,9 +579,9 @@ const Navbar = ({ lang, setLang }) => {
             />
 
             <img
-              src={img2}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
-                isNavbarTransition ? "h-10" : "h-14"
+              src={IMAGELIST?.kumbhMela}
+              className={`lg:mt-1 h-[28px] sm:h-[18px] md:h-[28px] lg:h-12 xl:${
+                isNavbarTransition ? "h-8" : "h-12"
               }`}
               alt="Maha Kumbh 2025 Logo"
             />

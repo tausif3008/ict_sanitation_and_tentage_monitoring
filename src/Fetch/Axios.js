@@ -1,6 +1,7 @@
 import { message } from "antd";
 import axios from "axios";
 import axiosInstance, { basicUrl } from "../Axios/commonAxios";
+import { sessionToken } from "../constant/const";
 
 // const loginFetch = async (data, setCanProceed) => {
 //   const url = basicUrl + "/login";
@@ -98,23 +99,22 @@ const loginFetch = async (data, setCanProceed) => {
 //   }
 // };
 
-const logoutFetch = async () => {
-  try {
-    const sessionToken = localStorage.getItem("sessionToken");
-    if (sessionToken) {
-      const response = await axiosInstance.delete("/logout");
-      if (response.status === 200) {
-        localStorage.removeItem("sessionToken");
-        localStorage.removeItem("sessionData");
-        return true;
-      }
-    }
-    return false;
-  } catch (error) {
-    console.error("Logout failed:", error);
-    return false;
-  }
-};
+// const logoutFetch = async () => {
+//   try {
+//     if (sessionToken) {
+//       const response = await axiosInstance.delete("/logout");
+//       if (response.status === 200) {
+//         localStorage.removeItem("sessionToken");
+//         localStorage.removeItem("sessionData");
+//         return true;
+//       }
+//     }
+//     return false;
+//   } catch (error) {
+//     console.error("Logout failed:", error);
+//     return false;
+//   }
+// };
 
 // const postData = async (formData, urlLast = "", extraHeaders) => {
 //   const url = basicUrl + urlLast;
@@ -265,4 +265,5 @@ const getData = async (urlLast, extraHeaders = {}, params = "") => {
   }
 };
 
-export { loginFetch, logoutFetch, postData, getData, putData };
+export { loginFetch, postData, getData, putData };
+// export { loginFetch, logoutFetch, postData, getData, putData };

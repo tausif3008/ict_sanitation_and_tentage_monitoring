@@ -8,6 +8,7 @@ import logOutIcon from "../assets/Dashboard/logOutIcon.png";
 import img1 from "../assets/Images/UPGovLatestLogo.png";
 import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 import { langingPage } from "../utils/dictionary";
+import { logoutFetch } from "../constant/const";
 
 const NavHead = ({ lang, setLang }) => {
   const myDate = new Date();
@@ -65,7 +66,6 @@ const NavHead = ({ lang, setLang }) => {
               >
                 ENG | हिंदी{" "}
               </a>{" "}
-              
             </div>
 
             {/* <div>
@@ -93,6 +93,7 @@ const NavHead = ({ lang, setLang }) => {
               onClick={() => {
                 if (token) {
                   localStorage.clear();
+                  logoutFetch();
                   setTimeout(() => {
                     navigate("/");
                   }, 200);
