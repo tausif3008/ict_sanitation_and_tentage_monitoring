@@ -11,26 +11,21 @@ import LandingPage from "./landingPage/LandingPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./Login/Login";
 import Layout from "./AppLayout/Layout";
-
 import UserList from "./register/user/UsersList";
 import AssetRegistrationForm from "./register/asset/AssetRegistrationForm";
 import AssetsList from "./register/asset/AssetsList";
 import AssetAllotment from "./register/asset/AssetAllotment";
 import GisServices from "./gis/GisServices";
 import GisList from "./gis/GisList";
-
 import VendorRegistrationForm from "./register/vendor/VendorRegistrationForm";
-
 import GPSFleetRegistration from "./gis/GPSFleetRegistration";
 import ManPowerAssignmentForm from "./assignment/ManPowerAssignmentForm";
 import AssigningMonitoringManPower from "./assignment/AssigningMonitoringManPower";
-
 import SchedulingAndDeploymentForm from "./schedule/SchedulingAndDeploymentForm";
 import WasteManagementSchedule from "./schedule/WasteManagementSchedule";
 import CreateTentageSchedule from "./schedule/CreateTentageSchedule";
 import CreateSanitationSchedule from "./schedule/CreateSanitationSchedule";
 import MonthlyReport from "./schedule/MonthlyReport";
-
 import Monitoring from "./complaince/Monitoring";
 import MonitoringReport from "./complaince/MonitoringReport";
 import NotificationAdd from "./notification/NotificationAdd";
@@ -43,8 +38,6 @@ import AppError from "./AppError";
 import DMSDashboard from "./DMSDashboard/DMSDashboard";
 import SLADashboard from "./SLADashboard/SLADashboard";
 import { useDispatch } from "react-redux";
-// import { Provider, useDispatch } from "react-redux";
-// import store from "./Redux/store";
 import VendorDetails from "./register/vendor/VendorDetails/VendorDetails";
 import UserRegistrationForm from "./register/user/UserRegistrationForm";
 import VendorDetailsForm from "./register/vendor/VendorDetails/VendorDetailsForm";
@@ -57,11 +50,9 @@ import VehicleList from "./register/vehicle/VehicleList";
 import AddVehicleForm from "./register/vehicle/AddVehicleForm";
 import UserProfile from "./Profile/UserProfile";
 import SectorsListing from "./register/sectorListing/SectorListing";
-// import URLS from "./urils/URLS"
 import ParkingList from "./register/parking/ParkingList";
 import SectorWiseReport from "./Reports/SectorWiseReport";
 import CircleWiseReport from "./Reports/CircleWiseReport";
-// import VendorWiseReport from "./Reports/VendorWiseReport";
 import Shift from "./shifts/shifts";
 import ChangePassword from "./Login/ChangePassword";
 import AddShiftForm from "./shifts/add form";
@@ -90,15 +81,19 @@ import VendorRegistrationReport from "./Reports/VendorWiseRegistrationReport";
 import { revertAll } from "./Redux/action";
 import TermsAndConditions from "./pages/term-and-conditions";
 import AboutUs from "./pages/about-us";
+// import { Provider, useDispatch } from "react-redux";
+// import store from "./Redux/store";
+// import URLS from "./urils/URLS"
+// import VendorWiseReport from "./Reports/VendorWiseReport";
 
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  // const location = useLocation();
   const loggedIn = localStorage.getItem("sessionToken");
-  // const RoleId = localStorage.getItem("role_id");
   const token = localStorage.getItem("sessionToken");
   const link = `/login`;
+  // const location = useLocation();
+  // const RoleId = localStorage.getItem("role_id");
 
   useEffect(() => {
     if (!token) {
@@ -144,7 +139,6 @@ function App() {
   // pass the token
   axiosInstance.interceptors.request.use(
     (config) => {
-      const token = localStorage.getItem("sessionToken");
       if (token) {
         config.headers["x-access-token"] = `${token}`;
       }
@@ -329,10 +323,7 @@ function App() {
           path="monthly-report"
           element={<MonthlyReport></MonthlyReport>}
         ></Route>
-        <Route
-          path="monitoring/:page?/:per_page?"
-          element={<Monitoring></Monitoring>}
-        ></Route>
+
         <Route
           path="asset-monitoring-report/:page?/:per_page?"
           element={<MonitoringReport></MonitoringReport>}
@@ -354,29 +345,6 @@ function App() {
           element={<SectorsListing></SectorsListing>}
         ></Route>
         <Route path="parking" element={<ParkingList></ParkingList>}></Route>
-
-        {/* report */}
-        <Route
-          path="sector-wise-report"
-          element={<SectorWiseReport></SectorWiseReport>}
-        ></Route>
-        <Route
-          path="circle-wise-report"
-          element={<CircleWiseReport></CircleWiseReport>}
-        ></Route>
-        <Route
-          // path="vendor-wise-report"
-          path="vendor-wise-report/:page?/:per_page?"
-          element={<VendorReports></VendorReports>}
-        ></Route>
-        <Route
-          path="gsd-wise-registration-report/:page?/:per_page?"
-          element={<GsdRegistrationReport></GsdRegistrationReport>}
-        ></Route>
-        <Route
-          path="vendor-wise-registration-report"
-          element={<VendorRegistrationReport></VendorRegistrationReport>}
-        ></Route>
 
         <Route path="shift/:page?/:per_page?" element={<Shift></Shift>}></Route>
         <Route
@@ -448,7 +416,32 @@ function App() {
           element={<ContactUsPage></ContactUsPage>}
         ></Route>
 
-        {/* Report */}
+        {/* report start */}
+        <Route
+          path="monitoring/:page?/:per_page?"
+          element={<Monitoring></Monitoring>}
+        ></Route>
+        <Route
+          path="sector-wise-report"
+          element={<SectorWiseReport></SectorWiseReport>}
+        ></Route>
+        <Route
+          path="circle-wise-report"
+          element={<CircleWiseReport></CircleWiseReport>}
+        ></Route>
+        <Route
+          // path="vendor-wise-report"
+          path="vendor-wise-report/:page?/:per_page?"
+          element={<VendorReports></VendorReports>}
+        ></Route>
+        <Route
+          path="gsd-wise-registration-report/:page?/:per_page?"
+          element={<GsdRegistrationReport></GsdRegistrationReport>}
+        ></Route>
+        <Route
+          path="vendor-wise-registration-report"
+          element={<VendorRegistrationReport></VendorRegistrationReport>}
+        ></Route>
         <Route
           path="/incident-report/:page?/:per_page?"
           element={<IncidentReports></IncidentReports>}
@@ -457,6 +450,7 @@ function App() {
           path="/inspection-report/:page?/:per_page?"
           element={<InspectionReports></InspectionReports>}
         ></Route>
+        {/* Report close */}
 
         {/* pages */}
         <Route

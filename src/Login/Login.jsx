@@ -8,6 +8,7 @@ import { loginFetch } from "../Fetch/Axios";
 import BeforeLoginUserTypeDropDown from "../register/user/BeforeLoginUserTypeDropDown";
 import "./login.css";
 import URLS from "../urils/URLS";
+import { checkLoginAvailability, sessionData } from "../constant/const";
 
 const headers = {
   "x-api-key": "YunHu873jHds83hRujGJKd873",
@@ -26,9 +27,6 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [otpStep, setOtpStep] = useState(false);
 
-  const sessionDataString = localStorage.getItem("sessionData");
-  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
-
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm(); // forgot
   const [resetForm] = Form.useForm(); // set new password
@@ -36,23 +34,9 @@ const Login = () => {
 
   useEffect(() => {
     if (sessionData) {
-      checkLoginAvailability(sessionData);
+      checkLoginAvailability(sessionData, navigate); // if user is already login then it they should not able to visit login page
     }
   }, [sessionData]);
-
-  const checkLoginAvailability = (loginData) => {
-    if (loginData) {
-      if (loginData?.user_type_id === "8") {
-        if (loginData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
-          navigate("/tentage-dashboard"); // vendor login tentage
-        } else {
-          navigate("/vendor-dashboard"); // vendor login
-        }
-      } else {
-        navigate("/sanitation-dashboard");
-      }
-    }
-  };
 
   const onFinish = async (values) => {
     const formData = new FormData();
@@ -67,18 +51,7 @@ const Login = () => {
 
     setLoading(false);
     if (resData) {
-      checkLoginAvailability(resData);
-      // if (resData) {
-      //   if (resData?.user_type_id === "8") {
-      //     if (resData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
-      //       navigate("/tentage-dashboard"); // vendor login tentage
-      //     } else {
-      //       navigate("/vendor-dashboard"); // vendor login
-      //     }
-      //   } else {
-      //     navigate("/sanitation-dashboard");
-      //   }
-      // }
+      checkLoginAvailability(resData, navigate);
     }
   };
 

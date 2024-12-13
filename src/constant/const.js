@@ -9,6 +9,28 @@ export const getValueLabel = (dataId, List, defaultName) => {
   }
 };
 
+export const userRoleId = localStorage.getItem("role_id");
+export const sessionDataString = localStorage.getItem("sessionData");
+export const sessionData = sessionDataString
+  ? JSON.parse(sessionDataString)
+  : null;
+
+export const checkLoginAvailability = (loginData, navigate) => {
+  if (loginData) {
+    if (loginData?.user_type_id === "8") {
+      if (loginData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
+        navigate("/tentage-dashboard"); // vendor login tentage
+      } else {
+        navigate("/vendor-dashboard"); // vendor login
+      }
+    } else {
+      navigate("/sanitation-dashboard");
+    }
+  }
+};
+
+// export const checkComponentPermission = (loginData, navigate) => {};
+
 export const statusOptions = [
   { value: 1, label: "Active" },
   { value: 2, label: "Deactive" },
