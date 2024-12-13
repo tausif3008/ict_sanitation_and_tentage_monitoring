@@ -2,6 +2,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import axiosInstance from "../../Axios/commonAxios";
 import URLS from "../../urils/URLS";
+import { revertAll } from "../../Redux/action";
 
 const initialState = {
   loading: false,
@@ -38,6 +39,9 @@ const assetTypeSlice = createSlice({
     postVendorAssetType: (state, action) => {
       state.vendor_assetType = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(revertAll, () => initialState);
   },
 });
 

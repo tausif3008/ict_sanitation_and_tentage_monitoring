@@ -10,6 +10,8 @@ import "./login.css";
 import URLS from "../urils/URLS";
 import { checkLoginAvailability, sessionData } from "../constant/const";
 import CustomInput from "../commonComponents/CustomInput";
+import { useDispatch } from "react-redux";
+import { storeToken } from "./slice/loginSlice";
 
 const headers = {
   "x-api-key": "YunHu873jHds83hRujGJKd873",
@@ -32,6 +34,7 @@ const Login = () => {
   const [forgotForm] = Form.useForm(); // forgot
   const [resetForm] = Form.useForm(); // set new password
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (sessionData) {
@@ -49,6 +52,7 @@ const Login = () => {
 
     const res = await loginFetch(formData, setCanProceed);
     const resData = res?.data?.sessionData?.[0];
+    dispatch(storeToken(res?.sessionToken));
 
     setLoading(false);
     if (resData) {

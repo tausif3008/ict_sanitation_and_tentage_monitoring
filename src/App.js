@@ -81,6 +81,7 @@ import VendorRegistrationReport from "./Reports/VendorWiseRegistrationReport";
 import { revertAll } from "./Redux/action";
 import TermsAndConditions from "./pages/term-and-conditions";
 import AboutUs from "./pages/about-us";
+import LoginSelectors from "./Login/slice/loginSelector";
 // import { Provider, useDispatch } from "react-redux";
 // import store from "./Redux/store";
 // import URLS from "./urils/URLS"
@@ -89,8 +90,10 @@ import AboutUs from "./pages/about-us";
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { sliceToken } = LoginSelectors();
+
   const loggedIn = localStorage.getItem("sessionToken");
-  const token = localStorage.getItem("sessionToken");
+  const token = localStorage.getItem("sessionToken") || sliceToken;
   const link = `/login`;
   // const location = useLocation();
   // const RoleId = localStorage.getItem("role_id");
@@ -150,29 +153,29 @@ function App() {
   );
 
   // if invalid token
-  axiosInstance.interceptors.response.use(
-    (response) => {
-      if (
-        response.data.success === false &&
-        response.data.message === "Invalid access token"
-      ) {
-        showLoginPage(); // show login page
-      }
+  // axiosInstance.interceptors.response.use(
+  //   (response) => {
+  //     if (
+  //       response.data.success === false &&
+  //       response.data.message === "Invalid access token"
+  //     ) {
+  //       showLoginPage(); // show login page
+  //     }
 
-      return response;
-    },
-    (error) => {
-      if (error.response && error.response.data) {
-        if (
-          error.response.data.success === false &&
-          error.response.data.message === "Invalid access token"
-        ) {
-          showLoginPage(); // show login page
-        }
-      }
-      return Promise.reject(error);
-    }
-  );
+  //     return response;
+  //   },
+  //   (error) => {
+  //     if (error.response && error.response.data) {
+  //       if (
+  //         error.response.data.success === false &&
+  //         error.response.data.message === "Invalid access token"
+  //       ) {
+  //         showLoginPage(); // show login page
+  //       }
+  //     }
+  //     return Promise.reject(error);
+  //   }
+  // );
 
   return (
     // <Provider store={store}>
