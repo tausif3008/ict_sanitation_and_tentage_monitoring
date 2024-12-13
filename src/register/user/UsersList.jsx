@@ -1,20 +1,24 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Table, Image, Button, message } from "antd";
-import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import UserRegistrationForm from "./UserRegistrationForm";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { EditOutlined } from "@ant-design/icons";
+import { Button, message, Collapse, notification, Row, Col, Form } from "antd";
+
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { EditOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import { setUpdateUserEl, setUserListIsUpdated } from "./userSlice";
-import CommonSearchForm from "../../commonComponents/CommonSearchForm";
-import UserTypeDropDown from "./UserTypeDropDown";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../asset/AssetsSlice";
-import moment from "moment";
+import { generateSearchQuery } from "../../urils/getSearchQuery";
+import CustomInput from "../../commonComponents/CustomInput";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import search from "../../assets/Dashboard/icon-search.png";
+import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
+import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
+import { getValueLabel } from "../../constant/const";
 
 const getVal = (val) => {
   if (val === "undefined" || val === null) {
@@ -95,7 +99,6 @@ const columns = [
 ];
 
 const UserList = () => {
-  const [form, setForm] = useState();
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [userDetails, setUserDetails] = useState({
@@ -104,13 +107,40 @@ const UserList = () => {
     currentPage: 1,
   });
 
+  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification({ top: 100 });
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: "Note",
+      duration: 7,
+      description: "Please enter some information to perform the search.",
+    });
+  };
+  const { UserListDrop } = UserTypeSelector(); // user type list
+
+  const values = form.getFieldValue("user_type_id"); // Get all form values
+  const fileName = getValueLabel(values, UserListDrop, "All User List");
 
   const isUpdatedSelector = useSelector(
     (state) => state.userUpdateEl?.isUpdated
   );
+
+  // fiter finish
+  const onFinishForm = async (values) => {
+    const searchParams = generateSearchQuery(values);
+    if (searchParams === "&") {
+      openNotificationWithIcon("info");
+    }
+    setSearchQuery(searchParams);
+  };
+
+  const resetForm = () => {
+    form.resetFields();
+    setSearchQuery("&");
+  };
 
   const getUsers = async () => {
     setLoading(true);
@@ -173,6 +203,8 @@ const UserList = () => {
   }, [params, isUpdatedSelector, searchQuery]);
 
   useEffect(() => {
+    const uri = URLS?.allUserType?.path;
+    dispatch(getUserTypeList(uri)); //  user type
     dispatch(setUpdateUserEl({ updateElement: null }));
   }, []);
 
@@ -234,11 +266,17 @@ const UserList = () => {
         ]);
 
       // Call the export function
-      isExcel && exportToExcel(myexcelData, "User List");
+      isExcel && exportToExcel(myexcelData, `${fileName}`);
 
       // Call the export function
       !isExcel &&
-        ExportPdfFunction("User List", "User List", pdfHeader, pdfData, true);
+        ExportPdfFunction(
+          `${fileName}`,
+          `${fileName}`,
+          pdfHeader,
+          pdfData,
+          true
+        );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
     }
@@ -279,24 +317,110 @@ const UserList = () => {
           </Button>
         </div>
       </div>
-      <CommonSearchForm
-        setForm={setForm}
-        setSearchQuery={setSearchQuery}
-        searchQuery={searchQuery}
-        fields={[
-          { name: "name", label: "Name" },
-          { name: "email", label: "Email" },
-          { name: "phone", label: "Phone" },
-          // { name: "company", label: " Company" },
-        ]}
-        dropdown={
-          <UserTypeDropDown
-            required={false}
-            form={form}
-            showLabel // means not visible
-          ></UserTypeDropDown>
-        }
-      ></CommonSearchForm>
+      <div>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <Row gutter={[16, 16]} align="middle">
+                    <Col key="user_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"user_type_id"}
+                        label={"Select User Type"}
+                        placeholder={"Select User Type"}
+                        options={UserListDrop || []}
+                      />
+                    </Col>
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name="name"
+                        label="Name"
+                        placeholder="Name"
+                      />
+                    </Col>
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name="phone"
+                        type="number"
+                        label="Phone Number"
+                        placeholder="Phone Number"
+                        maxLength={10}
+                        accept={"onlyNumber"}
+                        rules={[
+                          {
+                            required: false,
+                            message: "Please enter your mobile number!",
+                          },
+                          {
+                            pattern: /^[0-9]{10}$/,
+                            message:
+                              "Please enter a valid 10-digit mobile number",
+                          },
+                        ]}
+                      />
+                    </Col>
+                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name="email"
+                        label="Email"
+                        placeholder="Email"
+                        rules={[
+                          {
+                            required: false,
+                            message: "Please input your email!",
+                          },
+                          {
+                            type: "email",
+                            message: "The input is not a valid email!",
+                          },
+                        ]}
+                      />
+                    </Col>
+                    <Col
+                      xs={24}
+                      sm={12}
+                      md={6}
+                      lg={4}
+                      className="flex justify-end gap-2"
+                    >
+                      <Button
+                        type="primary"
+                        className="rounded-none bg-5c"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                      <Button
+                        type="primary"
+                        htmlType="submit"
+                        className="rounded-none bg-green-300 text-black"
+                      >
+                        Search
+                      </Button>
+                    </Col>
+                  </Row>
+                </Form>
+              ),
+            },
+          ]}
+        />
+        {contextHolder}
+      </div>
       <div className="h-3"></div>
       <CommonTable
         loading={loading}
