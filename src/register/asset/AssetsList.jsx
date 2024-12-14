@@ -40,6 +40,7 @@ import CoordinatesMap from "../../commonComponents/map/map";
 import ShowCode from "./showCode";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
+import CustomInput from "../../commonComponents/CustomInput";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -67,6 +68,8 @@ const AssetsList = () => {
       description: "Please enter some information to perform the search.",
     });
   };
+
+  console.log("rohit", form.getFieldsValue())
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
@@ -193,7 +196,7 @@ const AssetsList = () => {
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
-    dispatch(getAllCircleList()); // all circle list
+    // dispatch(getAllCircleList()); // all circle list
   }, []);
 
   const columns = [
@@ -235,12 +238,12 @@ const AssetsList = () => {
       key: "sector_name",
       width: 100,
     },
-    {
-      title: "Circle",
-      dataIndex: "circle_name",
-      key: "circle_name",
-      width: 100,
-    },
+    // {
+    //   title: "Circle",
+    //   dataIndex: "circle_name",
+    //   key: "circle_name",
+    //   width: 100,
+    // },
     // {
     //   title: "Vendor Item Code",
     //   dataIndex: "vendor_asset_code",
@@ -474,9 +477,9 @@ const AssetsList = () => {
                         options={VendorListDrop || []}
                       />
                     </Col>
-                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"assetmaintypes"}
+                        name={"asset_main_type_id"}
                         label={"Select Category"}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
@@ -499,14 +502,14 @@ const AssetsList = () => {
                         options={SectorListDrop || []}
                       />
                     </Col>
-                    <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
+                    {/* <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"circle_id"}
                         label={"Select Circle"}
                         placeholder={"Select Circle"}
                         options={CircleListDrop || []}
                       />
-                    </Col>
+                    </Col> */}
                     {/* <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"vendor_asset_code"}
@@ -514,13 +517,13 @@ const AssetsList = () => {
                         placeholder={"Vendor Item Code"}
                       />
                     </Col> */}
-                    {/* <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"code"}
                         label={"Code"}
                         placeholder={"Code"}
                       />
-                    </Col> */}
+                    </Col>
                     <Col
                       xs={24}
                       sm={12}

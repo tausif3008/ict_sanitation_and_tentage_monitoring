@@ -185,7 +185,7 @@ function App() {
         element={
           loggedIn ? (
             <>
-              <Navigate to={"/vendor-dashboard"}></Navigate>
+              <Navigate to={"/sanitation-dashboard"}></Navigate>
             </>
           ) : (
             <Navigate to={"/login"} />
@@ -381,7 +381,7 @@ function App() {
           element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
         ></Route>
         <Route
-          path="/vendor-supervisor-registration"
+          path="/vendor-supervisor-registration/:page?/:per_page?"
           element={
             <VendorSupervisorRegistration></VendorSupervisorRegistration>
           }
