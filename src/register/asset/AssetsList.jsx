@@ -69,8 +69,6 @@ const AssetsList = () => {
     });
   };
 
-  console.log("rohit", form.getFieldsValue())
-
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
   const { CircleListDrop } = CircleSelector(); // circle
@@ -562,8 +560,8 @@ const AssetsList = () => {
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
         totalName="Total"
-        subtotalName={"Register Unit"}
-        subtotalCount={totalUnit || 0}
+      // subtotalName={"Register Unit"}
+      // subtotalCount={totalUnit || 0}
       ></CommonTable>
 
       <Modal

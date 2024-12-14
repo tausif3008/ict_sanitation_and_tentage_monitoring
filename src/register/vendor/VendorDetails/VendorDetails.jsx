@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Modal, Table } from "antd";
-import CommonTable from "../../../commonComponents/CommonTable";
-import CommonDivider from "../../../commonComponents/CommonDivider";
-import URLS from "../../../urils/URLS";
+import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router";
-import { getData } from "../../../Fetch/Axios";
+import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+import { Button, Form, Input, message, Modal, Table } from "antd";
 import {
   ArrowLeftOutlined,
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import CommonTable from "../../../commonComponents/CommonTable";
+import CommonDivider from "../../../commonComponents/CommonDivider";
+import URLS from "../../../urils/URLS";
+import { getData } from "../../../Fetch/Axios";
 import {
   deleteVendorDetails,
   setUpdateVendorDetailsEl,
@@ -20,7 +22,7 @@ import {
 import { getPdfExcelData } from "../../asset/AssetsSlice";
 import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
-import moment from "moment";
+import { VendorDetailsPdfFunction } from "./vendorDetailsPdf";
 
 const VendorDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -262,11 +264,17 @@ const VendorDetails = () => {
     "Sr No",
     "Category",
     "Toilets & Tentage Type",
-    "Contract Number",
-    "Work Order Number",
+    // "Contract Number",
+    // "Work Order Number",
     "Total Allotted Quantity",
-    "Date of Allocation",
+    // "Date of Allocation",
     // "Country",
+  ];
+
+  // pdf header
+  const subTableHeader = [
+    "Sector Name / Parking Name",
+    "Quantity",
   ];
 
   // excel && pdf file
@@ -277,8 +285,6 @@ const VendorDetails = () => {
       const res = await dispatch(
         getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
       );
-
-      console.log("res", res)
 
       if (!res?.data?.userdetails) {
         throw new Error("No data found in the response data.");
@@ -292,9 +298,9 @@ const VendorDetails = () => {
             Sr: index + 1,
             "Category": data?.asset_main_type_name,
             "Toilets & Tentage Type": data?.asset_type_name,
-            "Contract Number": Number(data?.contract_number),
-            "Work Order Number": Number(data?.work_order_number),
-            "Total Allotted Quantity": Number(data?.total_allotted_quantity),
+            // "Contract Number": Number(data?.contract_number),
+            // "Work Order Number": Number(data?.work_order_number),
+            // "Total Allotted Quantity": Number(data?.total_allotted_quantity),
             "Date of Allocation": moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
           };
         });
@@ -305,10 +311,18 @@ const VendorDetails = () => {
           index + 1,
           data?.asset_main_type_name,
           data?.asset_type_name,
-          Number(data?.contract_number),
-          Number(data?.work_order_number),
+          // Number(data?.contract_number),
+          // Number(data?.work_order_number),
           Number(data?.total_allotted_quantity),
-          moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+          // moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+          [...data?.proposedsectors?.map((item) => [
+            item?.sector_name,
+            item?.quantity,
+          ]),
+          ...data?.proposedparkings?.map((item) => [
+            item?.parking_name,
+            item?.quantity,
+          ])]
         ]);
 
       // Call the export function
@@ -316,11 +330,12 @@ const VendorDetails = () => {
 
       // Call the export function
       !isExcel &&
-        ExportPdfFunction(
+        VendorDetailsPdfFunction(
           `${userName} Vendor Details`,
           `${userName} Vendor Details`,
           pdfHeader,
           pdfData,
+          subTableHeader,
           true
         );
     } catch (error) {
@@ -373,7 +388,7 @@ const VendorDetails = () => {
                 Download Pdf
               </Button>
             </div>
-            <div>
+            {/* <div>
               <Button
                 type="primary"
                 onClick={() => {
@@ -382,7 +397,7 @@ const VendorDetails = () => {
               >
                 Download Excel
               </Button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

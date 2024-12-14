@@ -70,7 +70,7 @@ export const ExportPdfFunction = (
 
   // Add report title and date on the same line, below the subheading
   const title = `${titleName}`;
-  const dateString = moment().format("DD-MMM-YYYY HH:MM A");
+  const dateString = moment().format("DD-MMM-YYYY hh:mm A");
 
   // Calculate positions for the title and date
   const titleX = 54; // Left align title
