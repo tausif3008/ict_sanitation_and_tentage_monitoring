@@ -17,6 +17,10 @@ import {
   setUpdateVendorDetailsEl,
   setVendorDetailsListIsUpdated,
 } from "./vendorDetailsSlice";
+import { getPdfExcelData } from "../../asset/AssetsSlice";
+import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
+import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
+import moment from "moment";
 
 const VendorDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +28,8 @@ const VendorDetails = () => {
   const [proposedSectors, setProposedSectors] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userName, setUserName] = useState("");
+  const [searchQuery, setSearchQuery] = useState();
+
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -197,6 +203,9 @@ const VendorDetails = () => {
       dataIndex: "date_of_allocation",
       key: "date_of_allocation",
       width: 160,
+      render: (text) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : ""
+      }
     },
     {
       title: "Action",
@@ -248,6 +257,78 @@ const VendorDetails = () => {
     )
     .toLocaleString(); // Convert to digit format with commas
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Category",
+    "Toilets & Tentage Type",
+    "Contract Number",
+    "Work Order Number",
+    "Total Allotted Quantity",
+    "Date of Allocation",
+    // "Country",
+  ];
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.vendorDetails.path + `${params?.id}&page=1&per_page=5000`;
+
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      console.log("res", res)
+
+      if (!res?.data?.userdetails) {
+        throw new Error("No data found in the response data.");
+      }
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.userdetails?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            "Category": data?.asset_main_type_name,
+            "Toilets & Tentage Type": data?.asset_type_name,
+            "Contract Number": Number(data?.contract_number),
+            "Work Order Number": Number(data?.work_order_number),
+            "Total Allotted Quantity": Number(data?.total_allotted_quantity),
+            "Date of Allocation": moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+          };
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.userdetails?.map((data, index) => [
+          index + 1,
+          data?.asset_main_type_name,
+          data?.asset_type_name,
+          Number(data?.contract_number),
+          Number(data?.work_order_number),
+          Number(data?.total_allotted_quantity),
+          moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+        ]);
+
+      // Call the export function
+      isExcel && exportToExcel(myexcelData, `${userName} Vendor Details`);
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          `${userName} Vendor Details`,
+          `${userName} Vendor Details`,
+          pdfHeader,
+          pdfData,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
+
   return (
     <div>
       <div className="flex gap-2 items-center">
@@ -281,6 +362,28 @@ const VendorDetails = () => {
               </Button>
             }
           />
+          <div className="flex justify-end gap-2 font-semibold mb-4">
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(false);
+                }}
+              >
+                Download Pdf
+              </Button>
+            </div>
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(true);
+                }}
+              >
+                Download Excel
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -357,20 +460,20 @@ const VendorDetails = () => {
         )}
         {(proposedSectors?.proposedsectors?.length ||
           proposedSectors?.proposedparkings?.length) && (
-          <div className="text-right font-semibold mt-2">
-            Total Quantity:{" "}
-            {(
-              proposedSectors?.proposedparkings?.reduce(
-                (total, park) => total + Number(park?.quantity || 0),
-                0
-              ) +
-              proposedSectors?.proposedsectors?.reduce(
-                (total, sector) => total + Number(sector?.quantity || 0),
-                0
-              )
-            ).toLocaleString()}
-          </div>
-        )}
+            <div className="text-right font-semibold mt-2">
+              Total Quantity:{" "}
+              {(
+                proposedSectors?.proposedparkings?.reduce(
+                  (total, park) => total + Number(park?.quantity || 0),
+                  0
+                ) +
+                proposedSectors?.proposedsectors?.reduce(
+                  (total, sector) => total + Number(sector?.quantity || 0),
+                  0
+                )
+              ).toLocaleString()}
+            </div>
+          )}
       </Modal>
 
       <Modal
