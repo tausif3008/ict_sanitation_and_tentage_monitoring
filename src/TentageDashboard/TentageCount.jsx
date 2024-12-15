@@ -16,7 +16,6 @@ import TentageSelector from "./Slice/tentageSelector";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
-import { name, Role, userId } from "../constant/const";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const TentageCount = () => {
@@ -31,6 +30,9 @@ const TentageCount = () => {
   const { TentageDash_data } = TentageSelector(); // tentage dashboard
   const { total, registered, under_monitoring, off_monitoring } =
     TentageDash_data?.data?.asset_counts || {};
+  const Role = localStorage.getItem("role");
+  const name = localStorage.getItem("name");
+  const userId = localStorage.getItem("userId");
 
   const formatNumber = (number) => {
     return new Intl.NumberFormat("en-IN").format(number);

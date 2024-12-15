@@ -17,6 +17,7 @@ import QuestionSelector from "../register/questions/questionSelector";
 import { priorityToiletTypes_Id } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import CustomSelect from "../commonComponents/CustomSelect";
+import { getQuestionList } from "../register/questions/questionSlice";
 
 const ToiletDetails = () => {
   const [dict, lang] = useOutletContext();
@@ -77,6 +78,7 @@ const ToiletDetails = () => {
     todayData(); // today data
     dispatch(getVendorList()); // vendor details
     dispatch(getSectorsList()); // all sectors
+    dispatch(getQuestionList()); // get question
   }, []);
 
   const sortedArray =
@@ -189,11 +191,10 @@ const ToiletDetails = () => {
       </Form>
 
       <div
-        className={`grid ${
-          showAll
+        className={`grid ${showAll
             ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
-        } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
+          } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
         {sortedArray?.length > 0 ? (
           sortedArray
@@ -201,8 +202,8 @@ const ToiletDetails = () => {
               showAll
                 ? true
                 : priorityToiletTypes_Id.includes(
-                    data?.asset_type_id?.toString()
-                  )
+                  data?.asset_type_id?.toString()
+                )
             )
             ?.map((item, index) => (
               <Tooltip
@@ -220,9 +221,8 @@ const ToiletDetails = () => {
                 arrowPointAtCenter
               >
                 <div
-                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
-                    showAll ? "" : "h-40"
-                  }`}
+                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${showAll ? "" : "h-40"
+                    }`}
                   style={{
                     minHeight: "110px",
                   }}

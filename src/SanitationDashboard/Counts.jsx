@@ -7,49 +7,49 @@ import card_purple from "../assets/Dashboard/card_purple.png";
 import { message } from "antd";
 
 const Counts = () => {
-  const [totalAssets, setTotalAssets] = useState(0);
-  const [registeredAssets, setRegisteredAssets] = useState(0);
-  const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
-  const [assetsOffMonitoring, setAssetsOffMonitoring] = useState(0);
+  //   const [totalAssets, setTotalAssets] = useState(0);
+  //   const [registeredAssets, setRegisteredAssets] = useState(0);
+  //   const [assetsUnderMonitoring, setAssetsUnderMonitoring] = useState(0);
+  //   const [assetsOffMonitoring, setAssetsOffMonitoring] = useState(0);
 
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
-  };
+  // const headers = {
+  //   "Content-Type": "application/json",
+  //   "x-api-key": "YunHu873jHds83hRujGJKd873",
+  //   "x-api-version": "1.0.1",
+  //   "x-platform": "Web",
+  //   "x-access-token": localStorage.getItem("sessionToken") || "",
+  // };
 
-  useEffect(() => {
-    const fetchAssetData = async () => {
-      try {
-        const response = await fetch(
-          `${URLS.baseUrl}/dashboard/sanitation`,
-          {
-            method: "POST",
-            headers: headers,
-          }
-        );
-        const result = await response.json();
+  // useEffect(() => {
+  //   const fetchAssetData = async () => {
+  //     try {
+  //       const response = await fetch(
+  //         `${URLS.baseUrl}/dashboard/sanitation`,
+  //         {
+  //           method: "POST",
+  //           headers: headers,
+  //         }
+  //       );
+  //       const result = await response.json();
 
-        if (result.success && result.data) {
-          const { total, registered, under_monitoring, off_monitoring } =
-            result.data.asset_counts;
+  //       if (result.success && result.data) {
+  //         const { total, registered, under_monitoring, off_monitoring } =
+  //           result.data.asset_counts;
 
-          setTotalAssets(total || 0);
-          setRegisteredAssets(registered || 0);
-          setAssetsUnderMonitoring(under_monitoring || 0);
-          setAssetsOffMonitoring(off_monitoring || 0);
-        } else {
-          message.error("Failed to load details.");
-        }
-      } catch (error) {
-        message.error("Error fetching details.");
-      }
-    };
+  //         setTotalAssets(total || 0);
+  //         setRegisteredAssets(registered || 0);
+  //         setAssetsUnderMonitoring(under_monitoring || 0);
+  //         setAssetsOffMonitoring(off_monitoring || 0);
+  //       } else {
+  //         message.error("Failed to load details.");
+  //       }
+  //     } catch (error) {
+  //       message.error("Error fetching details.");
+  //     }
+  //   };
 
-    fetchAssetData();
-  }, []);
+  //   fetchAssetData();
+  // }, []);
 
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">

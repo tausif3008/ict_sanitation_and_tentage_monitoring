@@ -10,6 +10,7 @@ import logOutIcon from "../assets/Dashboard/logOutIcon.png";
 // import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 import { langingPage } from "../utils/dictionary";
 import { logOutUser } from "../Login/slice/loginSlice";
+import { revertAll } from "../Redux/action";
 
 const NavHead = ({ lang, setLang }) => {
   const myDate = new Date();
@@ -42,10 +43,12 @@ const NavHead = ({ lang, setLang }) => {
   const handleLogOut = async () => {
     const result = await dispatch(logOutUser())
     if (result?.data?.success) {
+      dispatch(revertAll());
       localStorage.clear();
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      sessionStorage.clear();
+      // setTimeout(() => {
+      navigate("/");
+      // }, 1000);
     }
   }
 

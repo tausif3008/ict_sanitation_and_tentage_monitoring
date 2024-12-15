@@ -29,6 +29,7 @@ import {
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
+import { revertAll } from "../Redux/action";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
@@ -48,10 +49,12 @@ const Navbar = ({ lang, setLang }) => {
   const handleLogOut = async () => {
     const result = await dispatch(logOutUser())
     if (result?.data?.success) {
+      dispatch(revertAll());
       localStorage.clear();
-      setTimeout(() => {
-        navigate("/");
-      }, 1000);
+      sessionStorage.clear();
+      // setTimeout(() => {
+      navigate("/");
+      // }, 1000);
     }
   }
   // Dashboard
