@@ -1,5 +1,3 @@
-import axiosInstance from "../Axios/commonAxios";
-
 // Get label using id, list and default name
 export const getValueLabel = (dataId, List, defaultName) => {
   if (dataId) {
@@ -35,25 +33,6 @@ export const checkLoginAvailability = (loginData, navigate) => {
     }
   }
 };
-
-export const logoutFetch = async () => {
-  try {
-    if (sessionToken) {
-      const response = await axiosInstance.delete("/logout");
-      if (response.status === 200) {
-        localStorage.removeItem("sessionToken");
-        localStorage.removeItem("sessionData");
-        return true;
-      }
-    }
-    return false;
-  } catch (error) {
-    console.error("Logout failed:", error);
-    return false;
-  }
-};
-
-// export const checkComponentPermission = (loginData, navigate) => {};
 
 export const statusOptions = [
   { value: 1, label: "Active" },

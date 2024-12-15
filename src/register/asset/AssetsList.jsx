@@ -13,6 +13,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import moment from "moment";
+import dayjs from "dayjs";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import search from "../../assets/Dashboard/icon-search.png";
@@ -41,6 +42,8 @@ import ShowCode from "./showCode";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import CustomInput from "../../commonComponents/CustomInput";
+import { dateWeekOptions } from "../../constant/const";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -53,6 +56,9 @@ const AssetsList = () => {
     currentPage: 1,
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+
   // const [excelData, setExcelData] = useState([]); // excel data
   const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
@@ -92,6 +98,16 @@ const AssetsList = () => {
     const finalData = {
       ...values,
     };
+    if (values?.form_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.form_date = values?.form_date ? start : end;
+      finalData.to_date = values?.to_date ? end : start;
+    }
     const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
@@ -103,6 +119,20 @@ const AssetsList = () => {
   const resetForm = () => {
     form.resetFields();
     setSearchQuery("&");
+    setShowDateRange(false);
+  };
+
+  // handle date
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
+    } else {
+      form.setFieldsValue({
+        form_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
+    }
   };
 
   const getDetails = async () => {
@@ -196,6 +226,14 @@ const AssetsList = () => {
     dispatch(getSectorsList()); // all sectors list
     // dispatch(getAllCircleList()); // all circle list
   }, []);
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
+  };
 
   const columns = [
     {
@@ -455,6 +493,23 @@ const AssetsList = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={AssetTypeDrop || []}
+                      />
+                    </Col>
                     <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"created_by"}
@@ -473,23 +528,6 @@ const AssetsList = () => {
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
                         options={VendorListDrop || []}
-                      />
-                    </Col>
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop || []}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={AssetTypeDrop || []}
                       />
                     </Col>
                     <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
@@ -522,6 +560,75 @@ const AssetsList = () => {
                         placeholder={"Code"}
                       />
                     </Col>
+                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                        placeholder={"Select Date Type"}
+                        onSelect={handleDateSelect}
+                        options={dateWeekOptions || []}
+                      />
+                    </Col>
+                    {showDateRange && (
+                      <>
+                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                          <CustomDatepicker
+                            name={"form_date"}
+                            label={"From Date"}
+                            className="w-full"
+                            placeholder={"From Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                            onChange={(date) => {
+                              const dayjsObjectFrom = dayjs(date?.$d);
+                              const startDate = dayjsObjectFrom;
+
+                              const dayjsObjectTo = dayjs(
+                                form.getFieldValue("to_date")?.$d
+                              );
+                              const endDate = dayjsObjectTo;
+
+                              // Condition 1: If startDate is after endDate, set end_time to null
+                              if (startDate.isAfter(endDate)) {
+                                form.setFieldValue("to_date", null);
+                              }
+
+                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                              const daysDifference = endDate.diff(
+                                startDate,
+                                "days"
+                              );
+                              if (daysDifference > 7) {
+                                form.setFieldValue("to_date", null);
+                              } else {
+                                // If the difference is within the allowed range, you can keep the value or process further if needed.
+                              }
+
+                              setStartDate(startDate.format("YYYY-MM-DD"));
+                            }}
+                          />
+                        </Col>
+                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                          <CustomDatepicker
+                            name={"to_date"}
+                            label={"To Date"}
+                            className="w-full"
+                            placeholder={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                            disabledDate={disabledDate}
+                          />
+                        </Col>
+                      </>
+                    )}
                     <Col
                       xs={24}
                       sm={12}

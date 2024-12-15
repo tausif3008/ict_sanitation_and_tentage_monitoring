@@ -1,6 +1,8 @@
 // slices/counterSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../Redux/action";
+import URLS from "../../urils/URLS";
+import axiosInstance from "../../Axios/commonAxios";
 
 const initialState = {
   loading: false,
@@ -26,6 +28,19 @@ const loginSlice = createSlice({
 // store token
 export const storeToken = (data) => async (dispatch) => {
   dispatch(postToken(data));
+};
+
+// log out
+export const logOutUser = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.delete(`${URLS.out.path}`);
+    return res
+  } catch (error) {
+    console.error("In log out error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
 };
 
 export const { postToken, setLoading } = loginSlice.actions;

@@ -1,18 +1,20 @@
 import React from "react";
+import { useDispatch } from "react-redux";
 import { Badge, Select } from "antd";
 import notificationIcon from "../assets/Dashboard/notification.png";
 import calenderIcon from "../assets/Dashboard/calendarIcon.png";
 import loginIcon from "../assets/Dashboard/logInIcon.png";
 import { Link, useNavigate } from "react-router-dom";
 import logOutIcon from "../assets/Dashboard/logOutIcon.png";
-import img1 from "../assets/Images/UPGovLatestLogo.png";
-import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
+// import img1 from "../assets/Images/UPGovLatestLogo.png";
+// import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 import { langingPage } from "../utils/dictionary";
-import { logoutFetch } from "../constant/const";
+import { logOutUser } from "../Login/slice/loginSlice";
 
 const NavHead = ({ lang, setLang }) => {
   const myDate = new Date();
   const dict = langingPage;
+  const dispatch = useDispatch()
 
   // Format the date
   const options = {
@@ -35,6 +37,17 @@ const NavHead = ({ lang, setLang }) => {
   const navigate = useNavigate();
   const formattedDate = myDate.toLocaleDateString("en-GB", options);
   let token = localStorage.getItem("sessionToken");
+
+  // logout 
+  const handleLogOut = async () => {
+    const result = await dispatch(logOutUser())
+    if (result?.data?.success) {
+      localStorage.clear();
+      setTimeout(() => {
+        navigate("/");
+      }, 1000);
+    }
+  }
 
   return (
     <div className="relative top-0 px-3 bg-orange-400 font-nutino">
@@ -92,11 +105,7 @@ const NavHead = ({ lang, setLang }) => {
             <div
               onClick={() => {
                 if (token) {
-                  localStorage.clear();
-                  logoutFetch();
-                  setTimeout(() => {
-                    navigate("/");
-                  }, 200);
+                  handleLogOut()
                 } else {
                   navigate("/login");
                 }

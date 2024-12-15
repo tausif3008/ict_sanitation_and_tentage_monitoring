@@ -8,7 +8,7 @@ import { loginFetch } from "../Fetch/Axios";
 import BeforeLoginUserTypeDropDown from "../register/user/BeforeLoginUserTypeDropDown";
 import "./login.css";
 import URLS from "../urils/URLS";
-import { checkLoginAvailability, sessionData } from "../constant/const";
+import { checkLoginAvailability } from "../constant/const";
 import CustomInput from "../commonComponents/CustomInput";
 import { useDispatch } from "react-redux";
 import { storeToken } from "./slice/loginSlice";
@@ -35,6 +35,11 @@ const Login = () => {
   const [resetForm] = Form.useForm(); // set new password
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString
+    ? JSON.parse(sessionDataString)
+    : null;
 
   useEffect(() => {
     if (sessionData) {

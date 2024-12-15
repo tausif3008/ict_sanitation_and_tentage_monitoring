@@ -17,7 +17,6 @@ import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
-import { name, Role } from "../constant/const";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
@@ -28,6 +27,9 @@ const ToiletsCount = () => {
   const dispatch = useDispatch();
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard ( api call in details page of vendor dashboard)
   const { AssetType } = AssetTypeSelectors(); // asset type
+
+  const Role = localStorage.getItem("role");
+  const name = localStorage.getItem("name");
 
   useEffect(() => {
     if (AssetType) {
