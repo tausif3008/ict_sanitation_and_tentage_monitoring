@@ -23,6 +23,7 @@ import { getPdfExcelData } from "../../asset/AssetsSlice";
 import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
 import { VendorDetailsPdfFunction } from "./vendorDetailsPdf";
+import { VendorDetailsToExcel } from "./vendorDetailsExcel";
 
 const VendorDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -298,10 +299,15 @@ const VendorDetails = () => {
             Sr: index + 1,
             "Category": data?.asset_main_type_name,
             "Toilets & Tentage Type": data?.asset_type_name,
-            // "Contract Number": Number(data?.contract_number),
-            // "Work Order Number": Number(data?.work_order_number),
-            // "Total Allotted Quantity": Number(data?.total_allotted_quantity),
-            "Date of Allocation": moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+            "Total Allotted Quantity": Number(data?.total_allotted_quantity),
+            "Sector / Parking": [...data?.proposedsectors?.map((item) => [
+              item?.sector_name,
+              Number(item?.quantity),
+            ]),
+            ...data?.proposedparkings?.map((item) => [
+              item?.parking_name,
+              Number(item?.quantity),
+            ])]
           };
         });
 
@@ -326,7 +332,7 @@ const VendorDetails = () => {
         ]);
 
       // Call the export function
-      isExcel && exportToExcel(myexcelData, `${userName} Vendor Details`);
+      isExcel && VendorDetailsToExcel(myexcelData, `${userName} Vendor Details`);
 
       // Call the export function
       !isExcel &&
@@ -388,7 +394,7 @@ const VendorDetails = () => {
                 Download Pdf
               </Button>
             </div>
-            {/* <div>
+            <div>
               <Button
                 type="primary"
                 onClick={() => {
@@ -397,7 +403,7 @@ const VendorDetails = () => {
               >
                 Download Excel
               </Button>
-            </div> */}
+            </div>
           </div>
         </div>
       </div>
