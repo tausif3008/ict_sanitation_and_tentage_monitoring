@@ -61,7 +61,9 @@ const Login = () => {
 
     setLoading(false);
     if (resData) {
-      checkLoginAvailability(resData, navigate);
+      setTimeout(() => {
+        checkLoginAvailability(resData, navigate);
+      }, 1000);
     }
   };
 
@@ -195,7 +197,7 @@ const Login = () => {
                     </Form.Item> */}
                     <CustomInput
                       name="username"
-                      type="number"
+                      // type="text"  // use max length
                       placeholder="Mobile Number"
                       maxLength={10}
                       autoComplete="off"

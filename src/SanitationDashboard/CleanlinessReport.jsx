@@ -19,7 +19,7 @@ const CleanlinessReport = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown ( api of this drop call in ToiletDetails component of sanitation dash)
   const category = SectorListDrop?.map((data) => data?.label);
   const { Dash_Drop, SanitationDash_data } = SanitationDashSelector(); // dashboard
-  const { QuestionDrop } = QuestionSelector(); // questions
+  // const { QuestionDrop } = QuestionSelector(); // questions
   const sectorOptions = SanitationDash_data?.data?.sectorgraph || [];
 
   const options = {
@@ -92,15 +92,14 @@ const CleanlinessReport = () => {
   ];
 
   // const onFinish = (values) => {
-  //   console.log("Form Values: ", values);
   //   // You can perform any action with the form values here
   //   // setSelectedToilet(values.toilet); // Set state if you need
   //   // setSelectedQuestion(values.question);
   // };
 
   useEffect(() => {
-    dispatch(getDashboardData()); // get dashboard data
-    dispatch(getQuestionList()); // get question
+    // dispatch(getDashboardData()); // get dashboard data
+    // dispatch(getQuestionList()); // get question
   }, []);
 
   return (

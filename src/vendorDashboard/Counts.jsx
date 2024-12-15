@@ -16,7 +16,6 @@ import SanitationDashSelector from "../SanitationDashboard/Slice/sanitationDashb
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
-import { name, Role, userId } from "../constant/const";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const Counts = () => {
@@ -28,13 +27,15 @@ const Counts = () => {
   const dispatch = useDispatch();
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard ( api call in details page of vendor dashboard)
   const { AssetType } = AssetTypeSelectors(); // asset type
-
   const {
     off_monitoring = 0,
     under_monitoring = 0,
     total = 0,
     registered = 0,
   } = SanitationDash_data?.data?.asset_counts || {};
+  const Role = localStorage.getItem("role");
+  const name = localStorage.getItem("name");
+  const userId = localStorage.getItem("userId");
 
   const formatNumber = (number) => {
     return new Intl.NumberFormat("en-IN").format(number);
