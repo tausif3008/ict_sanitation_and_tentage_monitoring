@@ -47,7 +47,7 @@ import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState("&asset_main_type_id=1");
   const [loading, setLoading] = useState(false);
   const [totalUnit, setTotalUnit] = useState(0); // unit count
   const [details, setDetails] = useState({
@@ -66,6 +66,7 @@ const AssetsList = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  let categoryId = form.getFieldValue("asset_main_type_id")
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -118,7 +119,8 @@ const AssetsList = () => {
   // reset
   const resetForm = () => {
     form.resetFields();
-    setSearchQuery("&");
+    form.setFieldValue("asset_main_type_id", "1")
+    setSearchQuery("&asset_main_type_id=1");
     setShowDateRange(false);
   };
 
@@ -217,6 +219,7 @@ const AssetsList = () => {
   }, [params, isUpdatedSelector, searchQuery]);
 
   useEffect(() => {
+    form.setFieldValue("asset_main_type_id", "1")
     dispatch(setUpdateAssetEl({ updateElement: null }));
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
@@ -234,6 +237,7 @@ const AssetsList = () => {
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
     );
   };
+
 
   const columns = [
     {
@@ -267,12 +271,40 @@ const AssetsList = () => {
       render: (text) => {
         return text ? text : "GSD";
       },
+      width: 140,
     },
+    ...(categoryId === "2"
+      ? [
+        {
+          title: "Sanstha Name",
+          dataIndex: "sanstha_name_hi",
+          key: "sanstha_name_hi",
+          render: (text) => text || "",
+          width: 140,
+        },
+      ]
+      : []),
     {
       title: "Sector",
       dataIndex: "sector_name",
       key: "sector_name",
       width: 100,
+    },
+    {
+      title: "Photo",
+      width: 100,
+      render: (text, record) =>
+        record.photo ? (
+          <Image
+            width={60}
+            height={60}
+            src={ImageUrl + record?.photo}
+            alt="Assets Photo"
+          />
+        ) : (
+          "No Image"
+        ),
+      key: "photo",
     },
     // {
     //   title: "Circle",
@@ -297,6 +329,7 @@ const AssetsList = () => {
           />
         );
       },
+      width: 100,
     },
     {
       title: "Location",
@@ -310,6 +343,7 @@ const AssetsList = () => {
           "NA"
         );
       },
+      width: 100,
     },
     // {
     //   title: "QR Code",
@@ -325,28 +359,13 @@ const AssetsList = () => {
     //   key: "qrCode",
     // },
     {
-      title: "Photo",
-      width: 100,
-      render: (text, record) =>
-        record.photo ? (
-          <Image
-            width={60}
-            height={60}
-            src={ImageUrl + record?.photo}
-            alt="Assets Photo"
-          />
-        ) : (
-          "No Image"
-        ),
-      key: "photo",
-    },
-    {
       title: "Register At",
       dataIndex: "tagged_at",
       key: "tagged_at",
       render: (text, record) => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
+      width: 140,
     },
   ];
 
@@ -497,9 +516,10 @@ const AssetsList = () => {
                       <CustomSelect
                         name={"asset_main_type_id"}
                         label={"Select Category"}
+                        allowClear={false}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
-                        options={AssetMainTypeDrop || []}
+                        options={AssetMainTypeDrop.slice(0, 2) || []}
                       />
                     </Col>
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
