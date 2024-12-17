@@ -332,7 +332,7 @@ const VendorDetails = () => {
         ]);
 
       // Call the export function
-      isExcel && VendorDetailsToExcel(myexcelData, `${userName} Vendor Details`);
+      isExcel && VendorDetailsToExcel(myexcelData, `${userName} Vendor Details`, {}, totalAllottedQuantity);
 
       // Call the export function
       !isExcel &&
@@ -413,11 +413,10 @@ const VendorDetails = () => {
         uri={"vendor/add-vendor-details/" + params.id}
         details={details}
         loading={loading}
+        tableSubheading={{
+          "Total Allotted Quantity": totalAllottedQuantity,
+        }}
       />
-
-      <div className="text-right font-semibold mt-2">
-        Total Allotted Quantity: {totalAllottedQuantity}
-      </div>
 
       {/* sectors */}
       <Modal
