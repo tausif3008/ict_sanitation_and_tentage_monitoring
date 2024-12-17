@@ -207,8 +207,8 @@ const VendorDetails = () => {
       key: "date_of_allocation",
       width: 160,
       render: (text) => {
-        return text ? moment(text).format("DD-MMM-YYYY") : ""
-      }
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
     },
     {
       title: "Action",
@@ -273,15 +273,13 @@ const VendorDetails = () => {
   ];
 
   // pdf header
-  const subTableHeader = [
-    "Sector Name / Parking Name",
-    "Quantity",
-  ];
+  const subTableHeader = ["Sector Name / Parking Name", "Quantity"];
 
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
-      const url = URLS.vendorDetails.path + `${params?.id}&page=1&per_page=5000`;
+      const url =
+        URLS.vendorDetails.path + `${params?.id}&page=1&per_page=5000`;
 
       const res = await dispatch(
         getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
@@ -297,20 +295,23 @@ const VendorDetails = () => {
         res?.data?.userdetails?.map((data, index) => {
           return {
             Sr: index + 1,
-            "Category": data?.asset_main_type_name,
+            Category: data?.asset_main_type_name,
             "Toilets & Tentage Type": data?.asset_type_name,
             "Total Allotted Quantity": Number(data?.total_allotted_quantity),
-            "Sector / Parking": [...data?.proposedsectors?.map((item) => [
-              item?.sector_name,
-              Number(item?.quantity),
-            ]),
-            ...data?.proposedparkings?.map((item) => [
-              item?.parking_name,
-              Number(item?.quantity),
-            ])]
+            "Sector / Parking": [
+              ...data?.proposedsectors?.map((item) => [
+                item?.sector_name,
+                Number(item?.quantity),
+              ]),
+              ...data?.proposedparkings?.map((item) => [
+                item?.parking_name,
+                Number(item?.quantity),
+              ]),
+            ],
+            Registered: data?.proposedsectors?.registered, //need to work on this registered qty
           };
         });
-
+      console.log("myexcelData", myexcelData);
       const pdfData =
         !isExcel &&
         res?.data?.userdetails?.map((data, index) => [
@@ -321,18 +322,26 @@ const VendorDetails = () => {
           // Number(data?.work_order_number),
           Number(data?.total_allotted_quantity),
           // moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
-          [...data?.proposedsectors?.map((item) => [
-            item?.sector_name,
-            item?.quantity,
-          ]),
-          ...data?.proposedparkings?.map((item) => [
-            item?.parking_name,
-            item?.quantity,
-          ])]
+          [
+            ...data?.proposedsectors?.map((item) => [
+              item?.sector_name,
+              item?.quantity,
+            ]),
+            ...data?.proposedparkings?.map((item) => [
+              item?.parking_name,
+              item?.quantity,
+            ]),
+          ],
         ]);
 
       // Call the export function
-      isExcel && VendorDetailsToExcel(myexcelData, `${userName} Vendor Details`, {}, totalAllottedQuantity);
+      isExcel &&
+        VendorDetailsToExcel(
+          myexcelData,
+          `${userName} Vendor Details`,
+          {},
+          totalAllottedQuantity
+        );
 
       // Call the export function
       !isExcel &&
@@ -348,7 +357,6 @@ const VendorDetails = () => {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
     }
   };
-
 
   return (
     <div>
@@ -446,6 +454,11 @@ const VendorDetails = () => {
                   dataIndex: "quantity",
                   key: "quantity",
                 },
+                {
+                  title: "Registered",
+                  dataIndex: "registered",
+                  key: "registered",
+                },
               ]}
             />
           </>
@@ -472,6 +485,11 @@ const VendorDetails = () => {
                   dataIndex: "quantity",
                   key: "quantity",
                 },
+                {
+                  title: "Registered",
+                  dataIndex: "registered",
+                  key: "registered",
+                },
               ]}
             />
           </>
@@ -480,20 +498,20 @@ const VendorDetails = () => {
         )}
         {(proposedSectors?.proposedsectors?.length ||
           proposedSectors?.proposedparkings?.length) && (
-            <div className="text-right font-semibold mt-2">
-              Total Quantity:{" "}
-              {(
-                proposedSectors?.proposedparkings?.reduce(
-                  (total, park) => total + Number(park?.quantity || 0),
-                  0
-                ) +
-                proposedSectors?.proposedsectors?.reduce(
-                  (total, sector) => total + Number(sector?.quantity || 0),
-                  0
-                )
-              ).toLocaleString()}
-            </div>
-          )}
+          <div className="text-right font-semibold mt-2">
+            Total Quantity:{" "}
+            {(
+              proposedSectors?.proposedparkings?.reduce(
+                (total, park) => total + Number(park?.quantity || 0),
+                0
+              ) +
+              proposedSectors?.proposedsectors?.reduce(
+                (total, sector) => total + Number(sector?.quantity || 0),
+                0
+              )
+            ).toLocaleString()}
+          </div>
+        )}
       </Modal>
 
       <Modal
