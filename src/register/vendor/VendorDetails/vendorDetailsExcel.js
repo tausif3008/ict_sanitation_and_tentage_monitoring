@@ -43,7 +43,8 @@ const transformDataForExcel = (data) => {
 export const VendorDetailsToExcel = async (
     excelData = [],
     fileName = "excel_file",
-    dynamicFields = {}
+    dynamicFields = {},
+    Total = 0
 ) => {
     if (excelData?.length === 0) {
         message.error("No data available");
@@ -90,7 +91,7 @@ export const VendorDetailsToExcel = async (
     });
 
     const totalCountRow = worksheet.addRow({});
-    totalCountRow.getCell(1).value = `Total Rows: ${transformedData.length}`;
+    totalCountRow.getCell(1).value = `Total Alloted Quantity: ${Total}`;
     totalCountRow.getCell(1).font = { bold: true };
     totalCountRow.getCell(1).alignment = { horizontal: "center" };
 
