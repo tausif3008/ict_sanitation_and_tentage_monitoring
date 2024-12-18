@@ -1,31 +1,36 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { Provider } from "react-redux";
+import { ConfigProvider } from "antd";
+import { BrowserRouter, HashRouter } from "react-router-dom"; // Import BrowserRouter
+
 import "./index.css";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
-import { ConfigProvider } from "antd";
-import { BrowserRouter } from "react-router-dom"; // Import BrowserRouter
+import store from "./Redux/store";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <ConfigProvider
-      theme={{
-        components: {
-          Table: {
-            borderColor: "#b5f5ec",
-            headerBg: "orange",
-            cellPaddingBlock: 5,
-            headerColor: "white",
-            rowHoverBg: "#f6ffed",
-            headerBorderRadius: 0,
+  <Provider store={store}>
+    <HashRouter>
+      <ConfigProvider
+        theme={{
+          components: {
+            Table: {
+              borderColor: "#b5f5ec",
+              headerBg: "orange",
+              cellPaddingBlock: 5,
+              headerColor: "white",
+              rowHoverBg: "#f6ffed",
+              headerBorderRadius: 0,
+            },
           },
-        },
-      }}
-    >
-      <App /> {/* Your main App component */}
-    </ConfigProvider>
-  </BrowserRouter>
+        }}
+      >
+        <App /> {/* Your main App component */}
+      </ConfigProvider>
+    </HashRouter>
+  </Provider>
 );
 
 // If you want to start measuring performance in your app, pass a function

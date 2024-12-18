@@ -8,6 +8,10 @@ import { loginFetch } from "../Fetch/Axios";
 import BeforeLoginUserTypeDropDown from "../register/user/BeforeLoginUserTypeDropDown";
 import "./login.css";
 import URLS from "../urils/URLS";
+import { checkLoginAvailability } from "../constant/const";
+import CustomInput from "../commonComponents/CustomInput";
+import { useDispatch } from "react-redux";
+import { storeToken } from "./slice/loginSlice";
 
 const headers = {
   "x-api-key": "YunHu873jHds83hRujGJKd873",
@@ -30,6 +34,18 @@ const Login = () => {
   const [forgotForm] = Form.useForm(); // forgot
   const [resetForm] = Form.useForm(); // set new password
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString
+    ? JSON.parse(sessionDataString)
+    : null;
+
+  useEffect(() => {
+    if (sessionData) {
+      checkLoginAvailability(sessionData, navigate); // if user is already login then it they should not able to visit login page
+    }
+  }, [sessionData]);
 
   const onFinish = async (values) => {
     const formData = new FormData();
@@ -41,20 +57,13 @@ const Login = () => {
 
     const res = await loginFetch(formData, setCanProceed);
     const resData = res?.data?.sessionData?.[0];
+    dispatch(storeToken(res?.sessionToken));
 
     setLoading(false);
     if (resData) {
-      if (resData) {
-        if (resData?.user_type_id === "8") {
-          if (resData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
-            navigate("/tentage-dashboard"); // vendor login tentage
-          } else {
-            navigate("/vendor-dashboard"); // vendor login
-          }
-        } else {
-          navigate("/sanitation-dashboard");
-        }
-      }
+      setTimeout(() => {
+        checkLoginAvailability(resData, navigate);
+      }, 1000);
     }
   };
 
@@ -164,24 +173,71 @@ const Login = () => {
                     autoComplete="off"
                   >
                     <BeforeLoginUserTypeDropDown form={form} />
-                    <Form.Item
+                    {/* <Form.Item
                       name="username"
                       rules={[
                         {
                           required: true,
                           message: "Please enter your mobile number!",
                         },
+                        {
+                          pattern: /^[0-9]{10}$/,
+                          message:
+                            "Please enter a valid 10-digit mobile number",
+                        },
                       ]}
                       className="my-8"
                     >
                       <Input
+                        maxLength={10}
                         autoComplete="off"
                         prefix={<UserOutlined />}
                         placeholder="Mobile Number"
                         className="rounded-none"
                       />
-                    </Form.Item>
-                    <Form.Item
+                    </Form.Item> */}
+                    <CustomInput
+                      name="username"
+                      // type="text"  // use max length
+                      placeholder="Mobile Number"
+                      maxLength={10}
+                      autoComplete="off"
+                      accept={"onlyNumber"}
+                      prefix={<UserOutlined />}
+                      isPassword={false}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your mobile number!",
+                        },
+                        {
+                          pattern: /^[0-9]{10}$/,
+                          message:
+                            "Please enter a valid 10-digit mobile number",
+                        },
+                      ]}
+                      className={"mt-2"}
+                    />
+                    <CustomInput
+                      name="password"
+                      placeholder="Password"
+                      maxLength={15}
+                      autoComplete="off"
+                      prefix={<LockOutlined />}
+                      isPassword={true}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please enter your password!",
+                        },
+                        // {
+                        //   min: 6,
+                        //   message: "Password must be at least 6 characters.",
+                        // },
+                      ]}
+                      className={"mt-2"}
+                    />
+                    {/* <Form.Item
                       name="password"
                       rules={[
                         {
@@ -195,8 +251,14 @@ const Login = () => {
                         prefix={<LockOutlined />}
                         placeholder="Password"
                         className="rounded-none"
+                        onKeyDown={(event) => {
+                          const invalidChars = ["'", '"', ";", "-", "\\"];
+                          if (invalidChars.includes(event.key)) {
+                            event.preventDefault();
+                          }
+                        }}
                       />
-                    </Form.Item>
+                    </Form.Item> */}
                     <Form.Item noStyle>
                       <div className="flex justify-between">
                         <Button
@@ -250,7 +312,27 @@ const Login = () => {
         >
           {!otpStep ? (
             <>
-              <Form.Item
+              <CustomInput
+                label="Phone Number"
+                name="phone"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please enter your phone number!",
+                  },
+                  {
+                    pattern: /^[0-9]{10}$/,
+                    message: "Please enter a valid 10-digit phone number!",
+                  },
+                ]}
+                type="number"
+                placeholder="Phone Number"
+                maxLength={10}
+                autoComplete="off"
+                accept={"onlyNumber"}
+                className={"mt-2"}
+              />
+              {/* <Form.Item
                 label="Phone Number"
                 name="phone"
                 rules={[
@@ -269,7 +351,7 @@ const Login = () => {
                   type="Number"
                   className="rounded-none"
                 />
-              </Form.Item>
+              </Form.Item> */}
               <div className="text-center mt-2">
                 <Button type="primary" htmlType="submit" className="w-[30%]">
                   Get OTP
@@ -278,14 +360,37 @@ const Login = () => {
             </>
           ) : (
             <>
-              <Form.Item
+              {/* <Form.Item
                 label="One Time Password (OTP)"
                 name="otp"
                 rules={[{ required: true, message: "Please enter OTP!" }]}
               >
                 <Input placeholder="Enter OTP" className="rounded-none" />
-              </Form.Item>
-              <Form.Item
+              </Form.Item> */}
+              <CustomInput
+                name="otp"
+                label="One Time Password (OTP)"
+                placeholder="One Time Password (OTP)"
+                rules={[{ required: true, message: "Please enter OTP!" }]}
+                className={"mt-2"}
+              />
+              <CustomInput
+                label="New Password"
+                name="newPassword"
+                placeholder="New Password"
+                maxLength={15}
+                autoComplete="off"
+                isPassword={true}
+                rules={[
+                  { required: true, message: "Please enter a new password!" },
+                  {
+                    min: 6,
+                    message: "Password must be at least 6 characters.",
+                  },
+                ]}
+                className={"mt-2"}
+              />
+              {/* <Form.Item
                 label="New Password"
                 name="newPassword"
                 rules={[
@@ -300,7 +405,7 @@ const Login = () => {
                   placeholder="Enter new password"
                   className="rounded-none"
                 />
-              </Form.Item>
+              </Form.Item> */}
               <div className="text-center">
                 <Button type="primary" htmlType="submit" className="w-[30%]">
                   Save

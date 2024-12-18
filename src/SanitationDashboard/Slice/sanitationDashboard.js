@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../Redux/action";
 import axiosInstance from "../../Axios/commonAxios";
 import URLS from "../../urils/URLS";
+import { message } from "antd";
 
 const initialState = {
   loading: false,
@@ -43,6 +44,7 @@ export const getSanitationDashData = (data) => async (dispatch) => {
     );
     dispatch(postSuccess(res?.data));
   } catch (error) {
+    message.error("Something went wrong");
     console.error("In get sanitation dashboard data error", error);
   } finally {
     dispatch(setLoading(false));
@@ -56,6 +58,7 @@ export const getDashboardData = () => async (dispatch) => {
     const res = await axiosInstance.post(`${URLS?.dashboardApi?.path}`);
     dispatch(postDash(res?.data));
   } catch (error) {
+    message.error("Something went wrong");
     console.error("In get dashboard data error", error);
   } finally {
     dispatch(setLoading(false));

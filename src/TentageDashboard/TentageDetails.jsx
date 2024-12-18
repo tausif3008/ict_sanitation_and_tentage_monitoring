@@ -1,116 +1,69 @@
-import React, { useState, useEffect } from "react";
-import { DatePicker, Select, message, Tooltip, Button } from "antd";
+import React, { useEffect } from "react";
+import { Tooltip, Button, Form } from "antd";
 import dayjs from "dayjs";
-import lines from "../assets/Dashboard/lines.png";
-import URLS from "../urils/URLS";
+import moment from "moment";
 import { useOutletContext } from "react-router";
+import { useDispatch } from "react-redux";
+
+import lines from "../assets/Dashboard/lines.png";
+import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import TentageSelector from "./Slice/tentageSelector";
+import { langingPage } from "../utils/dictionary";
+import CustomSelect from "../commonComponents/CustomSelect";
+import CustomDatepicker from "../commonComponents/CustomDatepicker";
+import { getFormData } from "../urils/getFormData";
+import { getTentageDashboardData } from "./Slice/tentageSlice";
 
 const TentageDetails = () => {
+  const dateFormat = "YYYY-MM-DD";
   const [dict, lang] = useOutletContext();
-  const [selectedVendor, setSelectedVendor] = useState(null);
-  const [selectedSector, setSelectedSector] = useState(null);
-  const [vendorData, setVendorData] = useState([]);
-  const [sectorData, setSectorData] = useState([]);
-  const [assetData, setAssetData] = useState([]);
-  const [selectedDate, setSelectedDate] = useState(dayjs().format("YYYY-MM-DD"));
+  const [form] = Form.useForm();
+  const dispatch = useDispatch();
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { TentageDash_data, loading } = TentageSelector(); // tentage dashboard
+  const toiletData = TentageDash_data?.data?.asset_types || [];
 
-  const toiletData = assetData?.asset_types;
-
-  const headers = {
-    "Content-Type": "application/json",
-    "x-api-key": "YunHu873jHds83hRujGJKd873",
-    "x-api-version": "1.0.1",
-    "x-platform": "Web",
-    "x-access-token": localStorage.getItem("sessionToken") || "",
+  // Reset the form
+  const handleReset = () => {
+    form.resetFields();
+    todayData();
   };
 
-  useEffect(() => {
-    const fetchVendorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/users?user_type_id=8`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setVendorData(result.data.users);
-        } else {
-          message.error("Failed to load vendor details.");
-        }
-      } catch (error) {
-        message.error("Error fetching vendor details.");
-      }
+  // Handle form submission
+  const onFinish = async (values) => {
+    const dayjsDate = new Date(values?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
+    const finalValues = {
+      ...(values?.sector_id && { sector_id: values?.sector_id }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
-    fetchVendorData();
-  }, []);
+    const formData = await getFormData(finalValues);
+    dispatch(getTentageDashboardData(formData)); // tentage dashboard
+  };
 
-  useEffect(() => {
-    const fetchSectorData = async () => {
-      try {
-        const response = await fetch(`${URLS.baseUrl}/sector`, {
-          method: "GET",
-          headers: headers,
-        });
-        const result = await response.json();
-        if (result.success) {
-          setSectorData(result.data.sectors);
-        } else {
-          message.error("Failed to load sector details.");
-        }
-      } catch (error) {
-        message.error("Error fetching sector details.");
-      }
+  // today date
+  const todayData = async () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+    });
+    const finalData = {
+      date: newDate,
     };
-    fetchSectorData();
-  }, []);
-
-  const fetchAssetData = async (
-    sectorId = null,
-    vendorId = null,
-    toiletId = null
-  ) => {
-    try {
-      const response = await fetch(`${URLS.baseUrl}/dashboard/tentage`, {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({
-          date: selectedDate, 
-          sector_id: sectorId || undefined,
-          vendor_id: vendorId || undefined,
-          asset_type_id: toiletId || undefined,
-        }),
-      });
-      const result = await response.json();
-      if (result.success) {
-        setAssetData(result.data);
-      } else {
-        message.error("Failed to load asset details.");
-      }
-    } catch (error) {
-      message.error("Error fetching asset details.");
-    }
+    const formData = await getFormData(finalData);
+    dispatch(getTentageDashboardData(formData)); // tentage dashboard
   };
 
   useEffect(() => {
-    fetchAssetData();
+    dispatch(getVendorList()); // vendor details
+    dispatch(getSectorsList()); // all sectors
+    todayData();
   }, []);
-
-  const handleSectorChange = (value) => {
-    setSelectedSector(value);
-    fetchAssetData(value, selectedVendor);
-  };
-
-  const handleVendorChange = (value) => {
-    setSelectedVendor(value);
-    fetchAssetData(selectedSector, value);
-  };
-
-  const handleDateChange = (date) => {
-    const formattedDate = date ? date.format("YYYY-MM-DD") : dayjs().format("YYYY-MM-DD");
-    setSelectedDate(formattedDate);
-    fetchAssetData(selectedSector, selectedVendor);
-  };
-  
 
   return (
     <div className="p-4 bg-white rounded-xl space-y-4">
@@ -129,61 +82,68 @@ const TentageDetails = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-3 mt-0">
-      <DatePicker
-          size="middle"
-          defaultValue={dayjs()}
-          onChange={handleDateChange}
-        />
-        <Select
-          value={selectedSector}
-          onChange={handleSectorChange}
-          placeholder={dict.select_sector[lang]}
-          style={{ minWidth: "120px", flex: "1" }}
-        >
-          {sectorData.map((sector) => (
-            <Select.Option key={sector.sector_id} value={sector.sector_id}>
-              {sector.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Select
-          value={selectedVendor}
-          onChange={handleVendorChange}
-          placeholder={dict.select_vendor[lang]}
-          style={{ minWidth: "150px", flex: "1" }}
-        >
-          {vendorData.map((vendor) => (
-            <Select.Option key={vendor.user_id} value={vendor.user_id}>
-              {vendor.name}
-            </Select.Option>
-          ))}
-        </Select>
-
-        <Button
-          size="medium"
-          type="primary"
-          className="w-32 bg-orange-400 font-semibold"
-          style={{ flexShrink: 0 }}
-          onClick={() =>
-            fetchAssetData(selectedSector, selectedVendor)
-          }
-        >
-          {dict.search[lang]}
-        </Button>
-      </div>
+      <Form form={form} layout="vertical" onFinish={onFinish}>
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
+          <CustomDatepicker
+            name={"date"}
+            label={`${langingPage?.date[lang]}`}
+            placeholder={`${langingPage?.date[lang]}`}
+            className="w-full"
+            rules={[
+              {
+                required: true,
+                message: "Please select a date!",
+              },
+            ]}
+          />
+          <CustomSelect
+            name={"sector_id"}
+            label={`${dict?.select_sector[lang]}`}
+            placeholder={`${dict?.select_sector[lang]}`}
+            options={SectorListDrop || []}
+          />
+          <CustomSelect
+            name={"vendor_id"}
+            label={`${dict?.select_vendor[lang]}`}
+            placeholder={`${dict?.select_vendor[lang]}`}
+            options={VendorListDrop || []}
+          />
+          <div className="flex justify-start my-4 space-x-2">
+            <div>
+              <Button
+                loading={loading}
+                type="button"
+                // htmlType="submit"
+                className="w-fit rounded-none text-white bg-orange-400"
+                onClick={handleReset}
+              >
+                {langingPage?.reset[lang]}
+              </Button>
+            </div>
+            <div>
+              <Button
+                loading={loading}
+                type="primary"
+                htmlType="submit"
+                className="w-fit rounded-none bg-5c"
+              >
+                {dict?.search[lang]}
+              </Button>
+            </div>
+          </div>{" "}
+        </div>{" "}
+      </Form>
 
       <div className="grid sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3 gap-3 sm:gap-3 md:gap-4 lg:gap-4 gap-y-6">
         {toiletData?.length > 0 ? (
-          toiletData.map((item, index) => (
+          toiletData?.map((item, index) => (
             <Tooltip
               key={index}
               title={
                 <div>
-                  <strong>{item.name}</strong>
-                  <div>Total Quantity: {item.total}</div>
-                  <div>Registered Quantity: {item.registered}</div>
+                  <strong>{lang === "en" ? item?.name : item?.name_hi}</strong>
+                  <div>Total Quantity: {item?.total}</div>
+                  <div>Registered Quantity: {item?.registered}</div>
                 </div>
               }
               placement="top"
@@ -197,18 +157,18 @@ const TentageDetails = () => {
               >
                 <div className="text-start flex-1">
                   <div className="text-sm text-gray-500 font-bold">
-                    {item.name}
+                    {lang === "en" ? item?.name : item?.name_hi}
                   </div>
                 </div>
                 <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-                    <span className="text-md font-semibold">{item.clean}</span>
+                    <span className="text-sm font-semibold">{item?.clean}</span>
                   </div>
                   <div className="flex items-center">
                     <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                    <span className="text-md font-semibold">
-                      {item.unclean}
+                    <span className="text-sm font-semibold">
+                      {item?.unclean}
                     </span>
                   </div>
                 </div>

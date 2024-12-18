@@ -358,21 +358,21 @@ const VendorDetailsForm = () => {
               responseListName="assetmaintypes"
               responseLabelName="name"
               responseIdName="asset_main_type_id"
-              selectLabel={"Asset Main Type"}
+              selectLabel={"Category"}
               selectName={"asset_main_type_id"}
               required={true}
               RequiredMessage={"Main type is required!"}
               setValue={setAssetMainTypeId}
             ></CommonFormDropDownMaker>
             <Form.Item
-              label={<div className="font-semibold">Asset Type</div>}
+              label={<div className="font-semibold">Type</div>}
               name="asset_type_id"
               rules={[{ required: true, message: "Please enter asset type" }]}
               className="mb-4 w-full"
             >
               <Select
                 showSearch
-                placeholder="Select Asset Type"
+                placeholder="Select Type"
                 optionFilterProp="children"
               >
                 {assetTypes.map((option) => (

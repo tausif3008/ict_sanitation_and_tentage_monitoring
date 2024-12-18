@@ -222,11 +222,16 @@ const AssetTypeList = () => {
       key: "name",
       width: 250,
     },
-
     {
       title: "Total Quantity", // Total quantity
       dataIndex: "total_quantity",
       key: "total_quantity",
+    },
+    {
+      title: "Total Registered",
+      dataIndex: "registered",
+      key: "registered",
+      render: (text) => (text ? text : 0),
     },
     {
       title: "Description", // Asset description

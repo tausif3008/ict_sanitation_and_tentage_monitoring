@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
-import { Collapse, Form, Button, notification, Row, Col } from "antd";
+import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 import {
@@ -11,27 +11,30 @@ import {
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
 
-import { Image } from "antd";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
-import { dateOptions, getValueLabel } from "../constant/const";
+import { dateOptions } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
 import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
-import CircleSelector from "../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
-import ExportToExcel from "../Reports/ExportToExcel";
-import ExportToPDF from "../Reports/reportFile";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
+import { exportToExcel } from "../Reports/ExportExcelFuntion";
+import { getPdfExcelData } from "../register/asset/AssetsSlice";
+import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
+// import { Image } from "antd";
+// import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+// import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+// import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
+// import CircleSelector from "../Reports/CircleSlice/circleSelector";
+// import ExportToExcel from "../Reports/ExportToExcel";
+// import ExportToPDF from "../Reports/reportFile";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -39,18 +42,18 @@ const Monitoring = () => {
     list: [],
     pageLength: 25,
     currentPage: 1,
+    totalUnit: 0,
   });
   const [assetMainType, setAssetMainType] = useState([]); // asset main type
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
-  const [excelData, setExcelData] = useState([]); // excel data
+  // const [excelData, setExcelData] = useState([]); // excel data
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
-  const { SectorListDrop } = VendorSectorSelectors(); // sector
-  const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
+  // const ImageUrl = localStorage.getItem("ImageUrl") || "";
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -106,31 +109,36 @@ const Monitoring = () => {
         };
       });
 
+      const totalUnit = data?.listings?.reduce((total, start) => {
+        return total + Number(start?.unit_no);
+      }, 0);
+
       setDetails(() => {
         return {
           list,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentpage,
+          totalUnit,
           totalRecords: data.paging[0].totalrecords,
         };
       });
 
-      const myexcelData = data?.listings?.map((data, index) => {
-        return {
-          sr: index + 1,
-          "Asset Type Name": data?.asset_type_name,
-          Code: data?.asset_code,
-          Unit: data?.unit_no,
-          "Monitoring Agent Name": data?.agent_name,
-          "Vendor Name": data?.vendor_name,
-          Sector: data?.sector_name,
-          Circle: data?.circle_name,
-          Date: data?.created_at
-            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-            : "",
-        };
-      });
-      setExcelData(myexcelData);
+      // const myexcelData = data?.listings?.map((data, index) => {
+      //   return {
+      //     sr: index + 1,
+      //     "Asset Type Name": data?.asset_type_name,
+      //     Code: Number(data?.asset_code),
+      //     Unit: Number(data?.unit_no),
+      //     "Monitoring Agent Name": data?.agent_name,
+      //     "Vendor Name": data?.vendor_name,
+      //     Sector: data?.sector_name,
+      //     Circle: data?.circle_name,
+      //     Date: data?.created_at
+      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+      //       : "",
+      //   };
+      // });
+      // setExcelData(myexcelData);
     }
   };
 
@@ -149,9 +157,7 @@ const Monitoring = () => {
   useEffect(() => {
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    dispatch(getVendorList()); // vendor list
-    dispatch(getSectorsList()); // all sectors list
-    dispatch(getAllCircleList()); // all circle list
+    userRoleId != "8" && dispatch(getVendorList()); // vendor list
 
     return () => {};
   }, []);
@@ -239,20 +245,20 @@ const Monitoring = () => {
         return text ? `${text}-${record?.unit_no}` : "";
       },
     },
-    {
-      title: "QR",
-      dataIndex: "asset_qr_code",
-      width: 80,
-      render: (qr) => {
-        return (
-          <Image
-            src={URLS.baseUrl + "/" + qr}
-            alt="QR Code"
-            style={{ maxWidth: "50px" }}
-          />
-        );
-      },
-    },
+    // {
+    //   title: "QR",
+    //   dataIndex: "asset_qr_code",
+    //   width: 80,
+    //   render: (qr) => {
+    //     return (
+    //       <Image
+    //         src={ImageUrl + qr}
+    //         alt="QR Code"
+    //         style={{ maxWidth: "50px" }}
+    //       />
+    //     );
+    //   },
+    // },
     {
       title: "GSD Name",
       dataIndex: "agent_name",
@@ -263,28 +269,19 @@ const Monitoring = () => {
     },
     {
       title: "Vendor Name",
-      dataIndex: "vendor_id",
-      key: "vendor_id",
-      render: (text) => {
-        return getValueLabel(text, VendorListDrop, "Vendor Name");
-      },
+      dataIndex: "vendor_name",
+      key: "vendor_name",
     },
     {
       title: "Sector Name",
-      dataIndex: "sector_id",
-      key: "sector_id",
-      render: (text) => {
-        return getValueLabel(text, SectorListDrop, "sector");
-      },
+      dataIndex: "sector_name",
+      key: "sector_name",
     },
-    {
-      title: "Circle Name",
-      dataIndex: "circle_id",
-      key: "circle_id",
-      render: (text) => {
-        return getValueLabel(text, CircleListDrop, "circle");
-      },
-    },
+    // {
+    //   title: "Circle Name",
+    //   dataIndex: "circle_name",
+    //   key: "circle_name",
+    // },
     {
       title: "Date",
       dataIndex: "created_at",
@@ -334,38 +331,131 @@ const Monitoring = () => {
   ];
 
   // pdf data
-  const pdfData = details?.list?.map((data, index) => [
-    index + 1,
-    data?.asset_type_name,
-    data?.asset_code,
-    data?.unit_no,
-    data?.agent_name ? data?.agent_name : "GSD",
-    data?.vendor_name,
-    data?.sector_name,
-    data?.circle_name,
-    data?.created_at
-      ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-      : "",
-  ]);
+  // const pdfData = details?.list?.map((data, index) => [
+  //   index + 1,
+  //   data?.asset_type_name,
+  //   data?.asset_code,
+  //   data?.unit_no,
+  //   data?.agent_name ? data?.agent_name : "GSD",
+  //   data?.vendor_name,
+  //   data?.sector_name,
+  //   data?.circle_name,
+  //   data?.created_at
+  //     ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+  //     : "",
+  // ]);
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      let url = URLS.monitoring.path + "?page=1&per_page=5000";
+
+      if (userRoleId === "8") {
+        url = url + `&vendor_id=${sessionData?.id}`;
+      }
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.listings) {
+        throw new Error("No listings found in the response data.");
+      }
+
+      // Calculate total units
+      const unitCount = res?.data?.listings?.reduce((total, item) => {
+        return total + Number(item?.unit_no);
+      }, 0);
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.listings?.map((data, index) => {
+          return {
+            sr: index + 1,
+            "Asset Type Name": data?.asset_type_name,
+            Code: Number(data?.asset_code),
+            Unit: Number(data?.unit_no),
+            "GSD Name": data?.agent_name || "GSD",
+            "Vendor Name": data?.vendor_name,
+            Sector: data?.sector_name,
+            Circle: data?.circle_name,
+            Date: data?.created_at
+              ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+              : "",
+          };
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.listings?.map((data, index) => [
+          index + 1,
+          data?.asset_type_name,
+          data?.asset_code,
+          data?.unit_no,
+          data?.agent_name ? data?.agent_name : "GSD",
+          data?.vendor_name,
+          data?.sector_name,
+          data?.circle_name,
+          data?.created_at
+            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        ]);
+
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, "Monitoring Report", {
+          "Total Unit": unitCount,
+        });
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          "Toilet & Tentage Monitoring",
+          "Monitoring Report",
+          pdfHeader,
+          pdfData,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
 
   return (
     <div className="">
       <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          <ExportToPDF
+          {/* <ExportToPDF
             titleName={"Toilet & Tentage Monitoring"}
             pdfName={"Monitoring Report"}
             headerData={pdfHeader}
             rows={pdfData}
             landscape={true}
-          />
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(false);
+            }}
+          >
+            Download Pdf
+          </Button>
         </div>
         <div>
-          <ExportToExcel
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Monitoring Report"}
-          />
+            dynamicFields={{ "Total Unit": details?.totalUnit }}
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
+            Download Excel
+          </Button>
         </div>
       </div>
       <div>
@@ -512,6 +602,8 @@ const Monitoring = () => {
         uri={"monitoring"}
         details={details}
         loading={loading}
+        subtotalName={"Total Unit"}
+        subtotalCount={details?.totalUnit}
         scroll={{ x: 1000, y: 400 }}
       ></CommonTable>
     </div>

@@ -1,33 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
-import { Link } from "react-router-dom";
-import {
-  Collapse,
-  Form,
-  Input,
-  Button,
-  Select,
-  notification,
-  Row,
-  Col,
-} from "antd";
-import { EditOutlined, PlusOutlined } from "@ant-design/icons";
+import { Button, Form, Input, message, Modal } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import CommonTable from "../../commonComponents/CommonTable";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import { getValueLabel } from "../../constant/const";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
-import { getSectorsList } from "./Slice/vendorSectorSlice";
-import VendorSectorSelectors from "./Slice/vendorSectorSelectors";
+import { useDispatch } from "react-redux";
+import { deleteSupervisorSectorAllocation } from "./Slice/vendorSectorSlice";
 
 // sector allocation
 const VendorSectorAllocation = () => {
   const params = useParams();
   const [searchQuery, setSearchQuery] = useState();
+  const [viewDeleteModal, setViewDeleteModal] = useState(false); // view delete model
+
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
@@ -35,10 +22,41 @@ const VendorSectorAllocation = () => {
     currentPage: 1,
   });
 
+  const [form] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { VendorListDrop } = VendorSupervisorSelector();
-  const { SectorListDrop } = VendorSectorSelectors();
+
+  const handleCancel = () => {
+    setViewDeleteModal(false);
+  };
+
+  // handle delete
+  const handleDelete = (data) => {
+    form.setFieldsValue({
+      user_id: data?.user_id,
+      sector_id: data?.sector_id,
+      supervisor_name: data?.supervisor_name,
+      sector_name: data?.sector_name,
+    });
+    setViewDeleteModal(true);
+  };
+
+  // handle delete API
+  const onFinish = async (value) => {
+    const url =
+      URLS?.deleteAllocate_Sector?.path +
+      `/${value?.user_id}/${value?.sector_id}`;
+    const res = await dispatch(deleteSupervisorSectorAllocation(url));
+    if (res) {
+      getUsers();
+      message.success(
+        `${value?.supervisor_name} ${value?.sector_name} Allocation Record deleted Successfully`
+      );
+    } else {
+      message.error("Something went wrong! Please try again.");
+    }
+    setViewDeleteModal(false);
+  };
 
   const getUsers = async () => {
     setLoading(true);
@@ -63,7 +81,6 @@ const VendorSectorAllocation = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
 
       const list = data.listings.map((el, index) => {
         return {
@@ -81,12 +98,11 @@ const VendorSectorAllocation = () => {
         };
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     getUsers(); // users
-    dispatch(getSectorsList()); // sector list
-    dispatch(getVendorList()); // vendor list
   }, [params, searchQuery]);
 
   const columns = [
@@ -103,21 +119,18 @@ const VendorSectorAllocation = () => {
     },
     // {
     //   title: "Email",
-    //   dataIndex: "email",
-    //   key: "email",
+    //   dataIndex: "user_email",
+    //   key: "user_email",
     // },
     {
       title: "Mobile No.",
-      dataIndex: "supervisor_phone",
-      key: "supervisor_phone",
+      dataIndex: "user_phone",
+      key: "user_phone",
     },
     {
       title: "Sector Name",
-      dataIndex: "sector_id",
-      key: "sector_id",
-      render: (text, record) => {
-        return text ? getValueLabel(text, SectorListDrop, "NA") : "";
-      },
+      dataIndex: "sector_name",
+      key: "sector_name",
     },
     {
       title: "Action",
@@ -127,18 +140,26 @@ const VendorSectorAllocation = () => {
       width: 80,
       render: (text, record) => {
         return (
+          // <Button
+          //   className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+          //   onClick={() => {
+          //     navigate("/sector-allocation-form", {
+          //       state: {
+          //         key: "UpdateKey",
+          //         record: record, // Pass the record as part of the state
+          //       },
+          //     });
+          //   }}
+          // >
+          //   <EditOutlined />
+          // </Button>
           <Button
-            className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+            className="bg-red-100 border-red-500 focus:ring-red-500 hover:bg-red-200 rounded-full"
             onClick={() => {
-              navigate("/sector-allocation-form", {
-                state: {
-                  key: "UpdateKey",
-                  record: record, // Pass the record as part of the state
-                },
-              });
+              handleDelete(record);
             }}
           >
-            <EditOutlined />
+            <DeleteOutlined />
           </Button>
         );
       },
@@ -165,22 +186,6 @@ const VendorSectorAllocation = () => {
             </Button>
           }
         ></CommonDivider>
-        {/* <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          dropFields={[
-            {
-              name: "vendor_id",
-              label: "Vendor Name",
-              options: VendorListDrop || [],
-            },
-          ]}
-          fields={[
-            { name: "name", label: "Supervisor Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-          ]}
-        ></CommonSearchForm> */}
 
         <CommonTable
           columns={columns}
@@ -189,6 +194,46 @@ const VendorSectorAllocation = () => {
           details={details}
           setUserDetails={setDetails}
         ></CommonTable>
+
+        <Modal
+          title="Delete Supervisor Sector Allocation"
+          open={viewDeleteModal}
+          onCancel={handleCancel}
+          footer={null}
+          width={400}
+        >
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <p>
+              Are you sure you want to delete this Supervisor Sector Allocation
+              Record?
+            </p>
+
+            {/* Optional: Confirmation Checkbox or other fields */}
+            <Form.Item name="supervisor_name">
+              <Input
+                disabled
+                className="w-full"
+                placeholder="Supervisor Name"
+              />
+            </Form.Item>
+            <Form.Item name="sector_name">
+              <Input disabled className="w-full" placeholder="Sector Name" />
+            </Form.Item>
+            <Form.Item name="user_id">
+              <Input disabled className="w-full" placeholder="User Id" />
+            </Form.Item>
+            <Form.Item name="sector_id">
+              <Input disabled className="w-full" placeholder="Sector Id" />
+            </Form.Item>
+            <Form.Item>
+              <div className="flex justify-end space-x-2">
+                <Button type="primary" danger htmlType="submit">
+                  Delete
+                </Button>
+              </div>
+            </Form.Item>
+          </Form>
+        </Modal>
       </>
     </div>
   );

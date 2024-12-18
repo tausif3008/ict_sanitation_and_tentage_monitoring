@@ -130,11 +130,11 @@ const AssetTypeForm = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-x-5 mb-3">
             <Form.Item
               name={"asset_main_type_id"}
-              label={"Asset Main Type"}
+              label={"Category"}
               rules={[
                 {
                   required: true,
-                  message: "Please select an asset main type", // Customize the error message
+                  message: "Please select category", // Customize the error message
                 },
               ]}
             >

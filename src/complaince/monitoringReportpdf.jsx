@@ -110,6 +110,11 @@ export const DownloadPDF = ({ assetDetails, details = [] }) => {
                 </tbody>
               </table>
             </div>
+
+            <div style="margin: 30px 20px 0 20px; font-size: 14px; line-height: 1.6; background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
+            <!--  <strong>Instructions:</strong> -->
+              <p>You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.</p>
+            </div>
         
             <!-- Monitoring Report Table -->
             <div style="margin: 20px;">
@@ -150,9 +155,9 @@ export const DownloadPDF = ({ assetDetails, details = [] }) => {
             </div>
       
            <!-- Instructions Section (Focused part) -->
-            <div style="margin-top: 30px; font-size: 14px; line-height: 1.6; background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
+            <div style="margin: 30px 20px 0 20px; font-size: 14px; line-height: 1.6; background-color: #f0f0f0; padding: 15px; border-radius: 5px;">
               <strong>Instructions:</strong>
-              <p>You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.</p>
+              <p>If non-compliance with Operation & Maintenance found and not resolved within specified TAT then penalty would be imposed as mentioned in RFP.</p>
             </div>
         
             <!-- Footer Text -->

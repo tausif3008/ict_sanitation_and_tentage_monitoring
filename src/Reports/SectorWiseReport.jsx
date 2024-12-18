@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -24,14 +24,33 @@ import { getValueLabel } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 
 const SectorWiseReport = () => {
-  const [totalQuantity, setTotalQuantity] = useState(0);
+  const [totalQuantity, setTotalQuantity] = useState({
+    totalQnty: 0,
+    registered: 0,
+    clean: 0,
+    unclean: 0,
+  });
   const [filesName, setFilesName] = useState(null); // files Name
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorReports, loading } = SectorReportSelectors(); // sector reports
-  const sectorData = SectorReports?.data?.sectors || [];
+
+  const userRoleId = localStorage.getItem("role_id");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+
+  const sectorData = useMemo(() => {
+    return SectorReports?.data?.sectors?.map((item) => ({
+      ...item,
+      total: Number(item?.total),
+      registered: Number(item?.registered),
+      clean: Number(item?.clean),
+      unclean: Number(item?.unclean),
+    }));
+  }, [SectorReports]);
+
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
@@ -56,6 +75,9 @@ const SectorWiseReport = () => {
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+      ...(userRoleId === "8" && {
+        vendor_id: sessionData?.id,
+      }),
     };
     callApi(finalValues);
   };
@@ -87,7 +109,24 @@ const SectorWiseReport = () => {
         (acc, sector) => acc + Number(sector?.total),
         0
       );
-      setTotalQuantity(totalQty);
+      const totalRegister = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.registered),
+        0
+      );
+      const totalClean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.clean),
+        0
+      );
+      const totalUnclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.unclean),
+        0
+      );
+      setTotalQuantity({
+        totalQnty: totalQty,
+        registered: totalRegister,
+        clean: totalClean,
+        unclean: totalUnclean,
+      });
     }
   }, [SectorReports]);
 
@@ -96,9 +135,17 @@ const SectorWiseReport = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
+      asset_main_type_id: "1",
     });
+    const url = URLS?.assetType?.path + "1";
+    dispatch(getAssetTypes(url)); // get assset type
+
     const finalValues = {
       date: newDate,
+      asset_main_type_id: "1",
+      ...(userRoleId === "8" && {
+        vendor_id: sessionData?.id,
+      }),
     };
     callApi(finalValues);
   };
@@ -107,15 +154,15 @@ const SectorWiseReport = () => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    dispatch(getVendorList()); // vendor list
+    userRoleId != "8" && dispatch(getVendorList()); // vendor list
 
     return () => {};
   }, []);
 
   const columns = [
     { title: "Sector Name", dataIndex: "name", key: "name" },
-    { title: "Quantity", dataIndex: "total", key: "total" },
-    { title: "Registered", dataIndex: "registered", key: "registered" },
+    { title: "Total Quantity", dataIndex: "total", key: "total" },
+    { title: "Total Registered", dataIndex: "registered", key: "registered" },
     { title: "Clean", dataIndex: "clean", key: "clean" },
     { title: "Unclean", dataIndex: "unclean", key: "unclean" },
   ];
@@ -126,11 +173,24 @@ const SectorWiseReport = () => {
   // pdf data
   const pdfData = sectorData?.map((sector) => [
     sector?.name,
-    sector?.total,
-    sector?.registered,
-    sector?.clean,
-    sector?.unclean,
+    Number(sector?.total),
+    Number(sector?.registered),
+    Number(sector?.clean),
+    Number(sector?.unclean),
   ]);
+
+  // excel data
+  const myexcelData = useMemo(() => {
+    return sectorData?.map((data, index) => ({
+      Sr: index + 1,
+      Name: data?.name,
+      // "Name In Hindi": data?.name_hi,
+      Quantity: Number(data?.total),
+      Registered: Number(data?.registered),
+      Clean: Number(data?.clean),
+      Unclean: Number(data?.unclean),
+    }));
+  }, [sectorData]);
 
   return (
     <div style={{ padding: "24px" }}>
@@ -154,12 +214,18 @@ const SectorWiseReport = () => {
         </div>
         <div>
           <ExportToExcel
-            excelData={sectorData || []}
+            excelData={myexcelData || []}
             fileName={
               filesName
                 ? `Sector-Wise-${filesName}-Report`
                 : `Sector-Wise-Report`
             }
+            dynamicFields={{
+              "Total Quantity": totalQuantity?.totalQnty,
+              "Total Register": totalQuantity?.registered,
+              "Total Clean": totalQuantity?.clean,
+              "Total Unclean": totalQuantity?.unclean,
+            }}
           />
         </div>
       </div>
@@ -185,22 +251,6 @@ const SectorWiseReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                      />
-                    </Col>
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
@@ -216,6 +266,24 @@ const SectorWiseReport = () => {
                         label={"Select Asset Type"}
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    {userRoleId != "8" && (
+                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"vendor_id"}
+                          label={"Select Vendor"}
+                          placeholder={"Select Vendor"}
+                          options={VendorListDrop || []}
+                        />
+                      </Col>
+                    )}
+                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
                       />
                     </Col>
                     <Col
@@ -255,12 +323,12 @@ const SectorWiseReport = () => {
         pagination={{ pageSize: 30 }}
         bordered
         footer={() => (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              <strong>Total Sectors: {sectorData?.length}</strong> |{" "}
-              <strong>Total Quantity: {totalQuantity}</strong>
-            </span>
-            <span></span> {/* Empty span to maintain structure */}
+          <div className="flex justify-between">
+            <strong>Total Sectors: {sectorData?.length}</strong>
+            <strong>Total Quantity: {totalQuantity?.totalQnty}</strong>
+            <strong>Total Register: {totalQuantity?.registered}</strong>
+            <strong>Total Clean: {totalQuantity?.clean}</strong>
+            <strong>Total Unclean: {totalQuantity?.unclean}</strong>
           </div>
         )}
       />

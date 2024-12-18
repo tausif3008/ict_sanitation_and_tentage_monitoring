@@ -9,6 +9,31 @@ export const getValueLabel = (dataId, List, defaultName) => {
   }
 };
 
+// export const userId = localStorage.getItem("userId");
+// export const userRoleId = localStorage.getItem("role_id");
+// export const Role = localStorage.getItem("role");
+// export const name = localStorage.getItem("name");
+// export const sessionToken = localStorage.getItem("sessionToken");
+
+// export const sessionDataString = localStorage.getItem("sessionData");
+// export const sessionData = sessionDataString
+//   ? JSON.parse(sessionDataString)
+//   : null;
+
+export const checkLoginAvailability = (loginData, navigate) => {
+  if (loginData) {
+    if (loginData?.user_type_id === "8") {
+      if (loginData?.allocatedmaintype?.[0]?.asset_main_type_id === "2") {
+        navigate("/tentage-dashboard"); // vendor login tentage
+      } else {
+        navigate("/vendor-dashboard"); // vendor login
+      }
+    } else {
+      navigate("/sanitation-dashboard");
+    }
+  }
+};
+
 export const statusOptions = [
   { value: 1, label: "Active" },
   { value: 2, label: "Deactive" },

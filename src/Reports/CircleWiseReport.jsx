@@ -31,7 +31,16 @@ const CircleWiseReport = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { CircleReports, loading } = CircleSelector(); // circle reports
-  const CircleData = CircleReports?.data?.circles || [];
+
+  const CircleData = useMemo(() => {
+    return CircleReports?.data?.circles?.map((item) => ({
+      ...item,
+      registered: Number(item?.registered),
+      sector_id: Number(item?.sector_id),
+      clean: Number(item?.clean),
+      unclean: Number(item?.unclean),
+    }));
+  }, [CircleReports]);
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
 
@@ -96,9 +105,13 @@ const CircleWiseReport = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
+      asset_main_type_id: "1",
     });
+    const url = URLS?.assetType?.path + "1";
+    dispatch(getAssetTypes(url)); // get assset type
     const finalValues = {
       date: newDate,
+      asset_main_type_id: "1",
     };
     callApi(finalValues);
   };
@@ -127,11 +140,25 @@ const CircleWiseReport = () => {
     return (
       CircleData?.map((circle) => [
         circle?.name,
-        circle?.registered,
-        circle?.clean,
-        circle?.unclean,
+        // circle?.registered,
+        // circle?.clean,
+        // circle?.unclean,
+        Number(circle?.registered),
+        Number(circle?.clean),
+        Number(circle?.unclean),
       ]) || []
     );
+  }, [CircleData]);
+
+  // excel data
+  const myexcelData = useMemo(() => {
+    return CircleData?.map((data, index) => ({
+      sr: index + 1,
+      Name: data?.name,
+      Registered: Number(data?.registered),
+      Clean: Number(data?.clean),
+      Unclean: Number(data?.unclean),
+    }));
   }, [CircleData]);
 
   return (
@@ -148,8 +175,13 @@ const CircleWiseReport = () => {
         </div>
         <div>
           <ExportToExcel
-            excelData={CircleData || []}
+            excelData={myexcelData || []}
             fileName={"Circle-Wise-Report"}
+            dynamicFields={{
+              "Register Unit": totalRegistered,
+              Clean: totalClean,
+              Unclean: totalUnclean,
+            }}
           />
         </div>
       </div>
@@ -174,22 +206,6 @@ const CircleWiseReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                      />
-                    </Col>
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
@@ -205,6 +221,22 @@ const CircleWiseReport = () => {
                         label={"Select Asset Type"}
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
                       />
                     </Col>
                     <Col
@@ -245,14 +277,11 @@ const CircleWiseReport = () => {
         pagination={{ pageSize: 10 }}
         bordered
         footer={() => (
-          <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span>
-              <strong>Total Circles: {CircleData?.length}</strong> |{" "}
-              <strong>Registered: {totalRegistered}</strong> |{" "}
-              <strong>Clean: {totalClean}</strong> |{" "}
-              <strong>Unclean: {totalUnclean}</strong>
-            </span>
-            <span></span> {/* Empty span to maintain structure */}
+          <div className="flex justify-between">
+            <strong>Total Circles: {CircleData?.length}</strong>
+            <strong>Registered: {totalRegistered}</strong>
+            <strong>Clean: {totalClean}</strong>
+            <strong>Unclean: {totalUnclean}</strong>
           </div>
         )}
       />

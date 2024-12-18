@@ -8,17 +8,23 @@ import {
   notification,
   Row,
   Col,
+  message,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import moment from "moment";
+import dayjs from "dayjs";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import { setAssetListIsUpdated, setUpdateAssetEl } from "./AssetsSlice";
+import {
+  getPdfExcelData,
+  setAssetListIsUpdated,
+  setUpdateAssetEl,
+} from "./AssetsSlice";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
@@ -27,18 +33,21 @@ import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CircleSelector from "../../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
-import CustomInput from "../../commonComponents/CustomInput";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../AssetType/assetTypeSelectors";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
 import CoordinatesMap from "../../commonComponents/map/map";
-import ExportToExcel from "../../Reports/ExportToExcel";
 import ShowCode from "./showCode";
+import { exportToExcel } from "../../Reports/ExportExcelFuntion";
+import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
+import CustomInput from "../../commonComponents/CustomInput";
+import { dateWeekOptions } from "../../constant/const";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
-  const [searchQuery, setSearchQuery] = useState();
+  const [searchQuery, setSearchQuery] = useState("&asset_main_type_id=1");
   const [loading, setLoading] = useState(false);
   const [totalUnit, setTotalUnit] = useState(0); // unit count
   const [details, setDetails] = useState({
@@ -47,12 +56,17 @@ const AssetsList = () => {
     currentPage: 1,
   });
   const [qrCodeUrl, setQrCodeUrl] = useState("");
-  const [excelData, setExcelData] = useState([]); // excel data
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+
+  // const [excelData, setExcelData] = useState([]); // excel data
+  const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  let categoryId = form.getFieldValue("asset_main_type_id")
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -85,6 +99,16 @@ const AssetsList = () => {
     const finalData = {
       ...values,
     };
+    if (values?.form_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.form_date = values?.form_date ? start : end;
+      finalData.to_date = values?.to_date ? end : start;
+    }
     const searchParams = generateSearchQuery(finalData);
     if (searchParams === "&") {
       openNotificationWithIcon("info");
@@ -95,7 +119,22 @@ const AssetsList = () => {
   // reset
   const resetForm = () => {
     form.resetFields();
-    setSearchQuery("&");
+    form.setFieldValue("asset_main_type_id", "1")
+    setSearchQuery("&asset_main_type_id=1");
+    setShowDateRange(false);
+  };
+
+  // handle date
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
+    } else {
+      form.setFieldsValue({
+        form_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
+    }
   };
 
   const getDetails = async () => {
@@ -127,9 +166,9 @@ const AssetsList = () => {
           action: (
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
+              key={el?.name + index}
               onClick={() => {
-                navigate(`/asset-details/${el.assets_id}`);
+                navigate(`/asset-details/${el?.assets_id}`);
               }}
             >
               Details
@@ -151,24 +190,24 @@ const AssetsList = () => {
       }, 0);
       setTotalUnit(unitCount);
 
-      const myexcelData = data?.listings?.map((data, index) => {
-        return {
-          sr: index + 1,
-          Category: data?.asset_main_type_name,
-          "Toilets & Tentage Type": data?.asset_main_type_name,
-          "Vendor Name": data?.vendor_name,
-          "Monitoring Agent Name": data?.created_by,
-          Sector: data?.sector_name,
-          Circle: data?.circle_name,
-          "Vendor Item Code": data?.vendor_asset_code,
-          Code: data?.code,
-          Unit: data?.unit,
-          "Register Date": data?.tagged_at
-            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
-            : "",
-        };
-      });
-      setExcelData(myexcelData);
+      // const myexcelData = data?.listings?.map((data, index) => {
+      //   return {
+      //     sr: index + 1,
+      //     Category: data?.asset_main_type_name,
+      //     "Toilets & Tentage Type": data?.asset_type_name,
+      //     "Vendor Name": data?.vendor_name,
+      //     "GSD Name": data?.agent_name,
+      //     Sector: data?.sector_name,
+      //     Circle: data?.circle_name,
+      //     "Vendor Item Code": data?.vendor_asset_code,
+      //     Code: Number(data?.code),
+      //     Unit: Number(data?.unit),
+      //     "Register Date": data?.tagged_at
+      //       ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+      //       : "",
+      //   };
+      // });
+      // setExcelData(myexcelData);
     }
   };
 
@@ -180,6 +219,7 @@ const AssetsList = () => {
   }, [params, isUpdatedSelector, searchQuery]);
 
   useEffect(() => {
+    form.setFieldValue("asset_main_type_id", "1")
     dispatch(setUpdateAssetEl({ updateElement: null }));
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
@@ -187,8 +227,17 @@ const AssetsList = () => {
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
-    dispatch(getAllCircleList()); // all circle list
+    // dispatch(getAllCircleList()); // all circle list
   }, []);
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
+  };
+
 
   const columns = [
     {
@@ -222,7 +271,19 @@ const AssetsList = () => {
       render: (text) => {
         return text ? text : "GSD";
       },
+      width: 140,
     },
+    ...(categoryId === "2"
+      ? [
+        {
+          title: "Sanstha Name",
+          dataIndex: "sanstha_name_hi",
+          key: "sanstha_name_hi",
+          render: (text) => text || "",
+          width: 140,
+        },
+      ]
+      : []),
     {
       title: "Sector",
       dataIndex: "sector_name",
@@ -230,16 +291,32 @@ const AssetsList = () => {
       width: 100,
     },
     {
-      title: "Circle",
-      dataIndex: "circle_name",
-      key: "circle_name",
+      title: "Photo",
       width: 100,
+      render: (text, record) =>
+        record.photo ? (
+          <Image
+            width={60}
+            height={60}
+            src={ImageUrl + record?.photo}
+            alt="Assets Photo"
+          />
+        ) : (
+          "No Image"
+        ),
+      key: "photo",
     },
-    {
-      title: "Vendor Item Code",
-      dataIndex: "vendor_asset_code",
-      key: "vendor_asset_code",
-    },
+    // {
+    //   title: "Circle",
+    //   dataIndex: "circle_name",
+    //   key: "circle_name",
+    //   width: 100,
+    // },
+    // {
+    //   title: "Vendor Item Code",
+    //   dataIndex: "vendor_asset_code",
+    //   key: "vendor_asset_code",
+    // },
     {
       title: "Code",
       dataIndex: "code",
@@ -252,6 +329,7 @@ const AssetsList = () => {
           />
         );
       },
+      width: 100,
     },
     {
       title: "Location",
@@ -265,36 +343,21 @@ const AssetsList = () => {
           "NA"
         );
       },
-    },
-    {
-      title: "QR Code",
       width: 100,
-      render: (text, record) => (
-        <Image
-          src={URLS.baseUrl + "/" + record.qr_code}
-          width={60}
-          height={60}
-          alt={record.qr_code}
-        ></Image>
-      ),
-      key: "qrCode",
     },
-    {
-      title: "Photo",
-      width: 100,
-      render: (text, record) =>
-        record.photo ? (
-          <Image
-            width={60}
-            height={60}
-            src={`https://kumbhtsmonitoring.in/php-api/${record.photo}`}
-            alt="Assets Photo"
-          />
-        ) : (
-          "No Image"
-        ),
-      key: "photo",
-    },
+    // {
+    //   title: "QR Code",
+    //   width: 100,
+    //   render: (text, record) => (
+    //     <Image
+    //       src={ImageUrl + record.qr_code}
+    //       width={60}
+    //       height={60}
+    //       alt={record.qr_code}
+    //     ></Image>
+    //   ),
+    //   key: "qrCode",
+    // },
     {
       title: "Register At",
       dataIndex: "tagged_at",
@@ -302,30 +365,129 @@ const AssetsList = () => {
       render: (text, record) => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
+      width: 140,
     },
   ];
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Category",
+    "Toilets & Tentage Type",
+    "Vendor Name",
+    "GSD Name",
+    "Sector",
+    "Circle",
+    "Vendor Item Code",
+    "Code",
+    "Unit",
+    "Register Date",
+  ];
+
+  // excel file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.assetList.path + "?page=1&per_page=5000";
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.listings) {
+        throw new Error("No listings found in the response data.");
+      }
+
+      // Calculate total units
+      const unitCount = res?.data?.listings?.reduce((total, listing) => {
+        return total + (listing?.units?.length || 0);
+      }, 0);
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.listings?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            Category: data?.asset_main_type_name,
+            "Toilets & Tentage Type": data?.asset_type_name,
+            "Vendor Name": data?.vendor_name,
+            "GSD Name": data?.agent_name,
+            Sector: data?.sector_name,
+            Circle: data?.circle_name,
+            "Vendor Item Code": data?.vendor_asset_code,
+            Code: Number(data?.code),
+            Unit: Number(data?.unit),
+            "Register Date": data?.tagged_at
+              ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+              : "",
+          };
+        });
+
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, "Toilets & Tentage List", {
+          "Register Unit": unitCount,
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.listings?.map((data, index) => [
+          index + 1,
+          data?.asset_main_type_name,
+          data?.asset_type_name,
+          data?.vendor_name,
+          data?.agent_name,
+          data?.sector_name,
+          data?.circle_name,
+          data?.vendor_asset_code,
+          Number(data?.code),
+          Number(data?.unit),
+          data?.tagged_at
+            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+            : "",
+        ]);
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          "Toilets & Tentage List",
+          "Toilets & Tentage List",
+          pdfHeader,
+          pdfData,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
   return (
     <div className="">
-      <CommonDivider
-        label={"Toilets & Tentage List"}
-        // compo={
-        //   <Button
-        //     className="bg-orange-300 mb-1"
-        //     onClick={() => {
-        //       navigate("/asset-registration");
-        //     }}
-        //   >
-        //     Add Asset
-        //   </Button>
-        // }
-      ></CommonDivider>
+      <CommonDivider label={"Toilets & Tentage List"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          <ExportToExcel
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(false);
+            }}
+          >
+            Download Pdf
+          </Button>
+        </div>
+        <div>
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Toilets & Tentage List"}
-          />
+            dynamicFields={{ "Register Unit": totalUnit }}
+          /> */}
+          <Button
+            type="primary"
+            onClick={() => {
+              exportToFile(true);
+            }}
+          >
+            Download Excel
+          </Button>
         </div>
       </div>
 
@@ -350,6 +512,24 @@ const AssetsList = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        allowClear={false}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop.slice(0, 2) || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={AssetTypeDrop || []}
+                      />
+                    </Col>
                     <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"created_by"}
@@ -370,23 +550,6 @@ const AssetsList = () => {
                         options={VendorListDrop || []}
                       />
                     </Col>
-                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"assetmaintypes"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop || []}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={AssetTypeDrop || []}
-                      />
-                    </Col>
                     <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"sector_id"}
@@ -395,21 +558,21 @@ const AssetsList = () => {
                         options={SectorListDrop || []}
                       />
                     </Col>
-                    <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
+                    {/* <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"circle_id"}
                         label={"Select Circle"}
                         placeholder={"Select Circle"}
                         options={CircleListDrop || []}
                       />
-                    </Col>
-                    <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
+                    </Col> */}
+                    {/* <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"vendor_asset_code"}
                         label={"Vendor Item Code"}
                         placeholder={"Vendor Item Code"}
                       />
-                    </Col>
+                    </Col> */}
                     <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"code"}
@@ -417,6 +580,75 @@ const AssetsList = () => {
                         placeholder={"Code"}
                       />
                     </Col>
+                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                        placeholder={"Select Date Type"}
+                        onSelect={handleDateSelect}
+                        options={dateWeekOptions || []}
+                      />
+                    </Col>
+                    {showDateRange && (
+                      <>
+                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                          <CustomDatepicker
+                            name={"form_date"}
+                            label={"From Date"}
+                            className="w-full"
+                            placeholder={"From Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                            onChange={(date) => {
+                              const dayjsObjectFrom = dayjs(date?.$d);
+                              const startDate = dayjsObjectFrom;
+
+                              const dayjsObjectTo = dayjs(
+                                form.getFieldValue("to_date")?.$d
+                              );
+                              const endDate = dayjsObjectTo;
+
+                              // Condition 1: If startDate is after endDate, set end_time to null
+                              if (startDate.isAfter(endDate)) {
+                                form.setFieldValue("to_date", null);
+                              }
+
+                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                              const daysDifference = endDate.diff(
+                                startDate,
+                                "days"
+                              );
+                              if (daysDifference > 7) {
+                                form.setFieldValue("to_date", null);
+                              } else {
+                                // If the difference is within the allowed range, you can keep the value or process further if needed.
+                              }
+
+                              setStartDate(startDate.format("YYYY-MM-DD"));
+                            }}
+                          />
+                        </Col>
+                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                          <CustomDatepicker
+                            name={"to_date"}
+                            label={"To Date"}
+                            className="w-full"
+                            placeholder={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                            disabledDate={disabledDate}
+                          />
+                        </Col>
+                      </>
+                    )}
                     <Col
                       xs={24}
                       sm={12}
@@ -455,8 +687,8 @@ const AssetsList = () => {
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
         totalName="Total"
-        subtotalName={"Register Unit"}
-        subtotalCount={totalUnit || 0}
+      // subtotalName={"Register Unit"}
+      // subtotalCount={totalUnit || 0}
       ></CommonTable>
 
       <Modal

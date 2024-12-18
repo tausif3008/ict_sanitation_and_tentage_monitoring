@@ -82,9 +82,13 @@ const VendorReports = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
+      asset_main_type_id: "1",
     });
+    const url = URLS?.assetType?.path + "1";
+    dispatch(getAssetTypes(url)); // get assset type
     const finalValues = {
       date: newDate,
+      asset_main_type_id: "1",
     };
     callApi(finalValues);
   };
@@ -129,6 +133,8 @@ const VendorReports = () => {
     if (categoryType) {
       const value = getValueLabel(categoryType, AssetMainTypeDrop, "");
       setFilesName(value);
+    } else {
+      setFilesName("");
     }
   }, [categoryType, AssetMainTypeDrop]);
 
@@ -153,18 +159,12 @@ const VendorReports = () => {
 
       const myexcelData = vendorReports?.data?.vendors?.map((data, index) => {
         return {
-          sr: index + 1,
-          name: data?.name,
-          // email: data?.email,
-          // phone: data?.phone,
-          // address: data?.address,
-          // pin: data?.pin,
-          // company: data?.company,
-          // language: data?.language,
-          total: data?.total,
-          registered: data?.registered,
-          clean: data?.clean,
-          unclean: data?.unclean,
+          Sr: index + 1,
+          Name: data?.name,
+          Total: Number(data?.total),
+          Registered: Number(data?.registered),
+          Clean: Number(data?.clean),
+          Unclean: Number(data?.unclean),
         };
       });
       setExcelData(myexcelData);
@@ -178,7 +178,7 @@ const VendorReports = () => {
       key: "name",
     },
     {
-      title: "Total",
+      title: "Total Quantity",
       dataIndex: "total",
       key: "total",
     },
@@ -213,12 +213,12 @@ const VendorReports = () => {
   const pdfData = useMemo(() => {
     return (
       excelData?.map((opt) => [
-        opt?.sr,
-        opt?.name,
-        opt?.total,
-        opt?.registered,
-        opt?.clean,
-        opt?.unclean,
+        opt?.Sr,
+        opt?.Name,
+        opt?.Total,
+        opt?.Registered,
+        opt?.Clean,
+        opt?.Unclean,
       ]) || []
     );
   }, [excelData]);
@@ -251,6 +251,12 @@ const VendorReports = () => {
                 ? `Vendor-Wise-${filesName} Report`
                 : `Vendor-Wise Report`
             }
+            dynamicFields={{
+              Total: total,
+              "Register Unit": totalRegistered,
+              Clean: totalClean,
+              Unclean: totalUnclean,
+            }}
           />
         </div>
       </div>
@@ -276,22 +282,6 @@ const VendorReports = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                      />
-                    </Col>
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
@@ -307,6 +297,22 @@ const VendorReports = () => {
                         label={"Select Asset Type"}
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
                       />
                     </Col>
                     <Col
@@ -348,13 +354,11 @@ const VendorReports = () => {
         bordered
         footer={() => (
           <div className="flex justify-between">
-            <span>
-              <strong>Total Vendors: {vendorsData?.length}</strong> |{" "}
-              <strong>Total : {total}</strong> |{" "}
-              <strong>Total Registered: {totalRegistered}</strong> |{" "}
-              <strong>Total Clean : {totalClean}</strong> |{" "}
-              <strong>Total Unclean: {totalUnclean}</strong> |{" "}
-            </span>
+            <strong>Total Vendors: {vendorsData?.length}</strong>
+            <strong>Total : {total}</strong>
+            <strong>Total Registered: {totalRegistered}</strong>
+            <strong>Total Clean : {totalClean}</strong>
+            <strong>Total Unclean: {totalUnclean}</strong>
           </div>
         )}
       />

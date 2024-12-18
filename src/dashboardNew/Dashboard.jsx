@@ -12,9 +12,10 @@ import AverageResponseTimeChart from "./AverageTeamPerformance";
 import Notifications from "./Notifications";
 import Alerts from "./Alerts";
 import TaskSchedule from "./TaskSchedule";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
 import PerformanceMatrix from "./PerformanceMatrix/PerformanceMatrix";
+import HelplineNo from "../SanitationDashboard/helplineNo";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
 
 const Dashboard = () => {
   return (
@@ -95,7 +96,9 @@ const Dashboard = () => {
         <PerformanceMatrix></PerformanceMatrix>
       </div>
 
-      <div className="col-span-4 ">
+      <HelplineNo />
+
+      {/* <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">
             Prayagraj Kumbh Mela{" "}
@@ -111,7 +114,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

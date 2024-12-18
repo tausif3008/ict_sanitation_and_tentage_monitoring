@@ -1,18 +1,24 @@
+import { basicUrl } from "../Axios/commonAxios";
+
 const URLS = {
-  baseUrl: "https://kumbhtsmonitoring.in/php-api",
+  baseUrl: basicUrl,
 
   // user
   register: { path: "/users/entry", version: "5.43" },
   editUser: { path: "/users/edit", version: "5.43" },
   users: { path: "/users", version: "5.43" },
   country: { path: "/country", version: 5.43 },
+  out: { path: "/logout", version: 5.43 },
   state: { path: "/state", version: 5.43 }, // ?country_id=1
   city: { path: "/city", version: 5.43 }, //?country_id=1&state_id=1
   userType: { path: "/user-types?per_page=100", version: 5.43 },
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
-  allUserType: { path: "/user-types", version: 5.43 },
+  allUserType: { path: "/user-types?page=1&per_page=100", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },
-  TypeWiseUserList: { path: "/users?user_type_id=", version: "5.43" },
+  TypeWiseUserList: {
+    path: "/users?page=1&per_page=100&user_type_id=",
+    version: "5.43",
+  },
 
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
@@ -28,7 +34,10 @@ const URLS = {
     version: "5.43",
   },
   vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
-  vendorwiseSupervisor: { path: "/users?vendor_id=", version: "5.43" },
+  vendorwiseSupervisor: {
+    path: "/users?page=1&per_page=100&vendor_id=",
+    version: "5.43",
+  },
 
   // vendor Details
   vendorDetails: { path: "/vendor-details?user_id=", version: "5.43" },
@@ -141,6 +150,10 @@ const URLS = {
     path: "/allocation-sector/edit",
     version: 5.43,
   },
+  deleteAllocate_Sector: {
+    path: "/allocation-sector/delete",
+    version: 5.43,
+  },
 
   // sla types
   slaTypes: { path: "/sla-types", version: 5.43 },
@@ -162,8 +175,24 @@ const URLS = {
   // incidences Report
   incidencesReport: { path: "/incidences", version: 5.43 },
 
+  // incidences Report
+  gsdRegistrationReport: { path: "/reporting/agent-tagging", version: 5.43 },
+  vendorRegistrationReport: {
+    path: "/reporting/vendor-tagging",
+    version: 5.43,
+  },
+
   // inspection Report
   inspectionReport: { path: "/reporting/report-format-one", version: 5.43 },
+
+  // tentage dashboard
+  tentageDash: { path: "/dashboard/tentage", version: 5.43 },
+
+  // waste dashboard
+  wasteDash: {
+    path: "/vehicle-tracking?page=1&per_page=200&date_format=Today",
+    version: 5.43,
+  },
 };
 
 export default URLS;

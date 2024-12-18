@@ -1,22 +1,29 @@
 import React, { useEffect, useState } from "react";
-import { Button, Form, Input, message, Modal, Table } from "antd";
-import CommonTable from "../../../commonComponents/CommonTable";
-import CommonDivider from "../../../commonComponents/CommonDivider";
-import URLS from "../../../urils/URLS";
+import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router";
-import { getData } from "../../../Fetch/Axios";
+import { useDispatch, useSelector } from "react-redux";
+import moment from "moment";
+import { Button, Form, Input, message, Modal, Table } from "antd";
 import {
   ArrowLeftOutlined,
   DeleteOutlined,
   EditOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+
+import CommonTable from "../../../commonComponents/CommonTable";
+import CommonDivider from "../../../commonComponents/CommonDivider";
+import URLS from "../../../urils/URLS";
+import { getData } from "../../../Fetch/Axios";
 import {
   deleteVendorDetails,
   setUpdateVendorDetailsEl,
   setVendorDetailsListIsUpdated,
 } from "./vendorDetailsSlice";
+import { getPdfExcelData } from "../../asset/AssetsSlice";
+import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
+import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
+import { VendorDetailsPdfFunction } from "./vendorDetailsPdf";
+import { VendorDetailsToExcel } from "./vendorDetailsExcel";
 
 const VendorDetails = () => {
   const [loading, setLoading] = useState(false);
@@ -24,6 +31,8 @@ const VendorDetails = () => {
   const [proposedSectors, setProposedSectors] = useState([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [userName, setUserName] = useState("");
+  const [searchQuery, setSearchQuery] = useState();
+
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -197,6 +206,9 @@ const VendorDetails = () => {
       dataIndex: "date_of_allocation",
       key: "date_of_allocation",
       width: 160,
+      render: (text) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
     },
     {
       title: "Action",
@@ -248,6 +260,104 @@ const VendorDetails = () => {
     )
     .toLocaleString(); // Convert to digit format with commas
 
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Category",
+    "Toilets & Tentage Type",
+    // "Contract Number",
+    // "Work Order Number",
+    "Total Allotted Quantity",
+    // "Date of Allocation",
+    // "Country",
+  ];
+
+  // pdf header
+  const subTableHeader = ["Sector Name / Parking Name", "Quantity"];
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url =
+        URLS.vendorDetails.path + `${params?.id}&page=1&per_page=5000`;
+
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.userdetails) {
+        throw new Error("No data found in the response data.");
+      }
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.userdetails?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            Category: data?.asset_main_type_name,
+            "Toilets & Tentage Type": data?.asset_type_name,
+            "Total Allotted Quantity": Number(data?.total_allotted_quantity),
+            "Sector / Parking": [
+              ...data?.proposedsectors?.map((item) => [
+                item?.sector_name,
+                Number(item?.quantity),
+              ]),
+              ...data?.proposedparkings?.map((item) => [
+                item?.parking_name,
+                Number(item?.quantity),
+              ]),
+            ],
+            Registered: data?.proposedsectors?.registered, //need to work on this registered qty
+          };
+        });
+      console.log("myexcelData", myexcelData);
+      const pdfData =
+        !isExcel &&
+        res?.data?.userdetails?.map((data, index) => [
+          index + 1,
+          data?.asset_main_type_name,
+          data?.asset_type_name,
+          // Number(data?.contract_number),
+          // Number(data?.work_order_number),
+          Number(data?.total_allotted_quantity),
+          // moment(data?.date_of_allocation).format("DD-MMM-YYYY"),
+          [
+            ...data?.proposedsectors?.map((item) => [
+              item?.sector_name,
+              item?.quantity,
+            ]),
+            ...data?.proposedparkings?.map((item) => [
+              item?.parking_name,
+              item?.quantity,
+            ]),
+          ],
+        ]);
+
+      // Call the export function
+      isExcel &&
+        VendorDetailsToExcel(
+          myexcelData,
+          `${userName} Vendor Details`,
+          {},
+          totalAllottedQuantity
+        );
+
+      // Call the export function
+      !isExcel &&
+        VendorDetailsPdfFunction(
+          `${userName} Vendor Details`,
+          `${userName} Vendor Details`,
+          pdfHeader,
+          pdfData,
+          subTableHeader,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
   return (
     <div>
       <div className="flex gap-2 items-center">
@@ -281,6 +391,28 @@ const VendorDetails = () => {
               </Button>
             }
           />
+          <div className="flex justify-end gap-2 font-semibold mb-4">
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(false);
+                }}
+              >
+                Download Pdf
+              </Button>
+            </div>
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(true);
+                }}
+              >
+                Download Excel
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -289,11 +421,10 @@ const VendorDetails = () => {
         uri={"vendor/add-vendor-details/" + params.id}
         details={details}
         loading={loading}
+        tableSubheading={{
+          "Total Allotted Quantity": totalAllottedQuantity,
+        }}
       />
-
-      <div className="text-right font-semibold mt-2">
-        Total Allotted Quantity: {totalAllottedQuantity}
-      </div>
 
       {/* sectors */}
       <Modal
@@ -323,6 +454,11 @@ const VendorDetails = () => {
                   dataIndex: "quantity",
                   key: "quantity",
                 },
+                {
+                  title: "Registered",
+                  dataIndex: "registered",
+                  key: "registered",
+                },
               ]}
             />
           </>
@@ -348,6 +484,11 @@ const VendorDetails = () => {
                   title: "Quantity",
                   dataIndex: "quantity",
                   key: "quantity",
+                },
+                {
+                  title: "Registered",
+                  dataIndex: "registered",
+                  key: "registered",
                 },
               ]}
             />

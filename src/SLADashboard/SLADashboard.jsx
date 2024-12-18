@@ -12,6 +12,7 @@ import TaskSchedule from "./TaskSchedule.jsx";
 import MapData from "./MapData.jsx";
 import NotificationLog from "./NotificationLog.jsx";
 import SLASummary from "./SLASummary1.jsx";
+import HelplineNo from "../SanitationDashboard/helplineNo.jsx";
 
 const SLADashboard = () => {
   return (
@@ -27,49 +28,8 @@ const SLADashboard = () => {
         <SLAComplianceRate></SLAComplianceRate>
         <SLAResolution></SLAResolution>
       </div>
-      <div className="col-span-4 lg:col-span-2 flex gap-2 flex-col rounded-md">
-        <div className="">
-          <TeamPerformance></TeamPerformance>
-        </div>
-        <div>
-          <AverageResponseTimeChart></AverageResponseTimeChart>
-        </div>
+     
       </div>
-      <div className="lg:col-span-1 col-span-4 sm:col-span-2 md:col-span-2 flex gap-2 flex-col">
-        <div
-          className="col-span-2 flex-wrap h-full  rounded-md "
-          style={{ height: "424px" }}
-        >
-          <Notifications></Notifications>
-        </div>
-        <div
-          className="col-span-2  hidden lg:flex w-full flex-wrap rounded-md"
-          style={{ height: "375px" }}
-        >
-          <Alerts></Alerts>
-        </div>
-      </div>
-      <div
-        className="col-span-4 sm:col-span-2 flex lg:hidden w-full flex-wrap "
-        style={{ height: "425px" }}
-      >
-        <Alerts></Alerts>
-      </div>
-
-      <div className="lg:col-span-1 col-span-4 ">
-        <TaskSchedule></TaskSchedule>
-      </div>
-      <div className="col-span-4">
-        <MapData></MapData>
-      </div>
-      <div className=" col-span-4 lg:col-span-3">
-        <NotificationLog></NotificationLog>
-      </div>
-
-      <div className="col-span-4 sm:col-span-2 lg:col-span-1">
-        <SLASummary></SLASummary>
-      </div>
-    </div>
   );
 };
 

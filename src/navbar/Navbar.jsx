@@ -1,26 +1,35 @@
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Button } from "antd";
-import React, { useEffect, useState } from "react";
 import "./navbar.css";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
-import img1 from "../assets/Images/UPGovLatestLogo.png";
-import img2 from "../assets/Images/MahaKumbhLogo_optimized.png";
 
-import { logoutFetch } from "../Fetch/Axios";
 import {
+  circle_wise_reports,
   DMS_param,
+  gsd_wise_regi_reports,
+  incident_reports,
   incidentDash_param,
+  inspections_reports,
   masterData_param,
+  monitoring_reports,
   sanitationDash_param,
+  sector_wise_reports,
   SLADash_param,
   superAdmin,
   tentageDash_param,
   userAccess_param,
+  vendor_wise_regi_reports,
+  vendor_wise_reports,
   vendorDash_param,
   wasteDash_param,
 } from "../constant/permission";
+import { IMAGELIST } from "../assets/Images/exportImages";
+import { logOutUser } from "../Login/slice/loginSlice";
+import { revertAll } from "../Redux/action";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
@@ -33,7 +42,21 @@ const Navbar = ({ lang, setLang }) => {
   const [open, setOpen] = useState(false);
 
   const userRoleId = localStorage.getItem("role_id");
+  const dispatch = useDispatch()
 
+
+  // logout 
+  const handleLogOut = async () => {
+    const result = await dispatch(logOutUser())
+    if (result?.data?.success) {
+      dispatch(revertAll());
+      localStorage.clear();
+      sessionStorage.clear();
+      // setTimeout(() => {
+      navigate("/");
+      // }, 1000);
+    }
+  }
   // Dashboard
   const dashboards = (lang, dict) => {
     return [
@@ -48,18 +71,17 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      tentageDash_param?.includes(userRoleId) &&
-        tentageIdUser === "2" && {
-          key: "3",
-          label: (
-            <Link
-              className="text-black no-underline hover:text-green"
-              to="/tentage-dashboard"
-            >
-              Tentage Dashboard
-            </Link>
-          ),
-        },
+      (tentageDash_param?.includes(userRoleId) || tentageIdUser === "2") && {
+        key: "3",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/tentage-dashboard"
+          >
+            Tentage Dashboard
+          </Link>
+        ),
+      },
       wasteDash_param?.includes(userRoleId) && {
         key: "4",
         label: (
@@ -83,17 +105,17 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       vendorDash_param.includes(userRoleId) &&
-        tentageIdUser != "2" && {
-          key: "6",
-          label: (
-            <Link
-              className="text-black no-underline hover:text-green"
-              to="/vendor-dashboard"
-            >
-              Vendor Dashboard
-            </Link>
-          ),
-        },
+      tentageIdUser != "2" && {
+        key: "6",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/vendor-dashboard"
+          >
+            Vendor Dashboard
+          </Link>
+        ),
+      },
       SLADash_param?.includes(userRoleId) && {
         key: "7",
         label: (
@@ -378,7 +400,7 @@ const Navbar = ({ lang, setLang }) => {
   // reports
   const reports_items = (lang, dict) => {
     return [
-      {
+      monitoring_reports?.includes(userRoleId) && {
         key: "2",
         label: (
           <Link
@@ -389,7 +411,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      sector_wise_reports?.includes(userRoleId) && {
         key: "3",
         label: (
           <Link className="text-black no-underline" to="/sector-wise-report">
@@ -397,15 +419,15 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
-        key: "4",
-        label: (
-          <Link className="text-black no-underline" to="/circle-wise-report">
-            Circle Wise Report
-          </Link>
-        ),
-      },
-      {
+      // circle_wise_reports?.includes(userRoleId) && {
+      //   key: "4",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/circle-wise-report">
+      //       Circle Wise Report
+      //     </Link>
+      //   ),
+      // },
+      vendor_wise_reports?.includes(userRoleId) && {
         key: "5",
         label: (
           <Link className="text-black no-underline" to="/vendor-wise-report">
@@ -413,7 +435,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      incident_reports?.includes(userRoleId) && {
         key: "6",
         label: (
           <Link className="text-black no-underline" to="/incident-report">
@@ -421,11 +443,33 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
+      inspections_reports?.includes(userRoleId) && {
         key: "7",
         label: (
           <Link className="text-black no-underline" to="/inspection-report">
             Inspection Report
+          </Link>
+        ),
+      },
+      gsd_wise_regi_reports?.includes(userRoleId) && {
+        key: "8",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/gsd-wise-registration-report"
+          >
+            GSD Wise Registration Report
+          </Link>
+        ),
+      },
+      vendor_wise_regi_reports?.includes(userRoleId) && {
+        key: "9",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-wise-registration-report"
+          >
+            Vendor Wise Registration Report
           </Link>
         ),
       },
@@ -460,33 +504,31 @@ const Navbar = ({ lang, setLang }) => {
 
     localStorage.getItem("sessionToken")
       ? list.push({
-          key: "3",
-          label: (
-            <div
-              className="text-black no-underline hover:text-green"
-              onClick={() => {
-                logoutFetch();
-                localStorage.clear();
-                navigate("/login");
-              }}
-            >
-              Logout
-            </div>
-          ),
-        })
+        key: "3",
+        label: (
+          <div
+            className="text-black no-underline hover:text-green"
+            onClick={() => {
+              handleLogOut()
+            }}
+          >
+            Logout
+          </div>
+        ),
+      })
       : list.push({
-          key: "4",
-          label: (
-            <div
-              className="text-black no-underline hover:text-green"
-              onClick={() => {
-                navigate("/login");
-              }}
-            >
-              Login
-            </div>
-          ),
-        });
+        key: "4",
+        label: (
+          <div
+            className="text-black no-underline hover:text-green"
+            onClick={() => {
+              navigate("/login");
+            }}
+          >
+            Login
+          </div>
+        ),
+      });
 
     return list;
   };
@@ -517,7 +559,7 @@ const Navbar = ({ lang, setLang }) => {
   //   }
   // };
 
-  const location = useLocation();
+  // const location = useLocation();
   const [title, setTitle] = useState("");
 
   // useEffect(() => {
@@ -543,18 +585,16 @@ const Navbar = ({ lang, setLang }) => {
             className="no-underline d-flex"
           >
             <img
-              src={img1}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
-                isNavbarTransition ? "h-10" : "h-14"
-              }`}
+              src={IMAGELIST?.govt_logo}
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${isNavbarTransition ? "h-10" : "h-14"
+                }`}
               alt="UP Govt Logo"
             />
 
             <img
-              src={img2}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
-                isNavbarTransition ? "h-10" : "h-14"
-              }`}
+              src={IMAGELIST?.kumbhMela}
+              className={`lg:mt-1 h-[28px] sm:h-[18px] md:h-[28px] lg:h-12 xl:${isNavbarTransition ? "h-8" : "h-12"
+                }`}
               alt="Maha Kumbh 2025 Logo"
             />
           </Link>
@@ -587,10 +627,10 @@ const Navbar = ({ lang, setLang }) => {
               )}
 
               {/* <Link className="text-black no-underline " to="/dashboard">
-            <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-              Dashboard{" "}
-            </div>
-          </Link> */}
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  Dashboard
+                </div>
+              </Link> */}
 
               {loggedIn && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
@@ -629,9 +669,9 @@ const Navbar = ({ lang, setLang }) => {
                   items={schedule_items(lang, dict, navigate)}
                   name="Schedule"
                 ></DropDown>
-              </div> */}
+              </div>
 
-              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={complaince_items(lang, dict)}
@@ -658,12 +698,12 @@ const Navbar = ({ lang, setLang }) => {
               </div>
 
               {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-            <DropDown
-            text="black"
-              items={waste_items(lang, dict)}
-              name="Waste Management"
-            ></DropDown>
-          </div> */}
+                <DropDown
+                  text="black"
+                  items={waste_items(lang, dict)}
+                  name="Waste Management"
+                ></DropDown>
+              </div> */}
 
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
@@ -676,25 +716,25 @@ const Navbar = ({ lang, setLang }) => {
               </div>
 
               {/* {!logName ? (
-            <button onClick={() => handleNavigation("/login")}>
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
-                Login
-              </div>
-            </button>
-          ) : (
-            <div>
-              <button
-                onClick={() => {
-                  localStorage.clear();
-                  handleNavigation("/login");
-                }}
-              >
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
-                  Logout
+                <button onClick={() => handleNavigation("/login")}>
+                  <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
+                    Login
+                  </div>
+                </button>
+              ) : (
+                <div>
+                  <button
+                    onClick={() => {
+                      localStorage.clear();
+                      handleNavigation("/login");
+                    }}
+                  >
+                    <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
+                      Logout
+                    </div>
+                  </button>
                 </div>
-              </button>
-            </div>
-          )} */}
+              )} */}
             </div>
 
             <div className="flex w-11/12 m-auto justify-between xl:hidden">
@@ -735,13 +775,36 @@ const Navbar = ({ lang, setLang }) => {
                     </div>
                   </Link>
                 )}
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                  <DropDown
-                    text="black"
-                    items={register_items(lang, dict)}
-                    name={dict.register[lang]}
-                  ></DropDown>
-                </div>
+                {userAccess_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={register_items(lang, dict)}
+                      name={dict.register[lang]}
+                    ></DropDown>
+                  </div>
+                )}
+
+                {masterData_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={master_items(lang, dict)}
+                      // name={dict.register[lang]}
+                      name="Master Data Creation"
+                    ></DropDown>
+                  </div>
+                )}
+
+                {DMS_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={dms_items(lang, dict)}
+                      name={"DMS"}
+                    ></DropDown>
+                  </div>
+                )}
 
                 {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
@@ -776,54 +839,52 @@ const Navbar = ({ lang, setLang }) => {
                 </div>
 
                 {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-            <DropDown
-            text="black"
-              items={waste_items(lang, dict)}
-              name="Waste Management"
-            ></DropDown>
-          </div> */}
+                  <DropDown
+                    text="black"
+                    items={waste_items(lang, dict)}
+                    name="Waste Management"
+                  ></DropDown>
+                </div>
 
-                {/* <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
-              \{" "}
-              <DropDown
-              text="black"
-                items={setting_item(dict, lang)}
-                name={dict.setting[lang]}
-              ></DropDown>
-            </div> */}
-                {/* 
-            <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
-              {dict.help[lang]}
-            </div> */}
+                <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
+                  <DropDown
+                    text="black"
+                    items={setting_item(dict, lang)}
+                    name={dict.setting[lang]}
+                  ></DropDown>
+                </div>
 
-                {/* 
-            <button
-              onClick={handleLang}
-              className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
-            >
-              A / अ{" "}
-            </button> */}
+                <div className="h-10  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04">
+                  {dict.help[lang]}
+                </div> */}
+
+                {/* <button
+                  onClick={handleLang}
+                  className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
+                >
+                  A / अ
+                </button> */}
 
                 {/* {!logName ? (
-              <button onClick={() => handleNavigation("/login")}>
-                <div className="h-9 flex items-center hover:bg-lime-300 px-2 text-black font-semibold  ">
-                  {dict.login[lang]}
-                </div>
-              </button>
-            ) : (
-              <div>
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    handleNavigation("/login");
-                  }}
-                >
-                  <div className="h-9 flex text-black font-semibold  items-center hover:b2-lime-300 px-3">
-                    {dict.logout[lang]}
+                  <button onClick={() => handleNavigation("/login")}>
+                    <div className="h-9 flex items-center hover:bg-lime-300 px-2 text-black font-semibold  ">
+                      {dict.login[lang]}
+                    </div>
+                  </button>
+                ) : (
+                  <div>
+                    <button
+                      onClick={() => {
+                        localStorage.clear();
+                        handleNavigation("/login");
+                      }}
+                    >
+                      <div className="h-9 flex text-black font-semibold  items-center hover:b2-lime-300 px-3">
+                        {dict.logout[lang]}
+                      </div>
+                    </button>
                   </div>
-                </button>
-              </div>
-            )} */}
+                )} */}
               </div>
             </Drawer>
           </div>

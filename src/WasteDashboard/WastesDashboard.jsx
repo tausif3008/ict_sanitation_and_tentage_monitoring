@@ -1,23 +1,23 @@
-    import React from "react";
-import MapData from "./MapData";
+import React from "react";
 import FacilityDetails from "./FacilityDetails/FacilityDetails";
-import CleanlinessScoreGauge from "./CleanlinessScoreGauge";
-import ResponseTimeChart from "./ResponseTimeChart";
-import IncidentsReported from "./IncidentsReported";
-import DashboardCalender from "./DashboardCalender";
-import TeamPerformance from "./TeamPerformance";
-import AverageResponseTimeChart from "./AverageTeamPerformance";
-import Notifications from "./Notifications";
-import Alerts from "./Alerts";
-import TaskSchedule from "./TaskSchedule";
-import phone from "../assets/Dashboard/phone.png";
-import phoneIcon from "../assets/Dashboard/phone-alt.png";
-import PerformanceMatrix from "./PerformanceMatrix/PerformanceMatrix";
 import CompactorsTippers from "./CompactorTippers/CompactorsTipers";
 import AverageCollectionTimeChart from "./AverageCollectionTime";
-import VehiclePerformanceChart from "./VehiclePerformanceChart";
 import VehicleTrackingMapData from "./VehicleTrackingMapData";
-
+import HelplineNo from "../SanitationDashboard/helplineNo";
+// import MapData from "./MapData";
+// import CleanlinessScoreGauge from "./CleanlinessScoreGauge";
+// import ResponseTimeChart from "./ResponseTimeChart";
+// import IncidentsReported from "./IncidentsReported";
+// import DashboardCalender from "./DashboardCalender";
+// import TeamPerformance from "./TeamPerformance";
+// import AverageResponseTimeChart from "./AverageTeamPerformance";
+// import Notifications from "./Notifications";
+// import Alerts from "./Alerts";
+// import TaskSchedule from "./TaskSchedule";
+// import phone from "../assets/Dashboard/phone.png";
+// import phoneIcon from "../assets/Dashboard/phone-alt.png";
+// import PerformanceMatrix from "./PerformanceMatrix/PerformanceMatrix";
+// import VehiclePerformanceChart from "./VehiclePerformanceChart";
 
 const columns = [
   {
@@ -185,7 +185,8 @@ const WastesDashboard = () => {
         <PerformanceMatrix></PerformanceMatrix>
       </div>
        */}
-      <div className="col-span-4 ">
+      <HelplineNo />
+      {/* <div className="col-span-4 ">
         <div className="flex flex-col  shadow-md  sm:flex-row text-center mt-3 items-center border-2 border-orange-500 w-fit p-3 m-auto ">
           <span className="mr-8 text-xl font-semibold text-orange-400">
             Prayagraj Kumbh Mela{" "}
@@ -197,11 +198,11 @@ const WastesDashboard = () => {
               <img className="h-6 absolute" src={phoneIcon} alt="" />
             </div>
             <div className="ml-5 p-2 text-xl font-semibold text-white">
-              01334-224 457
+              1920
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

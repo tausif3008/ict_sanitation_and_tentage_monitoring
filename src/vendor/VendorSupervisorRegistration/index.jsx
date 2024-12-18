@@ -11,7 +11,7 @@ import {
   Select,
   notification,
   Row,
-  Col,
+  Col, message
 } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider";
@@ -22,6 +22,13 @@ import { getData } from "../../Fetch/Axios";
 import { getVendorList } from "./Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "./Slice/VendorSupervisorSelector";
 import { getValueLabel } from "../../constant/const";
+import CustomInput from "../../commonComponents/CustomInput";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import { generateSearchQuery } from "../../urils/getSearchQuery";
+import search from "../../assets/Dashboard/icon-search.png";
+import { getPdfExcelData } from "../../register/asset/AssetsSlice";
+import { exportToExcel } from "../../Reports/ExportExcelFuntion";
+import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 
 const VendorSupervisorRegistration = () => {
   const params = useParams();
@@ -35,7 +42,32 @@ const VendorSupervisorRegistration = () => {
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [form] = Form.useForm();
+  const [api, contextHolder] = notification.useNotification({ top: 100 });
+  const openNotificationWithIcon = (type) => {
+    api[type]({
+      message: "Note",
+      duration: 7,
+      description: "Please enter some information to perform the search.",
+    });
+  };
+
+
   const { VendorListDrop } = VendorSupervisorSelector();
+
+  // fiter finish
+  const onFinishForm = async (values) => {
+    const searchParams = generateSearchQuery(values);
+    if (searchParams === "&") {
+      openNotificationWithIcon("info");
+    }
+    setSearchQuery(searchParams);
+  };
+
+  const resetForm = () => {
+    form.resetFields();
+    setSearchQuery("&");
+  };
 
   const getUsers = async () => {
     setLoading(true);
@@ -139,6 +171,72 @@ const VendorSupervisorRegistration = () => {
     },
   ];
 
+  const values = form.getFieldValue("user_type_id"); // Get all form values
+  const fileName = getValueLabel(values, [], "Vendor Supervisor List");
+
+
+  // pdf header
+  const pdfHeader = [
+    "Sr No",
+    "Vendor Name",
+    "Supervisor Name",
+    "Email",
+    "Phone",
+  ];
+
+  // excel && pdf file
+  const exportToFile = async (isExcel) => {
+    try {
+      const url = URLS.users.path + "?page=1&per_page=5000";
+
+      const res = await dispatch(
+        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
+      );
+
+      if (!res?.data?.users) {
+        throw new Error("No users found in the response data.");
+      }
+
+      // Map data for Excel
+      const myexcelData =
+        isExcel &&
+        res?.data?.users?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            "Vendor Name": data?.vendor_name || "",
+            "Supervisor Name": data?.name,
+            Email: data?.email,
+            Phone: Number(data?.phone),
+          };
+        });
+
+      const pdfData =
+        !isExcel &&
+        res?.data?.users?.map((data, index) => [
+          index + 1,
+          data?.vendor_name,
+          data?.name,
+          data?.email,
+          data?.phone,
+        ]);
+
+      // Call the export function
+      isExcel && exportToExcel(myexcelData, `${fileName}`);
+
+      // Call the export function
+      !isExcel &&
+        ExportPdfFunction(
+          `${fileName}`,
+          `${fileName}`,
+          pdfHeader,
+          pdfData,
+          true
+        );
+    } catch (error) {
+      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+    }
+  };
+
   return (
     <div className="">
       <>
@@ -159,7 +257,29 @@ const VendorSupervisorRegistration = () => {
             </Button>
           }
         ></CommonDivider>
-        <CommonSearchForm
+        <div className="flex justify-end gap-2 font-semibold">
+          <div>
+            <Button
+              type="primary"
+              onClick={() => {
+                exportToFile(false);
+              }}
+            >
+              Download Pdf
+            </Button>
+          </div>
+          <div>
+            <Button
+              type="primary"
+              onClick={() => {
+                exportToFile(true);
+              }}
+            >
+              Download Excel
+            </Button>
+          </div>
+        </div>
+        {/* <CommonSearchForm
           setSearchQuery={setSearchQuery}
           searchQuery={searchQuery}
           dropFields={[
@@ -174,7 +294,111 @@ const VendorSupervisorRegistration = () => {
             { name: "email", label: "Email" },
             { name: "phone", label: "Phone" },
           ]}
-        ></CommonSearchForm>
+        ></CommonSearchForm> */}
+        <div>
+          <Collapse
+            defaultActiveKey={["1"]}
+            size="small"
+            className="rounded-none mt-3"
+            items={[
+              {
+                key: 1,
+                label: (
+                  <div className="flex items-center h-full">
+                    <img src={search} className="h-5" alt="Search Icon" />
+                  </div>
+                ),
+                children: (
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinishForm}
+                    key="form1"
+                  >
+                    <Row gutter={[16, 16]} align="middle">
+                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"vendor_id"}
+                          label={"Vendor Name"}
+                          placeholder={"Vendor Name"}
+                          options={VendorListDrop || []}
+                        />
+                      </Col>
+                      <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                        <CustomInput
+                          name="name"
+                          label="Supervisor Name"
+                          placeholder="Supervisor Name"
+                        />
+                      </Col>
+                      <Col key="phone" xs={24} sm={12} md={6} lg={5}>
+                        <CustomInput
+                          name="phone"
+                          type="number"
+                          label="Phone Number"
+                          placeholder="Phone Number"
+                          maxLength={10}
+                          accept={"onlyNumber"}
+                          rules={[
+                            {
+                              required: false,
+                              message: "Please enter your mobile number!",
+                            },
+                            {
+                              pattern: /^[0-9]{10}$/,
+                              message:
+                                "Please enter a valid 10-digit mobile number",
+                            },
+                          ]}
+                        />
+                      </Col>
+                      <Col key="email" xs={24} sm={12} md={6} lg={5}>
+                        <CustomInput
+                          name="email"
+                          label="Email"
+                          placeholder="Email"
+                          rules={[
+                            {
+                              required: false,
+                              message: "Please input your email!",
+                            },
+                            {
+                              type: "email",
+                              message: "The input is not a valid email!",
+                            },
+                          ]}
+                        />
+                      </Col>
+                      <Col
+                        xs={24}
+                        sm={12}
+                        md={6}
+                        lg={4}
+                        className="flex justify-end gap-2"
+                      >
+                        <Button
+                          type="primary"
+                          className="rounded-none bg-5c"
+                          onClick={resetForm}
+                        >
+                          Reset
+                        </Button>
+                        <Button
+                          type="primary"
+                          htmlType="submit"
+                          className="rounded-none bg-green-300 text-black"
+                        >
+                          Search
+                        </Button>
+                      </Col>
+                    </Row>
+                  </Form>
+                ),
+              },
+            ]}
+          />
+          {contextHolder}
+        </div>
 
         <CommonTable
           columns={columns}

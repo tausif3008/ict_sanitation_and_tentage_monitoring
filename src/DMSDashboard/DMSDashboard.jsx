@@ -9,6 +9,7 @@ import Approvals from "./Approvals";
 import FileUploadingFrequency from "./FileUploadingFrequency";
 import FileStorage from "./FileStorage";
 import FileHistory from "./FileHistory";
+import HelplineNo from "../SanitationDashboard/helplineNo";
 
 const DMSDashboard = () => {
   return (
@@ -44,6 +45,8 @@ const DMSDashboard = () => {
         <FileStorage></FileStorage>
         <FileHistory></FileHistory>
       </div>
+
+      <HelplineNo />
     </div>
   );
 };
