@@ -22,7 +22,7 @@ const Footer = ({ lang = "en" }) => {
             </div>
             <div className="flex flex-col font-semibold text-sm">
               <span>
-                <RightOutlined /> {dict.police[lang]} : 100
+                <RightOutlined /> {dict.police[lang]} : 112
               </span>
               <span>
                 <RightOutlined /> {dict.ambulance[lang]} : 108

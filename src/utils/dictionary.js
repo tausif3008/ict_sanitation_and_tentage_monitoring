@@ -264,13 +264,13 @@ export const DICT = {
     hi: "कुंभ मेला अधिकारी त्रिवेणी भवन, प्रयागराज, उत्तर प्रदेश।",
   },
   email_footer: {
-    en: "support@kumbhtsmonitoring.com",
-    hi: "support@kumbhtsmonitoring.com",
+    en: "support@kumbhtsmonitoring.in",
+    hi: "support@kumbhtsmonitoring.in",
   },
   phone: { en: "Phone", hi: "फ़ोन" },
   phone_number: {
-    en: "+919876543210",
-    hi: "+919876543210",
+    en: "9763224602",
+    hi: "9763224602",
   },
   emmergency: {
     en: "Emmergency",

@@ -116,6 +116,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      /*
       SLADash_param?.includes(userRoleId) && {
         key: "7",
         label: (
@@ -127,6 +128,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      */
     ];
   };
 
@@ -679,7 +681,7 @@ const Navbar = ({ lang, setLang }) => {
                 ></DropDown>
               </div> */}
 
-              {DMS_param.includes(userRoleId) && (
+              {/* {DMS_param.includes(userRoleId) && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
                   <DropDown
                     text="black"
@@ -687,7 +689,7 @@ const Navbar = ({ lang, setLang }) => {
                     name={"DMS"}
                   ></DropDown>
                 </div>
-              )}
+              )} */}
 
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown

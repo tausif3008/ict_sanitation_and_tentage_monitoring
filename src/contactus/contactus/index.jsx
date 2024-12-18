@@ -18,8 +18,8 @@ const ContactUsPage = () => {
           </li>
           <li>
             <strong>Email:</strong>{" "}
-            <a href="mailto:support@kumbhtsmonitoring.com">
-              support@kumbhtsmonitoring.com
+            <a href="mailto:support@kumbhtsmonitoring.in">
+              support@kumbhtsmonitoring.in
             </a>
           </li>
           <li>

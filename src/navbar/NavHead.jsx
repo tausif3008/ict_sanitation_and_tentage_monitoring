@@ -63,7 +63,11 @@ const NavHead = ({ lang, setLang }) => {
             </span>
           </div>
           <Link
-            to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+            to={
+              localStorage.getItem("sessionToken")
+                ? "/sanitation-dashboard"
+                : "/login"
+            }
             className="no-underline flex items-center space-x-4"
           >
             {/* <img src={img2} className="h-20" alt="MahaKumbh 2025 Logo" /> */}
@@ -108,7 +112,7 @@ const NavHead = ({ lang, setLang }) => {
             <div
               onClick={() => {
                 if (token) {
-                  handleLogOut()
+                  handleLogOut();
                 } else {
                   navigate("/login");
                 }
