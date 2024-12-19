@@ -83,6 +83,7 @@ import TermsAndConditions from "./pages/term-and-conditions";
 import AboutUs from "./pages/about-us";
 import LoginSelectors from "./Login/slice/loginSelector";
 import { logOutUser } from "./Login/slice/loginSlice";
+import AddParkingForm from "./register/parking/AddParking";
 // import { Provider, useDispatch } from "react-redux";
 // import store from "./Redux/store";
 // import URLS from "./urils/URLS"
@@ -356,6 +357,10 @@ function App() {
           element={<SectorsListing></SectorsListing>}
         ></Route>
         <Route path="parking" element={<ParkingList></ParkingList>}></Route>
+        <Route
+          path="add-parking-form"
+          element={<AddParkingForm></AddParkingForm>}
+        ></Route>
 
         <Route path="shift/:page?/:per_page?" element={<Shift></Shift>}></Route>
         <Route

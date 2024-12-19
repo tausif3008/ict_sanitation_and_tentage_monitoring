@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Table, Input } from "antd";
+import { useNavigate } from "react-router";
+import { Table, Input, Button } from "antd";
 import CommonDivider from "../../commonComponents/CommonDivider"; // Adjust path as necessary
 import { getParkingData } from "./parkingSlice";
 import URLS from "../../urils/URLS";
@@ -10,7 +11,7 @@ const { Search } = Input; // Import Search component from antd
 
 const ParkingList = () => {
   const [searchText, setSearchText] = useState(""); // State for search input
-
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { parkingData } = ParkingSelector(); // parking data
 
@@ -47,8 +48,24 @@ const ParkingList = () => {
   );
 
   return (
-    <div style={{ padding: "24px" }}>
-      <CommonDivider label={"Parking List"} />
+    <div>
+      <CommonDivider
+        label={"Parking List"}
+        compo={
+          <Button
+            onClick={() =>
+              navigate("/add-parking-form", {
+                state: {
+                  key: "AddKey",
+                },
+              })
+            }
+            className="bg-orange-300 mb-1"
+          >
+            Add Parking
+          </Button>
+        }
+      ></CommonDivider>
       <Search
         placeholder="Search by Parking Name"
         onSearch={(value) => setSearchText(value)} // Update search text on search
