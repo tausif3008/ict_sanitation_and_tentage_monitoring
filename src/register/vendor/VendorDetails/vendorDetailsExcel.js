@@ -18,7 +18,7 @@ const transformDataForExcel = (data) => {
         "Toilets & Tentage Type": row["Toilets & Tentage Type"],
         "Total Allotted Quantity": row["Total Allotted Quantity"] || 0,
         Sector: "",
-        AllottedQuantity: "",
+        "Allotted Quantity": "",
         Registered: row["Registered"] || 0,
       });
       previousSr = row["Sr"];
@@ -32,7 +32,7 @@ const transformDataForExcel = (data) => {
           "Total Allotted Quantity":
             idx === 0 ? row["Total Allotted Quantity"] : "", // Only show on the first row in the grouping
           Sector: sectorData[0] || "",
-          AllottedQuantity: sectorData[1] || "",
+          "Allotted Quantity": sectorData[1] || "",
           Registered: sectorData[2] || "",
         });
         previousSr = row["Sr"];
@@ -47,7 +47,8 @@ export const VendorDetailsToExcel = async (
   excelData = [],
   fileName = "excel_file",
   dynamicFields = {},
-  Total = 0
+  Total = 0,
+  registerCount
 ) => {
   if (excelData?.length === 0) {
     message.error("No data available");
@@ -59,6 +60,14 @@ export const VendorDetailsToExcel = async (
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
 
+  // Adding a row for the file name
+  worksheet.addRow([]); // Blank row for spacing
+  const fileNameRow = worksheet.addRow([fileName.toUpperCase()]);
+  fileNameRow.getCell(1).font = { bold: true, size: 16 }; // Bold and larger font for title
+  fileNameRow.getCell(1).alignment = { horizontal: "center" }; // Center-align text
+  worksheet.mergeCells(`A2:${String.fromCharCode(64 + 7)}2`); // Merge cells across columns for the title
+
+  // Define columns
   const columns = [
     { header: "Sr", key: "Sr", width: 10 },
     { header: "Category", key: "Category", width: 30 },
@@ -73,13 +82,14 @@ export const VendorDetailsToExcel = async (
       width: 30,
     },
     { header: "Sector", key: "Sector", width: 20 },
-    { header: "Allotted Quantity", key: "AllottedQuantity", width: 20 },
+    { header: "Allotted Quantity", key: "Allotted Quantity", width: 20 },
     { header: "Registered Quantity", key: "Registered", width: 20 },
   ];
 
   worksheet.columns = columns;
 
-  const headerRow = worksheet.getRow(4);
+  // Add headers to the second row
+  const headerRow = worksheet.getRow(3);
   columns.forEach((col, index) => {
     headerRow.getCell(index + 1).value = col.key;
     headerRow.getCell(index + 1).font = { bold: true };
@@ -104,14 +114,18 @@ export const VendorDetailsToExcel = async (
     });
   });
 
+  // Add a summary row after the data
   const totalCountRow = worksheet.addRow({});
-  totalCountRow.getCell(6).value = `Total Alloted Quantity: ${Total}`;
+  totalCountRow.getCell(6).value = `Total Allotted Quantity: ${Total}`;
   totalCountRow.getCell(6).font = { bold: true };
   totalCountRow.getCell(6).alignment = { horizontal: "center" };
-  totalCountRow.getCell(7).value = `Total Register Quantity: ${Total}`;
+  totalCountRow.getCell(
+    7
+  ).value = `Total Registered Quantity: ${registerCount}`;
   totalCountRow.getCell(7).font = { bold: true };
   totalCountRow.getCell(7).alignment = { horizontal: "center" };
 
+  // Add dynamic fields to the summary row
   let colIndex = 2;
   Object.keys(dynamicFields).forEach((key) => {
     const value = dynamicFields[key];
@@ -124,11 +138,13 @@ export const VendorDetailsToExcel = async (
     colIndex++;
   });
 
+  // Apply filter to the header row
   worksheet.autoFilter = {
-    from: worksheet.getCell("A1"),
-    to: worksheet.getCell(`E1`),
+    from: worksheet.getCell("A3"),
+    to: worksheet.getCell(`G3`),
   };
 
+  // Save the file
   const buffer = await workbook.xlsx.writeBuffer();
   saveAs(new Blob([buffer]), `${fileName}.xlsx`);
 };

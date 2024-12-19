@@ -289,6 +289,21 @@ const VendorDetails = () => {
         throw new Error("No data found in the response data.");
       }
 
+      const registerCount = res?.data?.userdetails?.reduce((total, element) => {                                                              
+        const sectorRegistered = element?.proposedsectors?.reduce(
+          (sectorTotal, item) => sectorTotal + Number(item?.registered),                                   
+          0
+        );
+
+        const parkingRegistered = element?.proposedparkings?.reduce(
+          (sectorTotal, item) => sectorTotal + Number(item?.registered),
+          0
+        );
+
+        // Return the total of both
+        return total + sectorRegistered + parkingRegistered;
+      }, 0);
+
       // Map data for Excel
       const myexcelData =
         isExcel &&
@@ -341,7 +356,8 @@ const VendorDetails = () => {
           myexcelData,
           `${userName} Vendor Details`,
           {},
-          totalAllottedQuantity
+          totalAllottedQuantity,
+          registerCount
         );
 
       // Call the export function
