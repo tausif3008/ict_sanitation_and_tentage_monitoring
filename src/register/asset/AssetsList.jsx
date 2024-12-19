@@ -9,6 +9,7 @@ import {
   Row,
   Col,
   message,
+  Input,
 } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router";
@@ -26,12 +27,15 @@ import {
   setUpdateAssetEl,
 } from "./AssetsSlice";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
-import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
+import {
+  deleteSupervisorSectorAllocation,
+  getSectorsList,
+} from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+// import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-import CircleSelector from "../../Reports/CircleSlice/circleSelector";
+// import CircleSelector from "../../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
@@ -44,6 +48,8 @@ import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import CustomInput from "../../commonComponents/CustomInput";
 import { dateWeekOptions } from "../../constant/const";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
+import { DeleteOutlined } from "@ant-design/icons";
+import { asset_delete_permisssion } from "../../constant/permission";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -58,15 +64,16 @@ const AssetsList = () => {
   const [qrCodeUrl, setQrCodeUrl] = useState("");
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
+  const [viewDeleteModal, setViewDeleteModal] = useState(false); // view delete model
 
-  // const [excelData, setExcelData] = useState([]); // excel data
   const ImageUrl = localStorage.getItem("ImageUrl") || "";
+  const userRoleId = localStorage.getItem("role_id");
 
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  let categoryId = form.getFieldValue("asset_main_type_id")
+  let categoryId = form.getFieldValue("asset_main_type_id");
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -78,7 +85,7 @@ const AssetsList = () => {
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
-  const { CircleListDrop } = CircleSelector(); // circle
+  // const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const isUpdatedSelector = useSelector(
@@ -119,7 +126,7 @@ const AssetsList = () => {
   // reset
   const resetForm = () => {
     form.resetFields();
-    form.setFieldValue("asset_main_type_id", "1")
+    form.setFieldValue("asset_main_type_id", "1");
     setSearchQuery("&asset_main_type_id=1");
     setShowDateRange(false);
   };
@@ -211,6 +218,35 @@ const AssetsList = () => {
     }
   };
 
+  const handleCancel = () => {
+    setViewDeleteModal(false);
+  };
+
+  // handle delete
+  const handleDelete = (data) => {
+    form.setFieldsValue({
+      assets_id: data?.assets_id,
+      asset_type_name: data?.asset_type_name,
+      asset_main_type_name: data?.asset_main_type_name,
+    });
+    setViewDeleteModal(true);
+  };
+
+  // handle delete API
+  const onFinish = async (value) => {
+    const url = URLS?.deleteAssetList?.path + `/${value?.assets_id}`;
+    const res = await dispatch(deleteSupervisorSectorAllocation(url)); // delete api
+    if (res) {
+      getDetails();
+      message.success(
+        `${value?.asset_main_type_name} - ${value?.asset_type_name} Record deleted Successfully`
+      );
+    } else {
+      message.error("Something went wrong! Please try again.");
+    }
+    setViewDeleteModal(false);
+  };
+
   useEffect(() => {
     getDetails();
     if (isUpdatedSelector) {
@@ -219,7 +255,7 @@ const AssetsList = () => {
   }, [params, isUpdatedSelector, searchQuery]);
 
   useEffect(() => {
-    form.setFieldValue("asset_main_type_id", "1")
+    form.setFieldValue("asset_main_type_id", "1");
     dispatch(setUpdateAssetEl({ updateElement: null }));
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
@@ -230,6 +266,7 @@ const AssetsList = () => {
     // dispatch(getAllCircleList()); // all circle list
   }, []);
 
+  // disable date
   const disabledDate = (current) => {
     const maxDate = moment(startDate).clone().add(8, "days");
     return (
@@ -237,7 +274,6 @@ const AssetsList = () => {
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
     );
   };
-
 
   const columns = [
     {
@@ -275,14 +311,14 @@ const AssetsList = () => {
     },
     ...(categoryId === "2"
       ? [
-        {
-          title: "Sanstha Name",
-          dataIndex: "sanstha_name_hi",
-          key: "sanstha_name_hi",
-          render: (text) => text || "",
-          width: 140,
-        },
-      ]
+          {
+            title: "Sanstha Name",
+            dataIndex: "sanstha_name_hi",
+            key: "sanstha_name_hi",
+            render: (text) => text || "",
+            width: 140,
+          },
+        ]
       : []),
     {
       title: "Sector",
@@ -367,6 +403,29 @@ const AssetsList = () => {
       },
       width: 140,
     },
+    ...(asset_delete_permisssion?.includes(userRoleId)
+      ? [
+          {
+            title: "Action",
+            dataIndex: "action",
+            key: "action",
+            fixed: "right",
+            width: 80,
+            render: (text, record) => {
+              return (
+                <Button
+                  className="bg-red-100 border-red-500 focus:ring-red-500 hover:bg-red-200 rounded-full"
+                  onClick={() => {
+                    handleDelete(record);
+                  }}
+                >
+                  <DeleteOutlined />
+                </Button>
+              );
+            },
+          },
+        ]
+      : []),
   ];
 
   // pdf header
@@ -687,8 +746,8 @@ const AssetsList = () => {
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
         totalName="Total"
-      // subtotalName={"Register Unit"}
-      // subtotalCount={totalUnit || 0}
+        // subtotalName={"Register Unit"}
+        // subtotalCount={totalUnit || 0}
       ></CommonTable>
 
       <Modal
@@ -703,6 +762,48 @@ const AssetsList = () => {
         ) : (
           <p>No QR Code available</p>
         )}
+      </Modal>
+
+      <Modal
+        title={
+          <div>
+            <h5>Delete Toilets & Tentage Type</h5>
+          </div>
+        }
+        open={viewDeleteModal}
+        onCancel={handleCancel}
+        footer={null}
+        width={400}
+      >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <p>
+            Are you sure you want to delete this Toilets & Tentage Type Record?
+          </p>
+
+          {/* Optional: Confirmation Checkbox or other fields */}
+          <Form.Item name="asset_main_type_name">
+            <Input disabled className="w-full" placeholder="Supervisor Name" />
+          </Form.Item>
+          <Form.Item name="asset_type_name">
+            <Input disabled className="w-full" placeholder="Sector Name" />
+          </Form.Item>
+          <Form.Item name="assets_id">
+            <Input disabled className="w-full" placeholder="Id" />
+          </Form.Item>
+          <p>
+            <strong className="text-red-500 font-bold">
+              Please note: The data in this field cannot be recovered.
+            </strong>
+          </p>
+
+          <Form.Item>
+            <div className="flex justify-end space-x-2">
+              <Button type="primary" danger htmlType="submit">
+                Delete
+              </Button>
+            </div>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

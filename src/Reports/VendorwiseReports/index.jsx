@@ -146,10 +146,10 @@ const VendorReports = () => {
     const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
 
     if (vendor_id_name && asset_type_id_name) {
-      return `${vendorName} Wise ${assetTypeName} Report`;
+      return `${vendorName} - ${assetTypeName} Report`;
     }
     if (vendor_id_name) {
-      return `${vendorName} Wise ${catTypeName} Report`;
+      return `${vendorName} - ${catTypeName} Report`;
     }
     if (asset_type_id_name) {
       return `Vendor Wise ${catTypeName} (${assetTypeName}) Report`;
