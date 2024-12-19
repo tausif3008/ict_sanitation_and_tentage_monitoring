@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
+import { useLocation, useNavigate, useParams } from "react-router";
+import dayjs from "dayjs";
 import {
   Form,
   Input,
   Button,
-  Select,
   Divider,
   DatePicker,
   message,
-  Space,
+  // Select,
+  // Space,
   InputNumber,
 } from "antd";
 import {
@@ -18,25 +21,30 @@ import {
 import { postData } from "../../../Fetch/Axios";
 import URLS from "../../../urils/URLS";
 import { getFormData } from "../../../urils/getFormData";
-import optionsMaker from "../../../urils/OptionMaker";
-import { useLocation, useNavigate, useParams } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
 import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
-import dayjs from "dayjs";
-import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
+// import optionsMaker from "../../../urils/OptionMaker";
+// import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
 import { getParkingData } from "../../parking/parkingSlice";
 import ParkingSelector from "../../parking/parkingSelector";
 import { getValueLabel } from "../../../constant/const";
+import CustomSelect from "../../../commonComponents/CustomSelect";
+import AssetTypeSelectors from "../../AssetType/assetTypeSelectors";
+import {
+  getAssetMainTypes,
+  getAssetTypes,
+} from "../../AssetType/AssetTypeSlice";
+import { getSectorsList } from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 
-const { Option } = Select;
+// const { Option } = Select;
 
 const dateFormat = "YYYY-MM-DD";
 
 const VendorDetailsForm = () => {
   const [loading, setLoading] = useState(false);
-  const [assetTypes, setAssetTypes] = useState([]);
-  const [assetMainTypeId, setAssetMainTypeId] = useState();
-  const [sectorOptions, setSectorOptions] = useState([]);
+  // const [assetTypes, setAssetTypes] = useState([]);
+  // const [assetMainTypeId, setAssetMainTypeId] = useState();
+  // const [sectorOptions, setSectorOptions] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [parkQuantity, setParkQuantity] = useState(0);
 
@@ -47,7 +55,9 @@ const VendorDetailsForm = () => {
   const location = useLocation();
   const key = location.state?.key;
   const record = location.state?.record;
-  const { parkingDrop } = ParkingSelector();
+  const { parkingDrop } = ParkingSelector(); // Parking
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { SectorListDrop } = VendorSectorSelectors(); // sector data
 
   // Prepopulate form if editing vendor details
   useEffect(() => {
@@ -72,7 +82,9 @@ const VendorDetailsForm = () => {
       form.setFieldsValue({
         parking_info: parkEdit,
       });
-      setAssetMainTypeId(record?.asset_main_type_id);
+      // setAssetMainTypeId(record?.asset_main_type_id);
+      const url = URLS?.assetType?.path + record?.asset_main_type_id;
+      dispatch(getAssetTypes(url)); // get assset type
       const updatedDetails = { ...record };
 
       updatedDetails.date_of_allocation = dayjs(
@@ -114,18 +126,27 @@ const VendorDetailsForm = () => {
     }
   }, [key, record, form]);
 
+  // handle category
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+  };
+
   // Populate asset types for selection
-  useEffect(() => {
-    if (assetMainTypeId)
-      optionsMaker(
-        "vendorAsset",
-        "assettypes",
-        "name",
-        setAssetTypes,
-        "?asset_main_type_id=" + assetMainTypeId,
-        "asset_type_id"
-      );
-  }, [assetMainTypeId]);
+  // useEffect(() => {
+  //   if (assetMainTypeId)
+  //     optionsMaker(
+  //       "vendorAsset",
+  //       "assettypes",
+  //       "name",
+  //       setAssetTypes,
+  //       "?asset_main_type_id=" + assetMainTypeId,
+  //       "asset_type_id"
+  //     );
+  // }, [assetMainTypeId]);
 
   // handle sector
   const handelQuantitySector = () => {
@@ -230,7 +251,7 @@ const VendorDetailsForm = () => {
       for (const key of vals?.sector_info) {
         if (key?.sector) {
           if (selectedSectors.includes(key.sector)) {
-            for (const key1 of sectorOptions) {
+            for (const key1 of SectorListDrop) {
               if (key1?.value == key?.sector) {
                 message.error(key1.label + " Found duplicate");
                 setLoading(false);
@@ -258,7 +279,7 @@ const VendorDetailsForm = () => {
       for (const key of vals?.parking_info) {
         if (key?.parking) {
           if (selectedParking.includes(key.parking)) {
-            for (const key1 of sectorOptions) {
+            for (const key1 of SectorListDrop) {
               if (key1?.value == key?.parking) {
                 const keyLabel = getValueLabel(
                   key1?.value,
@@ -310,14 +331,17 @@ const VendorDetailsForm = () => {
   }, [params, navigate]);
 
   useEffect(() => {
-    optionsMaker(
-      "sectors",
-      "sectors",
-      "name",
-      setSectorOptions,
-      "",
-      "sector_id"
-    );
+    // optionsMaker(
+    //   "sectors",
+    //   "sectors",
+    //   "name",
+    //   setSectorOptions,
+    //   "",
+    //   "sector_id"
+    // );
+    dispatch(getSectorsList()); // all sectors
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
 
     // get parking data
     const url = URLS?.parking?.path;
@@ -353,7 +377,22 @@ const VendorDetailsForm = () => {
 
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-            <CommonFormDropDownMaker
+            <CustomSelect
+              name={"asset_main_type_id"}
+              label={"Select Category"}
+              placeholder={"Select Category"}
+              onSelect={handleSelect}
+              options={AssetMainTypeDrop || []}
+              rules={[{ required: true, message: "Please Select Category" }]}
+            />
+            <CustomSelect
+              name={"asset_type_id"}
+              label={"Select Type"}
+              placeholder={"Select Type"}
+              options={AssetTypeDrop || []}
+              rules={[{ required: true, message: "Please Select Asset Type" }]}
+            />
+            {/* <CommonFormDropDownMaker
               uri={"assetMainTypePerPage"}
               responseListName="assetmaintypes"
               responseLabelName="name"
@@ -363,8 +402,8 @@ const VendorDetailsForm = () => {
               required={true}
               RequiredMessage={"Main type is required!"}
               setValue={setAssetMainTypeId}
-            ></CommonFormDropDownMaker>
-            <Form.Item
+            ></CommonFormDropDownMaker> */}
+            {/* <Form.Item
               label={<div className="font-semibold">Type</div>}
               name="asset_type_id"
               rules={[{ required: true, message: "Please enter asset type" }]}
@@ -381,7 +420,7 @@ const VendorDetailsForm = () => {
                   </Option>
                 ))}
               </Select>
-            </Form.Item>
+            </Form.Item> */}
             <Form.Item
               label={<div className="font-semibold">LOE Number</div>}
               name="contract_number"
@@ -449,7 +488,7 @@ const VendorDetailsForm = () => {
             </div>
 
             <div className="col-span-3 grid grid-cols-3 justify-start items-start gap-3 mt-3 mb-2">
-              <Form.Item
+              {/* <Form.Item
                 label="Sector"
                 name="sector"
                 rules={[
@@ -469,7 +508,20 @@ const VendorDetailsForm = () => {
                     </Option>
                   ))}
                 </Select>
-              </Form.Item>
+              </Form.Item> */}
+              <CustomSelect
+                name="sector"
+                label="Select a sector"
+                placeholder="Select a sector"
+                onChange={handelQuantitySector}
+                options={SectorListDrop || []}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select sector!",
+                  },
+                ]}
+              />
 
               <Form.Item
                 label="Quantity"
@@ -500,7 +552,7 @@ const VendorDetailsForm = () => {
                     key={key}
                   >
                     <div className="w-full ">
-                      <Form.Item
+                      {/* <Form.Item
                         {...restField}
                         name={[name, "sector"]}
                         rules={[
@@ -520,7 +572,20 @@ const VendorDetailsForm = () => {
                             </Option>
                           ))}
                         </Select>
-                      </Form.Item>
+                      </Form.Item> */}
+                      <CustomSelect
+                        name={[name, "sector"]}
+                        {...restField}
+                        placeholder="Select a sector"
+                        onChange={handelQuantitySector}
+                        options={SectorListDrop || []}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select sector!",
+                          },
+                        ]}
+                      />
                     </div>
 
                     <div className="">
@@ -579,7 +644,7 @@ const VendorDetailsForm = () => {
                     key={key}
                   >
                     <div className="w-full ">
-                      <Form.Item
+                      {/* <Form.Item
                         {...restField}
                         name={[name, "parking"]}
                         rules={[
@@ -599,7 +664,20 @@ const VendorDetailsForm = () => {
                             </Option>
                           ))}
                         </Select>
-                      </Form.Item>
+                      </Form.Item> */}
+                      <CustomSelect
+                        name={[name, "parking"]}
+                        {...restField}
+                        placeholder="Select a parking"
+                        onChange={handelQuantityParking}
+                        options={parkingDrop || []}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Parking!",
+                          },
+                        ]}
+                      />
                     </div>
 
                     <div className="">
