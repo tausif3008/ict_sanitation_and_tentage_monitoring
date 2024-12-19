@@ -56,7 +56,21 @@ const CustomInput = ({
         empIdValidation: /^[a-zA-Z0-9-]*$/,
       };
 
-      const specialKeys = ["Backspace", "Delete", "ArrowLeft", "ArrowRight"];
+      const specialKeys = [
+        "Backspace",
+        "Delete",
+        "ArrowLeft",
+        "ArrowRight",
+        "Tab",
+      ];
+
+      // Check if the event is a Ctrl+C or Ctrl+V (for copy and paste)
+      if (
+        (e.ctrlKey || e.metaKey) && // Check if Ctrl or Cmd (metaKey) is pressed
+        (e.key === "c" || e.key === "v") // Check if the key is C or V
+      ) {
+        return; // Allow Ctrl+C and Ctrl+V
+      }
 
       if (!specialKeys.includes(e.key) && !obj[accept].test(e.key)) {
         e.preventDefault();
