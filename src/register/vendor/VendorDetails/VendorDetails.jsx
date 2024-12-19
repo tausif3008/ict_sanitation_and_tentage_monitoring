@@ -302,16 +302,17 @@ const VendorDetails = () => {
               ...data?.proposedsectors?.map((item) => [
                 item?.sector_name,
                 Number(item?.quantity),
+                Number(item?.registered) || 0,
               ]),
               ...data?.proposedparkings?.map((item) => [
                 item?.parking_name,
                 Number(item?.quantity),
+                Number(item?.registered) || 0,
               ]),
             ],
-            Registered: data?.proposedsectors?.registered, //need to work on this registered qty
           };
         });
-      console.log("myexcelData", myexcelData);
+
       const pdfData =
         !isExcel &&
         res?.data?.userdetails?.map((data, index) => [
