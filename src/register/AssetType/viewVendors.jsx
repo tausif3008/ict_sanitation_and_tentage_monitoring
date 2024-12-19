@@ -25,7 +25,7 @@ const ViewVendorsSectors = ({
             dataSource={tableData}
             rowKey="question_id"
             pagination={false}
-            scroll={{ x: 800, y: 400 }}
+            // scroll={{ x: 800, y: 400 }}
             columns={column || []}
           />
         ) : (

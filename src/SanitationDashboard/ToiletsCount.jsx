@@ -81,7 +81,7 @@ const ToiletsCount = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      // width: "10%",
+      // width: "60%",
     },
   ];
 

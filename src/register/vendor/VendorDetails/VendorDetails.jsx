@@ -452,6 +452,7 @@ const VendorDetails = () => {
         footer={null}
         width={800}
       >
+        <h4>fdsfsdf</h4>
         {proposedSectors?.proposedsectors?.length ? (
           <>
             <Table
