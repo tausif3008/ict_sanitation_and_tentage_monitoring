@@ -59,6 +59,11 @@ export const VendorDetailsToExcel = async (
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
 
+  //   worksheet.addRow(["Rohit Salunke"]).font = { bold: true };
+  //   worksheet.mergeCells("A1:G1"); // Merging cells from A1 to G1
+  //   worksheet.getCell("A1").alignment = { horizontal: "center" };
+  //   worksheet.getCell("A1").value = `ROHIT`;
+
   const columns = [
     { header: "Sr", key: "Sr", width: 10 },
     { header: "Category", key: "Category", width: 30 },
@@ -79,14 +84,26 @@ export const VendorDetailsToExcel = async (
 
   worksheet.columns = columns;
 
-  worksheet.getRow(1).eachCell((cell) => {
-    cell.fill = {
+  //   worksheet.getRow(1).eachCell((cell) => {
+  //     cell.fill = {
+  //       type: "pattern",
+  //       pattern: "solid",
+  //       fgColor: { argb: "FBB900" },
+  //     };
+  //     cell.font = { bold: true, color: { argb: "000000" } };
+  //     cell.alignment = { horizontal: "center" };
+  //   });
+
+  const headerRow = worksheet.getRow(2);
+  columns.forEach((col, index) => {
+    headerRow.getCell(index + 1).value = col.header;
+    headerRow.getCell(index + 1).font = { bold: true };
+    headerRow.getCell(index + 1).alignment = { horizontal: "center" };
+    headerRow.getCell(index + 1).fill = {
       type: "pattern",
       pattern: "solid",
       fgColor: { argb: "FBB900" },
     };
-    cell.font = { bold: true, color: { argb: "000000" } };
-    cell.alignment = { horizontal: "center" };
   });
 
   // Populate rows with transformed data
@@ -103,9 +120,12 @@ export const VendorDetailsToExcel = async (
   });
 
   const totalCountRow = worksheet.addRow({});
-  totalCountRow.getCell(1).value = `Total Alloted Quantity: ${Total}`;
-  totalCountRow.getCell(1).font = { bold: true };
-  totalCountRow.getCell(1).alignment = { horizontal: "center" };
+  totalCountRow.getCell(6).value = `Total Alloted Quantity: ${Total}`;
+  totalCountRow.getCell(6).font = { bold: true };
+  totalCountRow.getCell(6).alignment = { horizontal: "center" };
+  totalCountRow.getCell(7).value = `Total Register Quantity: ${Total}`;
+  totalCountRow.getCell(7).font = { bold: true };
+  totalCountRow.getCell(7).alignment = { horizontal: "center" };
 
   let colIndex = 2;
   Object.keys(dynamicFields).forEach((key) => {
