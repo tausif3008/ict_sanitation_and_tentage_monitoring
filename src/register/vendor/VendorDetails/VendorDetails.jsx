@@ -446,13 +446,28 @@ const VendorDetails = () => {
 
       {/* sectors */}
       <Modal
-        title={`Proposed Sectors & Parking`}
+        title={
+          <div>
+            <h5>Proposed Sectors & Parking</h5>
+          </div>
+        }
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
         width={800}
       >
-        <h4>fdsfsdf</h4>
+        <div className="mb-4">
+          <p>
+            <strong>Vendor Name:</strong> {proposedSectors?.user_name}
+          </p>
+          <p>
+            <strong>Category:</strong> {proposedSectors?.asset_main_type_name}
+          </p>
+          <p>
+            <strong>Toilets & Tentage Type:</strong>{" "}
+            {proposedSectors?.asset_type_name}
+          </p>
+        </div>
         {proposedSectors?.proposedsectors?.length ? (
           <>
             <Table
@@ -517,19 +532,38 @@ const VendorDetails = () => {
         )}
         {(proposedSectors?.proposedsectors?.length ||
           proposedSectors?.proposedparkings?.length) && (
-          <div className="text-right font-semibold mt-2">
-            Total Quantity:{" "}
-            {(
-              proposedSectors?.proposedparkings?.reduce(
-                (total, park) => total + Number(park?.quantity || 0),
-                0
-              ) +
-              proposedSectors?.proposedsectors?.reduce(
-                (total, sector) => total + Number(sector?.quantity || 0),
-                0
-              )
-            ).toLocaleString()}
-          </div>
+          <>
+            <div className="flex justify-around">
+              {/* <div className="flex gap-2 flex-row-reverse"> */}
+              <div></div>
+              <div className="text-right font-semibold mt-2">
+                Total Quantity:{" "}
+                {(
+                  proposedSectors?.proposedparkings?.reduce(
+                    (total, park) => total + Number(park?.quantity || 0),
+                    0
+                  ) +
+                  proposedSectors?.proposedsectors?.reduce(
+                    (total, sector) => total + Number(sector?.quantity || 0),
+                    0
+                  )
+                ).toLocaleString()}
+              </div>
+              <div className="text-right font-semibold mt-2">
+                Total Registered:{" "}
+                {(
+                  proposedSectors?.proposedparkings?.reduce(
+                    (total, park) => total + Number(park?.registered || 0),
+                    0
+                  ) +
+                  proposedSectors?.proposedsectors?.reduce(
+                    (total, sector) => total + Number(sector?.registered || 0),
+                    0
+                  )
+                ).toLocaleString()}
+              </div>
+            </div>
+          </>
         )}
       </Modal>
 
