@@ -289,9 +289,9 @@ const VendorDetails = () => {
         throw new Error("No data found in the response data.");
       }
 
-      const registerCount = res?.data?.userdetails?.reduce((total, element) => {                                                              
+      const registerCount = res?.data?.userdetails?.reduce((total, element) => {
         const sectorRegistered = element?.proposedsectors?.reduce(
-          (sectorTotal, item) => sectorTotal + Number(item?.registered),                                   
+          (sectorTotal, item) => sectorTotal + Number(item?.registered),
           0
         );
 
@@ -319,6 +319,7 @@ const VendorDetails = () => {
                 Number(item?.quantity),
                 Number(item?.registered) || 0,
               ]),
+              ...[""],
               ...data?.proposedparkings?.map((item) => [
                 item?.parking_name,
                 Number(item?.quantity),

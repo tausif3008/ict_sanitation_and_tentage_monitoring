@@ -116,12 +116,10 @@ export const VendorDetailsToExcel = async (
 
   // Add a summary row after the data
   const totalCountRow = worksheet.addRow({});
-  totalCountRow.getCell(6).value = `Total Allotted Quantity: ${Total}`;
+  totalCountRow.getCell(6).value = `Total Allotted: ${Total}`;
   totalCountRow.getCell(6).font = { bold: true };
   totalCountRow.getCell(6).alignment = { horizontal: "center" };
-  totalCountRow.getCell(
-    7
-  ).value = `Total Registered Quantity: ${registerCount}`;
+  totalCountRow.getCell(7).value = `Total Registered: ${registerCount}`;
   totalCountRow.getCell(7).font = { bold: true };
   totalCountRow.getCell(7).alignment = { horizontal: "center" };
 
