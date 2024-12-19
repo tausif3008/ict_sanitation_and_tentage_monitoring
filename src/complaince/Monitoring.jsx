@@ -259,14 +259,18 @@ const Monitoring = () => {
     //     );
     //   },
     // },
-    {
-      title: "GSD Name",
-      dataIndex: "agent_name",
-      key: "agent_name",
-      render: (text) => {
-        return text ? text : "GSD";
-      },
-    },
+    ...(userRoleId !== "8"
+      ? [
+          {
+            title: "GSD Name",
+            dataIndex: "agent_name",
+            key: "agent_name",
+            render: (text) => {
+              return text ? text : "GSD";
+            },
+          },
+        ]
+      : []),
     {
       title: "Vendor Name",
       dataIndex: "vendor_name",
@@ -479,27 +483,29 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"created_by"}
-                        label={"Select GSD"}
-                        placeholder={"Select GSD"}
-                        options={monitoringAgentDrop || []}
-                        // search dropdown
-                        isOnSearchFind={true}
-                        apiAction={getMonitoringAgent}
-                        onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                      />
-                    </Col>
                     {userRoleId != "8" && (
-                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                        <CustomSelect
-                          name={"vendor_id"}
-                          label={"Select Vendor"}
-                          placeholder={"Select Vendor"}
-                          options={VendorListDrop || []}
-                        />
-                      </Col>
+                      <>
+                        <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"created_by"}
+                            label={"Select GSD"}
+                            placeholder={"Select GSD"}
+                            options={monitoringAgentDrop || []}
+                            // search dropdown
+                            isOnSearchFind={true}
+                            apiAction={getMonitoringAgent}
+                            onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
+                          />
+                        </Col>
+                        <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"vendor_id"}
+                            label={"Select Vendor"}
+                            placeholder={"Select Vendor"}
+                            options={VendorListDrop || []}
+                          />
+                        </Col>
+                      </>
                     )}
                     <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
