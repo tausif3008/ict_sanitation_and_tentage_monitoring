@@ -72,7 +72,22 @@ const ExportToPDF = ({
     const title = `${titleName}`;
     const dateString = moment().format("DD-MMM-YYYY HH:MM A");
 
+    // -------------------------
+
     // Calculate positions for the title and date
+    // const titleX = 54; // Left align title
+    // const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
+
+    // // Add title and date below the subheading
+    // doc.setFontSize(12);
+    // doc.setFont("bold");
+    // doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
+    // doc.setFont("normal");
+    // doc.setFontSize(10); // Smaller font size for date
+    // doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
+
+    // -------------------------
+
     const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
@@ -80,15 +95,18 @@ const ExportToPDF = ({
     doc.setFontSize(12);
     doc.setFont("bold");
     doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
+
+    // Add date on the next line, maintaining the same X position for horizontal alignment
     doc.setFont("normal");
     doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
+    const dateY = 40 + 10; // Increase the Y position by the height of the title text (approx. 10 units)
+    doc.text(dateString, dateX + 30, dateY); // Date position (on the next line below the title)
 
     // Table header and content
     doc.autoTable({
       head: [headerData],
       body: rows,
-      startY: 45, // Start after the horizontal line and other content (Y position adjusted)
+      startY: 45 + 10, // Start after the horizontal line and other content (Y position adjusted)
     });
 
     // Add footer

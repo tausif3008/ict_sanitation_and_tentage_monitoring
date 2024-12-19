@@ -18,7 +18,7 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getAssetTypeWiseVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -44,16 +44,27 @@ const VendorReports = () => {
   const vendorsData = vendorReports?.data?.vendors || [];
 
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
+  const asset_type_id_name = form.getFieldValue("asset_type_id");
+  const vendor_id_name = form.getFieldValue("vendor_id");
 
   // handle category
   const handleSelect = (value) => {
     form.setFieldsValue({
       asset_type_id: null,
+      vendor_id: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
+  };
+
+  // handle asset type
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // fiter finish
@@ -129,21 +140,62 @@ const VendorReports = () => {
   }, [vendorReports]);
 
   // file name
-  useEffect(() => {
-    if (categoryType) {
-      const value = getValueLabel(categoryType, AssetMainTypeDrop, "");
-      setFilesName(value);
-    } else {
-      setFilesName("");
+  const getReportName = () => {
+    const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
+    const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+
+    if (vendor_id_name && asset_type_id_name) {
+      return `${vendorName} Wise ${assetTypeName} Report`;
     }
-  }, [categoryType, AssetMainTypeDrop]);
+    if (vendor_id_name) {
+      return `${vendorName} Wise ${catTypeName} Report`;
+    }
+    if (asset_type_id_name) {
+      return `Vendor Wise ${catTypeName} (${assetTypeName}) Report`;
+    }
+    if (categoryType) {
+      return `Vendor Wise ${catTypeName} Report`;
+    }
+    return "Vendor Wise Report";
+  };
+  useEffect(() => {
+    setFilesName(getReportName()); // file name
+  }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
+
+  // useEffect(() => {
+  //   if (categoryType || asset_type_id_name || vendor_id_name) {
+  //     const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
+  //     const assetTypeName = getValueLabel(
+  //       asset_type_id_name,
+  //       AssetTypeDrop,
+  //       ""
+  //     );
+  //     const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+  //     if (vendor_id_name) {
+  //       if (asset_type_id_name) {
+  //         const name = `${vendorName} Wise ${assetTypeName} Report`;
+  //         setFilesName(name);
+  //       } else {
+  //         const name = `${vendorName} Wise ${catTypeName} Report`;
+  //         setFilesName(name);
+  //       }
+  //     } else if (asset_type_id_name) {
+  //       const name = `Vendor Wise ${catTypeName} (${assetTypeName}) Report`;
+  //       setFilesName(name);
+  //     } else {
+  //       const name = `Vendor Wise ${catTypeName} Report`;
+  //       setFilesName(name);
+  //     }
+  //   } else {
+  //     setFilesName("");
+  //   }
+  // }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
 
   useEffect(() => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    dispatch(getVendorList()); // vendor list
-
     return () => {};
   }, []);
 
@@ -231,13 +283,15 @@ const VendorReports = () => {
           <ExportToPDF
             titleName={
               filesName
-                ? `Vendor-Wise-${filesName} Report`
-                : `Vendor-Wise Report`
+                ? filesName
+                : // ? `Vendor-Wise-${filesName} Report`
+                  `Vendor-Wise Report`
             }
             pdfName={
               filesName
-                ? `Vendor-Wise-${filesName}-Report`
-                : `Vendor-Wise-Report`
+                ? filesName
+                : // ? `Vendor-Wise-${filesName}-Report`
+                  `Vendor-Wise-Report`
             }
             headerData={pdfHeader}
             rows={pdfData}
@@ -248,8 +302,9 @@ const VendorReports = () => {
             excelData={excelData || []}
             fileName={
               filesName
-                ? `Vendor-Wise-${filesName} Report`
-                : `Vendor-Wise Report`
+                ? filesName
+                : // ? `Vendor-Wise-${filesName} Report`
+                  `Vendor-Wise Report`
             }
             dynamicArray={[
               {
@@ -313,6 +368,7 @@ const VendorReports = () => {
                         label={"Select Asset Type"}
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
+                        onSelect={handleTypeSelect}
                       />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
@@ -320,7 +376,7 @@ const VendorReports = () => {
                         name={"vendor_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
+                        options={AssetTypeVendorDrop || []}
                       />
                     </Col>
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
