@@ -220,12 +220,28 @@ const SectorWiseReport = () => {
                 ? `Sector-Wise-${filesName}-Report`
                 : `Sector-Wise-Report`
             }
-            dynamicFields={{
-              "Total Quantity": totalQuantity?.totalQnty,
-              "Total Register": totalQuantity?.registered,
-              "Total Clean": totalQuantity?.clean,
-              "Total Unclean": totalQuantity?.unclean,
-            }}
+            dynamicArray={[
+              {
+                name: "Total Quantity",
+                value: totalQuantity?.totalQnty,
+                colIndex: 3,
+              },
+              {
+                name: "Total Register",
+                value: totalQuantity?.registered,
+                colIndex: 4,
+              },
+              {
+                name: "Total Clean",
+                value: totalQuantity?.clean,
+                colIndex: 5,
+              },
+              {
+                name: "Total Unclean",
+                value: totalQuantity?.unclean,
+                colIndex: 6,
+              },
+            ]}
           />
         </div>
       </div>

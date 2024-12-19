@@ -251,12 +251,28 @@ const VendorReports = () => {
                 ? `Vendor-Wise-${filesName} Report`
                 : `Vendor-Wise Report`
             }
-            dynamicFields={{
-              Total: total,
-              "Register Unit": totalRegistered,
-              Clean: totalClean,
-              Unclean: totalUnclean,
-            }}
+            dynamicArray={[
+              {
+                name: "Total",
+                value: total,
+                colIndex: 3,
+              },
+              {
+                name: "Register Unit",
+                value: totalRegistered,
+                colIndex: 4,
+              },
+              {
+                name: "Clean",
+                value: totalClean,
+                colIndex: 5,
+              },
+              {
+                name: "Unclean",
+                value: totalUnclean,
+                colIndex: 6,
+              },
+            ]}
           />
         </div>
       </div>

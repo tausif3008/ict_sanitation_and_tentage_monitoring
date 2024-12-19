@@ -14,6 +14,7 @@ const ExportToExcel = ({
   excelData = [],
   fileName = "excel_file",
   dynamicFields = {},
+  dynamicArray = [],
 }) => {
   const exportToExcel = async () => {
     if (excelData?.length === 0) {
@@ -24,22 +25,40 @@ const ExportToExcel = ({
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
 
-    // Define columns based on the first row of data
-    const columns = Object.keys(excelData[0] || {}).map((key) => ({
-      header: key,
-      key,
+    worksheet.addRow([]); // This adds a blank row above the title row to create a margin
+
+    // Calculate the last column dynamically
+    const columnCount = Object.keys(excelData?.[0] || {}).length || 1; // Default to 1 if no data
+    const lastColumn = String.fromCharCode(64 + columnCount); // Convert column index to letter (e.g., 1 -> A, 2 -> B)
+
+    // Add a title in the first row
+    const titleRow = worksheet.addRow([fileName.toUpperCase()]);
+    titleRow.getCell(1).font = { bold: true, size: 16 }; // Bold and larger font for title
+    titleRow.getCell(1).alignment = { horizontal: "center" }; // Center-align text
+    // worksheet.mergeCells("A1:D1"); // Merge cells for the title (adjust column range as needed)
+    worksheet.mergeCells(`A2:${lastColumn}2`); // Dynamically merge cells for the title
+
+    // Define the structure of columns (required for alignment)
+    const columns = Object.keys(excelData?.[0] || {}).map((key) => ({
+      key, // Map data keys to columns
     }));
     worksheet.columns = columns;
 
-    worksheet.getRow(1).eachCell((cell) => {
+    // Manually add headers to the second row
+    const headerRow = worksheet.getRow(3);
+    Object.keys(excelData?.[0] || {}).forEach((key, index) => {
+      const cell = headerRow.getCell(index + 1); // +1 because ExcelJS column index starts at 1
+      cell.value = key; // Use key as the header
       cell.fill = {
         type: "pattern",
         pattern: "solid",
-        fgColor: { argb: "FBB900" }, // Yellow color
+        fgColor: { argb: "FBB900" }, // Yellow background
       };
-      cell.font = { bold: true, color: { argb: "000000" } }; // Make header text bold and black
-      cell.alignment = { horizontal: "center" }; // Center-align header text
+      cell.font = { bold: true, color: { argb: "000000" } }; // Bold and black text
+      cell.alignment = { horizontal: "center" }; // Center-align text
     });
+
+    headerRow.commit(); // Commit changes to the second row
 
     // Add rows from the excelData
     excelData?.forEach((data) => {
@@ -65,7 +84,7 @@ const ExportToExcel = ({
 
     let colIndex = 2; // Start from column B for dynamic fields
 
-    // Loop over dynamicFields and add each to the same row, starting from column B
+    // for object
     Object.keys(dynamicFields).forEach((key) => {
       const value = dynamicFields[key];
       totalCountRow.getCell(colIndex).value = `${
@@ -75,6 +94,16 @@ const ExportToExcel = ({
       cell.font = { bold: true };
       cell.alignment = { horizontal: "center" };
       colIndex++;
+    });
+
+    // for array
+    dynamicArray?.forEach((item) => {
+      totalCountRow.getCell(item?.colIndex).value = `${
+        item?.name.charAt(0).toUpperCase() + item?.name.slice(1)
+      }: ${item?.value}`;
+      const cell = totalCountRow.getCell(item?.colIndex);
+      cell.font = { bold: true };
+      cell.alignment = { horizontal: "center" };
     });
 
     // Apply filter to the first row (header row) for all columns
