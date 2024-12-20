@@ -64,6 +64,7 @@ const ToiletDetails = () => {
       date: newDate,
       question_id: 1,
     };
+    form.setFieldValue("question_id", "1");
     const formData = await getFormData(finalData);
     dispatch(getSanitationDashData(formData));
   };
@@ -157,7 +158,7 @@ const ToiletDetails = () => {
                 </Select.Option>
               ))}
             </Select>
-          </Form.Item>{" "}
+          </Form.Item>
           <CustomSelect
             name="question_id" // This is the field name
             label={dict.select_question[lang]}
@@ -169,8 +170,7 @@ const ToiletDetails = () => {
               <Button
                 loading={loading}
                 type="button"
-                // htmlType="submit"
-                className="w-fit rounded-none text-white bg-orange-400"
+                className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
                 onClick={handleReset}
               >
                 {langingPage?.reset[lang]}
@@ -179,22 +179,23 @@ const ToiletDetails = () => {
             <div>
               <Button
                 loading={loading}
-                type="primary"
+                type="button"
                 htmlType="submit"
-                className="w-fit rounded-none bg-5c"
+                className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
               >
                 {dict?.search[lang]}
               </Button>
             </div>
-          </div>{" "}
-        </div>{" "}
+          </div>
+        </div>
       </Form>
 
       <div
-        className={`grid ${showAll
+        className={`grid ${
+          showAll
             ? "grid-cols-2 sm:grid-cols-2 md:grid-cols-4"
             : "sm:grid-cols-2 xl:grid-cols-3 md:grid-cols-3"
-          } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
+        } gap-3 sm:gap-3 md:gap-4 lg:gap-4`}
       >
         {sortedArray?.length > 0 ? (
           sortedArray
@@ -202,8 +203,8 @@ const ToiletDetails = () => {
               showAll
                 ? true
                 : priorityToiletTypes_Id.includes(
-                  data?.asset_type_id?.toString()
-                )
+                    data?.asset_type_id?.toString()
+                  )
             )
             ?.map((item, index) => (
               <Tooltip
@@ -221,8 +222,9 @@ const ToiletDetails = () => {
                 arrowPointAtCenter
               >
                 <div
-                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${showAll ? "" : "h-40"
-                    }`}
+                  className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
+                    showAll ? "" : "h-40"
+                  }`}
                   style={{
                     minHeight: "110px",
                   }}

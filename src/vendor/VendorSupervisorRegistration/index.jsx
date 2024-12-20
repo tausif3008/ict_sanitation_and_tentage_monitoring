@@ -281,22 +281,6 @@ const VendorSupervisorRegistration = () => {
             </Button>
           </div>
         </div>
-        {/* <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          dropFields={[
-            {
-              name: "vendor_id",
-              label: "Vendor Name",
-              options: VendorListDrop || [],
-            },
-          ]}
-          fields={[
-            { name: "name", label: "Supervisor Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-          ]}
-        ></CommonSearchForm> */}
         <div>
           <Collapse
             defaultActiveKey={["1"]}
@@ -370,28 +354,28 @@ const VendorSupervisorRegistration = () => {
                           ]}
                         />
                       </Col>
-                      <Col
-                        xs={24}
-                        sm={12}
-                        md={6}
-                        lg={4}
-                        className="flex justify-end gap-2"
-                      >
-                        <Button
-                          type="primary"
-                          className="rounded-none bg-5c"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          className="rounded-none bg-green-300 text-black"
-                        >
-                          Search
-                        </Button>
-                      </Col>
+                      <div className="flex justify-start my-4 space-x-2 ml-3">
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                            onClick={resetForm}
+                          >
+                            Reset
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            htmlType="submit"
+                            className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          >
+                            Search
+                          </Button>
+                        </div>
+                      </div>
                     </Row>
                   </Form>
                 ),

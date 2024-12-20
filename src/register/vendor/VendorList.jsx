@@ -10,15 +10,15 @@ import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
 import { setUpdateVendorEl, setVendorListIsUpdated } from "./vendorSlice";
 import { Link } from "react-router-dom";
-import CommonSearchForm from "../../commonComponents/CommonSearchForm";
+// import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getPdfExcelData } from "../asset/AssetsSlice";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-import CustomSelect from "../../commonComponents/CustomSelect";
+// import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+// import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getValueLabel } from "../../constant/const";
 
 const columns = [
@@ -123,9 +123,6 @@ const VendorList = () => {
     });
   };
 
-
-  const { VendorListDrop } = VendorSupervisorSelector();
-
   // fiter finish
   const onFinishForm = async (values) => {
     const searchParams = generateSearchQuery(values);
@@ -139,7 +136,6 @@ const VendorList = () => {
     form.resetFields();
     setSearchQuery("&");
   };
-
 
   const getDetails = async () => {
     setLoading(true);
@@ -218,7 +214,6 @@ const VendorList = () => {
 
   const values = form.getFieldValue("user_type_id"); // Get all form values
   const fileName = getValueLabel(values, [], "Vendor List");
-
 
   // pdf header
   const pdfHeader = [
@@ -330,16 +325,6 @@ const VendorList = () => {
           </div>
         </div>
 
-        {/* <CommonSearchForm
-          setSearchQuery={setSearchQuery}
-          searchQuery={searchQuery}
-          fields={[
-            { name: "name", label: "Name" },
-            { name: "email", label: "Email" },
-            { name: "phone", label: "Phone" },
-            // { name: "index_no", label: "Index No." },
-          ]}
-        ></CommonSearchForm> */}
         <div>
           <Collapse
             defaultActiveKey={["1"]}
@@ -371,7 +356,6 @@ const VendorList = () => {
                       <Col key="phone" xs={24} sm={12} md={6} lg={5}>
                         <CustomInput
                           name="phone"
-                          type="number"
                           label="Phone Number"
                           placeholder="Phone Number"
                           maxLength={10}
@@ -406,28 +390,28 @@ const VendorList = () => {
                           ]}
                         />
                       </Col>
-                      <Col
-                        xs={24}
-                        sm={12}
-                        md={6}
-                        lg={4}
-                        className="flex justify-end gap-2"
-                      >
-                        <Button
-                          type="primary"
-                          className="rounded-none bg-5c"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          className="rounded-none bg-green-300 text-black"
-                        >
-                          Search
-                        </Button>
-                      </Col>
+                      <div className="flex justify-start my-4 space-x-2 ml-3">
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                            onClick={resetForm}
+                          >
+                            Reset
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            htmlType="submit"
+                            className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          >
+                            Search
+                          </Button>
+                        </div>
+                      </div>
                     </Row>
                   </Form>
                 ),
@@ -436,7 +420,6 @@ const VendorList = () => {
           />
           {contextHolder}
         </div>
-
 
         <CommonTable
           columns={columns}

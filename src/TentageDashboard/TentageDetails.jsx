@@ -113,8 +113,7 @@ const TentageDetails = () => {
               <Button
                 loading={loading}
                 type="button"
-                // htmlType="submit"
-                className="w-fit rounded-none text-white bg-orange-400"
+                className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
                 onClick={handleReset}
               >
                 {langingPage?.reset[lang]}
@@ -123,14 +122,14 @@ const TentageDetails = () => {
             <div>
               <Button
                 loading={loading}
-                type="primary"
+                type="button"
                 htmlType="submit"
-                className="w-fit rounded-none bg-5c"
+                className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
               >
                 {dict?.search[lang]}
               </Button>
             </div>
-          </div>{" "}
+          </div>
         </div>{" "}
       </Form>
 

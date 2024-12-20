@@ -108,29 +108,26 @@ const CommonSearchForm = ({
                       {dropdown}
                     </Col>
                   )}
-
-                  <Col
-                    xs={24}
-                    sm={12}
-                    md={6}
-                    lg={4}
-                    className="flex justify-end gap-2"
-                  >
-                    <Button
-                      type="primary"
-                      className="rounded-none bg-5c"
-                      onClick={resetForm}
-                    >
-                      Reset
-                    </Button>
-                    <Button
-                      type="primary"
-                      htmlType="submit"
-                      className="rounded-none bg-green-300 text-black"
-                    >
-                      Search
-                    </Button>
-                  </Col>
+                  <div className="flex justify-start mt-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                    </div>
+                  </div>
                 </Row>
               </Form>
             ),

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { Collapse, Form, Button, Row, Col, Checkbox } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import UserTypeSelector from "./userTypeSelector";
 import {
   getModuleList,
@@ -10,10 +12,9 @@ import {
 import URLS from "../../urils/URLS";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
-import { Collapse, Form, Button, Select, Row, Col, Checkbox } from "antd";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getValueLabel } from "../../constant/const";
-import { EditOutlined } from "@ant-design/icons";
+import CustomSelect from "../../commonComponents/CustomSelect";
 
 const UserTypePermission = () => {
   const [tableData, setTableData] = useState({
@@ -159,8 +160,9 @@ const UserTypePermission = () => {
                   >
                     <Row gutter={[16, 16]} align="middle">
                       <Col key={1} xs={24} sm={12} md={6} lg={5}>
-                        <Form.Item
+                        <CustomSelect
                           name={"user_type_id"}
+                          placeholder="Select User Type"
                           label={"User Type"}
                           rules={[
                             {
@@ -168,44 +170,31 @@ const UserTypePermission = () => {
                               message: "Please select a user type",
                             },
                           ]}
-                        >
-                          <Select
-                            placeholder="Select User Type"
-                            className="rounded-none"
+                          options={UserListDrop || []}
+                        />
+                      </Col>
+                      <div className="flex justify-start my-4 space-x-2 ml-3">
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                            onClick={resetForm}
                           >
-                            {UserListDrop?.map((option) => (
-                              <Select.Option
-                                key={option?.value}
-                                value={option?.value}
-                              >
-                                {option?.label}
-                              </Select.Option>
-                            ))}
-                          </Select>
-                        </Form.Item>
-                      </Col>
-                      <Col
-                        xs={24}
-                        sm={12}
-                        md={6}
-                        lg={4}
-                        className="flex justify-end gap-2"
-                      >
-                        <Button
-                          type="primary"
-                          className="rounded-none bg-5c"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                        <Button
-                          type="primary"
-                          htmlType="submit"
-                          className="rounded-none bg-green-300 text-black"
-                        >
-                          Search
-                        </Button>
-                      </Col>
+                            Reset
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            htmlType="submit"
+                            className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          >
+                            Search
+                          </Button>
+                        </div>
+                      </div>
                     </Row>
                   </Form>
                 ),
