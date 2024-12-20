@@ -4,17 +4,17 @@ import { useDispatch, useSelector } from "react-redux";
 import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
+
 import {
   getMonitoringAgent,
   setAssetInfo,
   setMonitoringListIsUpdated,
   setUpdateMonitoringEl,
 } from "./monitoringSlice";
-
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
-import { dateOptions } from "../constant/const";
+import { dateOptions, getValueLabel } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
@@ -44,10 +44,13 @@ const Monitoring = () => {
     currentPage: 1,
     totalUnit: 0,
   });
+  const [startDate, setStartDate] = useState(null);
   const [assetMainType, setAssetMainType] = useState([]); // asset main type
   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
+  const [filesName, setFilesName] = useState(null); // files Name
+
   // const [excelData, setExcelData] = useState([]); // excel data
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
@@ -74,24 +77,88 @@ const Monitoring = () => {
   const isUpdatedSelector = useSelector(
     (state) => state.monitoringSlice?.isUpdated
   );
+  const categoryType = form.getFieldValue("asset_main_type_id");
+  const asset_type_id_name = form.getFieldValue("asset_type_id");
+  const vendor_id_name = form.getFieldValue("vendor_id");
+  const GSD_name = form.getFieldValue("created_by");
+
+  const handleSelect = (value) => {
+    setAssetTypes([]); // get assset type
+    form.setFieldsValue({
+      asset_type_id: null,
+    });
+    optionsMaker(
+      "vendorAsset",
+      "assettypes",
+      "name",
+      setAssetTypes,
+      "?asset_main_type_id=" + value,
+      "asset_type_id"
+    );
+  };
+
+  // fiter finish
+  const onFinishForm = (values) => {
+    const finalData = {
+      ...values,
+    };
+    if (values?.form_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalData.form_date = values?.form_date ? start : end;
+      finalData.to_date = values?.to_date ? end : start;
+    }
+    const searchParams = generateSearchQuery(finalData);
+    if (searchParams === "&") {
+      openNotificationWithIcon("info");
+    }
+    setSearchQuery(searchParams);
+  };
+
+  // reset form
+  const resetForm = () => {
+    form.resetFields();
+    setSearchQuery("&");
+    setShowDateRange(false);
+    setFilesName(null);
+  };
+
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
+    } else {
+      form.setFieldsValue({
+        form_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
+    }
+  };
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
+  };
 
   const getDetails = async () => {
     setLoading(true);
-
     let uri = URLS.monitoring.path + "?";
-
     if (userRoleId === "8") {
       uri = uri + `&vendor_id=${sessionData?.id}`;
     }
-
     if (params.page) {
       uri = uri + params.page;
     }
-
     if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
-
     if (searchQuery) {
       uri = uri + searchQuery;
     }
@@ -101,18 +168,14 @@ const Monitoring = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
-
       const list = data.listings.map((el, index) => {
         return {
           ...el,
         };
       });
-
       const totalUnit = data?.listings?.reduce((total, start) => {
         return total + Number(start?.unit_no);
       }, 0);
-
       setDetails(() => {
         return {
           list,
@@ -140,7 +203,38 @@ const Monitoring = () => {
       // });
       // setExcelData(myexcelData);
     }
+    setLoading(false);
   };
+
+  // file name
+  const getReportName = () => {
+    const catTypeName = getValueLabel(categoryType, assetMainType, "");
+    const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
+    const vendorName = getValueLabel(vendor_id_name, VendorListDrop, "");
+
+    let reportName = "";
+    if (vendorName) {
+      reportName += `${vendorName}`;
+    }
+    if (catTypeName) {
+      if (reportName) {
+        reportName += `-${catTypeName}`;
+      } else {
+        reportName += catTypeName;
+      }
+    }
+    if (assetTypeName) {
+      reportName += `(${assetTypeName})`;
+    }
+    return reportName
+      ? `${reportName} -Toilet & Tentage Monitoring Report`
+      : "Toilet & Tentage Monitoring Report";
+  };
+
+  // console.log("filesName", filesName);
+  useEffect(() => {
+    setFilesName(getReportName()); // file name
+  }, [categoryType, asset_type_id_name, vendor_id_name, GSD_name]);
 
   useEffect(() => {
     getDetails();
@@ -158,8 +252,6 @@ const Monitoring = () => {
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
     userRoleId != "8" && dispatch(getVendorList()); // vendor list
-
-    return () => {};
   }, []);
 
   useEffect(() => {
@@ -173,61 +265,6 @@ const Monitoring = () => {
       "asset_main_type_id"
     );
   }, []);
-
-  const handleSelect = (value) => {
-    setAssetTypes([]); // get assset type
-    form.setFieldsValue({
-      asset_type_id: null,
-    });
-    optionsMaker(
-      "vendorAsset",
-      "assettypes",
-      "name",
-      setAssetTypes,
-      "?asset_main_type_id=" + value,
-      "asset_type_id"
-    );
-  };
-
-  // fiter finish
-  const onFinishForm = (values) => {
-    const finalData = {
-      ...values,
-    };
-    if (values?.from_date || values?.to_date) {
-      const dayjsObjectFrom = dayjs(values?.from_date?.$d);
-      const dayjsObjectTo = dayjs(values?.to_date?.$d);
-
-      // Format the date as 'YYYY-MM-DD'
-      const start = dayjsObjectFrom.format("YYYY-MM-DD");
-      const end = dayjsObjectTo.format("YYYY-MM-DD");
-      finalData.from_date = values?.from_date ? start : end;
-      finalData.to_date = values?.to_date ? end : start;
-    }
-    const searchParams = generateSearchQuery(finalData);
-    if (searchParams === "&") {
-      openNotificationWithIcon("info");
-    }
-    setSearchQuery(searchParams);
-  };
-
-  const resetForm = () => {
-    form.resetFields();
-    setSearchQuery("&");
-    setShowDateRange(false);
-  };
-
-  const handleDateSelect = (value) => {
-    if (value === "Date Range") {
-      setShowDateRange(true);
-    } else {
-      form.setFieldsValue({
-        from_date: null,
-        to_date: null,
-      });
-      setShowDateRange(false);
-    }
-  };
 
   const columns = [
     {
@@ -407,15 +444,17 @@ const Monitoring = () => {
 
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, "Monitoring Report", {
+        exportToExcel(myexcelData, filesName, {
           "Total Unit": unitCount,
         });
 
       // Call the export function
       !isExcel &&
         ExportPdfFunction(
-          "Toilet & Tentage Monitoring",
-          "Monitoring Report",
+          // "Toilet & Tentage Monitoring",
+          // "Monitoring Report",
+          filesName,
+          filesName,
           pdfHeader,
           pdfData,
           true
@@ -507,9 +546,9 @@ const Monitoring = () => {
                         </Col>
                       </>
                     )}
-                    <Col key="assetmaintypes" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"assetmaintypes"}
+                        name={"asset_main_type_id"}
                         label={"Select Category"}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
@@ -542,9 +581,9 @@ const Monitoring = () => {
                     </Col>
                     {showDateRange && (
                       <>
-                        <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
+                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
                           <CustomDatepicker
-                            name={"from_date"}
+                            name={"form_date"}
                             label={"From Date"}
                             className="w-full"
                             placeholder={"From Date"}
@@ -554,6 +593,33 @@ const Monitoring = () => {
                                 message: "Please select a start date!",
                               },
                             ]}
+                            onChange={(date) => {
+                              const dayjsObjectFrom = dayjs(date?.$d);
+                              const startDate = dayjsObjectFrom;
+
+                              const dayjsObjectTo = dayjs(
+                                form.getFieldValue("to_date")?.$d
+                              );
+                              const endDate = dayjsObjectTo;
+
+                              // Condition 1: If startDate is after endDate, set end_time to null
+                              if (startDate.isAfter(endDate)) {
+                                form.setFieldValue("to_date", null);
+                              }
+
+                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                              const daysDifference = endDate.diff(
+                                startDate,
+                                "days"
+                              );
+                              if (daysDifference > 7) {
+                                form.setFieldValue("to_date", null);
+                              } else {
+                                // If the difference is within the allowed range, you can keep the value or process further if needed.
+                              }
+
+                              setStartDate(startDate.format("YYYY-MM-DD"));
+                            }}
                           />
                         </Col>
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
@@ -568,6 +634,7 @@ const Monitoring = () => {
                                 message: "Please select a end date!",
                               },
                             ]}
+                            disabledDate={disabledDate}
                           />
                         </Col>
                       </>
