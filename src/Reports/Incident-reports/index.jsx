@@ -33,7 +33,7 @@ import {
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-import { dateWeekOptions } from "../../constant/const";
+import { dateWeekOptions, getValueLabel } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
@@ -52,6 +52,7 @@ const IncidentReports = () => {
     pageLength: 25,
     currentPage: 1,
   });
+  const [filesName, setFilesName] = useState(null); // files Name
 
   const dispatch = useDispatch();
   const params = useParams();
@@ -68,6 +69,10 @@ const IncidentReports = () => {
       description: "Please enter some information to perform the search.",
     });
   };
+
+  const categoryType = form.getFieldValue("asset_main_type_id");
+  const asset_type_id_name = form.getFieldValue("asset_type_id");
+  const vendor_id_name = form.getFieldValue("vendor_id");
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -165,6 +170,30 @@ const IncidentReports = () => {
 
     dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
   };
+
+  // file name
+  const getReportName = () => {
+    const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
+    const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+
+    if (vendor_id_name && asset_type_id_name) {
+      return `${vendorName} - ( ${assetTypeName} ) -Incident Report`;
+    }
+    if (vendor_id_name) {
+      return `${vendorName} - ${catTypeName} -Incident Report`;
+    }
+    if (asset_type_id_name) {
+      return `${catTypeName} (${assetTypeName})- Incident Report`;
+    }
+    if (categoryType) {
+      return `${catTypeName}- Incident Report`;
+    }
+    return "Incident Report";
+  };
+  useEffect(() => {
+    setFilesName(getReportName()); // file name
+  }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
 
   useEffect(() => {
     getData(); // get incident report data
@@ -332,7 +361,7 @@ const IncidentReports = () => {
 
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, "Incident-Report", {
+        exportToExcel(myexcelData, filesName, {
           "Total Unit": unitCount,
         });
 
@@ -340,7 +369,7 @@ const IncidentReports = () => {
       // !isExcel &&
       //   ExportPdfFunction(
       //     "Toilet & Tentage Monitoring",
-      //     "Incident-Report",
+      //     filesName,
       //     "pdfHeader",
       //     pdfData,
       //     true

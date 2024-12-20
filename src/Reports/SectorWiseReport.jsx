@@ -17,7 +17,7 @@ import {
   getAssetTypes,
 } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
-import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getAssetTypeWiseVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getFormData } from "../urils/getFormData";
 import { getValueLabel } from "../constant/const";
@@ -36,10 +36,15 @@ const SectorWiseReport = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorReports, loading } = SectorReportSelectors(); // sector reports
+  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const categoryType = form.getFieldValue("asset_main_type_id");
+  const asset_type_id_name = form.getFieldValue("asset_type_id");
+  const vendor_id_name = form.getFieldValue("vendor_id");
 
   const sectorData = useMemo(() => {
     return SectorReports?.data?.sectors?.map((item) => ({
@@ -51,10 +56,6 @@ const SectorWiseReport = () => {
     }));
   }, [SectorReports]);
 
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
-  const categoryType = form.getFieldValue("asset_main_type_id");
-
   // handle category
   const handleSelect = (value) => {
     form.setFieldsValue({
@@ -62,6 +63,14 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
+  };
+
+  // handle asset type
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    value && userRoleId != "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // fiter finish
@@ -96,12 +105,28 @@ const SectorWiseReport = () => {
   };
 
   // file name
-  useEffect(() => {
-    if (categoryType) {
-      const value = getValueLabel(categoryType, AssetMainTypeDrop, "");
-      setFilesName(value);
+  const getReportName = () => {
+    const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
+    const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+
+    if (vendor_id_name && asset_type_id_name) {
+      return `${vendorName} - ( ${assetTypeName} ) -Sector Report`;
     }
-  }, [categoryType, AssetMainTypeDrop]);
+    if (vendor_id_name) {
+      return `${vendorName} - ${catTypeName} -Sector Report`;
+    }
+    if (asset_type_id_name) {
+      return `Sector Wise ${catTypeName} (${assetTypeName}) Report`;
+    }
+    if (categoryType) {
+      return `Sector Wise ${catTypeName} Report`;
+    }
+    return "Sector Wise Report";
+  };
+  useEffect(() => {
+    setFilesName(getReportName()); // file name
+  }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
 
   useEffect(() => {
     if (SectorReports) {
@@ -154,7 +179,7 @@ const SectorWiseReport = () => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    userRoleId != "8" && dispatch(getVendorList()); // vendor list
+    // userRoleId != "8" && dispatch(getVendorList()); // vendor list
 
     return () => {};
   }, []);
@@ -193,21 +218,13 @@ const SectorWiseReport = () => {
   }, [sectorData]);
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div>
       <CommonDivider label={"Sector-Wise Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={
-              filesName
-                ? `Sector-Wise-${filesName} Report`
-                : `Sector-Wise Report`
-            }
-            pdfName={
-              filesName
-                ? `Sector-Wise-${filesName}-Report`
-                : `Sector-Wise-Report`
-            }
+            titleName={filesName ? filesName : `Sector-Wise Report`}
+            pdfName={filesName ? filesName : `Sector-Wise-Report`}
             headerData={pdfHeader}
             rows={pdfData}
           />
@@ -215,11 +232,7 @@ const SectorWiseReport = () => {
         <div>
           <ExportToExcel
             excelData={myexcelData || []}
-            fileName={
-              filesName
-                ? `Sector-Wise-${filesName}-Report`
-                : `Sector-Wise-Report`
-            }
+            fileName={filesName ? filesName : `Sector-Wise-Report`}
             dynamicArray={[
               {
                 name: "Total Quantity",
@@ -282,6 +295,7 @@ const SectorWiseReport = () => {
                         label={"Select Asset Type"}
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
+                        onSelect={handleTypeSelect}
                       />
                     </Col>
                     {userRoleId != "8" && (
@@ -290,7 +304,7 @@ const SectorWiseReport = () => {
                           name={"vendor_id"}
                           label={"Select Vendor"}
                           placeholder={"Select Vendor"}
-                          options={VendorListDrop || []}
+                          options={AssetTypeVendorDrop || []}
                         />
                       </Col>
                     )}

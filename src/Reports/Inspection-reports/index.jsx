@@ -59,6 +59,14 @@ const InspectionReports = () => {
     });
   };
 
+  const date_format_name = form.getFieldValue("date_format");
+  const form_date_name = dayjs(form.getFieldValue("form_date")).format(
+    "DD-MMM-YYYY"
+  );
+  const to_date_name = dayjs(form.getFieldValue("to_date")).format(
+    "DD-MMM-YYYY"
+  );
+
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
@@ -194,7 +202,7 @@ const InspectionReports = () => {
             Unit: Number(data?.unit_no),
             "Asset Type Name": data?.asset_type_name,
             Week: `${columnDate?.start}  - ${columnDate?.end}`,
-            "Total Inspections": Number(data?.inspections),
+            Inspections: Number(data?.inspections),
             "Positive Response": Number(data?.count_of_1),
             "Negative Response": Number(data?.count_of_0),
             Escalations: Number(data?.escalations),
@@ -258,14 +266,38 @@ const InspectionReports = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={"Inspection-Report"}
-            dynamicFields={{
-              "Total Unit": inspectionData?.UnitCount,
-              "Total Inspections": inspectionData?.totalInspections,
-              "Positive Response": inspectionData?.PositiveResponse,
-              "Negative Response": inspectionData?.NegativeResponse,
-              Escalations: inspectionData?.Escalations,
-            }}
+            fileName={
+              date_format_name === "Today"
+                ? `Inspection-Report (${moment().format("DD-MMM-YYYY")})`
+                : `Inspection-Report (${form_date_name} to ${to_date_name})`
+            }
+            dynamicArray={[
+              {
+                name: "Total Unit",
+                value: inspectionData?.UnitCount,
+                colIndex: 3,
+              },
+              {
+                name: "Total Inspections",
+                value: inspectionData?.totalInspections,
+                colIndex: 6,
+              },
+              {
+                name: "Positive Response",
+                value: inspectionData?.PositiveResponse,
+                colIndex: 7,
+              },
+              {
+                name: "Negative Response",
+                value: inspectionData?.NegativeResponse,
+                colIndex: 8,
+              },
+              {
+                name: "Escalations",
+                value: inspectionData?.Escalations,
+                colIndex: 9,
+              },
+            ]}
           />
         </div>
       </div>
