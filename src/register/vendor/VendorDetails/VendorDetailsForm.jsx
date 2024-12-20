@@ -35,6 +35,7 @@ import {
 } from "../../AssetType/AssetTypeSlice";
 import { getSectorsList } from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import CustomDatepicker from "../../../commonComponents/CustomDatepicker";
 
 // const { Option } = Select;
 
@@ -469,19 +470,16 @@ const VendorDetailsForm = () => {
                 className="rounded-none"
               />
             </Form.Item>
-            <Form.Item
+
+            <CustomDatepicker
               label="Date of Allocation"
+              placeholder="Date of Allocation"
               name="date_of_allocation"
               rules={[
                 { required: true, message: "Please select date of allocation" },
               ]}
-            >
-              <DatePicker
-                format={dateFormat}
-                placeholder="Select Date"
-                className="w-full"
-              />
-            </Form.Item>
+              className="w-full"
+            />
 
             <div className="col-span-3 font-semibold ">
               Total Alloted Quantity: {quantity + parkQuantity}

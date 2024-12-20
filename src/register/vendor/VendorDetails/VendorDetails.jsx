@@ -253,9 +253,9 @@ const VendorDetails = () => {
     },
   ];
 
-  const totalAllottedQuantity = details.list
+  const totalAllottedQuantity = details?.list
     .reduce(
-      (total, item) => total + Number(item.total_allotted_quantity || 0),
+      (total, item) => total + Number(item?.total_allotted_quantity || 0),
       0
     )
     .toLocaleString(); // Convert to digit format with commas
@@ -372,7 +372,7 @@ const VendorDetails = () => {
           true
         );
     } catch (error) {
-      message.error(`Error occurred: ${error.message || "Unknown error"}`);
+      message.error(`Error occurred: ${error?.message || "Unknown error"}`);
     }
   };
 
@@ -397,7 +397,6 @@ const VendorDetails = () => {
               <Button
                 className="bg-orange-300 mb-1"
                 onClick={() =>
-                  // navigate("/vendor/add-vendor-details-form/" + params.id)
                   navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
                     state: {
                       key: "AddKey",
