@@ -27,6 +27,9 @@ const TentageDetails = () => {
   const { TentageDash_data, loading } = TentageSelector(); // tentage dashboard
   const toiletData = TentageDash_data?.data?.asset_types || [];
 
+  const userRoleId = localStorage.getItem("role_id");
+  const user_Id = localStorage.getItem("userId");
+
   // Reset the form
   const handleReset = () => {
     form.resetFields();
@@ -40,6 +43,7 @@ const TentageDetails = () => {
     const finalValues = {
       ...(values?.sector_id && { sector_id: values?.sector_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(userRoleId === "8" && { vendor_id: user_Id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     const formData = await getFormData(finalValues);
@@ -54,13 +58,14 @@ const TentageDetails = () => {
     });
     const finalData = {
       date: newDate,
+      ...(userRoleId === "8" && { vendor_id: user_Id }),
     };
     const formData = await getFormData(finalData);
     dispatch(getTentageDashboardData(formData)); // tentage dashboard
   };
 
   useEffect(() => {
-    dispatch(getVendorList()); // vendor details
+    userRoleId != "8" && dispatch(getVendorList()); // vendor details
     dispatch(getSectorsList()); // all sectors
     todayData();
   }, []);
@@ -102,12 +107,14 @@ const TentageDetails = () => {
             placeholder={`${dict?.select_sector[lang]}`}
             options={SectorListDrop || []}
           />
-          <CustomSelect
-            name={"vendor_id"}
-            label={`${dict?.select_vendor[lang]}`}
-            placeholder={`${dict?.select_vendor[lang]}`}
-            options={VendorListDrop || []}
-          />
+          {userRoleId != "8" && (
+            <CustomSelect
+              name={"vendor_id"}
+              label={`${dict?.select_vendor[lang]}`}
+              placeholder={`${dict?.select_vendor[lang]}`}
+              options={VendorListDrop || []}
+            />
+          )}
           <div className="flex justify-start my-4 space-x-2">
             <div>
               <Button

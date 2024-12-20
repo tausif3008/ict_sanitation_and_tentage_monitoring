@@ -231,7 +231,6 @@ const Monitoring = () => {
       : "Toilet & Tentage Monitoring Report";
   };
 
-  // console.log("filesName", filesName);
   useEffect(() => {
     setFilesName(getReportName()); // file name
   }, [categoryType, asset_type_id_name, vendor_id_name, GSD_name]);

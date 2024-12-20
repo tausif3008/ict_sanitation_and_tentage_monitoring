@@ -1,20 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
-import {
-  Collapse,
-  Form,
-  Input,
-  Button,
-  Select,
-  notification,
-  Row,
-  Col,
-  DatePicker,
-  message,
-} from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
+import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
+
 import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
 import URLS from "../../urils/URLS";
@@ -22,10 +12,7 @@ import { basicUrl } from "../../Axios/commonAxios";
 import { getIncidentReportData } from "./Slice/IncidentReportSlice";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
 import search from "../../assets/Dashboard/icon-search.png";
-import {
-  getAssetTypeWiseVendorList,
-  getVendorList,
-} from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getAssetTypeWiseVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
@@ -34,12 +21,12 @@ import {
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
 import { dateWeekOptions, getValueLabel } from "../../constant/const";
-import ExportToExcel from "../ExportToExcel";
+// import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../ExportExcelFuntion";
-import { ExportPdfFunction } from "../ExportPdfFunction";
+// import { ExportPdfFunction } from "../ExportPdfFunction";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
 
 const IncidentReports = () => {
@@ -70,6 +57,8 @@ const IncidentReports = () => {
     });
   };
 
+  const userRoleId = localStorage.getItem("role_id");
+  const user_Id = localStorage.getItem("userId");
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
@@ -128,7 +117,7 @@ const IncidentReports = () => {
     form.setFieldsValue({
       to_user_id: null,
     });
-    value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
+    value && userRoleId != "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // handle date select
@@ -153,19 +142,18 @@ const IncidentReports = () => {
   };
 
   const getData = async () => {
-    let uri = URLS?.incidencesReport?.path;
-    let isFirstParam = true;
-
-    if (params?.page) {
-      uri += isFirstParam ? "?" + params?.page : "&" + params?.page;
-      isFirstParam = false;
-    } else if (params?.per_page) {
-      uri += isFirstParam ? "?" + params?.per_page : "&" + params?.per_page;
-      isFirstParam = false;
+    let uri = URLS?.incidencesReport?.path + "?";
+    if (userRoleId === "8") {
+      uri = uri + `to_user_id=${user_Id}`;
     }
-
+    if (params.page) {
+      uri = uri + params.page;
+    }
+    if (params.per_page) {
+      uri = uri + "&" + params.per_page;
+    }
     if (searchQuery) {
-      uri += isFirstParam ? "?" + searchQuery : "&" + searchQuery;
+      uri = uri + searchQuery;
     }
 
     dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
@@ -175,7 +163,11 @@ const IncidentReports = () => {
   const getReportName = () => {
     const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
     const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+    const vendorName = getValueLabel(
+      vendor_id_name,
+      AssetTypeVendorDrop,
+      "Vendor"
+    );
 
     if (vendor_id_name && asset_type_id_name) {
       return `${vendorName} - ( ${assetTypeName} ) -Incident Report`;
@@ -260,11 +252,16 @@ const IncidentReports = () => {
       dataIndex: "asset_types_name",
       key: "asset_types_name",
     },
-    {
-      title: "Vendor Name",
-      dataIndex: "vendor_name",
-      key: "vendor_name",
-    },
+    ...(userRoleId === "8"
+      ? []
+      : [
+          {
+            title: "Vendor Name",
+            dataIndex: "vendor_name",
+            key: "vendor_name",
+          },
+        ]),
+
     {
       title: "Incidence Date",
       dataIndex: "incidence_at",
@@ -437,12 +434,21 @@ const IncidentReports = () => {
                         onSelect={handleTypeSelect}
                       />
                     </Col>
-                    <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"to_user_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={AssetTypeVendorDrop || []}
+                    {userRoleId != "8" && (
+                      <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"to_user_id"}
+                          label={"Select Vendor"}
+                          placeholder={"Select Vendor"}
+                          options={AssetTypeVendorDrop || []}
+                        />
+                      </Col>
+                    )}
+                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        name={"code"}
+                        label={"Asset Code"}
+                        placeholder={"Asset Code"}
                       />
                     </Col>
                     <Col key="incidence_at" xs={24} sm={12} md={6} lg={5}>
@@ -514,13 +520,6 @@ const IncidentReports = () => {
                         </Col>
                       </>
                     )}
-                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name={"code"}
-                        label={"Asset Code"}
-                        placeholder={"Asset Code"}
-                      />
-                    </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
