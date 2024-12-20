@@ -355,7 +355,7 @@ const VendorDetailsForm = () => {
             <CustomInput
               label={<div className="font-semibold">LOE Number</div>}
               name="contract_number"
-              accept={"onlyNumber"}
+              // accept={"onlyNumber"}
               rules={[{ required: true, message: "Please enter LOE number" }]}
               placeholder={"LOE Number"}
             />
@@ -366,6 +366,7 @@ const VendorDetailsForm = () => {
                 { required: true, message: "Please enter manager contact 1" },
               ]}
               accept={"onlyNumber"}
+              maxLength={10}
               placeholder={"Manager Contact 1"}
             />
             <CustomInput
@@ -375,6 +376,7 @@ const VendorDetailsForm = () => {
                 { required: true, message: "Please enter manager contact 2" },
               ]}
               accept={"onlyNumber"}
+              maxLength={10}
               placeholder={"Manager Contact 2"}
             />
             <CustomInput
@@ -383,7 +385,7 @@ const VendorDetailsForm = () => {
               rules={[
                 { required: true, message: "Please enter work order number" },
               ]}
-              accept={"onlyNumber"}
+              // accept={"onlyNumber"}
               placeholder={"Work Order Number"}
             />
             <CustomDatepicker
