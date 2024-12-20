@@ -92,31 +92,57 @@ const CustomInput = ({
 
   return (
     <Form.Item label={label} name={name} rules={rules}>
-      <Input
-        type={isPassword && !passwordVisible ? "password" : type}
-        // type={isPassword && passwordVisible ? type : "password"} // Toggle between password and text
-        placeholder={placeholder}
-        className={`rounded-none ${className}`}
-        onChange={(e) => {
-          if (onChange) {
-            onChange(e);
+      {type === "textarea" ? (
+        <Input.TextArea
+          type={isPassword && !passwordVisible ? "password" : type}
+          placeholder={placeholder}
+          className={`rounded-none ${className}`}
+          onChange={(e) => {
+            if (onChange) {
+              onChange(e);
+            }
+          }}
+          disabled={disabled}
+          size={size}
+          onKeyDown={handleKeyDown}
+          {...rest}
+          suffix={
+            isPassword && (
+              <span
+                onClick={handlePasswordVisibility}
+                style={{ cursor: "pointer" }}
+              >
+                {passwordVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+              </span>
+            )
           }
-        }}
-        disabled={disabled}
-        size={size}
-        onKeyDown={handleKeyDown}
-        {...rest}
-        suffix={
-          isPassword && (
-            <span
-              onClick={handlePasswordVisibility}
-              style={{ cursor: "pointer" }}
-            >
-              {passwordVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
-            </span>
-          )
-        }
-      />
+        />
+      ) : (
+        <Input
+          type={isPassword && !passwordVisible ? "password" : type}
+          placeholder={placeholder}
+          className={`rounded-none ${className}`}
+          onChange={(e) => {
+            if (onChange) {
+              onChange(e);
+            }
+          }}
+          disabled={disabled}
+          size={size}
+          onKeyDown={handleKeyDown}
+          {...rest}
+          suffix={
+            isPassword && (
+              <span
+                onClick={handlePasswordVisibility}
+                style={{ cursor: "pointer" }}
+              >
+                {passwordVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+              </span>
+            )
+          }
+        />
+      )}
     </Form.Item>
   );
 };

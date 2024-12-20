@@ -2,17 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate, useParams } from "react-router";
 import dayjs from "dayjs";
-import {
-  Form,
-  Input,
-  Button,
-  Divider,
-  DatePicker,
-  message,
-  // Select,
-  // Space,
-  InputNumber,
-} from "antd";
+import { Form, Button, Divider, message, InputNumber } from "antd";
 import {
   ArrowLeftOutlined,
   MinusCircleOutlined,
@@ -22,8 +12,6 @@ import { postData } from "../../../Fetch/Axios";
 import URLS from "../../../urils/URLS";
 import { getFormData } from "../../../urils/getFormData";
 import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
-// import optionsMaker from "../../../urils/OptionMaker";
-// import CommonFormDropDownMaker from "../../../commonComponents/CommonFormDropDownMaker";
 import { getParkingData } from "../../parking/parkingSlice";
 import ParkingSelector from "../../parking/parkingSelector";
 import { getValueLabel } from "../../../constant/const";
@@ -36,16 +24,12 @@ import {
 import { getSectorsList } from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomDatepicker from "../../../commonComponents/CustomDatepicker";
-
-// const { Option } = Select;
+import CustomInput from "../../../commonComponents/CustomInput";
 
 const dateFormat = "YYYY-MM-DD";
 
 const VendorDetailsForm = () => {
   const [loading, setLoading] = useState(false);
-  // const [assetTypes, setAssetTypes] = useState([]);
-  // const [assetMainTypeId, setAssetMainTypeId] = useState();
-  // const [sectorOptions, setSectorOptions] = useState([]);
   const [quantity, setQuantity] = useState(0);
   const [parkQuantity, setParkQuantity] = useState(0);
 
@@ -136,19 +120,6 @@ const VendorDetailsForm = () => {
     dispatch(getAssetTypes(url)); // get assset type
   };
 
-  // Populate asset types for selection
-  // useEffect(() => {
-  //   if (assetMainTypeId)
-  //     optionsMaker(
-  //       "vendorAsset",
-  //       "assettypes",
-  //       "name",
-  //       setAssetTypes,
-  //       "?asset_main_type_id=" + assetMainTypeId,
-  //       "asset_type_id"
-  //     );
-  // }, [assetMainTypeId]);
-
   // handle sector
   const handelQuantitySector = () => {
     const vals = form.getFieldsValue();
@@ -168,6 +139,7 @@ const VendorDetailsForm = () => {
       }
     }
   };
+
   // handle parking
   const handelQuantityParking = () => {
     const vals = form.getFieldsValue();
@@ -191,14 +163,12 @@ const VendorDetailsForm = () => {
   // sector quantity
   const handelQuantity = () => {
     const vals = form.getFieldsValue();
-
     let total = 0;
-
-    total = vals.quantity;
+    total = Number(vals.quantity);
 
     if (vals?.sector_info) {
       for (const key of vals?.sector_info) {
-        if (key?.quantity) total = total + key?.quantity;
+        if (key?.quantity) total = total + Number(key?.quantity);
       }
     }
 
@@ -231,15 +201,12 @@ const VendorDetailsForm = () => {
     } else {
       return message.info("Invalid User");
     }
-
     if (values.date_of_allocation) {
       values.date_of_allocation = values.date_of_allocation.format(dateFormat);
     }
-
     if (key === "UpdateKey") {
       values.vendor_detail_id = record?.vendor_detail_id;
     }
-
     const vals = form.getFieldsValue();
 
     const selectedSectors = []; // id
@@ -332,14 +299,6 @@ const VendorDetailsForm = () => {
   }, [params, navigate]);
 
   useEffect(() => {
-    // optionsMaker(
-    //   "sectors",
-    //   "sectors",
-    //   "name",
-    //   setSectorOptions,
-    //   "",
-    //   "sector_id"
-    // );
     dispatch(getSectorsList()); // all sectors
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
@@ -393,84 +352,40 @@ const VendorDetailsForm = () => {
               options={AssetTypeDrop || []}
               rules={[{ required: true, message: "Please Select Asset Type" }]}
             />
-            {/* <CommonFormDropDownMaker
-              uri={"assetMainTypePerPage"}
-              responseListName="assetmaintypes"
-              responseLabelName="name"
-              responseIdName="asset_main_type_id"
-              selectLabel={"Category"}
-              selectName={"asset_main_type_id"}
-              required={true}
-              RequiredMessage={"Main type is required!"}
-              setValue={setAssetMainTypeId}
-            ></CommonFormDropDownMaker> */}
-            {/* <Form.Item
-              label={<div className="font-semibold">Type</div>}
-              name="asset_type_id"
-              rules={[{ required: true, message: "Please enter asset type" }]}
-              className="mb-4 w-full"
-            >
-              <Select
-                showSearch
-                placeholder="Select Type"
-                optionFilterProp="children"
-              >
-                {assetTypes.map((option) => (
-                  <Option key={option.value} value={option.value}>
-                    {option.label}
-                  </Option>
-                ))}
-              </Select>
-            </Form.Item> */}
-            <Form.Item
+            <CustomInput
               label={<div className="font-semibold">LOE Number</div>}
               name="contract_number"
+              accept={"onlyNumber"}
               rules={[{ required: true, message: "Please enter LOE number" }]}
-              className="mb-4"
-            >
-              <Input placeholder="Enter LOE number" className="rounded-none" />
-            </Form.Item>
-            <Form.Item
+              placeholder={"LOE Number"}
+            />
+            <CustomInput
               label={<div className="font-semibold">Manager Contact 1</div>}
               name="manager_contact_1"
               rules={[
                 { required: true, message: "Please enter manager contact 1" },
               ]}
-              className="mb-4"
-            >
-              <Input
-                placeholder="Enter manager contact 1"
-                className="rounded-none"
-              />
-            </Form.Item>
-
-            <Form.Item
+              accept={"onlyNumber"}
+              placeholder={"Manager Contact 1"}
+            />
+            <CustomInput
               label={<div className="font-semibold">Manager Contact 2</div>}
               name="manager_contact_2"
               rules={[
                 { required: true, message: "Please enter manager contact 2" },
               ]}
-              className="mb-4"
-            >
-              <Input
-                placeholder="Enter manager contact 2"
-                className="rounded-none"
-              />
-            </Form.Item>
-            <Form.Item
+              accept={"onlyNumber"}
+              placeholder={"Manager Contact 2"}
+            />
+            <CustomInput
               label={<div className="font-semibold">Work Order Number</div>}
               name="work_order_number"
               rules={[
                 { required: true, message: "Please enter work order number" },
               ]}
-              className="mb-4"
-            >
-              <Input
-                placeholder="Enter work order number"
-                className="rounded-none"
-              />
-            </Form.Item>
-
+              accept={"onlyNumber"}
+              placeholder={"Work Order Number"}
+            />
             <CustomDatepicker
               label="Date of Allocation"
               placeholder="Date of Allocation"
@@ -520,7 +435,6 @@ const VendorDetailsForm = () => {
                   },
                 ]}
               />
-
               <Form.Item
                 label="Quantity"
                 name="quantity"
@@ -630,9 +544,6 @@ const VendorDetailsForm = () => {
             )}
           </Form.List>
 
-          {/* <div className="col-span-3 mb-4 font-semibold ">
-            Total Alloted Parking Quantity: {parkQuantity}
-          </div> */}
           <Form.List name="parking_info">
             {(fields, { add, remove }) => (
               <>

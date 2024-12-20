@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Divider } from "antd";
+import { useNavigate } from "react-router";
+import { useDispatch, useSelector } from "react-redux";
+import { Form, Button, Divider } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
 import CountryStateCity from "../../commonComponents/CountryStateCity";
-import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
 import { setVendorListIsUpdated } from "./vendorSlice";
-const { TextArea } = Input;
+import CustomInput from "../../commonComponents/CustomInput";
 
 const VendorRegistrationForm = () => {
   const [form] = Form.useForm();
@@ -83,99 +83,78 @@ const VendorRegistrationForm = () => {
 
         <Divider className="bg-d9 h-2/3 mt-1" />
 
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-        >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-            <Form.Item
+            <CustomInput
               label={
                 <div className="font-semibold">Mobile Number (Username)</div>
               }
               name="phone"
+              placeholder="Mobile Number"
+              maxLength={10} // by default type is text
+              autoComplete="off"
+              accept={"onlyNumber"}
               rules={[
-                { required: true, message: "Please enter the mobile number" },
+                {
+                  required: true,
+                  message: "Please enter the mobile number!",
+                },
                 {
                   pattern: /^[0-9]{10}$/,
                   message: "Please enter a valid 10-digit mobile number",
                 },
               ]}
-              className="mb-4"
-            >
-              <Input
-                placeholder="Enter mobile number"
-                className="rounded-none "
-              />
-            </Form.Item>
-
-            <Form.Item
+            />
+            <CustomInput
               label={<div className="font-semibold">Vendor Name</div>}
               name="name"
               rules={[{ required: true, message: "Please enter name" }]}
-              className="mb-4"
-            >
-              <Input placeholder="Enter name" className="rounded-none" />
-            </Form.Item>
-
-            <Form.Item
+              placeholder={"Vendor Name"}
+            />
+            <CustomInput
               label={<div className="font-semibold">Email ID</div>}
               name="email"
               rules={[
                 { required: true, message: "Please enter the email" },
                 { type: "email", message: "Please enter a valid email" },
               ]}
-              className="mb-4"
-            >
-              <Input placeholder="Enter email" className="rounded-none" />
-            </Form.Item>
-
+              placeholder={"Email ID"}
+            />
             <CountryStateCity
               form={form}
               country_id={vendorUpdateElSelector?.country_id}
               state_id={vendorUpdateElSelector?.state_id}
               city_id={vendorUpdateElSelector?.city_id}
             />
-
-            <Form.Item
+            <CustomInput
+              type="textarea"
               label={<div className="font-semibold">Address</div>}
               name="address"
               className="mb-6"
               rules={[{ required: true, message: "Please enter the address" }]}
-            >
-              <TextArea rows={1} />
-            </Form.Item>
-
-            {/* <Form.Item
-              label={<div className="font-semibold">Company</div>}
-              name="company"
-              rules={[{ required: true, message: "Please enter the company" }]}
-              className="mb-4"
-            >
-              <Input placeholder="Company Name" className="rounded-none" />
-            </Form.Item> */}
-
+              placeholder={"Address"}
+            />
             {!vendorUpdateElSelector && (
-              <Form.Item
+              <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
+                placeholder="Password"
+                maxLength={15}
+                autoComplete="off"
+                isPassword={true}
                 rules={[
-                  { required: true, message: "Please enter the password" },
+                  {
+                    required: true,
+                    message: "Please enter your password!",
+                  },
                   {
                     min: 6,
-                    message: "Password must be at least 6 characters long",
+                    message: "Password must be at least 6 characters.",
                   },
                 ]}
-                className="mb-4"
-              >
-                <Input.Password
-                  placeholder="Enter password"
-                  className="rounded-none"
-                />
-              </Form.Item>
+              />
             )}
           </div>
-
           <div className="flex justify-end">
             <Form.Item>
               <Button

@@ -91,7 +91,6 @@ const CountryStateCity = ({ form, country_id, state_id, city_id }) => {
           placeholder="Select a country"
           optionFilterProp="children"
           onChange={(val) => setSelectedCountryId(val)}
-          style={{ width: 300 }}
         >
           {countryOptions.map((option) => (
             <Option key={option.value} value={option.value}>
