@@ -20,8 +20,8 @@ import {
   setVendorDetailsListIsUpdated,
 } from "./vendorDetailsSlice";
 import { getPdfExcelData } from "../../asset/AssetsSlice";
-import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
-import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
+// import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
+// import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
 import { VendorDetailsPdfFunction } from "./vendorDetailsPdf";
 import { VendorDetailsToExcel } from "./vendorDetailsExcel";
 
@@ -329,6 +329,16 @@ const VendorDetails = () => {
           };
         });
 
+      // Call the export function
+      isExcel &&
+        VendorDetailsToExcel(
+          myexcelData,
+          `${userName} Vendor Details`,
+          {},
+          totalAllottedQuantity,
+          registerCount
+        );
+
       const pdfData =
         !isExcel &&
         res?.data?.userdetails?.map((data, index) => [
@@ -350,16 +360,6 @@ const VendorDetails = () => {
             ]),
           ],
         ]);
-
-      // Call the export function
-      isExcel &&
-        VendorDetailsToExcel(
-          myexcelData,
-          `${userName} Vendor Details`,
-          {},
-          totalAllottedQuantity,
-          registerCount
-        );
 
       // Call the export function
       !isExcel &&
@@ -482,6 +482,7 @@ const VendorDetails = () => {
                   title: "Sector Name",
                   dataIndex: "sector_name",
                   key: "sector_name",
+                  width: "50%",
                 },
                 {
                   title: "Quantity",
@@ -513,6 +514,7 @@ const VendorDetails = () => {
                   title: "Parking Name",
                   dataIndex: "parking_name",
                   key: "parking_name",
+                  width: "50%",
                 },
                 {
                   title: "Quantity",
@@ -533,22 +535,9 @@ const VendorDetails = () => {
         {(proposedSectors?.proposedsectors?.length ||
           proposedSectors?.proposedparkings?.length) && (
           <>
-            <div className="flex justify-around">
-              {/* <div className="flex gap-2 flex-row-reverse"> */}
-              <div></div>
-              <div className="text-right font-semibold mt-2">
-                Total Quantity:{" "}
-                {(
-                  proposedSectors?.proposedparkings?.reduce(
-                    (total, park) => total + Number(park?.quantity || 0),
-                    0
-                  ) +
-                  proposedSectors?.proposedsectors?.reduce(
-                    (total, sector) => total + Number(sector?.quantity || 0),
-                    0
-                  )
-                ).toLocaleString()}
-              </div>
+            {/* <div className="flex justify-around"> */}
+            <div className="flex gap-16 flex-row-reverse">
+              {/* <div></div> */}
               <div className="text-right font-semibold mt-2">
                 Total Registered:{" "}
                 {(
@@ -558,6 +547,19 @@ const VendorDetails = () => {
                   ) +
                   proposedSectors?.proposedsectors?.reduce(
                     (total, sector) => total + Number(sector?.registered || 0),
+                    0
+                  )
+                ).toLocaleString()}
+              </div>
+              <div className="text-right font-semibold mt-2">
+                Total Quantity:{" "}
+                {(
+                  proposedSectors?.proposedparkings?.reduce(
+                    (total, park) => total + Number(park?.quantity || 0),
+                    0
+                  ) +
+                  proposedSectors?.proposedsectors?.reduce(
+                    (total, sector) => total + Number(sector?.quantity || 0),
                     0
                   )
                 ).toLocaleString()}

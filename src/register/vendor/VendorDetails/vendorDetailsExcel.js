@@ -3,46 +3,6 @@ import { message } from "antd";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-// modified
-const transformDataForExcel = (data) => {
-  const transformedData = [];
-  let previousSr = "";
-
-  data.forEach((row) => {
-    const lastColumnData = row["Sector / Parking"] || [];
-    // Handle empty data case - even if Sector/Parking is missing
-    if (lastColumnData?.length === 0) {
-      transformedData.push({
-        Sr: row["Sr"] !== previousSr ? row["Sr"] : "", // Show Sr only for the first row in the grouping
-        Category: row["Category"],
-        "Toilets & Tentage Type": row["Toilets & Tentage Type"],
-        "Total Allotted Quantity": row["Total Allotted Quantity"] || 0,
-        Sector: "",
-        "Allotted Quantity": "",
-        Registered: row["Registered"] || 0,
-      });
-      previousSr = row["Sr"];
-    } else {
-      lastColumnData?.forEach((sectorData, idx) => {
-        transformedData?.push({
-          Sr: idx === 0 ? row["Sr"] : "", // Ensure only the first row shows the serial number
-          Category: idx === 0 ? row["Category"] : "",
-          "Toilets & Tentage Type":
-            idx === 0 ? row["Toilets & Tentage Type"] : "",
-          "Total Allotted Quantity":
-            idx === 0 ? row["Total Allotted Quantity"] : "", // Only show on the first row in the grouping
-          Sector: sectorData[0] || "",
-          "Allotted Quantity": sectorData[1] || "",
-          Registered: sectorData[2] || "",
-        });
-        previousSr = row["Sr"];
-      });
-    }
-  });
-
-  return transformedData;
-};
-
 export const VendorDetailsToExcel = async (
   excelData = [],
   fileName = "excel_file",
@@ -55,17 +15,14 @@ export const VendorDetailsToExcel = async (
     return;
   }
 
-  const transformedData = transformDataForExcel(excelData);
-
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
 
-  // Adding a row for the file name
-  worksheet.addRow([]); // Blank row for spacing
+  worksheet.addRow([]);
   const fileNameRow = worksheet.addRow([fileName.toUpperCase()]);
-  fileNameRow.getCell(1).font = { bold: true, size: 16 }; // Bold and larger font for title
-  fileNameRow.getCell(1).alignment = { horizontal: "center" }; // Center-align text
-  worksheet.mergeCells(`A2:${String.fromCharCode(64 + 7)}2`); // Merge cells across columns for the title
+  fileNameRow.getCell(1).font = { bold: true, size: 16 };
+  fileNameRow.getCell(1).alignment = { horizontal: "center" };
+  worksheet.mergeCells(`A2:${String.fromCharCode(64 + 7)}2`);
 
   // Define columns
   const columns = [
@@ -86,11 +43,10 @@ export const VendorDetailsToExcel = async (
     { header: "Registered Quantity", key: "Registered", width: 20 },
   ];
 
-  worksheet.columns = columns;
-
   // Add headers to the second row
   const headerRow = worksheet.getRow(3);
   columns.forEach((col, index) => {
+    headerRow.getCell(index + 1).key = col.key;
     headerRow.getCell(index + 1).value = col.key;
     headerRow.getCell(index + 1).font = { bold: true };
     headerRow.getCell(index + 1).alignment = { horizontal: "center" };
@@ -101,17 +57,58 @@ export const VendorDetailsToExcel = async (
     };
   });
 
-  // Populate rows with transformed data
-  transformedData.forEach((data) => {
-    const row = worksheet.addRow(data);
+  let currentRow = 4;
 
-    row.eachCell((cell) => {
-      if (typeof cell.value === "number") {
-        cell.alignment = { horizontal: "center" };
-      } else {
-        cell.alignment = { horizontal: "left" };
-      }
+  excelData?.forEach((record) => {
+    worksheet.getRow(currentRow).values = [
+      record?.Sr,
+      record?.Category,
+      record?.["Toilets & Tentage Type"],
+      record?.["Total Allotted Quantity"],
+      record?.["Sector / Parking"][0][0],
+      record?.["Sector / Parking"][0][1],
+      record?.["Sector / Parking"][0][2],
+    ];
+    currentRow++;
+
+    // Add additional age data
+    record?.["Sector / Parking"].slice(1).forEach((age) => {
+      worksheet.getRow(currentRow).values = [
+        "",
+        "",
+        "",
+        "",
+        age?.[0],
+        age?.[1],
+        age?.[2],
+      ];
+      currentRow++;
     });
+
+    // Add total for the person
+    const total = record?.["Sector / Parking"].reduce(
+      (sum, age) => sum + Number(age?.[1] || 0),
+      0
+    );
+    const totalRegister = record?.["Sector / Parking"].reduce(
+      (sum, age) => sum + Number(age?.[2] || 0),
+      0
+    );
+    worksheet.getRow(currentRow).values = [
+      "",
+      "",
+      "",
+      "",
+      "Total",
+      total,
+      totalRegister,
+    ];
+    worksheet.getRow(currentRow).font = { bold: true };
+    currentRow++;
+
+    // Add an empty row
+    worksheet.addRow();
+    currentRow++;
   });
 
   // Add a summary row after the data
