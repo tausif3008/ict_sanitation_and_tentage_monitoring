@@ -264,6 +264,7 @@ const AssetsList = () => {
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     // dispatch(getAllCircleList()); // all circle list
+    handleSelect("1") // call asset type api
   }, []);
 
   // disable date

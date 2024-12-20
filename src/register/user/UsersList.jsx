@@ -240,14 +240,14 @@ const UserList = () => {
         res?.data?.users?.map((data, index) => {
           return {
             Sr: index + 1,
-            "User Type": data?.user_type,
-            Name: data?.name,
-            Phone: Number(data?.phone),
-            Email: data?.email,
-            Address: data?.address,
-            City: data?.city_name,
-            State: data?.state_name,
-            Country: data?.country_name,
+            "User Type": data?.user_type || "",
+            Name: data?.name || "",
+            Phone: Number(data?.phone) || "",
+            Email: data?.email || "",
+            Address: data?.address || "",
+            City: data?.city_name || "",
+            State: data?.state_name || "",
+            Country: data?.country_name || "",
           };
         });
 
@@ -255,13 +255,13 @@ const UserList = () => {
         !isExcel &&
         res?.data?.users?.map((data, index) => [
           index + 1,
-          data?.user_type,
-          data?.name,
-          data?.phone,
-          data?.email,
-          data?.address,
-          data?.city_name,
-          data?.state_name,
+          data?.user_type || "",
+          data?.name || "",
+          data?.phone || "",
+          data?.email || "",
+          data?.address || "",
+          data?.city_name || "",
+          data?.state_name || "",
           // data?.country_name,
         ]);
 

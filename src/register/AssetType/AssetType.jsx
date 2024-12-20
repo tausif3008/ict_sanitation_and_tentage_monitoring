@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router";
+import { EditOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Table } from "antd";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { useNavigate, useParams } from "react-router";
 import { getData } from "../../Fetch/Axios";
-import { EditOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 import {
   getVendorListAssetType,
   setAssetTypeListIsUpdated,
@@ -50,8 +50,10 @@ const AssetTypeList = () => {
     totalRecords: 0,
   });
   const [showVendors, setshowVendors] = useState(false);
+  const [searchQuery, setSearchQuery] = useState();
   const [showVendorsList, setVendorsList] = useState([]); // vendor list
   const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
+  const [rowRecord, setRowRecord] = useState(); // vendor list all quantity
   const { VendorListAssetType } = AssetTypeSelectors(); // asset type wise vendor list
 
   const isUpdatedSelector = useSelector(
@@ -61,8 +63,6 @@ const AssetTypeList = () => {
   const params = useParams();
   const navigate = useNavigate();
 
-  const [searchQuery, setSearchQuery] = useState();
-
   const getDetails = async () => {
     setLoading(true);
 
@@ -70,15 +70,12 @@ const AssetTypeList = () => {
     if (params.page) {
       uri = uri + params.page;
     }
-
     if (params.per_page) {
       uri = uri + "&" + params.per_page;
     }
-
     if (searchQuery) {
       uri = uri + searchQuery;
     }
-
     const extraHeaders = { "x-api-version": URLS.assetTypes.version };
     const res = await getData(uri, extraHeaders);
 
@@ -163,8 +160,9 @@ const AssetTypeList = () => {
   }, [params, isUpdatedSelector, searchQuery]);
 
   const showModal = async (assetTypeId) => {
-    setSelectedAssetType(assetTypeId);
-    await fetchQuestions(assetTypeId); // Fetch questions for the asset type
+    setRowRecord(assetTypeId);
+    setSelectedAssetType(assetTypeId?.asset_type_id);
+    await fetchQuestions(assetTypeId?.asset_type_id); // Fetch questions for the asset type
     setIsModalVisible(true); // Show the modal
   };
 
@@ -173,13 +171,15 @@ const AssetTypeList = () => {
     setIsModalVisible(false); // Close the modal
     setQuestions([]); // Clear the questions when modal closes
     setshowVendors(false);
+    setRowRecord(null);
   };
 
   // get vendors data
   const getVedorsData = (value) => {
+    setRowRecord(value);
     setVendorsList([]);
     setAllQuantity(0);
-    dispatch(getVendorListAssetType(value));
+    dispatch(getVendorListAssetType(value?.asset_type_id));
     setshowVendors(true);
   };
 
@@ -244,10 +244,7 @@ const AssetTypeList = () => {
       dataIndex: "vendors_list",
       key: "vendors_list",
       render: (text, record) => (
-        <Button
-          type="link"
-          onClick={() => getVedorsData(record?.asset_type_id)}
-        >
+        <Button type="link" onClick={() => getVedorsData(record)}>
           View Vendors
         </Button>
       ),
@@ -257,7 +254,7 @@ const AssetTypeList = () => {
       dataIndex: "questions",
       key: "questions",
       render: (text, record) => (
-        <Button type="link" onClick={() => showModal(record?.asset_type_id)}>
+        <Button type="link" onClick={() => showModal(record)}>
           View Questions
         </Button>
       ),
@@ -288,7 +285,7 @@ const AssetTypeList = () => {
     dispatch(setUpdateAssetEl({ updateElement: null }));
   }, []);
 
-  const totalAllottedQuantity = details.list
+  const totalAllottedQuantity = details?.list
     .reduce((total, item) => total + Number(item.total_quantity || 0), 0)
     .toLocaleString(); // Format with commas
 
@@ -333,19 +330,30 @@ const AssetTypeList = () => {
         details={details}
         loading={loading}
         scroll={{ x: 1200, y: 400 }}
+        tableSubheading={{
+          "Total Allotted Quantity": totalAllottedQuantity,
+        }}
       ></CommonTable>
 
-      <div className="text-right font-semibold mt-2">
-        Total Allotted Quantity: {totalAllottedQuantity}
-      </div>
-
       <Modal
-        title={`Questions for Asset Type ID: ${selectedAssetType}`}
+        title={
+          <div>
+            <h5>{`Questions for Asset Type ID: ${selectedAssetType}`}:</h5>
+          </div>
+        }
         open={isModalVisible}
         onCancel={handleCancel}
         footer={null}
         width={800}
       >
+        <div className="mb-4">
+          <p>
+            <strong>Category:</strong> {rowRecord?.asset_main_type_name}
+          </p>
+          <p>
+            <strong>Toilets & Tentage Type:</strong> {rowRecord?.name}
+          </p>
+        </div>
         {questions?.commonList?.length > 0 ? (
           <>
             <h6>Common Questions :</h6>
@@ -384,6 +392,18 @@ const AssetTypeList = () => {
         openModal={showVendors}
         handleCancel={handleCancel}
         tableData={showVendorsList || []}
+        tableHeaderData={
+          [
+            {
+              label: "Category",
+              value: rowRecord?.asset_main_type_name,
+            },
+            {
+              label: "Toilets & Tentage Type",
+              value: rowRecord?.name,
+            },
+          ] || []
+        }
         column={vendorColumn || []}
         footer={`Total Allotted Quantity : ${allQuantity}`}
       />

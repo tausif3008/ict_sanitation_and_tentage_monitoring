@@ -11,7 +11,8 @@ import {
   Select,
   notification,
   Row,
-  Col, message
+  Col,
+  message,
 } from "antd";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider";
@@ -51,7 +52,6 @@ const VendorSupervisorRegistration = () => {
       description: "Please enter some information to perform the search.",
     });
   };
-
 
   const { VendorListDrop } = VendorSupervisorSelector();
 
@@ -112,8 +112,11 @@ const VendorSupervisorRegistration = () => {
 
   useEffect(() => {
     getUsers(); // users
-    dispatch(getVendorList()); // vendor list
   }, [params, searchQuery]);
+
+  useEffect(() => {
+    dispatch(getVendorList()); // vendor list
+  }, []);
 
   const columns = [
     {
@@ -173,7 +176,6 @@ const VendorSupervisorRegistration = () => {
 
   const values = form.getFieldValue("user_type_id"); // Get all form values
   const fileName = getValueLabel(values, [], "Vendor Supervisor List");
-
 
   // pdf header
   const pdfHeader = [
@@ -334,7 +336,6 @@ const VendorSupervisorRegistration = () => {
                       <Col key="phone" xs={24} sm={12} md={6} lg={5}>
                         <CustomInput
                           name="phone"
-                          type="number"
                           label="Phone Number"
                           placeholder="Phone Number"
                           maxLength={10}
