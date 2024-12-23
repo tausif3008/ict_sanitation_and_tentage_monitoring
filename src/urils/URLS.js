@@ -11,7 +11,7 @@ const URLS = {
   out: { path: "/logout", version: 5.43 },
   state: { path: "/state", version: 5.43 }, // ?country_id=1
   city: { path: "/city", version: 5.43 }, //?country_id=1&state_id=1
-  userType: { path: "/user-types?per_page=100", version: 5.43 },
+  // userType: { path: "/user-types?per_page=100", version: 5.43 },
   userTypeLogin: { path: "/universal/user-types?per_page=100", version: 5.43 },
   allUserType: { path: "/user-types?page=1&per_page=100", version: 5.43 },
   moduleList: { path: "/module", version: 5.43 },

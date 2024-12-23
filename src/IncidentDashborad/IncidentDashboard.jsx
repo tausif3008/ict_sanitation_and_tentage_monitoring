@@ -18,15 +18,15 @@ const IncidentDashboard = () => {
         defaultValue="sanitation"
         style={{ width: 200 }}
       >
-        <option key={1} value="sanitation">
+        <Select.Option key={1} value="sanitation">
           Sanitation
-        </option>
-        <option key={3} value="tentage">
+        </Select.Option>
+        <Select.Option key={3} value="tentage">
           Tentage
-        </option>
-        <option key={2} value="wastes">
+        </Select.Option>
+        <Select.Option key={2} value="wastes">
           Wastes
-        </option>
+        </Select.Option>
       </Select>
       <div className="grid grid-cols-4 mt-2 gap-3">
         {/* <div className="col-span-4 grid lg:grid-cols-7 gap-3">

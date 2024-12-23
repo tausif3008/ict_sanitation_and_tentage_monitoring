@@ -1,77 +1,64 @@
-import React, { useContext, useEffect, useState } from "react";
-import { Form, Input, Button, Select, Divider } from "antd";
+import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
+import { ArrowLeftOutlined } from "@ant-design/icons";
+import { Form, Button, Divider } from "antd";
 import CountryStateCity from "../../commonComponents/CountryStateCity";
-import optionsMaker from "../../urils/OptionMaker";
-import { getData, postData } from "../../Fetch/Axios";
+import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
 import { setUserListIsUpdated } from "./userSlice";
-import UserTypeDropDown from "./UserTypeDropDown";
+import CustomInput from "../../commonComponents/CustomInput";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
+import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
 
 const UserRegistrationForm = () => {
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [form] = Form.useForm();
   const navigate = useNavigate();
-
-  const userUpdateElSelector = useSelector(
-    (state) => state.userSlice?.userUpdateEl
-  );
-
   const dispatch = useDispatch();
+  const location = useLocation();
+  const key = location.state?.key;
+  const record = location.state?.record;
 
-  useEffect(() => {
-    if (userUpdateElSelector) {
-      form.setFieldsValue(userUpdateElSelector);
-    }
-  }, [userUpdateElSelector, form]);
+  const { UserListDrop } = UserTypeSelector(); // user type list
 
   const onFinish = async (values) => {
     setLoading(true);
-
     values.status = 1;
-
-    if (userUpdateElSelector) {
-      values.user_id = userUpdateElSelector.user_id;
+    if (key === "UpdateKey") {
+      values.user_id = record.user_id;
     }
-
     const res = await postData(
       getFormData(values),
-      userUpdateElSelector ? URLS.editUser.path : URLS.register.path,
+      key === "UpdateKey" ? URLS.editUser.path : URLS.register.path,
       {
         version: URLS.register.version,
       }
     );
 
     if (res) {
-      setLoading(false);
       dispatch(setUserListIsUpdated({ isUpdated: true }));
-
       if (res.data.success) {
         form.resetFields();
-        if (userUpdateElSelector) {
-          navigate("/users");
-        }
+        navigate("/users");
       }
     }
+    setLoading(false);
   };
 
-  const [userTypes, setUserTypes] = useState([]);
-
   useEffect(() => {
-    optionsMaker(
-      "userType",
-      "user_type",
-      "user_type",
-      setUserTypes,
-      "",
-      "user_type_id"
-    );
+    const uri = URLS?.allUserType?.path;
+    dispatch(getUserTypeList(uri)); //  user type
+  }, []);
 
-    getData(URLS.userType.path, { "x-api-version": URLS.userType.version });
-  }, [form]);
+  // set value
+  useEffect(() => {
+    if (key === "UpdateKey") {
+      form.setFieldsValue(record);
+    }
+  }, [record, key]);
 
   return (
     <div className="mt-3">
@@ -87,7 +74,7 @@ const UserRegistrationForm = () => {
           </Button>
           <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
             <div className="font-bold">
-              {userUpdateElSelector
+              {key === "UpdateKey"
                 ? "Update User Details"
                 : "User Registration"}
             </div>
@@ -95,100 +82,89 @@ const UserRegistrationForm = () => {
           </div>
         </div>
         <Divider className="bg-d9 h-2/3 mt-1"></Divider>
-
-        <Form
-          form={form}
-          layout="vertical"
-          onFinish={onFinish}
-        >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
-            <UserTypeDropDown form={form}></UserTypeDropDown>
-
-            <Form.Item
+            <CustomSelect
+              name={"user_type_id"}
+              label={"Select User Type"}
+              placeholder={"Select User Type"}
+              rules={[{ required: true, message: "Please select User Type" }]}
+              options={UserListDrop || []}
+            />
+            <CustomInput
               label={
                 <div className="font-semibold">Mobile Number (Username)</div>
               }
               name="phone"
+              placeholder="Mobile Number"
+              maxLength={10}
+              autoComplete="off"
+              accept={"onlyNumber"}
               rules={[
-                { required: true, message: "Please enter the mobile number" },
+                {
+                  required: true,
+                  message: "Please enter the mobile number!",
+                },
                 {
                   pattern: /^[0-9]{10}$/,
                   message: "Please enter a valid 10-digit mobile number",
                 },
               ]}
-              className="mb-4"
-            >
-              <Input
-                placeholder="Enter mobile number"
-                className="rounded-none "
-              />
-            </Form.Item>
-
-            {!userUpdateElSelector && (
-              <Form.Item
+            />
+            {!key === "UpdateKey" && (
+              <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
+                placeholder="Password"
+                maxLength={15}
+                autoComplete="off"
+                isPassword={true}
                 rules={[
-                  { required: true, message: "Please enter the password" },
+                  {
+                    required: true,
+                    message: "Please enter your password!",
+                  },
                   {
                     min: 6,
-                    message: "Password must be at least 6 characters long",
+                    message: "Password must be at least 6 characters.",
                   },
                 ]}
-                className="mb-4"
-              >
-                <Input.Password
-                  placeholder="Enter password"
-                  className="rounded-none "
-                />
-              </Form.Item>
+              />
             )}
-
-            <Form.Item
+            <CustomInput
               label={<div className="font-semibold">Name (Display Name) </div>}
               name="name"
               rules={[{ required: true, message: "Please enter name" }]}
-              className="mb-4"
-            >
-              <Input placeholder="Enter name" className="rounded-none " />
-            </Form.Item>
-            <Form.Item
-              label={<div className="font-semibold">Email ID</div>}
+              placeholder={"Name (Display Name)"}
+            />
+            <CustomInput
+              label={<div className="font-semibold">Email ID </div>}
               name="email"
               rules={[
                 { required: true, message: "Please enter the email" },
                 { type: "email", message: "Please enter a valid email" },
               ]}
-              className="mb-4"
-            >
-              <Input placeholder="Enter email" className="rounded-none " />
-            </Form.Item>
-
-            {/* <Form.Item
+              placeholder={"Email ID"}
+            />
+            {/* <CustomInput
               label={<div className="font-semibold">Company</div>}
               name="company"
               rules={[{ required: true, message: "Please enter the company" }]}
-              className="mb-4"
-            >
-              <Input placeholder="Company Name" className="rounded-none " />
-            </Form.Item> */}
-
+              placeholder={"Company"}
+            /> */}
             <CountryStateCity
               form={form}
-              country_id={userUpdateElSelector?.country_id}
-              state_id={userUpdateElSelector?.state_id}
-              city_id={userUpdateElSelector?.city_id}
+              country_id={record?.country_id}
+              state_id={record?.state_id}
+              city_id={record?.city_id}
             ></CountryStateCity>
-
-            <Form.Item
-              label={<div className="font-semibold">Address</div>}
+            <CustomInput
+              type="textarea"
+              label={<div className="font-semibold">Address </div>}
               name="address"
-              className="mb-6"
-            >
-              <TextArea rows={2} />
-            </Form.Item>
+              placeholder={"Address"}
+            />
           </div>
-
           <div className="flex justify-end">
             <Form.Item>
               <Button
@@ -197,7 +173,7 @@ const UserRegistrationForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {userUpdateElSelector ? "Update" : "Register"}
+                {key === "UpdateKey" ? "Update" : "Register"}
               </Button>
             </Form.Item>
           </div>
@@ -208,4 +184,3 @@ const UserRegistrationForm = () => {
 };
 
 export default UserRegistrationForm;
-const { TextArea } = Input;

@@ -295,7 +295,7 @@ const Login = () => {
             {!otpStep ? "Forgot Password" : "Set New Password"}
           </h5>
         }
-        visible={forgotPasswordVisible}
+        open={forgotPasswordVisible}
         onCancel={() => {
           setForgotPasswordVisible(false);
           forgotForm.resetFields();

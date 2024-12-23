@@ -86,7 +86,7 @@ const ResponseTimeChart = () => {
         className="rounded-none"
         defaultValue={"Sector 1"}
       >
-        <option value="Sector 1">Sector 1</option>
+        <Select.Option value="Sector 1">Sector 1</Select.Option>
       </Select>
 
       <ReactApexChart

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, message, Collapse, notification, Row, Col, Form } from "antd";
 
@@ -8,7 +8,7 @@ import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { setUpdateUserEl, setUserListIsUpdated } from "./userSlice";
+import { setUpdateUserEl } from "./userSlice";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../asset/AssetsSlice";
@@ -19,84 +19,6 @@ import search from "../../assets/Dashboard/icon-search.png";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
 import { getValueLabel } from "../../constant/const";
-
-const getVal = (val) => {
-  if (val === "undefined" || val === null) {
-    return "-";
-  } else {
-    return val;
-  }
-};
-
-const columns = [
-  {
-    title: "Sr. No", // Asset main type
-    dataIndex: "sr",
-    key: "sr",
-    width: 80,
-  },
-  {
-    title: "User Type",
-    dataIndex: "user_type",
-    key: "user_type",
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Phone (Username)",
-    dataIndex: "phone",
-    key: "Phone",
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-    width: 250,
-  },
-  {
-    title: "Country",
-    dataIndex: "country_name",
-    key: "country_name",
-    render: getVal,
-  },
-  {
-    title: "State",
-    dataIndex: "state_name",
-    key: "state_name",
-    render: getVal,
-  },
-  {
-    title: "City",
-    dataIndex: "city_name",
-    key: "city_type",
-    render: getVal,
-  },
-
-  {
-    title: "Address",
-    dataIndex: "address",
-    width: 300,
-    key: "address",
-    render: (val) => {
-      if (val === "undefined") {
-        return "-";
-      } else {
-        return val;
-      }
-    },
-  },
-
-  {
-    title: "Action",
-    dataIndex: "action",
-    key: "action",
-    fixed: "right",
-    width: 80,
-  },
-];
 
 const UserList = () => {
   const [loading, setLoading] = useState(false);
@@ -123,10 +45,6 @@ const UserList = () => {
 
   const values = form.getFieldValue("user_type_id"); // Get all form values
   const fileName = getValueLabel(values, UserListDrop, "All User List");
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.userUpdateEl?.isUpdated
-  );
 
   // fiter finish
   const onFinishForm = async (values) => {
@@ -163,50 +81,130 @@ const UserList = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
-
-      const list = data.users.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-          action: (
-            <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
-              onClick={() => {
-                dispatch(setUpdateUserEl({ updateElement: el }));
-                navigate("/user-registration");
-              }}
-            >
-              <EditOutlined></EditOutlined>
-            </Button>
-          ),
-        };
-      });
-
       setUserDetails(() => {
         return {
-          list,
+          list: data?.users,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentPage,
           totalRecords: data.paging[0].totalrecords,
         };
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     getUsers();
-    if (isUpdatedSelector) {
-      dispatch(setUserListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector, searchQuery]);
+  }, [params, searchQuery]);
 
   useEffect(() => {
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
     dispatch(setUpdateUserEl({ updateElement: null }));
   }, []);
+
+  const getVal = (val) => {
+    if (val === "undefined" || val === null) {
+      return "-";
+    } else {
+      return val;
+    }
+  };
+
+  const columns = [
+    {
+      title: "Sr. No", // Asset main type
+      dataIndex: "sr",
+      key: "sr",
+      width: 80,
+    },
+    {
+      title: "User Type",
+      dataIndex: "user_type",
+      key: "user_type",
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Phone (Username)",
+      dataIndex: "phone",
+      key: "Phone",
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: 250,
+    },
+    {
+      title: "Country",
+      dataIndex: "country_name",
+      key: "country_name",
+      render: getVal,
+    },
+    {
+      title: "State",
+      dataIndex: "state_name",
+      key: "state_name",
+      render: getVal,
+    },
+    {
+      title: "City",
+      dataIndex: "city_name",
+      key: "city_type",
+      render: getVal,
+    },
+
+    {
+      title: "Address",
+      dataIndex: "address",
+      width: 300,
+      key: "address",
+      render: (val) => {
+        if (val === "undefined") {
+          return "-";
+        } else {
+          return val;
+        }
+      },
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: 130,
+      render: (text, record) => (
+        <>
+          <div className="flex justify-between">
+            <Button
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              onClick={() => {
+                navigate(`/user-registration`, {
+                  state: {
+                    key: "UpdateKey",
+                    record: record, // Pass the record as part of the state
+                  },
+                });
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </div>
+        </>
+      ),
+    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   fixed: "right",
+    //   width: 80,
+    // },
+  ];
 
   // pdf header
   const pdfHeader = [
@@ -346,14 +344,14 @@ const UserList = () => {
                         options={UserListDrop || []}
                       />
                     </Col>
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="name" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name="name"
                         label="Name"
                         placeholder="Name"
                       />
                     </Col>
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="phone" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name="phone"
                         type="number"
@@ -374,7 +372,7 @@ const UserList = () => {
                         ]}
                       />
                     </Col>
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="email" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name="email"
                         label="Email"

@@ -172,7 +172,8 @@ const FurnitureDetails = () => {
                 </div>
               }
               placement="top"
-              arrowPointAtCenter
+              // arrowPointAtCenter
+              arrow={{ pointAtCenter: true }}
             >
               <div
                 className="relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50"
