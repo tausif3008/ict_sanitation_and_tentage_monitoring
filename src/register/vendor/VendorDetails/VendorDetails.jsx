@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate, useParams } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import moment from "moment";
 import { Button, Form, Input, message, Modal, Table } from "antd";
 import {
@@ -14,14 +14,8 @@ import CommonTable from "../../../commonComponents/CommonTable";
 import CommonDivider from "../../../commonComponents/CommonDivider";
 import URLS from "../../../urils/URLS";
 import { getData } from "../../../Fetch/Axios";
-import {
-  deleteVendorDetails,
-  setUpdateVendorDetailsEl,
-  setVendorDetailsListIsUpdated,
-} from "./vendorDetailsSlice";
+import { deleteVendorDetails } from "./vendorDetailsSlice";
 import { getPdfExcelData } from "../../asset/AssetsSlice";
-// import { exportToExcel } from "../../../Reports/ExportExcelFuntion";
-// import { ExportPdfFunction } from "../../../Reports/ExportPdfFunction";
 import { VendorDetailsPdfFunction } from "./vendorDetailsPdf";
 import { VendorDetailsToExcel } from "./vendorDetailsExcel";
 
@@ -44,10 +38,6 @@ const VendorDetails = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const params = useParams();
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.vendorDetailsUpdateEl?.isUpdated
-  );
 
   const handleProposedSectorsView = (data, record) => {
     setProposedSectors(record);
@@ -97,49 +87,24 @@ const VendorDetails = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
       setUserName(data.userdetails[0]?.user_name);
-
-      const list = data.userdetails.map((el, index) => ({
-        ...el,
-        sr: index + 1,
-        action: (
-          <Button
-            className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
-            key={el.name + index}
-            onClick={() => {
-              dispatch(setUpdateVendorDetailsEl({ updateElement: el }));
-              navigate("/vendor/add-vendor-details-form/" + params.id);
-            }}
-          >
-            <EditOutlined />
-          </Button>
-        ),
-      }));
-
       setDetails({
-        list,
+        list: data.userdetails,
         pageLength: data.paging[0].length,
         currentPage: data.paging[0].currentPage,
         totalRecords: data.paging[0].totalrecords,
       });
     }
+    setLoading(false);
   };
-
-  useEffect(() => {
-    dispatch(setUpdateVendorDetailsEl({ updateElement: null }));
-  }, [dispatch]);
 
   useEffect(() => {
     if (params.id) {
       getDetails();
-      if (isUpdatedSelector) {
-        dispatch(setVendorDetailsListIsUpdated({ isUpdated: false }));
-      }
     } else {
       navigate("/vendor");
     }
-  }, [params, isUpdatedSelector, dispatch, navigate]);
+  }, [params, dispatch, navigate]);
 
   const columns = [
     {
@@ -222,17 +187,10 @@ const VendorDetails = () => {
             <Button
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
               onClick={() => {
-                const newObject = Object.keys(record)
-                  .filter((key) => key !== "action") // Filter out 'action'
-                  .reduce((obj, key) => {
-                    obj[key] = record[key]; // Rebuild the object without 'action'
-                    return obj;
-                  }, {});
-                dispatch(setUpdateVendorDetailsEl({ updateElement: record }));
                 navigate(`/vendor/add-vendor-details-form/${params?.id}`, {
                   state: {
                     key: "UpdateKey",
-                    record: newObject, // Pass the record as part of the state
+                    record: record, // Pass the record as part of the state
                   },
                 });
               }}

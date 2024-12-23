@@ -322,7 +322,6 @@ const VendorDetailsForm = () => {
           >
             <ArrowLeftOutlined />
           </Button>
-
           <div className="text-d9 text-2xl w-full flex items-end justify-between ">
             <div className="font-bold">
               {key === "UpdateKey"
@@ -332,9 +331,7 @@ const VendorDetailsForm = () => {
             <div className="text-xs">All * marks fields are mandatory</div>
           </div>
         </div>
-
         <Divider className="bg-d9 h-2/3 mt-1" />
-
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
             <CustomSelect
@@ -501,7 +498,6 @@ const VendorDetailsForm = () => {
                         ]}
                       />
                     </div>
-
                     <div className="">
                       <Form.Item
                         {...restField}
@@ -520,7 +516,6 @@ const VendorDetailsForm = () => {
                         />
                       </Form.Item>
                     </div>
-
                     <div className="flex ">
                       <MinusCircleOutlined
                         onClick={() => {
