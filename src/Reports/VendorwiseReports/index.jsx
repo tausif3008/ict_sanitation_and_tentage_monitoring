@@ -275,6 +275,8 @@ const VendorReports = () => {
     );
   }, [excelData]);
 
+  console.log("pdfData", pdfData);
+
   return (
     <div>
       <CommonDivider label={"Vendor-Wise Report"} />
@@ -284,7 +286,10 @@ const VendorReports = () => {
             titleName={filesName ? filesName : `Vendor-Wise Report`}
             pdfName={filesName ? filesName : `Vendor-Wise-Report`}
             headerData={pdfHeader}
-            rows={pdfData}
+            rows={[
+              ...pdfData,
+              ["", "Total", total, totalRegistered, totalClean, totalUnclean],
+            ]}
           />
         </div>
         <div>
