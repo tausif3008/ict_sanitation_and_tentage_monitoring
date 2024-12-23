@@ -11,6 +11,7 @@ const ExportToPDF = ({
   headerData,
   rows,
   landscape = false,
+  IsLastLineBold = false,
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -107,6 +108,14 @@ const ExportToPDF = ({
       head: [headerData],
       body: rows,
       startY: 45 + 10, // Start after the horizontal line and other content (Y position adjusted)
+      didParseCell: function (data) {
+        const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
+        if (isLastRow && IsLastLineBold) {
+          data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
+          data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
+          data.cell.styles.fontSize = 12; // Increase font size for emphasis
+        }
+      },
     });
 
     // Add footer
