@@ -281,18 +281,8 @@ const VendorReports = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={
-              filesName
-                ? filesName
-                : // ? `Vendor-Wise-${filesName} Report`
-                  `Vendor-Wise Report`
-            }
-            pdfName={
-              filesName
-                ? filesName
-                : // ? `Vendor-Wise-${filesName}-Report`
-                  `Vendor-Wise-Report`
-            }
+            titleName={filesName ? filesName : `Vendor-Wise Report`}
+            pdfName={filesName ? filesName : `Vendor-Wise-Report`}
             headerData={pdfHeader}
             rows={pdfData}
           />
@@ -300,12 +290,7 @@ const VendorReports = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={
-              filesName
-                ? filesName
-                : // ? `Vendor-Wise-${filesName} Report`
-                  `Vendor-Wise Report`
-            }
+            fileName={filesName ? filesName : `Vendor-Wise Report`}
             dynamicArray={[
               {
                 name: "Total",
