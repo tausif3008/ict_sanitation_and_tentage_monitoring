@@ -47,13 +47,15 @@ const SectorWiseReport = () => {
   const vendor_id_name = form.getFieldValue("vendor_id");
 
   const sectorData = useMemo(() => {
-    return SectorReports?.data?.sectors?.map((item) => ({
-      ...item,
-      total: Number(item?.total),
-      registered: Number(item?.registered),
-      clean: Number(item?.clean),
-      unclean: Number(item?.unclean),
-    }));
+    return (
+      SectorReports?.data?.sectors?.map((item) => ({
+        ...item,
+        total: Number(item?.total),
+        registered: Number(item?.registered),
+        clean: Number(item?.clean),
+        unclean: Number(item?.unclean),
+      })) || []
+    );
   }, [SectorReports]);
 
   // handle category
@@ -193,10 +195,18 @@ const SectorWiseReport = () => {
   ];
 
   // pdf header
-  const pdfHeader = ["Sector Name", "Total", "Registered", "Clean", "Unclean"];
+  const pdfHeader = [
+    "Sr No",
+    "Sector Name",
+    "Total",
+    "Registered",
+    "Clean",
+    "Unclean",
+  ];
 
   // pdf data
-  const pdfData = sectorData?.map((sector) => [
+  const pdfData = sectorData?.map((sector, index) => [
+    index + 1,
     sector?.name,
     Number(sector?.total),
     Number(sector?.registered),
@@ -226,7 +236,18 @@ const SectorWiseReport = () => {
             titleName={filesName ? filesName : `Sector-Wise Report`}
             pdfName={filesName ? filesName : `Sector-Wise-Report`}
             headerData={pdfHeader}
-            rows={pdfData}
+            IsLastLineBold={true}
+            rows={[
+              ...pdfData,
+              [
+                "",
+                "Total",
+                totalQuantity?.totalQnty,
+                totalQuantity?.registered,
+                totalQuantity?.clean,
+                totalQuantity?.unclean,
+              ],
+            ]}
           />
         </div>
         <div>
