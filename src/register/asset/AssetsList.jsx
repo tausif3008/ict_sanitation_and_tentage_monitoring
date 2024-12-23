@@ -290,7 +290,7 @@ const AssetsList = () => {
       width: 100,
     },
     {
-      title: "Toilets & Tentage Type",
+      title: "Type",
       dataIndex: "asset_type_name",
       key: "asset_type_name",
       width: 200,
@@ -320,13 +320,28 @@ const AssetsList = () => {
             width: 140,
           },
         ]
-      : []),
-    {
-      title: "Sector",
-      dataIndex: "sector_name",
-      key: "sector_name",
-      width: 100,
-    },
+      : [
+          {
+            title: "Sector Name",
+            dataIndex: "sector_name",
+            key: "sector_name",
+            render: (text) => text || "",
+            width: 140,
+          },
+          {
+            title: "Parking Name",
+            dataIndex: "parking_name",
+            key: "parking_name",
+            render: (text) => text || "",
+            width: 140,
+          },
+        ]),
+    // {
+    //   title: "Circle",
+    //   dataIndex: "circle",
+    //   key: "circle",
+    //   width: 100,
+    // },
     {
       title: "Photo",
       width: 100,
@@ -343,12 +358,6 @@ const AssetsList = () => {
         ),
       key: "photo",
     },
-    // {
-    //   title: "Circle",
-    //   dataIndex: "circle_name",
-    //   key: "circle_name",
-    //   width: 100,
-    // },
     // {
     //   title: "Vendor Item Code",
     //   dataIndex: "vendor_asset_code",
@@ -433,12 +442,14 @@ const AssetsList = () => {
   const pdfHeader = [
     "Sr No",
     "Category",
-    "Toilets & Tentage Type",
+    ...(categoryId === "2"
+      ? ["Tentage Type"]
+      : ["Toilets Type"]),
     "Vendor Name",
     "GSD Name",
     "Sector",
-    "Circle",
-    "Vendor Item Code",
+    "Sanstha",
+    "Parking",
     "Code",
     "Unit",
     "Register Date",
@@ -468,12 +479,14 @@ const AssetsList = () => {
           return {
             Sr: index + 1,
             Category: data?.asset_main_type_name,
-            "Toilets & Tentage Type": data?.asset_type_name,
+            "Type": data?.asset_type_name,
             "Vendor Name": data?.vendor_name,
             "GSD Name": data?.agent_name,
             Sector: data?.sector_name,
-            Circle: data?.circle_name,
-            "Vendor Item Code": data?.vendor_asset_code,
+            Parking: data?.parking_name,
+            Sanstha: data?.sanstha_name_hi,
+            // Circle: data?.circle_name,
+            // "Vendor Item Code": data?.vendor_asset_code,
             Code: Number(data?.code),
             Unit: Number(data?.unit),
             "Register Date": data?.tagged_at
@@ -482,9 +495,12 @@ const AssetsList = () => {
           };
         });
 
+      
+      const heading = categoryId === "2" ? "Tentage List" : "Toilets List";
+      
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, "Toilets & Tentage List", {
+        exportToExcel(myexcelData, heading, {
           "Register Unit": unitCount,
         });
 
@@ -497,8 +513,8 @@ const AssetsList = () => {
           data?.vendor_name,
           data?.agent_name,
           data?.sector_name,
-          data?.circle_name,
-          data?.vendor_asset_code,
+          data?.sanstha_name,
+          data?.parking_name,
           Number(data?.code),
           Number(data?.unit),
           data?.tagged_at
