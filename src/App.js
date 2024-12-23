@@ -84,6 +84,22 @@ import AboutUs from "./pages/about-us";
 import LoginSelectors from "./Login/slice/loginSelector";
 import { logOutUser } from "./Login/slice/loginSlice";
 import AddParkingForm from "./register/parking/AddParking";
+import ProtectedRoute from "./protectiveRoutes";
+import {
+  circle_wise_reports,
+  gsd_wise_regi_reports,
+  incident_reports,
+  incidentDash_param,
+  inspections_reports,
+  monitoring_reports,
+  sanitationDash_param,
+  sector_wise_reports,
+  tentageDash_param,
+  vendor_wise_regi_reports,
+  vendor_wise_reports,
+  vendorDash_param,
+  wasteDash_param,
+} from "./constant/permission";
 // import { Provider, useDispatch } from "react-redux";
 // import store from "./Redux/store";
 // import URLS from "./urils/URLS"
@@ -94,11 +110,13 @@ function App() {
   const dispatch = useDispatch();
   const { sliceToken } = LoginSelectors();
 
+  const link = `/login`;
   const loggedIn = localStorage.getItem("sessionToken");
   const token = localStorage.getItem("sessionToken") || sliceToken;
-  const link = `/login`;
-  // const location = useLocation();
-  // const RoleId = localStorage.getItem("role_id");
+  const sessionData = localStorage.getItem("sessionData");
+  const jsonObject = JSON.parse(sessionData);
+  const tentageIdUser = jsonObject?.allocatedmaintype?.[0]?.asset_main_type_id;
+  const userRoleId = localStorage.getItem("role_id");
 
   useEffect(() => {
     if (!token) {
@@ -206,22 +224,75 @@ function App() {
         <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
 
         {/* dashboard */}
-        <Route
+        {/* <Route
           path="/sanitation-dashboard"
           element={<SanitationDashboard></SanitationDashboard>}
-        ></Route>
+        ></Route> */}
         <Route
+          path="/sanitation-dashboard"
+          element={
+            <ProtectedRoute
+              condition={sanitationDash_param?.includes(userRoleId)}
+              component={VendorDashboard}
+            />
+          }
+        />
+        {/* <Route
+          path="/vendor-dashboard"
+          element={<VendorDashboard></VendorDashboard>}
+        ></Route> */}
+        <Route
+          path="/vendor-dashboard"
+          element={
+            <ProtectedRoute
+              condition={
+                vendorDash_param.includes(userRoleId) && tentageIdUser != "2"
+              }
+              component={VendorDashboard}
+            />
+          }
+        />
+        {/* <Route
           path="/tentage-dashboard"
           element={<TentageDashboard></TentageDashboard>}
-        ></Route>
+        ></Route> */}
+        <Route
+          path="/tentage-dashboard"
+          element={
+            <ProtectedRoute
+              condition={
+                tentageDash_param?.includes(userRoleId) || tentageIdUser === "2"
+              }
+              component={TentageDashboard}
+            />
+          }
+        />
+        {/* <Route
+            path="/waste-dashboard"
+            element={<WastesDashboard></WastesDashboard>}
+          ></Route> */}
         <Route
           path="/waste-dashboard"
-          element={<WastesDashboard></WastesDashboard>}
-        ></Route>
+          element={
+            <ProtectedRoute
+              condition={wasteDash_param?.includes(userRoleId)}
+              component={WastesDashboard}
+            />
+          }
+        />
+        {/* <Route
+            path="/incident-dashboard"
+            element={<IncidentDashboard></IncidentDashboard>}
+          ></Route> */}
         <Route
           path="/incident-dashboard"
-          element={<IncidentDashboard></IncidentDashboard>}
-        ></Route>
+          element={
+            <ProtectedRoute
+              condition={incidentDash_param?.includes(userRoleId)}
+              component={IncidentDashboard}
+            />
+          }
+        />
         <Route
           path="/DMS-dashboard"
           element={<DMSDashboard></DMSDashboard>}
@@ -230,6 +301,7 @@ function App() {
           path="/SLA-dashboard"
           element={<SLADashboard></SLADashboard>}
         ></Route>
+        {/* dashboard Close*/}
 
         <Route path="/home" element={<LandingPage></LandingPage>}></Route>
         <Route
@@ -345,10 +417,6 @@ function App() {
           element={<NotificationAdd></NotificationAdd>}
         ></Route>
         <Route
-          path="monitoring-report/:id/:page?/:per_page?"
-          element={<MonitoringReport></MonitoringReport>}
-        ></Route>
-        <Route
           path="/user-profile"
           element={<UserProfile></UserProfile>}
         ></Route>
@@ -381,10 +449,6 @@ function App() {
           element={<AssignRouteForm></AssignRouteForm>}
         ></Route>
         <Route path="add-route" element={<AddRouteForm></AddRouteForm>}></Route>
-        <Route
-          path="/vendor-dashboard"
-          element={<VendorDashboard></VendorDashboard>}
-        ></Route>
         <Route
           path="/user-type-permission/:page?/:per_page?"
           element={<UserTypePermission></UserTypePermission>}
@@ -433,39 +497,117 @@ function App() {
         ></Route>
 
         {/* report start */}
-        <Route
+        {/* <Route
           path="monitoring/:page?/:per_page?"
           element={<Monitoring></Monitoring>}
+        ></Route> */}
+        <Route
+          path="monitoring/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={monitoring_reports?.includes(userRoleId)}
+              component={Monitoring}
+            />
+          }
+        />
+
+        <Route
+          path="monitoring-report/:id/:page?/:per_page?"
+          element={<MonitoringReport></MonitoringReport>}
         ></Route>
+
         <Route
           path="sector-wise-report"
+          element={
+            <ProtectedRoute
+              condition={sector_wise_reports?.includes(userRoleId)}
+              component={SectorWiseReport}
+            />
+          }
+        />
+        {/* <Route
+          path="sector-wise-report"
           element={<SectorWiseReport></SectorWiseReport>}
-        ></Route>
+          ></Route> */}
         <Route
           path="circle-wise-report"
+          element={
+            <ProtectedRoute
+              condition={circle_wise_reports?.includes(userRoleId)}
+              component={CircleWiseReport}
+            />
+          }
+        />
+        {/* <Route
+          path="circle-wise-report"
           element={<CircleWiseReport></CircleWiseReport>}
-        ></Route>
+        ></Route> */}
         <Route
-          // path="vendor-wise-report"
+          path="vendor-wise-report/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={vendor_wise_reports?.includes(userRoleId)}
+              component={VendorReports}
+            />
+          }
+        />
+        {/* <Route
           path="vendor-wise-report/:page?/:per_page?"
           element={<VendorReports></VendorReports>}
-        ></Route>
+        ></Route> */}
         <Route
           path="gsd-wise-registration-report/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={gsd_wise_regi_reports?.includes(userRoleId)}
+              component={GsdRegistrationReport}
+            />
+          }
+        />
+        {/* <Route
+          path="gsd-wise-registration-report/:page?/:per_page?"
           element={<GsdRegistrationReport></GsdRegistrationReport>}
-        ></Route>
+        ></Route> */}
+        <Route
+          path="vendor-wise-registration-report"
+          element={
+            <ProtectedRoute
+              condition={vendor_wise_regi_reports?.includes(userRoleId)}
+              component={VendorRegistrationReport}
+            />
+          }
+        />
         <Route
           path="vendor-wise-registration-report"
           element={<VendorRegistrationReport></VendorRegistrationReport>}
         ></Route>
+
         <Route
           path="/incident-report/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={incident_reports?.includes(userRoleId)}
+              component={IncidentReports}
+            />
+          }
+        />
+        {/* <Route
+          path="/incident-report/:page?/:per_page?"
           element={<IncidentReports></IncidentReports>}
-        ></Route>
+        ></Route> */}
         <Route
           path="/inspection-report/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={inspections_reports?.includes(userRoleId)}
+              component={InspectionReports}
+            />
+          }
+        />
+        {/* <Route
+          path="/inspection-report/:page?/:per_page?"
           element={<InspectionReports></InspectionReports>}
-        ></Route>
+        ></Route> */}
         {/* Report close */}
 
         {/* pages */}

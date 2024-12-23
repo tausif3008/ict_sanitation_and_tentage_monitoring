@@ -42,12 +42,11 @@ const Navbar = ({ lang, setLang }) => {
   const [open, setOpen] = useState(false);
 
   const userRoleId = localStorage.getItem("role_id");
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-
-  // logout 
+  // logout
   const handleLogOut = async () => {
-    const result = await dispatch(logOutUser())
+    const result = await dispatch(logOutUser());
     if (result?.data?.success) {
       dispatch(revertAll());
       localStorage.clear();
@@ -56,7 +55,7 @@ const Navbar = ({ lang, setLang }) => {
       navigate("/");
       // }, 1000);
     }
-  }
+  };
   // Dashboard
   const dashboards = (lang, dict) => {
     return [
@@ -105,17 +104,17 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       vendorDash_param.includes(userRoleId) &&
-      tentageIdUser != "2" && {
-        key: "6",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/vendor-dashboard"
-          >
-            Vendor Dashboard
-          </Link>
-        ),
-      },
+        tentageIdUser != "2" && {
+          key: "6",
+          label: (
+            <Link
+              className="text-black no-underline hover:text-green"
+              to="/vendor-dashboard"
+            >
+              Vendor Dashboard
+            </Link>
+          ),
+        },
       /*
       SLADash_param?.includes(userRoleId) && {
         key: "7",
@@ -506,31 +505,31 @@ const Navbar = ({ lang, setLang }) => {
 
     localStorage.getItem("sessionToken")
       ? list.push({
-        key: "3",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              handleLogOut()
-            }}
-          >
-            Logout
-          </div>
-        ),
-      })
+          key: "3",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                handleLogOut();
+              }}
+            >
+              Logout
+            </div>
+          ),
+        })
       : list.push({
-        key: "4",
-        label: (
-          <div
-            className="text-black no-underline hover:text-green"
-            onClick={() => {
-              navigate("/login");
-            }}
-          >
-            Login
-          </div>
-        ),
-      });
+          key: "4",
+          label: (
+            <div
+              className="text-black no-underline hover:text-green"
+              onClick={() => {
+                navigate("/login");
+              }}
+            >
+              Login
+            </div>
+          ),
+        });
 
     return list;
   };
@@ -588,15 +587,17 @@ const Navbar = ({ lang, setLang }) => {
           >
             <img
               src={IMAGELIST?.govt_logo}
-              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${isNavbarTransition ? "h-10" : "h-14"
-                }`}
+              className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
+                isNavbarTransition ? "h-10" : "h-14"
+              }`}
               alt="UP Govt Logo"
             />
 
             <img
               src={IMAGELIST?.kumbhMela}
-              className={`lg:mt-1 h-[28px] sm:h-[18px] md:h-[28px] lg:h-12 xl:${isNavbarTransition ? "h-8" : "h-12"
-                }`}
+              className={`lg:mt-1 h-[28px] sm:h-[18px] md:h-[28px] lg:h-12 xl:${
+                isNavbarTransition ? "h-8" : "h-12"
+              }`}
               alt="Maha Kumbh 2025 Logo"
             />
           </Link>
