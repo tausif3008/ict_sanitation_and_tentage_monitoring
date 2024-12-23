@@ -128,8 +128,7 @@ const Shift = () => {
                   },
                 })
               }
-              className="mb-1"
-              style={{ backgroundColor: AppConstants.AddButtonColor }}
+              className="bg-orange-300 mb-1"
             >
               Add Shift
             </Button>

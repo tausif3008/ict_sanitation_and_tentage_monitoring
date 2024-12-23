@@ -28,6 +28,16 @@ export const statusOptions = [
   { value: 2, label: "Deactive" },
 ];
 
+export const yesNoType = [
+  { value: "1", label: "Yes" },
+  { value: "0", label: "No" },
+];
+
+export const vehicleType = [
+  { value: "Compactor", label: "Compactor" },
+  { value: "Tipper", label: "Tipper" },
+];
+
 export const dateOptions = [
   {
     label: "Today",

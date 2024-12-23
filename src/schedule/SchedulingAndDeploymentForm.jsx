@@ -11,8 +11,6 @@ const SchedulingAndDeploymentForm = () => {
   const [showAssetsOnMap, setShowAssetsOnMap] = useState(false);
 
   const onFinish = (values) => {
-    console.log("Form Values:", values);
-
     // Save scheduling and deployment data to local storage
     const localSchedules =
       JSON.parse(localStorage.getItem("schedulingDeployment")) || [];

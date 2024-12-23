@@ -5,7 +5,6 @@ const { Option } = Select;
 
 const CreateTentageSchedule = () => {
   const onFinish = (values) => {
-    console.log("Form Values: ", values);
     // Handle form submission logic here
   };
 

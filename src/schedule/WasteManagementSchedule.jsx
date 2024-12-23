@@ -17,7 +17,6 @@ const WasteManagementSchedule = () => {
   const [form] = Form.useForm();
 
   const onFinish = (values) => {
-    console.log("Form Values: ", values);
     // Handle form submission logic here
   };
 

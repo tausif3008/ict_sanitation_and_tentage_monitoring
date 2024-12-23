@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import { useDispatch } from "react-redux";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
@@ -10,7 +10,7 @@ const columns = [
     title: "Sector Name",
     dataIndex: "name",
     key: "name",
-    width: 200,
+    width: 80,
   },
 ];
 

@@ -1,57 +1,51 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Divider } from "antd";
+import { useLocation, useNavigate } from "react-router";
+import { Form, Button, Divider } from "antd";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
-import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-import { setQuestionListIsUpdated } from "./questionSlice";
+import { yesNoType } from "../../constant/const";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import CustomInput from "../../commonComponents/CustomInput";
 
 const QuestionRegistrationForm = () => {
-  const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+
+  const [form] = Form.useForm();
   const navigate = useNavigate();
+  const location = useLocation();
+  const key = location.state?.key;
+  const record = location.state?.record;
 
-  const questionUpdateElSelector = useSelector(
-    (state) => state.questionSlice?.questionUpdateEl
-  );
-
-  const dispatch = useDispatch();
-
+  // set value
   useEffect(() => {
-    if (questionUpdateElSelector) {
-      form.setFieldsValue(questionUpdateElSelector);
+    if (key === "UpdateKey") {
+      form.setFieldsValue(record);
     }
-  }, [questionUpdateElSelector, form]);
+  }, [record, key]);
 
   const onFinish = async (values) => {
     setLoading(true);
     values.status = 1;
-
-    if (questionUpdateElSelector) {
-      values.question_id = questionUpdateElSelector.question_id;
+    if (key === "UpdateKey") {
+      values.question_id = record?.question_id;
     }
-
     const res = await postData(
       getFormData(values),
-      questionUpdateElSelector
+      key === "UpdateKey"
         ? URLS.editQuestionsEntry.path
         : URLS.questionsEntry.path,
       { version: URLS.register.version }
     );
 
     if (res) {
-      setLoading(false);
-      dispatch(setQuestionListIsUpdated({ isUpdated: true }));
-
       if (res.data.success) {
         form.resetFields();
-        if (questionUpdateElSelector) {
-          navigate("/questions");
-        }
+        navigate("/questions");
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -66,15 +60,14 @@ const QuestionRegistrationForm = () => {
           </Button>
           <div className="text-d9 text-2xl w-full flex items-end justify-between">
             <div className="font-bold">
-              {questionUpdateElSelector ? "Update Question" : "Add Question"}
+              {key === "UpdateKey" ? "Update Question" : "Add Question"}
             </div>
             <div className="text-xs">All * marked fields are mandatory</div>
           </div>
         </div>
-
         <Divider className="bg-d9 h-2/3 mt-1" />
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
+          <CustomInput
             label="Question (English)"
             name="question_en"
             rules={[
@@ -83,73 +76,43 @@ const QuestionRegistrationForm = () => {
                 message: "Please enter the question in English",
               },
             ]}
-          >
-            <Input
-              placeholder="Enter question in English"
-              className="rounded-none"
-            />
-          </Form.Item>
-
-          <Form.Item label="Question (Hindi)" name="question_hi">
-            <Input
-              placeholder="Enter question in Hindi"
-              className="rounded-none"
-            />
-          </Form.Item>
-
+            placeholder="Enter question in English"
+          />
+          <CustomInput
+            label="Question (Hindi)"
+            name="question_hi"
+            placeholder="Enter question in Hindi"
+          />
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            <Form.Item
+            <CustomSelect
               label="Is Image"
               name="is_image"
               rules={[{ required: true, message: "Please select an option" }]}
-            >
-              <Select
-                placeholder="Select if image is required"
-                className="rounded-none"
-              >
-                <Select.Option value={0}>No</Select.Option>
-                <Select.Option value={1}>Yes</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
+              placeholder="Select if image is required"
+              options={yesNoType || []}
+            />
+            <CustomSelect
               label="Is Image On"
               name="is_image_on"
               rules={[{ required: true, message: "Please select an option" }]}
-            >
-              <Select
-                placeholder="Select if image is active"
-                className="rounded-none"
-              >
-                <Select.Option value={0}>No</Select.Option>
-                <Select.Option value={1}>Yes</Select.Option>
-              </Select>
-            </Form.Item>
-
-            <Form.Item
+              placeholder="Select if image is active"
+              options={yesNoType || []}
+            />
+            <CustomSelect
               label="Is Primary"
               name="is_primary"
               rules={[{ required: true, message: "Please select an option" }]}
-            >
-              <Select placeholder="Select if primary" className="rounded-none">
-                <Select.Option value={0}>No</Select.Option>
-                <Select.Option value={1}>Yes</Select.Option>
-              </Select>
-            </Form.Item>
+              placeholder="Select if primary"
+              options={yesNoType || []}
+            />
           </div>
-
-          <Form.Item
+          <CustomInput
+            type="textarea"
             label="Description"
             name="description"
             rules={[{ required: true, message: "Please enter a description" }]}
-          >
-            <Input.TextArea
-              rows={4}
-              placeholder="Enter description"
-              className="rounded-none"
-            />
-          </Form.Item>
-
+            placeholder="Enter description"
+          />
           <Form.Item>
             <div className="flex w-full justify-end">
               <Button
@@ -158,7 +121,7 @@ const QuestionRegistrationForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {questionUpdateElSelector ? "Update Question" : "Add Question"}
+                {key === "UpdateKey" ? "Update Question" : "Add Question"}
               </Button>
             </div>
           </Form.Item>

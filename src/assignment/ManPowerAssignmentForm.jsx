@@ -9,8 +9,6 @@ const ManPowerAssignmentForm = () => {
   const [loading, setLoading] = useState(false);
 
   const onFinish = (values) => {
-    console.log("Form Values:", values);
-
     // Save assignment data to local storage
     const localAssignments =
       JSON.parse(localStorage.getItem("assignments")) || [];

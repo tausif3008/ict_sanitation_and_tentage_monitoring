@@ -1,58 +1,58 @@
-import React from 'react';
-import { Table, Select, Button, Form, Tooltip, Divider } from 'antd';
-import { DownloadOutlined, CalendarOutlined } from '@ant-design/icons';
+import React from "react";
+import { Table, Select, Button, Form, Tooltip, Divider } from "antd";
+import { DownloadOutlined, CalendarOutlined } from "@ant-design/icons";
 
 const { Option } = Select;
 
 const columns = [
   {
-    title: 'Sr No',
-    dataIndex: 'srNo',
-    key: 'srNo',
+    title: "Sr No",
+    dataIndex: "srNo",
+    key: "srNo",
     width: 80,
   },
   {
-    title: 'Name',
-    dataIndex: 'name',
-    key: 'name',
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
   },
   {
-    title: 'User Type',
-    dataIndex: 'userType',
-    key: 'userType',
+    title: "User Type",
+    dataIndex: "userType",
+    key: "userType",
   },
   ...Array.from({ length: 31 }, (_, index) => ({
     title: index + 1,
     dataIndex: `day${index + 1}`,
     key: `day${index + 1}`,
     width: 40,
-    align: 'center',
+    align: "center",
     render: (text) => (
       <div className="flex justify-center items-center">
         {/* Example: Red circle for unavailable, green for available */}
         <Tooltip title={text}>
           <div
             className={`w-3 h-3 rounded-full ${
-              text === 'Available' ? 'bg-green-500' : 'bg-red-500'
+              text === "Available" ? "bg-green-500" : "bg-red-500"
             }`}
           />
         </Tooltip>
       </div>
     ),
-  }))
+  })),
 ];
 
 const data = [
   {
-    key: '1',
-    srNo: '1',
-    name: 'Ananya Reddy',
-    userType: 'Driver',
-    day1: 'Available',
-    day2: 'Unavailable',
-    day3: 'Available',
-    day4: '',
-    day5: '',
+    key: "1",
+    srNo: "1",
+    name: "Ananya Reddy",
+    userType: "Driver",
+    day1: "Available",
+    day2: "Unavailable",
+    day3: "Available",
+    day4: "",
+    day5: "",
     // Add similar fields for other days
   },
 ];
@@ -60,12 +60,10 @@ const data = [
 const MonthlyReport = () => {
   const handleDownloadPDF = () => {
     // Add PDF download logic here
-    console.log('Download PDF');
   };
 
   const handleDownloadExcel = () => {
     // Add Excel download logic here
-    console.log('Download Excel');
   };
 
   return (
@@ -116,12 +114,7 @@ const MonthlyReport = () => {
         </Form>
 
         <div className="flex justify-between mb-4">
-          <Button
-            type="default"
-            icon={<CalendarOutlined />}
-            className="mr-2"
-            onClick={() => console.log("Show Calendar View")}
-          >
+          <Button type="default" icon={<CalendarOutlined />} className="mr-2">
             Calendar View
           </Button>
           <div>

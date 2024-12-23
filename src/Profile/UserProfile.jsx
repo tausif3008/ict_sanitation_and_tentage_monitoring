@@ -61,7 +61,6 @@ const UserProfile = () => {
         const result = await response.json();
         if (result.success) {
           setCountries(result.data.countries || []);
-          console.log(result.data.countries, "countries");
         } else {
           message.error("Failed to load countries.");
         }

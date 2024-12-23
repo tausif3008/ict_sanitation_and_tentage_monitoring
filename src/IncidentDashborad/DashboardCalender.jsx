@@ -126,9 +126,7 @@ const columns = [
   },
 ];
 
-const onPanelChange = (value, mode) => {
-  console.log(value.format("YYYY-MM-DD"), mode);
-};
+const onPanelChange = (value, mode) => {};
 const localizer = momentLocalizer(moment);
 
 const DashboardCalender = () => {
@@ -188,9 +186,7 @@ const DashboardCalender = () => {
     };
   };
 
-  const onChange = (checkedValues) => {
-    console.log("checked = ", checkedValues);
-  };
+  const onChange = (checkedValues) => {};
 
   const { token } = theme.useToken();
   const wrapperStyle = {
