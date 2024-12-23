@@ -1,104 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
+import { Link } from "react-router-dom";
 import { EditOutlined, PlusOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Button, message, Collapse, notification, Row, Col, Form } from "antd";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import { setUpdateVendorEl, setVendorListIsUpdated } from "./vendorSlice";
-import { Link } from "react-router-dom";
-// import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getPdfExcelData } from "../asset/AssetsSlice";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-// import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
-// import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getValueLabel } from "../../constant/const";
 
-const columns = [
-  {
-    title: "Sr. No", // Asset main type
-    dataIndex: "sr",
-    key: "sr",
-    width: 70,
-  },
-  {
-    title: "Name",
-    dataIndex: "name",
-    key: "name",
-    width: 200,
-  },
-  {
-    title: "Email",
-    dataIndex: "email",
-    key: "email",
-    width: 250,
-  },
-
-  {
-    title: "Mobile No.",
-    dataIndex: "phone",
-    key: "phone",
-    width: 110,
-  },
-  // {
-  //   title: "Company",
-  //   dataIndex: "company",
-  //   key: "company",
-  //   width: 200,
-  // },
-  // {
-  //   title: "Pin",
-  //   dataIndex: "pin",
-  //   key: "pin",
-  // },
-  // {
-  //   title: "Country",
-  //   dataIndex: "country_name",
-  //   key: "country_name",
-  //   width: 100,
-  // },
-  {
-    title: "State",
-    dataIndex: "state_name",
-    key: "state_name",
-    width: 120,
-  },
-  {
-    title: "City",
-    dataIndex: "city_name",
-    key: "city_name",
-    width: 120,
-  },
-  {
-    title: "Address",
-    dataIndex: "address",
-    key: "address",
-    width: 300,
-  },
-  {
-    title: "Vendor Code",
-    dataIndex: "code",
-    key: "code",
-    width: 160,
-  },
-  {
-    title: "Action",
-    dataIndex: "action",
-    key: "action",
-    fixed: "right",
-    width: 170,
-  },
-];
-
 const VendorList = () => {
-  const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [details, setDetails] = useState({
@@ -107,10 +26,7 @@ const VendorList = () => {
     currentPage: 1,
   });
 
-  const isUpdatedSelector = useSelector(
-    (state) => state.vendorUpdateEl?.isUpdated
-  );
-
+  const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
@@ -122,7 +38,8 @@ const VendorList = () => {
       description: "Please enter some information to perform the search.",
     });
   };
-
+  const values = form.getFieldValue("user_type_id"); // Get all form values
+  const fileName = getValueLabel(values, [], "Vendor List");
   // fiter finish
   const onFinishForm = async (values) => {
     const searchParams = generateSearchQuery(values);
@@ -157,63 +74,131 @@ const VendorList = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
-
-      const list = data.users.map((el, index) => {
-        return {
-          ...el,
-
-          sr: index + 1,
-          action: (
-            <div className="flex gap-2">
-              <Button
-                className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-                key={el.name + index}
-                onClick={() => {
-                  dispatch(setUpdateVendorEl({ updateElement: el }));
-                  navigate("/vendor-registration");
-                }}
-              >
-                <EditOutlined></EditOutlined>
-              </Button>
-
-              <Link to={"/vendor/add-vendor-details/" + el.user_id}>
-                <Button
-                  className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-                  key={el.name + index}
-                >
-                  <PlusOutlined></PlusOutlined> Details
-                </Button>
-              </Link>
-            </div>
-          ),
-        };
-      });
-
       setDetails(() => {
         return {
-          list,
+          list: data.users,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentPage,
           totalRecords: data.paging[0].totalrecords,
         };
       });
     }
+    setLoading(false);
   };
 
   useEffect(() => {
     getDetails();
-    if (isUpdatedSelector) {
-      dispatch(setVendorListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector, searchQuery]);
+  }, [params, searchQuery]);
 
-  useEffect(() => {
-    dispatch(setUpdateVendorEl({ updateElement: null }));
-  }, []);
+  const columns = [
+    {
+      title: "Sr. No", // Asset main type
+      dataIndex: "sr",
+      key: "sr",
+      width: 70,
+    },
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      width: 200,
+    },
+    {
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: 250,
+    },
 
-  const values = form.getFieldValue("user_type_id"); // Get all form values
-  const fileName = getValueLabel(values, [], "Vendor List");
+    {
+      title: "Mobile No.",
+      dataIndex: "phone",
+      key: "phone",
+      width: 110,
+    },
+    // {
+    //   title: "Company",
+    //   dataIndex: "company",
+    //   key: "company",
+    //   width: 200,
+    // },
+    // {
+    //   title: "Pin",
+    //   dataIndex: "pin",
+    //   key: "pin",
+    // },
+    // {
+    //   title: "Country",
+    //   dataIndex: "country_name",
+    //   key: "country_name",
+    //   width: 100,
+    // },
+    {
+      title: "State",
+      dataIndex: "state_name",
+      key: "state_name",
+      width: 120,
+    },
+    {
+      title: "City",
+      dataIndex: "city_name",
+      key: "city_name",
+      width: 120,
+    },
+    {
+      title: "Address",
+      dataIndex: "address",
+      key: "address",
+      width: 300,
+    },
+    {
+      title: "Vendor Code",
+      dataIndex: "code",
+      key: "code",
+      width: 160,
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: 160,
+      render: (text, record) => (
+        <>
+          <div className="flex gap-2 justify-between">
+            <Button
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              onClick={() => {
+                navigate(`/vendor-registration`, {
+                  state: {
+                    key: "UpdateKey",
+                    record: record, // Pass the record as part of the state
+                  },
+                });
+              }}
+            >
+              <EditOutlined />
+            </Button>
+            <Link to={"/vendor/add-vendor-details/" + record?.user_id}>
+              <Button
+                className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
+                key={record?.id}
+              >
+                <PlusOutlined></PlusOutlined> Details
+              </Button>
+            </Link>
+          </div>
+        </>
+      ),
+    },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   fixed: "right",
+    //   width: 170,
+    // },
+  ];
 
   // pdf header
   const pdfHeader = [

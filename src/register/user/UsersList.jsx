@@ -176,7 +176,7 @@ const UserList = () => {
       dataIndex: "action",
       key: "action",
       fixed: "right",
-      width: 130,
+      width: 80,
       render: (text, record) => (
         <>
           <div className="flex justify-between">

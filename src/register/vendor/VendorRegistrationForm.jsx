@@ -1,62 +1,50 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
+import { useLocation, useNavigate } from "react-router";
 import { Form, Button, Divider } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
 import CountryStateCity from "../../commonComponents/CountryStateCity";
-import { setVendorListIsUpdated } from "./vendorSlice";
 import CustomInput from "../../commonComponents/CustomInput";
 
 const VendorRegistrationForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
-  const vendorUpdateElSelector = useSelector(
-    (state) => state.vendorSlice?.vendorUpdateEl
-  );
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (vendorUpdateElSelector) {
-      form.setFieldsValue(vendorUpdateElSelector);
-    }
-  }, [vendorUpdateElSelector, form]);
+  const location = useLocation();
+  const key = location.state?.key;
+  const record = location.state?.record;
 
   const onFinish = async (values) => {
     setLoading(true);
-
     values.status = 1;
     values.user_type_id = 8;
-
-    if (vendorUpdateElSelector) {
-      values.user_id = vendorUpdateElSelector.user_id;
+    if (key === "UpdateKey") {
+      values.user_id = record.user_id;
     }
-
     const res = await postData(
       getFormData(values),
-      vendorUpdateElSelector ? URLS.editUser.path : URLS.register.path,
+      key === "UpdateKey" ? URLS.editUser.path : URLS.register.path,
       {
         version: URLS.register.version,
       }
     );
-
     if (res) {
-      setLoading(false);
       if (res.data.success) {
         form.resetFields();
-        dispatch(setVendorListIsUpdated({ isUpdated: true }));
-
-        if (vendorUpdateElSelector) {
-          navigate("/vendor");
-        }
+        navigate("/vendor");
       }
     }
+    setLoading(false);
   };
+
+  // set value
+  useEffect(() => {
+    if (key === "UpdateKey") {
+      form.setFieldsValue(record);
+    }
+  }, [record, key]);
 
   return (
     <div className="mt-3">
@@ -70,19 +58,16 @@ const VendorRegistrationForm = () => {
           >
             <ArrowLeftOutlined />
           </Button>
-
           <div className="text-d9 text-2xl w-full flex items-end justify-between ">
             <div className="font-bold">
-              {vendorUpdateElSelector
+              {key === "UpdateKey"
                 ? "Update Vendor Details"
                 : "Vendor Registration"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
           </div>
         </div>
-
         <Divider className="bg-d9 h-2/3 mt-1" />
-
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-5">
             <CustomInput
@@ -122,19 +107,18 @@ const VendorRegistrationForm = () => {
             />
             <CountryStateCity
               form={form}
-              country_id={vendorUpdateElSelector?.country_id}
-              state_id={vendorUpdateElSelector?.state_id}
-              city_id={vendorUpdateElSelector?.city_id}
+              country_id={record?.country_id}
+              state_id={record?.state_id}
+              city_id={record?.city_id}
             />
             <CustomInput
               type="textarea"
               label={<div className="font-semibold">Address</div>}
               name="address"
-              className="mb-6"
               rules={[{ required: true, message: "Please enter the address" }]}
               placeholder={"Address"}
             />
-            {!vendorUpdateElSelector && (
+            {!key === "UpdateKey" && (
               <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
@@ -163,7 +147,7 @@ const VendorRegistrationForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {vendorUpdateElSelector ? "Update" : "Register"}
+                {key === "UpdateKey" ? "Update" : "Register"}
               </Button>
             </Form.Item>
           </div>
