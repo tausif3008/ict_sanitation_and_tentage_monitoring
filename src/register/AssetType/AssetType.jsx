@@ -83,37 +83,37 @@ const AssetTypeList = () => {
       const data = res.data;
       setLoading(false);
 
-      const list = data.assettypes.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-          action: (
-            <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
-              // onClick={() => {
-              //   dispatch(setUpdateAssetEl({ updateElement: el }));
-              //   navigate("/asset-type-registration");
-              // }}
-              onClick={() => {
-                dispatch(setUpdateAssetEl({ updateElement: el }));
-                navigate("/asset-type-registration", {
-                  state: {
-                    key: "UpdateKey",
-                    record: el, // Pass the record as part of the state
-                  },
-                });
-              }}
-            >
-              <EditOutlined></EditOutlined>
-            </Button>
-          ),
-        };
-      });
+      // const list = data.assettypes.map((el, index) => {
+      //   return {
+      //     ...el,
+      //     sr: index + 1,
+      //     action: (
+      //       <Button
+      //         className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
+      //         key={el.name + index}
+      //         // onClick={() => {
+      //         //   dispatch(setUpdateAssetEl({ updateElement: el }));
+      //         //   navigate("/asset-type-registration");
+      //         // }}
+      //         onClick={() => {
+      //           dispatch(setUpdateAssetEl({ updateElement: el }));
+      //           navigate("/asset-type-registration", {
+      //             state: {
+      //               key: "UpdateKey",
+      //               record: el, // Pass the record as part of the state
+      //             },
+      //           });
+      //         }}
+      //       >
+      //         <EditOutlined></EditOutlined>
+      //       </Button>
+      //     ),
+      //   };
+      // });
 
       setDetails(() => {
         return {
-          list,
+          list: data.assettypes,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentpage,
           totalRecords: data.paging[0].totalrecords,
@@ -264,8 +264,34 @@ const AssetTypeList = () => {
       dataIndex: "action",
       key: "action",
       fixed: "right",
-      width: 100,
+      width: 80,
+      render: (text, record) => (
+        <>
+          <div className="flex justify-between">
+            <Button
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              onClick={() => {
+                navigate("/asset-type-registration", {
+                  state: {
+                    key: "UpdateKey",
+                    record: record, // Pass the record as part of the state
+                  },
+                });
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </div>
+        </>
+      ),
     },
+    // {
+    //   title: "Action",
+    //   dataIndex: "action",
+    //   key: "action",
+    //   fixed: "right",
+    //   width: 100,
+    // },
   ];
 
   const questionsColumns = [

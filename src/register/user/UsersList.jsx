@@ -197,13 +197,6 @@ const UserList = () => {
         </>
       ),
     },
-    // {
-    //   title: "Action",
-    //   dataIndex: "action",
-    //   key: "action",
-    //   fixed: "right",
-    //   width: 80,
-    // },
   ];
 
   // pdf header
