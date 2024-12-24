@@ -8,6 +8,9 @@ import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
 import { useDispatch } from "react-redux";
 import { deleteSupervisorSectorAllocation } from "./Slice/vendorSectorSlice";
+import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
+import { getValueLabel } from "../../constant/const";
+import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
 
 // sector allocation
 const VendorSectorAllocation = () => {
@@ -25,6 +28,7 @@ const VendorSectorAllocation = () => {
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { UserListDrop } = UserTypeSelector(); // user type list
 
   const handleCancel = () => {
     setViewDeleteModal(false);
@@ -105,6 +109,11 @@ const VendorSectorAllocation = () => {
     getUsers(); // users
   }, [params, searchQuery]);
 
+  useEffect(() => {
+    const uri = URLS?.allUserType?.path;
+    dispatch(getUserTypeList(uri)); //  user type
+  }, []);
+
   const columns = [
     {
       title: "Sr.No", // Asset main type
@@ -116,6 +125,14 @@ const VendorSectorAllocation = () => {
       title: "Supervisor Name",
       dataIndex: "supervisor_name",
       key: "supervisor_name",
+    },
+    {
+      title: "User Type",
+      dataIndex: "user_type_id",
+      key: "user_type_id",
+      render: (text) => {
+        return text ? getValueLabel(text, UserListDrop) : "User Type";
+      },
     },
     // {
     //   title: "Email",
