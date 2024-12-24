@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Select, Tooltip, Button, Form } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -36,6 +36,16 @@ const ToiletDetails = () => {
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
+  const userSectorArray = sessionData?.allocatedsectors || [];
+
+  const SectorArray = useMemo(() => {
+    return (
+      SectorListDrop?.filter((obj1) =>
+        userSectorArray?.some((obj2) => obj2?.sector_id === obj1?.value)
+      ) || []
+    );
+  }, [SectorListDrop, userSectorArray]);
 
   // Reset the form
   const handleReset = () => {
@@ -53,9 +63,6 @@ const ToiletDetails = () => {
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.question_id && { question_id: values?.question_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
-      ...(userRoleId === "9" && {
-        sector_id: sessionData?.allocatedsectors?.[0]?.sector_id,
-      }),
     };
     const formData = await getFormData(finalValues);
     dispatch(getSanitationDashData(formData));
@@ -71,10 +78,11 @@ const ToiletDetails = () => {
       date: newDate,
       question_id: 1,
       ...(userRoleId === "9" && {
-        sector_id: sessionData?.allocatedsectors?.[0]?.sector_id,
+        sector_id: userSectorId,
       }),
     };
     form.setFieldValue("question_id", "1");
+    userRoleId === "9" && form.setFieldValue("sector_id", userSectorId);
     const formData = await getFormData(finalData);
     dispatch(getSanitationDashData(formData));
   };
@@ -88,7 +96,8 @@ const ToiletDetails = () => {
   useEffect(() => {
     todayData(); // today data
     dispatch(getVendorList()); // vendor details
-    userRoleId != "9" && dispatch(getSectorsList()); // all sectors
+    dispatch(getSectorsList()); // all sectors
+    // userRoleId != "9" && dispatch(getSectorsList()); // all sectors
     dispatch(getQuestionList()); // get question
   }, []);
 
@@ -132,14 +141,13 @@ const ToiletDetails = () => {
               },
             ]}
           />
-          {userRoleId != "9" && (
-            <CustomSelect
-              name={"sector_id"}
-              label={`${dict?.select_sector[lang]}`}
-              placeholder={`${dict?.select_sector[lang]}`}
-              options={SectorListDrop || []}
-            />
-          )}
+          <CustomSelect
+            name={"sector_id"}
+            allowClear={userRoleId === "9" ? false : true}
+            label={`${dict?.select_sector[lang]}`}
+            placeholder={`${dict?.select_sector[lang]}`}
+            options={userRoleId === "9" ? SectorArray : SectorListDrop || []}
+          />
           <CustomSelect
             name={"vendor_id"}
             label={`${dict?.select_vendor[lang]}`}
