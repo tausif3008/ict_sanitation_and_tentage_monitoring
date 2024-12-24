@@ -1,12 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import {
   Collapse,
   Form,
-  Input,
   Button,
-  Select,
   notification,
   Row,
   Col,
@@ -24,6 +22,9 @@ import InspectionReportSelector from "./Slice/InspectionReportSelector";
 import { getInspectionReportData } from "./Slice/InspectionReportSlice";
 import { getFormData } from "../../urils/getFormData";
 import ExportToExcel from "../ExportToExcel";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import CustomSelect from "../../commonComponents/CustomSelect";
 
 const InspectionReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -46,6 +47,7 @@ const InspectionReports = () => {
     UnitCount: 0,
   });
   const { InspectionReport_data, loading } = InspectionReportSelector(); // inspectation report data
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
   const dispatch = useDispatch();
   const params = useParams();
@@ -66,6 +68,20 @@ const InspectionReports = () => {
   const to_date_name = dayjs(form.getFieldValue("to_date")).format(
     "DD-MMM-YYYY"
   );
+
+  const userRoleId = localStorage.getItem("role_id");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
+  const userSectorArray = sessionData?.allocatedsectors || [];
+
+  const SectorArray = useMemo(() => {
+    return (
+      SectorListDrop?.filter((obj1) =>
+        userSectorArray?.some((obj2) => obj2?.sector_id === obj1?.value)
+      ) || []
+    );
+  }, [SectorListDrop, userSectorArray]);
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -99,6 +115,11 @@ const InspectionReports = () => {
     setExcelData([]);
     form.resetFields();
     setSearchQuery("&");
+    getTodayData();
+  };
+
+  const getTodayData = () => {
+    userRoleId === "9" && form.setFieldValue("sector_id", userSectorId);
   };
 
   const disabledDate = (current) => {
@@ -128,6 +149,7 @@ const InspectionReports = () => {
     const perPage = rrr.get("per_page"); // "50"
 
     const finalData = {
+      ...(searchQuery?.sector_id && { sector_id: searchQuery?.sector_id }),
       form_date: searchQuery?.form_date,
       to_date: searchQuery?.to_date,
       date_format: "Date Range",
@@ -212,6 +234,11 @@ const InspectionReports = () => {
       setExcelData(myexcelData);
     }
   }, [InspectionReport_data]);
+
+  useEffect(() => {
+    dispatch(getSectorsList()); // all sectors
+    getTodayData();
+  }, []);
 
   const columns = [
     {
@@ -323,27 +350,14 @@ const InspectionReports = () => {
                 >
                   <Row gutter={[16, 16]} align="middle">
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <Form.Item
+                      <CustomSelect
                         name={"date_format"}
                         label={"Select Date Type"}
-                      >
-                        <Select
-                          placeholder="Select Date Type"
-                          className="rounded-none"
-                          onSelect={handleDateSelect}
-                        >
-                          {dateWeekOptions?.map((option) => (
-                            <Select.Option
-                              key={option?.value}
-                              value={option?.value}
-                            >
-                              {option?.label}
-                            </Select.Option>
-                          ))}
-                        </Select>
-                      </Form.Item>
+                        placeholder={"Select Date Type"}
+                        onSelect={handleDateSelect}
+                        options={dateWeekOptions || []}
+                      />{" "}
                     </Col>
-
                     {showDateRange && (
                       <>
                         <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
@@ -411,6 +425,19 @@ const InspectionReports = () => {
                         </Col>
                       </>
                     )}
+                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"sector_id"}
+                        allowClear={userRoleId === "9" ? false : true}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        options={
+                          userRoleId === "9"
+                            ? SectorArray
+                            : SectorListDrop || []
+                        }
+                      />{" "}
+                    </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button

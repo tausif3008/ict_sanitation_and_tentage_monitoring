@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import moment from "moment";
@@ -28,6 +28,8 @@ import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../ExportExcelFuntion";
 // import { ExportPdfFunction } from "../ExportPdfFunction";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -46,6 +48,7 @@ const IncidentReports = () => {
   const { loading, IncidentReport_data } = IncidentReportSelector(); // incident selector
   const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
@@ -62,6 +65,18 @@ const IncidentReports = () => {
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
+  const userSectorArray = sessionData?.allocatedsectors || [];
+
+  const SectorArray = useMemo(() => {
+    return (
+      SectorListDrop?.filter((obj1) =>
+        userSectorArray?.some((obj2) => obj2?.sector_id === obj1?.value)
+      ) || []
+    );
+  }, [SectorListDrop, userSectorArray]);
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -100,6 +115,11 @@ const IncidentReports = () => {
     form.resetFields();
     setSearchQuery("&");
     setShowDateRange(false);
+    getTodayData();
+  };
+
+  const getTodayData = () => {
+    userRoleId === "9" && form.setFieldValue("sector_id", userSectorId);
   };
 
   // handle asset main type
@@ -155,7 +175,9 @@ const IncidentReports = () => {
     if (searchQuery) {
       uri = uri + searchQuery;
     }
-
+    if (userRoleId === "9" && !uri.includes(`sector_id=${userSectorId}`)) {
+      uri = uri + `sector_id=${userSectorId}`;
+    }
     dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
   };
 
@@ -194,6 +216,8 @@ const IncidentReports = () => {
   useEffect(() => {
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    dispatch(getSectorsList()); // all sectors
+    getTodayData();
   }, []);
 
   useEffect(() => {
@@ -308,9 +332,11 @@ const IncidentReports = () => {
   const exportToFile = async (isExcel) => {
     try {
       const url = URLS.incidencesReport.path + "?page=1&per_page=5000";
-      const res = await dispatch(
-        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
-      );
+      let newUrl = `${url}${searchQuery ? searchQuery : ""}`;
+      if (userRoleId === "9" && !newUrl.includes(`sector_id=${userSectorId}`)) {
+        newUrl = newUrl + `&sector_id=${userSectorId}`;
+      }
+      const res = await dispatch(getPdfExcelData(newUrl));
       if (!res?.data?.incidences) {
         throw new Error("No incidences found in the response data.");
       }
@@ -520,6 +546,19 @@ const IncidentReports = () => {
                         </Col>
                       </>
                     )}
+                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"sector_id"}
+                        allowClear={userRoleId === "9" ? false : true}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        options={
+                          userRoleId === "9"
+                            ? SectorArray
+                            : SectorListDrop || []
+                        }
+                      />{" "}
+                    </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
