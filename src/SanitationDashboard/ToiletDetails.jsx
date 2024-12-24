@@ -34,7 +34,9 @@ const ToiletDetails = () => {
   const toiletData = assetData?.asset_types || [];
 
   const userRoleId = localStorage.getItem("role_id");
-  // console.log("userRoleId", typeof userRoleId);
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+
   // Reset the form
   const handleReset = () => {
     form.resetFields();
@@ -51,6 +53,9 @@ const ToiletDetails = () => {
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.question_id && { question_id: values?.question_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+      ...(userRoleId === "9" && {
+        sector_id: sessionData?.allocatedsectors?.[0]?.sector_id,
+      }),
     };
     const formData = await getFormData(finalValues);
     dispatch(getSanitationDashData(formData));
@@ -65,6 +70,9 @@ const ToiletDetails = () => {
     const finalData = {
       date: newDate,
       question_id: 1,
+      ...(userRoleId === "9" && {
+        sector_id: sessionData?.allocatedsectors?.[0]?.sector_id,
+      }),
     };
     form.setFieldValue("question_id", "1");
     const formData = await getFormData(finalData);
@@ -80,7 +88,7 @@ const ToiletDetails = () => {
   useEffect(() => {
     todayData(); // today data
     dispatch(getVendorList()); // vendor details
-    dispatch(getSectorsList()); // all sectors
+    userRoleId != "9" && dispatch(getSectorsList()); // all sectors
     dispatch(getQuestionList()); // get question
   }, []);
 
@@ -124,12 +132,14 @@ const ToiletDetails = () => {
               },
             ]}
           />
-          <CustomSelect
-            name={"sector_id"}
-            label={`${dict?.select_sector[lang]}`}
-            placeholder={`${dict?.select_sector[lang]}`}
-            options={SectorListDrop || []}
-          />
+          {userRoleId != "9" && (
+            <CustomSelect
+              name={"sector_id"}
+              label={`${dict?.select_sector[lang]}`}
+              placeholder={`${dict?.select_sector[lang]}`}
+              options={SectorListDrop || []}
+            />
+          )}
           <CustomSelect
             name={"vendor_id"}
             label={`${dict?.select_vendor[lang]}`}
