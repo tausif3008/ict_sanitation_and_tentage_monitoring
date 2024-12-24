@@ -45,7 +45,7 @@ export const sanitationDash_param = [
 ];
 export const tentageDash_param = ["1", "2", "3", "4"]; // vendor view permission added to the navbar
 // export const tentageDash_param = ["1", "2", "3", "4", "8"];
-export const wasteDash_param = ["1", "2", "3", "4", "9"]; // vehicle
+export const wasteDash_param = ["1", "2", "3", "4", "5", "9"]; // vehicle
 export const incidentDash_param = ["1", "2", "3", "4"];
 export const vendorDash_param = ["8"]; // vendor dashboard
 export const SLADash_param = ["1", "2", "3", "4"];
@@ -60,15 +60,15 @@ export const masterData_param = ["1", "2"];
 export const DMS_param = ["1", "2", "3", "4"];
 
 // Reports
-export const reports_param = ["1", "2", "3", "4", "8", "9"];
-export const monitoring_reports = ["1", "2", "3", "4", "8"];
-export const sector_wise_reports = ["1", "2", "3", "4", "8"];
-export const circle_wise_reports = ["1", "2", "3", "4"];
-export const vendor_wise_reports = ["1", "2", "3", "4"];
-export const incident_reports = ["1", "2", "3", "4", "8", "9"];
-export const inspections_reports = ["1", "2", "3", "4", "9"];
-export const gsd_wise_regi_reports = ["1", "2", "3", "4"];
-export const vendor_wise_regi_reports = ["1", "2", "3", "4"];
+export const reports_param = ["1", "2", "3", "4", "5", "8", "9"];
+export const monitoring_reports = ["1", "2", "3", "4", "5", "8"];
+export const sector_wise_reports = ["1", "2", "3", "4", "5", "8"];
+export const circle_wise_reports = ["1", "2", "3", "4", "5"];
+export const vendor_wise_reports = ["1", "2", "3", "4", "5"];
+export const incident_reports = ["1", "2", "3", "4", "5", "8", "9"];
+export const inspections_reports = ["1", "2", "3", "4", "5", "9"];
+export const gsd_wise_regi_reports = ["1", "2", "3", "4", "5"];
+export const vendor_wise_regi_reports = ["1", "2", "3", "4", "5"];
 
 // asset type delete permission
 export const asset_delete_permisssion = ["1", "2"];
