@@ -16,6 +16,7 @@ import {
   inspections_reports,
   masterData_param,
   monitoring_reports,
+  reports_param,
   sanitationDash_param,
   sector_wise_reports,
   SLADash_param,
@@ -691,14 +692,15 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
               )} */}
-
-              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <DropDown
-                  text="black"
-                  items={reports_items(lang, dict)}
-                  name="Reports"
-                ></DropDown>
-              </div>
+              {reports_param.includes(userRoleId) && (
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  <DropDown
+                    text="black"
+                    items={reports_items(lang, dict)}
+                    name="Reports"
+                  ></DropDown>
+                </div>
+              )}
 
               {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
@@ -824,14 +826,15 @@ const Navbar = ({ lang, setLang }) => {
                     name="Complaince"
                   ></DropDown>
                 </div> */}
-
-                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                  <DropDown
-                    text="black"
-                    items={reports_items(lang, dict)}
-                    name="Reports"
-                  ></DropDown>
-                </div>
+                {reports_param.includes(userRoleId) && (
+                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    <DropDown
+                      text="black"
+                      items={reports_items(lang, dict)}
+                      name="Reports"
+                    ></DropDown>
+                  </div>
+                )}
 
                 <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown

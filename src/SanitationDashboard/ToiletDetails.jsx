@@ -33,6 +33,8 @@ const ToiletDetails = () => {
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
   const toiletData = assetData?.asset_types || [];
 
+  const userRoleId = localStorage.getItem("role_id");
+  // console.log("userRoleId", typeof userRoleId);
   // Reset the form
   const handleReset = () => {
     form.resetFields();
