@@ -25,6 +25,7 @@ import ExportToExcel from "../ExportToExcel";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const InspectionReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -135,7 +136,7 @@ const InspectionReports = () => {
       setShowDateRange(true);
     } else {
       form.setFieldsValue({
-        from_date: null,
+        form_date: null,
         to_date: null,
       });
       setShowDateRange(false);
@@ -356,57 +357,59 @@ const InspectionReports = () => {
                         placeholder={"Select Date Type"}
                         onSelect={handleDateSelect}
                         options={dateWeekOptions || []}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Date Type",
+                          },
+                        ]}
                       />{" "}
                     </Col>
                     {showDateRange && (
                       <>
-                        <Col key="from_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                          <CustomDatepicker
                             name={"form_date"}
                             label={"From Date"}
+                            className="w-full"
+                            placeholder={"Date"}
                             rules={[
                               {
                                 required: true,
                                 message: "Please select a start date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              format="DD/MM/YYYY"
-                              onChange={(date) => {
-                                const dayjsObjectFrom = dayjs(date?.$d);
-                                const startDate = dayjsObjectFrom;
+                            onChange={(date) => {
+                              const dayjsObjectFrom = dayjs(date?.$d);
+                              const startDate = dayjsObjectFrom;
 
-                                const dayjsObjectTo = dayjs(
-                                  form.getFieldValue("to_date")?.$d
-                                );
-                                const endDate = dayjsObjectTo;
+                              const dayjsObjectTo = dayjs(
+                                form.getFieldValue("to_date")?.$d
+                              );
+                              const endDate = dayjsObjectTo;
 
-                                // Condition 1: If startDate is after endDate, set end_time to null
-                                if (startDate.isAfter(endDate)) {
-                                  form.setFieldValue("to_date", null);
-                                }
+                              // Condition 1: If startDate is after endDate, set end_time to null
+                              if (startDate.isAfter(endDate)) {
+                                form.setFieldValue("to_date", null);
+                              }
 
-                                // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                                const daysDifference = endDate.diff(
-                                  startDate,
-                                  "days"
-                                );
-                                if (daysDifference > 7) {
-                                  form.setFieldValue("to_date", null);
-                                } else {
-                                  // If the difference is within the allowed range, you can keep the value or process further if needed.
-                                }
+                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                              const daysDifference = endDate.diff(
+                                startDate,
+                                "days"
+                              );
+                              if (daysDifference > 7) {
+                                form.setFieldValue("to_date", null);
+                              } else {
+                                // If the difference is within the allowed range, you can keep the value or process further if needed.
+                              }
 
-                                setStartDate(startDate.format("YYYY-MM-DD"));
-                              }}
-                            />
-                          </Form.Item>
+                              setStartDate(startDate.format("YYYY-MM-DD"));
+                            }}
+                          />
                         </Col>
-
                         <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <Form.Item
+                          <CustomDatepicker
                             name={"to_date"}
                             label={"To Date"}
                             rules={[
@@ -415,13 +418,10 @@ const InspectionReports = () => {
                                 message: "Please select a end date!",
                               },
                             ]}
-                          >
-                            <DatePicker
-                              className="rounded-none w-full"
-                              disabledDate={disabledDate}
-                              format="DD/MM/YYYY"
-                            />
-                          </Form.Item>
+                            className="w-full"
+                            placeholder={"Date"}
+                            disabledDate={disabledDate}
+                          />
                         </Col>
                       </>
                     )}
