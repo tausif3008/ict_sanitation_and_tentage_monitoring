@@ -6,20 +6,12 @@ import URLS from "../../urils/URLS";
 const initialState = {
   loading: false,
   name: null,
-  questionUpdateEl: null,
-  isUpdated: false,
 };
 
 const questionSlice = createSlice({
   name: "questionSlice",
   initialState,
   reducers: {
-    setUpdateQuestionEl: (state, action) => {
-      state.questionUpdateEl = action.payload.updateElement;
-    },
-    setQuestionListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -42,11 +34,5 @@ export const getQuestionList = () => async (dispatch) => {
   }
 };
 
-export const {
-  setUpdateQuestionEl,
-  setQuestionListIsUpdated,
-  setLoading,
-  postSuccess,
-} = questionSlice.actions;
-
+export const { setLoading, postSuccess } = questionSlice.actions;
 export default questionSlice.reducer;

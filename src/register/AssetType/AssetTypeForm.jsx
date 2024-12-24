@@ -6,11 +6,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
-import {
-  getAssetMainTypes,
-  getSLATypes,
-  setAssetTypeListIsUpdated,
-} from "./AssetTypeSlice";
+import { getAssetMainTypes, getSLATypes } from "./AssetTypeSlice";
 import AssetTypeSelectors from "./assetTypeSelectors";
 import { getQuestionList } from "../questions/questionSlice";
 import QuestionSelector from "../questions/questionSelector";
@@ -58,13 +54,9 @@ const AssetTypeForm = () => {
       }
     );
 
-    if (res) {
-      dispatch(setAssetTypeListIsUpdated({ isUpdated: true }));
-
-      if (res.data.success) {
-        form.resetFields();
-        navigate("/asset-type-list");
-      }
+    if (res?.data?.success) {
+      form.resetFields();
+      navigate("/asset-type-list");
     }
     setLoading(false);
   };

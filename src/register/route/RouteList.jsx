@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { setRouteListIsUpdated, setUpdateRoute } from "./routeSlice";
 import RouteSelector from "./routeSelector";
 
 const columns = [
@@ -55,20 +53,13 @@ const columns = [
 
 const RouteList = () => {
   const navigate = useNavigate();
-
-  // const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
 
-  const dispatch = useDispatch();
-  const { RouteList, loading } = RouteSelector();
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.vehicleUpdateEl?.isUpdated
-  );
+  const { loading } = RouteSelector();
 
   const params = useParams();
 
@@ -98,7 +89,6 @@ const RouteList = () => {
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
               onClick={() => {
-                dispatch(setUpdateRoute({ updateElement: el }));
                 navigate("/add-route");
               }}
             >
@@ -121,14 +111,7 @@ const RouteList = () => {
 
   useEffect(() => {
     getUsers();
-    if (isUpdatedSelector) {
-      dispatch(setRouteListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector]);
-
-  useEffect(() => {
-    dispatch(setUpdateRoute({ updateElement: null }));
-  }, []);
+  }, [params]);
 
   return (
     <div className="">

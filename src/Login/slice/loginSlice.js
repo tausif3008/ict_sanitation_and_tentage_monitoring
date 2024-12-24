@@ -35,7 +35,7 @@ export const logOutUser = () => async (dispatch) => {
   try {
     dispatch(setLoading(true));
     const res = await axiosInstance.delete(`${URLS.out.path}`);
-    return res
+    return res;
   } catch (error) {
     console.error("In log out error", error);
   } finally {

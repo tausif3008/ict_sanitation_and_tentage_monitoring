@@ -1,60 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Divider } from "antd";
+import React, { useState } from "react";
+import { Form, Input, Button, Divider } from "antd";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
 import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
-import { setRouteListIsUpdated } from "./assignRouteSlice";
 
 const AssignRouteForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const assignRouteUpdateElSelector = useSelector(
-    (state) => state.assignRouteSlice?.routeUpdate
-  );
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (assignRouteUpdateElSelector) {
-      form.setFieldsValue(assignRouteUpdateElSelector);
-    }
-  }, [assignRouteUpdateElSelector, form]);
-
   const onFinish = async (values) => {
     setLoading(true);
 
     values.status = 1;
 
-    if (assignRouteUpdateElSelector) {
-      values.vehicle_id = assignRouteUpdateElSelector.vehicle_id;
-    }
+    // if (assignRouteUpdateElSelector) {
+    //   values.vehicle_id = assignRouteUpdateElSelector.vehicle_id;
+    // }
 
     const res = await postData(
       getFormData(values),
-      assignRouteUpdateElSelector ? URLS.editAssignRoute.path : URLS.assignRoute.path,
+      false ? URLS.editAssignRoute.path : URLS.assignRoute.path,
       {
         version: URLS.assignRoute.version,
       }
     );
 
-    if (res) {
-      setLoading(false);
-        dispatch(setRouteListIsUpdated({ isUpdated: true }));
-
-      if (res.data.success) {
-        form.resetFields();
-
-        if (assignRouteUpdateElSelector) {
-          navigate("/assigned-routelist");
-        }
-      }
+    if (res?.data?.success) {
+      form.resetFields();
+      navigate("/assigned-routelist");
     }
+    setLoading(false);
   };
 
   return (
@@ -71,7 +50,7 @@ const AssignRouteForm = () => {
           </Button>
           <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
             <div className="font-bold">
-              {assignRouteUpdateElSelector ? "Update Route" : "Assign Route"}
+              {false ? "Update Route" : "Assign Route"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
           </div>
@@ -106,7 +85,7 @@ const AssignRouteForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {assignRouteUpdateElSelector ? "Update Route" : "Assign Route"}
+                {false ? "Update Route" : "Assign Route"}
               </Button>
             </Form.Item>
           </div>

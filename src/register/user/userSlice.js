@@ -4,8 +4,6 @@ import axiosInstance from "../../Axios/commonAxios";
 import URLS from "../../urils/URLS";
 
 const initialState = {
-  userUpdateEl: null,
-  isUpdated: false,
   loading: false,
   nameList: null,
 };
@@ -14,12 +12,6 @@ const userSlice = createSlice({
   name: "userSlice",
   initialState: initialState,
   reducers: {
-    setUpdateUserEl: (state, action) => {
-      state.userUpdateEl = action.payload.updateElement;
-    },
-    setUserListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -44,10 +36,5 @@ export const getUsersList = () => async (dispatch) => {
   }
 };
 
-export const {
-  setUpdateUserEl,
-  setUserListIsUpdated,
-  setLoading,
-  postSuccess,
-} = userSlice.actions;
+export const { setLoading, postSuccess } = userSlice.actions;
 export default userSlice.reducer;

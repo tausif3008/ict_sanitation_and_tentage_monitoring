@@ -1,59 +1,38 @@
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Select, Divider } from "antd";
-import { postData } from "../../Fetch/Axios";
-import URLS from "../../urils/URLS";
-import { getFormData } from "../../urils/getFormData";
+// import { postData } from "../../Fetch/Axios";
+// import URLS from "../../urils/URLS";
+// import { getFormData } from "../../urils/getFormData";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router";
-import { useDispatch, useSelector } from "react-redux";
-// import { setVehicleListIsUpdated } from "./vehicleSlice";
 
 const AddRouteForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const vehicleUpdateElSelector = useSelector(
-    (state) => state.vehicleSlice?.vehicleUpdateEl
-  );
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    if (vehicleUpdateElSelector) {
-      form.setFieldsValue(vehicleUpdateElSelector);
-    }
-  }, [vehicleUpdateElSelector, form]);
-
   const onFinish = async (values) => {
     setLoading(true);
 
     values.status = 1;
 
-    if (vehicleUpdateElSelector) {
-      values.vehicle_id = vehicleUpdateElSelector.vehicle_id;
-    }
+    // if (vehicleUpdateElSelector) {
+    //   values.vehicle_id = vehicleUpdateElSelector.vehicle_id;
+    // }
 
-    const res = await postData(
-      getFormData(values),
-      vehicleUpdateElSelector ? URLS.editVehicle.path : URLS.addVehicle.path,
-      {
-        version: URLS.addVehicle.version,
-      }
-    );
+    // const res = await postData(
+    //   getFormData(values),
+    //   vehicleUpdateElSelector ? URLS.editVehicle.path : URLS.addVehicle.path,
+    //   {
+    //     version: URLS.addVehicle.version,
+    //   }
+    // );
 
-    if (res) {
-      setLoading(false);
-      //   dispatch(setVehicleListIsUpdated({ isUpdated: true }));
-
-      if (res.data.success) {
-        form.resetFields();
-
-        if (vehicleUpdateElSelector) {
-          navigate("/route-list");
-        }
-      }
-    }
+    // if (res?.data?.success) {
+    //   form.resetFields();
+    //   navigate("/route-list");
+    // }
+    setLoading(false);
   };
 
   return (
@@ -70,7 +49,7 @@ const AddRouteForm = () => {
           </Button>
           <div className="text-d9 text-2xl  w-full flex items-end justify-between ">
             <div className="font-bold">
-              {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
+              {false ? "Update Route" : "Add Route"}
             </div>
             <div className="text-xs">All * marks fields are mandatory</div>
           </div>
@@ -125,7 +104,7 @@ const AddRouteForm = () => {
                 htmlType="submit"
                 className="w-fit rounded-none bg-5c"
               >
-                {vehicleUpdateElSelector ? "Update Route" : "Add Route"}
+                {false ? "Update Route" : "Add Route"}
               </Button>
             </Form.Item>
           </div>

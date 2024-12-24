@@ -1,10 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-// import { revertAll } from "@/store/actions";
-// import axiosInstance from "@/configs/https";
-// import showAlert from "@/constant/alert";
 import { revertAll } from "../../Redux/action";
 import axiosInstance from "../../Axios/commonAxios";
-import URLS from "../../urils/URLS";
 
 const initialState = {
   loading: false,

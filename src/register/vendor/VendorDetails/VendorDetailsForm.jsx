@@ -11,7 +11,6 @@ import {
 import { postData } from "../../../Fetch/Axios";
 import URLS from "../../../urils/URLS";
 import { getFormData } from "../../../urils/getFormData";
-import { setVendorDetailsListIsUpdated } from "./vendorDetailsSlice";
 import { getParkingData } from "../../parking/parkingSlice";
 import ParkingSelector from "../../parking/parkingSelector";
 import { getValueLabel } from "../../../constant/const";
@@ -281,13 +280,11 @@ const VendorDetailsForm = () => {
       }
     );
 
-    if (res) {
-      if (res.data.success) {
-        form.resetFields();
-        dispatch(setVendorDetailsListIsUpdated({ isUpdated: true }));
-        navigate("/vendor/add-vendor-details/" + params.id);
-      }
+    if (res?.data?.success) {
+      form.resetFields();
+      navigate("/vendor/add-vendor-details/" + params.id);
     }
+
     setLoading(false);
   };
 

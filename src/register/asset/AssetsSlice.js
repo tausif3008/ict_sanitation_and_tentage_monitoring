@@ -1,11 +1,8 @@
-// slices/counterSlice.js
 import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../Redux/action";
 import axiosInstance from "../../Axios/commonAxios";
 
 const initialState = {
-  assetUpdateEl: null,
-  isUpdated: false,
   loading: false,
   name: null,
 };
@@ -14,12 +11,6 @@ const assetsSlice = createSlice({
   name: "assetsSlice",
   initialState,
   reducers: {
-    setUpdateAssetEl: (state, action) => {
-      state.assetUpdateEl = action.payload.updateElement;
-    },
-    setAssetListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -46,10 +37,5 @@ export const getPdfExcelData = (url) => async (dispatch) => {
   }
 };
 
-export const {
-  setUpdateAssetEl,
-  setAssetListIsUpdated,
-  setLoading,
-  postSuccess,
-} = assetsSlice.actions;
+export const { setLoading, postSuccess } = assetsSlice.actions;
 export default assetsSlice.reducer;

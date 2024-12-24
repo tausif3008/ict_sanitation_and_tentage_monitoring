@@ -7,7 +7,6 @@ import CountryStateCity from "../../commonComponents/CountryStateCity";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
-import { setUserListIsUpdated } from "./userSlice";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
@@ -38,12 +37,9 @@ const UserRegistrationForm = () => {
       }
     );
 
-    if (res) {
-      dispatch(setUserListIsUpdated({ isUpdated: true }));
-      if (res.data.success) {
-        form.resetFields();
-        navigate("/users");
-      }
+    if (res?.data?.success) {
+      form.resetFields();
+      navigate("/users");
     }
     setLoading(false);
   };

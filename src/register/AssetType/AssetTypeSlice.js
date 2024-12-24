@@ -8,8 +8,6 @@ const initialState = {
   loading: false,
   name: null,
   type_data: null,
-  assetUpdateEl: null,
-  isUpdated: false,
   sla_data: null,
   vendor_assetType: null,
 };
@@ -18,12 +16,6 @@ const assetTypeSlice = createSlice({
   name: "assetTypeSlice",
   initialState,
   reducers: {
-    setUpdateAssetEl: (state, action) => {
-      state.assetUpdateEl = action.payload.updateElement;
-    },
-    setAssetTypeListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -100,8 +92,6 @@ export const getVendorListAssetType = (Id) => async (dispatch) => {
 };
 
 export const {
-  setUpdateAssetEl,
-  setAssetTypeListIsUpdated,
   setLoading,
   postSuccess,
   postType,

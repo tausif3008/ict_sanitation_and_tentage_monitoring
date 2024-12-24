@@ -7,7 +7,6 @@ import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { setUpdateQuestionEl } from "./questionSlice";
 
 const QuestionList = () => {
   const [loading, setLoading] = useState(false);
@@ -50,10 +49,6 @@ const QuestionList = () => {
   useEffect(() => {
     getUsers();
   }, [params]);
-
-  useEffect(() => {
-    dispatch(setUpdateQuestionEl({ updateElement: null }));
-  }, []);
 
   const columns = [
     {

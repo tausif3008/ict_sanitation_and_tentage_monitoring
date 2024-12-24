@@ -11,7 +11,7 @@ import {
   message,
   Input,
 } from "antd";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import moment from "moment";
 import dayjs from "dayjs";
@@ -21,11 +21,7 @@ import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import {
-  getPdfExcelData,
-  setAssetListIsUpdated,
-  setUpdateAssetEl,
-} from "./AssetsSlice";
+import { getPdfExcelData } from "./AssetsSlice";
 import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import {
   deleteSupervisorSectorAllocation,
@@ -88,9 +84,6 @@ const AssetsList = () => {
   // const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const isUpdatedSelector = useSelector(
-    (state) => state.assetsSlice?.isUpdated
-  );
 
   // handle category
   const handleSelect = (value) => {
@@ -249,14 +242,10 @@ const AssetsList = () => {
 
   useEffect(() => {
     getDetails();
-    if (isUpdatedSelector) {
-      dispatch(setAssetListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector, searchQuery]);
+  }, [params, searchQuery]);
 
   useEffect(() => {
     form.setFieldValue("asset_main_type_id", "1");
-    dispatch(setUpdateAssetEl({ updateElement: null }));
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     const urls = URLS?.monitoringAgent?.path;
@@ -442,9 +431,7 @@ const AssetsList = () => {
   const pdfHeader = [
     "Sr No",
     "Category",
-    ...(categoryId === "2"
-      ? ["Tentage Type"]
-      : ["Toilets Type"]),
+    ...(categoryId === "2" ? ["Tentage Type"] : ["Toilets Type"]),
     "Vendor Name",
     "GSD Name",
     "Sector",
@@ -479,7 +466,7 @@ const AssetsList = () => {
           return {
             Sr: index + 1,
             Category: data?.asset_main_type_name,
-            "Type": data?.asset_type_name,
+            Type: data?.asset_type_name,
             "Vendor Name": data?.vendor_name,
             "GSD Name": data?.agent_name,
             Sector: data?.sector_name,
@@ -495,9 +482,8 @@ const AssetsList = () => {
           };
         });
 
-      
       const heading = categoryId === "2" ? "Tentage List" : "Toilets List";
-      
+
       // Call the export function
       isExcel &&
         exportToExcel(myexcelData, heading, {

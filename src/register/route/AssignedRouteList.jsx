@@ -6,8 +6,6 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { EditOutlined } from "@ant-design/icons";
-import { useDispatch, useSelector } from "react-redux";
-import { setRouteListIsUpdated, setUpdateRoute } from "./routeSlice";
 
 const columns = [
   {
@@ -47,12 +45,6 @@ const AssignedRouteList = () => {
     currentPage: 1,
   });
 
-  const dispatch = useDispatch();
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.vehicleUpdateEl?.isUpdated
-  );
-
   const params = useParams();
 
   const getUsers = async () => {
@@ -81,7 +73,6 @@ const AssignedRouteList = () => {
               className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
               key={el.name + index}
               onClick={() => {
-                dispatch(setUpdateRoute({ updateElement: el }));
                 navigate("/assign-route");
               }}
             >
@@ -104,14 +95,7 @@ const AssignedRouteList = () => {
 
   useEffect(() => {
     getUsers();
-    if (isUpdatedSelector) {
-      dispatch(setRouteListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector]);
-
-  useEffect(() => {
-    dispatch(setUpdateRoute({ updateElement: null }));
-  }, []);
+  }, [params]);
 
   return (
     <div className="">

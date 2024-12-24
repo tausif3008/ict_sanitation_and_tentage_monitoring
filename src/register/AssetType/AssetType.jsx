@@ -7,11 +7,7 @@ import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
-import {
-  getVendorListAssetType,
-  setAssetTypeListIsUpdated,
-  setUpdateAssetEl,
-} from "./AssetTypeSlice";
+import { getVendorListAssetType } from "./AssetTypeSlice";
 import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 import AssetTypeSelectors from "./assetTypeSelectors";
@@ -83,34 +79,6 @@ const AssetTypeList = () => {
       const data = res.data;
       setLoading(false);
 
-      // const list = data.assettypes.map((el, index) => {
-      //   return {
-      //     ...el,
-      //     sr: index + 1,
-      //     action: (
-      //       <Button
-      //         className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-      //         key={el.name + index}
-      //         // onClick={() => {
-      //         //   dispatch(setUpdateAssetEl({ updateElement: el }));
-      //         //   navigate("/asset-type-registration");
-      //         // }}
-      //         onClick={() => {
-      //           dispatch(setUpdateAssetEl({ updateElement: el }));
-      //           navigate("/asset-type-registration", {
-      //             state: {
-      //               key: "UpdateKey",
-      //               record: el, // Pass the record as part of the state
-      //             },
-      //           });
-      //         }}
-      //       >
-      //         <EditOutlined></EditOutlined>
-      //       </Button>
-      //     ),
-      //   };
-      // });
-
       setDetails(() => {
         return {
           list: data.assettypes,
@@ -154,10 +122,7 @@ const AssetTypeList = () => {
 
   useEffect(() => {
     getDetails();
-    if (isUpdatedSelector) {
-      dispatch(setAssetTypeListIsUpdated({ isUpdated: false }));
-    }
-  }, [params, isUpdatedSelector, searchQuery]);
+  }, [params, searchQuery]);
 
   const showModal = async (assetTypeId) => {
     setRowRecord(assetTypeId);
@@ -306,10 +271,6 @@ const AssetTypeList = () => {
       key: "question_hi",
     },
   ];
-
-  useEffect(() => {
-    dispatch(setUpdateAssetEl({ updateElement: null }));
-  }, []);
 
   const totalAllottedQuantity = details?.list
     .reduce((total, item) => total + Number(item.total_quantity || 0), 0)

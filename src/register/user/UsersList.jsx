@@ -8,7 +8,6 @@ import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
-import { setUpdateUserEl } from "./userSlice";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../asset/AssetsSlice";
@@ -100,7 +99,6 @@ const UserList = () => {
   useEffect(() => {
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
-    dispatch(setUpdateUserEl({ updateElement: null }));
   }, []);
 
   const getVal = (val) => {

@@ -1,26 +1,3 @@
-// import { createSlice } from "@reduxjs/toolkit";
-
-// const routeSlice = createSlice({
-//   name: "routeSlice",
-//   initialState: {
-//     routeUpdate: null,
-//     isUpdated: false,
-//   },
-
-//   reducers: {
-//     setUpdateRoute: (state, action) => {
-//       state.routeUpdate = action.payload.updateElement;
-//     },
-//     setRouteListIsUpdated: (state, action) => {
-//       state.isUpdated = action.payload.isUpdated;
-//     },
-//   },
-// });
-
-// export const { setUpdateRoute, setRouteListIsUpdated } = routeSlice.actions;
-
-// export default routeSlice.reducer;
-
 import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../Redux/action";
 import axiosInstance from "../../Axios/commonAxios";
@@ -36,12 +13,6 @@ export const routeSlice = createSlice({
   name: "routeSlice",
   initialState,
   reducers: {
-    setUpdateRoute: (state, action) => {
-      state.routeUpdate = action.payload.updateElement;
-    },
-    setRouteListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
@@ -67,10 +38,5 @@ export const getRouteList = (url) => async (dispatch) => {
   }
 };
 
-export const {
-  setUpdateRoute,
-  setRouteListIsUpdated,
-  setLoading,
-  postSuccess,
-} = routeSlice.actions;
+export const { setLoading, postSuccess } = routeSlice.actions;
 export default routeSlice.reducer;
