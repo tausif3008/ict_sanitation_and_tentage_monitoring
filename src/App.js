@@ -95,6 +95,7 @@ import {
   sanitationDash_param,
   sector_wise_reports,
   tentageDash_param,
+  userAccess_param,
   vendor_wise_regi_reports,
   vendor_wise_reports,
   vendorDash_param,
@@ -304,23 +305,133 @@ function App() {
         {/* dashboard Close*/}
 
         <Route path="/home" element={<LandingPage></LandingPage>}></Route>
-        <Route
+
+        {/* user access registration */}
+        {/* <Route
           path="users/:page?/:per_page?"
           element={<UserList></UserList>}
-        ></Route>
+        ></Route> */}
+        {/* <Route
+            path="user-registration"
+            element={<UserRegistrationForm></UserRegistrationForm>}
+          ></Route> */}
+        {/* <Route
+          path="vendor/:page?/:per_page?"
+          element={<VendorList></VendorList>}
+        ></Route> */}
+        {/* <Route
+          path="vendor-registration"
+          element={<VendorRegistrationForm></VendorRegistrationForm>}
+        ></Route> */}
+        {/* <Route
+          path="vendor/add-vendor-details/:id?/:page?/:per_page?"
+          element={<VendorDetails></VendorDetails>}
+        ></Route> */}
+        {/* <Route
+          path="vendor/add-vendor-details-form/:id"
+          element={<VendorDetailsForm></VendorDetailsForm>}
+        ></Route> */}
+        {/* <Route
+          path="asset-list/:page?/:per_page?"
+          element={<AssetsList></AssetsList>}
+        ></Route> */}
+        {/* <Route
+          path="/vendor-supervisor-registration/:page?/:per_page?"
+          element={
+            <VendorSupervisorRegistration></VendorSupervisorRegistration>
+          }
+        ></Route> */}
+        {/* <Route
+          path="/vendor-supervisor-form"
+          element={<VendorSupervisorForm></VendorSupervisorForm>}
+        ></Route> */}
+        <Route
+          path="users/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={UserList}
+            />
+          }
+        />
         <Route
           path="user-registration"
-          element={<UserRegistrationForm></UserRegistrationForm>}
-        ></Route>
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={UserRegistrationForm}
+            />
+          }
+        />
+        <Route
+          path="vendor/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorList}
+            />
+          }
+        />
+        <Route
+          path="vendor-registration"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorRegistrationForm}
+            />
+          }
+        />
+        <Route
+          path="vendor/add-vendor-details/:id?/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorDetails}
+            />
+          }
+        />
+        <Route
+          path="vendor/add-vendor-details-form/:id"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorDetailsForm}
+            />
+          }
+        />
+        <Route
+          path="asset-list/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={AssetsList}
+            />
+          }
+        />
+        <Route
+          path="/vendor-supervisor-registration/:page?/:per_page?"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorSupervisorRegistration}
+            />
+          }
+        />
+        <Route
+          path="/vendor-supervisor-form"
+          element={
+            <ProtectedRoute
+              condition={userAccess_param?.includes(userRoleId)}
+              component={VendorSupervisorForm}
+            />
+          }
+        />
+        {/* user access registration end */}
+
         <Route
           path="asset-registration"
           element={<AssetRegistrationForm></AssetRegistrationForm>}
         ></Route>
-        <Route
-          path="asset-list/:page?/:per_page?"
-          element={<AssetsList></AssetsList>}
-        ></Route>
-
         <Route
           path="gis-services"
           element={<GisServices></GisServices>}
@@ -330,22 +441,7 @@ function App() {
           path="gps-fleet-registration"
           element={<GPSFleetRegistration></GPSFleetRegistration>}
         ></Route>
-        <Route
-          path="vendor/:page?/:per_page?"
-          element={<VendorList></VendorList>}
-        ></Route>
-        <Route
-          path="vendor-registration"
-          element={<VendorRegistrationForm></VendorRegistrationForm>}
-        ></Route>
-        <Route
-          path="vendor/add-vendor-details/:id?/:page?/:per_page?"
-          element={<VendorDetails></VendorDetails>}
-        ></Route>
-        <Route
-          path="vendor/add-vendor-details-form/:id"
-          element={<VendorDetailsForm></VendorDetailsForm>}
-        ></Route>
+
         {/* 
             <Route
               path="vendor-proposed-sectors/:page?/:per_page?"
@@ -457,16 +553,7 @@ function App() {
           path="/user-permission-type-form"
           element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
         ></Route>
-        <Route
-          path="/vendor-supervisor-registration/:page?/:per_page?"
-          element={
-            <VendorSupervisorRegistration></VendorSupervisorRegistration>
-          }
-        ></Route>
-        <Route
-          path="/vendor-supervisor-form"
-          element={<VendorSupervisorForm></VendorSupervisorForm>}
-        ></Route>
+
         <Route
           path="/sector-allocation/:page?/:per_page?"
           element={<VendorSectorAllocation></VendorSectorAllocation>}
@@ -501,6 +588,34 @@ function App() {
           path="monitoring/:page?/:per_page?"
           element={<Monitoring></Monitoring>}
         ></Route> */}
+        {/* <Route
+          path="monitoring-report/:id/:page?/:per_page?"
+          element={<MonitoringReport></MonitoringReport>}
+        ></Route> */}
+        {/* <Route
+          path="sector-wise-report"
+          element={<SectorWiseReport></SectorWiseReport>}
+        ></Route> */}
+        {/* <Route
+          path="circle-wise-report"
+          element={<CircleWiseReport></CircleWiseReport>}
+        ></Route> */}
+        {/* <Route
+          path="vendor-wise-report/:page?/:per_page?"
+          element={<VendorReports></VendorReports>}
+        ></Route> */}
+        {/* <Route
+          path="gsd-wise-registration-report/:page?/:per_page?"
+          element={<GsdRegistrationReport></GsdRegistrationReport>}
+        ></Route> */}
+        {/* <Route
+          path="/incident-report/:page?/:per_page?"
+          element={<IncidentReports></IncidentReports>}
+        ></Route> */}
+        {/* <Route
+          path="/inspection-report/:page?/:per_page?"
+          element={<InspectionReports></InspectionReports>}
+        ></Route> */}
         <Route
           path="monitoring/:page?/:per_page?"
           element={
@@ -510,12 +625,15 @@ function App() {
             />
           }
         />
-
         <Route
           path="monitoring-report/:id/:page?/:per_page?"
-          element={<MonitoringReport></MonitoringReport>}
-        ></Route>
-
+          element={
+            <ProtectedRoute
+              condition={monitoring_reports?.includes(userRoleId)}
+              component={MonitoringReport}
+            />
+          }
+        />
         <Route
           path="sector-wise-report"
           element={
@@ -525,10 +643,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="sector-wise-report"
-          element={<SectorWiseReport></SectorWiseReport>}
-          ></Route> */}
         <Route
           path="circle-wise-report"
           element={
@@ -538,10 +652,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="circle-wise-report"
-          element={<CircleWiseReport></CircleWiseReport>}
-        ></Route> */}
         <Route
           path="vendor-wise-report/:page?/:per_page?"
           element={
@@ -551,10 +661,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="vendor-wise-report/:page?/:per_page?"
-          element={<VendorReports></VendorReports>}
-        ></Route> */}
         <Route
           path="gsd-wise-registration-report/:page?/:per_page?"
           element={
@@ -564,10 +670,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="gsd-wise-registration-report/:page?/:per_page?"
-          element={<GsdRegistrationReport></GsdRegistrationReport>}
-        ></Route> */}
         <Route
           path="vendor-wise-registration-report"
           element={
@@ -591,10 +693,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="/incident-report/:page?/:per_page?"
-          element={<IncidentReports></IncidentReports>}
-        ></Route> */}
         <Route
           path="/inspection-report/:page?/:per_page?"
           element={
@@ -604,10 +702,6 @@ function App() {
             />
           }
         />
-        {/* <Route
-          path="/inspection-report/:page?/:per_page?"
-          element={<InspectionReports></InspectionReports>}
-        ></Route> */}
         {/* Report close */}
 
         {/* pages */}
