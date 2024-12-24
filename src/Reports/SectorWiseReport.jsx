@@ -37,11 +37,11 @@ const SectorWiseReport = () => {
   const dispatch = useDispatch();
   const { SectorReports, loading } = SectorReportSelectors(); // sector reports
   const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");

@@ -113,7 +113,7 @@ const ExportToPDF = ({
         if (isLastRow && IsLastLineBold) {
           data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
           data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
-          data.cell.styles.fontSize = 12; // Increase font size for emphasis
+          data.cell.styles.fontSize = 10; // Increase font size for emphasis
         }
       },
     });
@@ -137,7 +137,6 @@ const ExportToPDF = ({
 
   return (
     <Button type="primary" onClick={exportToPDF}>
-      {/* <Button type="primary" onClick={exportToPDF}> */}
       Download PDF
     </Button>
   );
