@@ -234,7 +234,7 @@ function App() {
           element={
             <ProtectedRoute
               condition={sanitationDash_param?.includes(userRoleId)}
-              component={VendorDashboard}
+              component={SanitationDashboard}
             />
           }
         />
