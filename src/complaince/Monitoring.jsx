@@ -316,6 +316,7 @@ const Monitoring = () => {
       title: "Sector Name",
       dataIndex: "sector_name",
       key: "sector_name",
+      width: 110,
     },
     // {
     //   title: "Circle Name",
@@ -329,6 +330,7 @@ const Monitoring = () => {
       render: (text) => {
         return text ? moment(text).format("DD-MMM-YYYY") : "";
       },
+      width: 120,
     },
     {
       title: "remark",
@@ -336,11 +338,10 @@ const Monitoring = () => {
       key: "remark",
     },
     {
-      title: "View Monitoring Details",
+      title: "Monitoring Details View",
       key: "action",
       fixed: "right",
       width: 130,
-
       render: (text, record) => (
         <div className="flex gap-2">
           <div

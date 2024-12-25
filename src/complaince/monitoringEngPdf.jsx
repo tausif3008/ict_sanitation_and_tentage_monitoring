@@ -19,16 +19,15 @@ const MonitoringEngPdf = ({
       return "";
     }
     const doc = new jsPDF(landscape ? "landscape" : "");
-
-    doc.y = 15; // Start from a specific Y position
+    doc.y = 15;
 
     // Centered ICT heading
     const ictHeading = "Maha Kumbh 2025";
     const pageWidth = doc.internal.pageSize.getWidth();
-    const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(23); // Increase font size for better prominence
+    const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2;
+    doc.setFontSize(23);
     doc.setFont("helvetica", "bold");
-    doc.text(ictHeading, ictX - 12, doc.y); // Heading position
+    doc.text(ictHeading, ictX - 12, doc.y);
 
     doc.y += 15;
 
@@ -50,10 +49,10 @@ const MonitoringEngPdf = ({
     );
 
     // Image on the Right (Another logo or image)
-    const rightImageX = pageWidth - 35; // X position (from the right)
-    const rightImageY = 7; // Y position (from the top)
-    const rightImageWidth = 25; // Image width (adjust as needed)
-    const rightImageHeight = 25; // Image height (adjust as needed)
+    const rightImageX = pageWidth - 35;
+    const rightImageY = 7;
+    const rightImageWidth = 25;
+    const rightImageHeight = 25;
     doc.addImage(
       `${IMAGELIST?.kumbhMela}`,
       "JPEG",
@@ -70,7 +69,7 @@ const MonitoringEngPdf = ({
 
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
-    const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
+    const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2;
     doc.setFontSize(16);
     doc.setFont("bold");
     doc.text(subHeading, subHeadingX + 30, doc.y); // Position it below the images (Y position is adjusted)
@@ -88,10 +87,10 @@ const MonitoringEngPdf = ({
     // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
+    doc.text(title, titleX - 35, doc.y);
     doc.setFont("normal");
-    doc.setFontSize(10); // Smaller font size for date
-    doc.text(dateString, dateX + 30, doc.y); // Date position (Y position adjusted to be below the title)
+    doc.setFontSize(10);
+    doc.text(dateString, dateX + 30, doc.y);
 
     // Table for dynamic fields (label-value pairs)
     const tableData = [
@@ -132,11 +131,9 @@ const MonitoringEngPdf = ({
     };
 
     const getTableHeight = (rows) => {
-      const rowHeight = 10; // Approximate row height (you can adjust based on your styles)
-      const headerHeight = 15; // Optional header row height
+      const rowHeight = 10;
+      const headerHeight = 15;
       const rowCount = rows.length;
-
-      // Calculate total table height
       return headerHeight + rowHeight * rowCount;
     };
 
@@ -144,13 +141,13 @@ const MonitoringEngPdf = ({
 
     // Add the first table (dynamic fields)
     doc.autoTable({
-      startY: doc.y, // 45 Start the table after the header
-      body: tableData, // Table body
-      theme: "plain", // Table style
+      startY: doc.y,
+      body: tableData,
+      theme: "plain",
       styles: tableStyles,
-      didDrawPage: function (data) {
-        const dynamicHeight = getTableHeight(tableData);
-      },
+      // didDrawPage: function (data) {
+      //   const dynamicHeight = getTableHeight(tableData);
+      // },
     });
 
     doc.y += getTableHeight(tableData);
@@ -163,7 +160,7 @@ const MonitoringEngPdf = ({
     const instructionDataLines = doc.splitTextToSize(
       instructionData,
       pageWidth - 40
-    ); // Adjust width to leave space for margins (20px left and right)
+    );
     doc.y += 10;
 
     const backgroundHeight = 35; // Adjust height of the background box if necessary
@@ -174,42 +171,35 @@ const MonitoringEngPdf = ({
     doc.y += 45;
 
     const tableTitle = "Monitoring Report";
-    const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2; // Center the subheading
+    const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2;
     doc.setFontSize(16);
     doc.setFont("bold");
     doc.text(tableTitle, tableTitleIndex - 20, doc.y);
 
     doc.y += 10;
-
     let currentY = doc.y;
 
     let totalHeight = 0;
     let newPageHeight = 30;
     let remainRow = [];
-    const rowHeight = 10; // Example row height in units (this can be adjusted)
-    const pageHeight = doc.internal.pageSize.height; // Get the height of the page
-    const availableHeight = pageHeight - currentY; // Height available for rows
+    const rowHeight = 10;
+    const pageHeight = doc.internal.pageSize.height;
+    const availableHeight = pageHeight - currentY;
     const rowsPerPage = Math.floor(availableHeight / rowHeight);
 
     // Table header and content
     doc.autoTable({
       head: [headerData],
       body: rows,
-      startY: doc.y, // Start after the horizontal line and other content (Y position adjusted)
+      startY: doc.y,
       didDrawPage: function (data) {
-        // Get the Y position after drawing the table rows
         let currentPageY = data.cursor.y;
-
-        // Calculate the height of the rows that were drawn on the current page
         let heightCoveredOnCurrentPage = currentPageY - currentY; // This is the height used on the current page
-
         totalHeight += heightCoveredOnCurrentPage; // Add to the total height covered by the table rows
-
-        // If we have a new page (i.e., the table overflowed), the currentY is reset
         if (currentPageY > doc.internal.pageSize.height - 20) {
           // doc.addPage(); // Add a new page if the table exceeds the current page's height
           currentY = 10; // Start from the top of the new page
-          const remainingRows = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
+          // const remainingRows = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
           remainRow = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
         } else {
           currentY = currentPageY; // Update currentY to the Y position at the end of the table rows
@@ -231,20 +221,18 @@ const MonitoringEngPdf = ({
       introduction2,
       pageWidth - 40
     );
-    let instructionDataY2 = newPageHeight; // Adjust Y position as needed
-    // const instructionDataY2 = 90; // Adjust Y position as needed
-    const backgroundHeight2 = 20; // Adjust height of the background box if necessary
+    let instructionDataY2 = newPageHeight;
+    const backgroundHeight2 = 20;
 
-    const lineHeight = 12 * 1.2; // Assuming a line height of 1.2 times the font size (adjust as needed)
+    const lineHeight = 12 * 1.2;
     const contentHeight =
       newPageHeight +
       backgroundHeight2 +
       instructionDataLines2.length * lineHeight;
     const spaceRemaining = pageHeight - contentHeight;
 
-    if (spaceRemaining < 50) {
+    if (spaceRemaining < 20) {
       instructionDataY2 = 15;
-      // If the remaining space is less than 30 points (adjust as needed)
       doc.addPage(); // Add a new page if not enough space for the footer
     }
 

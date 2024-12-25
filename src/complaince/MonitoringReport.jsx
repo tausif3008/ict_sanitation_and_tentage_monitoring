@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Table, Image, Divider } from "antd";
+import { Button, Table, Image, Divider, message } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
@@ -30,7 +30,9 @@ const MonitoringReport = () => {
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
       const myexcelData = monitoringData.questions
-        ?.filter((item) => item?.answer != "N")
+        ?.filter((item) => item?.answer === "0")
+        // ?.filter((item) => item?.answer != "N" && item?.answer != "1")
+        // ?.filter((item) => item?.answer != "N" )
         ?.map((data, index) => {
           return {
             sr: index + 1,
@@ -128,7 +130,10 @@ const MonitoringReport = () => {
 
   // excel
   const exportToExcel = async () => {
-    if (details && details?.length > 0) {
+    if (details && details?.length === 0) {
+      message?.error("Data is not available");
+      return "";
+    } else if (details && details?.length > 0) {
       const excelList = details.map((data) => {
         const { image, answer, ...rest } = data;
         const modifiedAnswer = answer === "1" ? "Yes" : "No";
