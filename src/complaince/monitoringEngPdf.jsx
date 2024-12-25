@@ -130,13 +130,6 @@ const MonitoringEngPdf = ({
       margin: { left: 10, right: 20 },
     };
 
-    const getTableHeight = (rows) => {
-      const rowHeight = 10;
-      const headerHeight = 15;
-      const rowCount = rows.length;
-      return headerHeight + rowHeight * rowCount;
-    };
-
     doc.y += 5;
 
     // Add the first table (dynamic fields)
@@ -145,12 +138,10 @@ const MonitoringEngPdf = ({
       body: tableData,
       theme: "plain",
       styles: tableStyles,
-      // didDrawPage: function (data) {
-      //   const dynamicHeight = getTableHeight(tableData);
-      // },
+      didDrawPage: function (data) {
+        doc.y = data.cursor.y;
+      },
     });
-
-    doc.y += getTableHeight(tableData);
 
     const instructionData =
       "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
@@ -161,14 +152,14 @@ const MonitoringEngPdf = ({
       instructionData,
       pageWidth - 40
     );
-    doc.y += 10;
+    doc.y += 15;
 
-    const backgroundHeight = 35; // Adjust height of the background box if necessary
+    const backgroundHeight = 33; // Adjust height of the background box if necessary
     doc.setFillColor(220, 220, 220);
-    doc.rect(10, doc.y - 7, pageWidth - 20, backgroundHeight, "F");
+    doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
     doc.text(instructionDataLines, 15, doc.y); // Adjust X position to leave some space between text and the left edge
 
-    doc.y += 45;
+    doc.y += 35;
 
     const tableTitle = "Monitoring Report";
     const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2;
@@ -176,16 +167,7 @@ const MonitoringEngPdf = ({
     doc.setFont("bold");
     doc.text(tableTitle, tableTitleIndex - 20, doc.y);
 
-    doc.y += 10;
-    let currentY = doc.y;
-
-    let totalHeight = 0;
-    let newPageHeight = 30;
-    let remainRow = [];
-    const rowHeight = 10;
-    const pageHeight = doc.internal.pageSize.height;
-    const availableHeight = pageHeight - currentY;
-    const rowsPerPage = Math.floor(availableHeight / rowHeight);
+    doc.y += 5;
 
     // Table header and content
     doc.autoTable({
@@ -193,24 +175,14 @@ const MonitoringEngPdf = ({
       body: rows,
       startY: doc.y,
       didDrawPage: function (data) {
-        let currentPageY = data.cursor.y;
-        let heightCoveredOnCurrentPage = currentPageY - currentY; // This is the height used on the current page
-        totalHeight += heightCoveredOnCurrentPage; // Add to the total height covered by the table rows
-        if (currentPageY > doc.internal.pageSize.height - 20) {
-          // doc.addPage(); // Add a new page if the table exceeds the current page's height
-          currentY = 10; // Start from the top of the new page
-          // const remainingRows = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
-          remainRow = rows.slice(data.pageNumber * rowsPerPage); // Adjust to your slicing logic
-        } else {
-          currentY = currentPageY; // Update currentY to the Y position at the end of the table rows
-        }
+        doc.y = data.cursor.y;
       },
     });
 
-    if (remainRow?.length > 0) {
-      newPageHeight += remainRow?.length * 10;
-    } else {
-      newPageHeight += doc.y;
+    const pageHeights = doc.internal.pageSize.getHeight();
+    if (doc.y + 10 > pageHeights) {
+      doc.addPage();
+      doc.y = 10; // Reset Y position for the new page
     }
 
     const introduction2 =
@@ -221,24 +193,12 @@ const MonitoringEngPdf = ({
       introduction2,
       pageWidth - 40
     );
-    let instructionDataY2 = newPageHeight;
-    const backgroundHeight2 = 20;
 
-    const lineHeight = 12 * 1.2;
-    const contentHeight =
-      newPageHeight +
-      backgroundHeight2 +
-      instructionDataLines2.length * lineHeight;
-    const spaceRemaining = pageHeight - contentHeight;
-
-    if (spaceRemaining < 20) {
-      instructionDataY2 = 15;
-      doc.addPage(); // Add a new page if not enough space for the footer
-    }
+    doc.y += 10;
 
     doc.setFillColor(220, 220, 220);
-    doc.rect(10, instructionDataY2 - 7, pageWidth - 20, backgroundHeight2, "F");
-    doc.text(instructionDataLines2, 15, instructionDataY2); // Adjust X position to leave some space between text and the left edge
+    doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 12, "F");
+    doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
 
     // Add footer
     const footerText1 =
