@@ -76,7 +76,7 @@ const MonitoringEngPdf = ({
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
-    const dateString = moment().format("DD-MMM-YYYY HH:MM A");
+    const dateString = moment().format("DD-MMM-YYYY hh:mm A");
 
     // Calculate positions for the title and date
     const titleX = 54; // Left align title
@@ -143,8 +143,13 @@ const MonitoringEngPdf = ({
       },
     });
 
-    const instructionData =
-      "You are hereby being put to notice that upon inspection the following observations have been made with respect to the under mentioned work(s). You are directed to take the required remedial actions as may be required, forthwith, within 24 hours, and apprise the Authority of the action taken in the form of an Action Taken Report. In case you fail to abide this notice, the Authority may proceed further as per the terms and conditions of service.";
+    const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
+      tableObject?.submitted_date
+    ).format("DD-MMM-YYYY hh:mm A")} you have been sent “${
+      tableObject?.unit_no
+    }” number of SMS alerts on your registered Mobile Number “9999252341” individually for each ${
+      tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
+    } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
 
     doc.setFontSize(12);
     doc.setFont("normal"); // Set the font style to normal (not bold)
@@ -186,7 +191,7 @@ const MonitoringEngPdf = ({
     }
 
     const introduction2 =
-      " If non-compliance with Operation & Maintenance found and not resolved within specified TAT then penalty would be imposed as mentioned in RFP.";
+      "You are directed to take the requisite remedial actions/measures in connection with the report being enclosed, as may be required, forthwith, within 24 hours, and apprise the Authority of the curative action(s) taken in the form of an Action Taken Report. Please note failure to abide by this notice shall not only tantamount breach of contract but would also entitle the Authority to proceed further as per the terms and conditions of agreement.";
     doc.setFontSize(12);
     doc.setFont("normal"); // Set the font style to normal (not bold)
     const instructionDataLines2 = doc.splitTextToSize(
@@ -194,10 +199,10 @@ const MonitoringEngPdf = ({
       pageWidth - 40
     );
 
-    doc.y += 10;
+    doc.y += 13;
 
     doc.setFillColor(220, 220, 220);
-    doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 12, "F");
+    doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 30, "F");
     doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
 
     // Add footer

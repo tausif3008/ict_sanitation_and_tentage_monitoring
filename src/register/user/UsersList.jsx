@@ -345,7 +345,6 @@ const UserList = () => {
                     <Col key="phone" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name="phone"
-                        type="number"
                         label="Phone Number"
                         placeholder="Phone Number"
                         maxLength={10}
