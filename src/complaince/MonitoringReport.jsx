@@ -1,20 +1,21 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Table, Image, Divider, message } from "antd";
+import { Button, Table, Image, Divider } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
-import * as XLSX from "xlsx";
 
 import { getData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import CoordinatesMap from "../commonComponents/map/map";
 import { DownloadPDF } from "./monitoringReportpdf";
 import MonitoringEngPdf from "./monitoringEngPdf";
+import ExportToExcel from "../Reports/ExportToExcel";
 
 const MonitoringReport = () => {
   const [details, setDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [assetDetails, setAssetDetails] = useState({});
+  const [excelData, setExcelData] = useState([]);
   const params = useParams();
   const navigate = useNavigate();
   const contentRef = useRef();
@@ -39,11 +40,35 @@ const MonitoringReport = () => {
             question_en: data?.question_en,
             question_hi: data?.question_hi,
             description: data?.description,
-            answer: data?.answer,
+            answer:
+              data?.answer === "1"
+                ? "Yes"
+                : data?.answer === "0"
+                ? "No"
+                : "Maintenance",
             image: data?.image,
           };
         });
       setDetails(myexcelData);
+
+      // Excel data
+      const myexcelDatas = monitoringData?.questions
+        ?.filter((item) => item?.answer === "0")
+        ?.map((data, index) => {
+          return {
+            Sr: index + 1,
+            "Question (English)": data?.question_en,
+            "Question (Hindi)": data?.question_hi,
+            Description: data?.description,
+            Answer:
+              data?.answer === "1"
+                ? "Yes"
+                : data?.answer === "0"
+                ? "No"
+                : "Maintenance",
+          };
+        });
+      setExcelData(myexcelDatas);
 
       setAssetDetails({
         asset_main_type_id: monitoringData?.asset_main_type_id,
@@ -114,39 +139,19 @@ const MonitoringReport = () => {
       render: (answer) => (
         <div
           className={`p-1 px-3 rounded-md flex w-fit text-xs ${
-            answer === "1"
+            answer === "Yes"
               ? "bg-green-500"
-              : answer === "0"
+              : answer === "No"
               ? "bg-orange-500"
               : "bg-blue-200"
           }`}
         >
-          {answer === "1" ? "Yes" : answer === "0" ? "No" : "Maintenance"}
+          {answer}
         </div>
       ),
       width: "10%",
     },
   ];
-
-  // excel
-  const exportToExcel = async () => {
-    if (details && details?.length === 0) {
-      message?.error("Data is not available");
-      return "";
-    } else if (details && details?.length > 0) {
-      const excelList = details.map((data) => {
-        const { image, answer, ...rest } = data;
-        const modifiedAnswer = answer === "1" ? "Yes" : "No";
-        return { ...rest, answer: modifiedAnswer };
-      });
-      const worksheet = XLSX.utils.json_to_sheet(excelList);
-      const workbook = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Monitoring Report");
-      XLSX.writeFile(workbook, "MonitoringReport.xlsx");
-    } else {
-      return "";
-    }
-  };
 
   // download pdf
   const downloadPDF = () => {
@@ -192,14 +197,13 @@ const MonitoringReport = () => {
             />
           </div>
           <div>
-            <Button type="primary" onClick={exportToExcel}>
-              Download Excel
-            </Button>
+            <ExportToExcel
+              excelData={excelData || []}
+              fileName={`Monitoring Report`}
+            />
           </div>
         </div>
-
         <Divider className="bg-d9 h-2/3 mt-1" />
-
         <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[40%,40%,20%]">
             <table

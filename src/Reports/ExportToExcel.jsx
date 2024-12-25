@@ -3,13 +3,6 @@ import { Button, message } from "antd";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 
-// dynamicFields={{
-//   Total: total,
-//   "Register Unit": totalRegistered,
-//   Clean: totalClean,
-//   Unclean: totalUnclean,
-// }}
-
 const ExportToExcel = ({
   excelData = [],
   fileName = "excel_file",
@@ -25,37 +18,36 @@ const ExportToExcel = ({
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
 
-    worksheet.addRow([]); // This adds a blank row above the title row to create a margin
+    worksheet.addRow([]);
 
     // Calculate the last column dynamically
-    const columnCount = Object.keys(excelData?.[0] || {}).length || 1; // Default to 1 if no data
-    const lastColumn = String.fromCharCode(64 + columnCount); // Convert column index to letter (e.g., 1 -> A, 2 -> B)
+    const columnCount = Object.keys(excelData?.[0] || {}).length || 1;
+    const lastColumn = String.fromCharCode(64 + columnCount);
 
     // Add a title in the first row
     const titleRow = worksheet.addRow([fileName.toUpperCase()]);
-    titleRow.getCell(1).font = { bold: true, size: 16 }; // Bold and larger font for title
-    titleRow.getCell(1).alignment = { horizontal: "center" }; // Center-align text
-    // worksheet.mergeCells("A1:D1"); // Merge cells for the title (adjust column range as needed)
-    worksheet.mergeCells(`A2:${lastColumn}2`); // Dynamically merge cells for the title
+    titleRow.getCell(1).font = { bold: true, size: 16 };
+    titleRow.getCell(1).alignment = { horizontal: "center" };
+    worksheet.mergeCells(`A2:${lastColumn}2`);
 
     // Define the structure of columns (required for alignment)
     const columns = Object.keys(excelData?.[0] || {}).map((key) => ({
-      key, // Map data keys to columns
+      key,
     }));
     worksheet.columns = columns;
 
     // Manually add headers to the second row
     const headerRow = worksheet.getRow(3);
     Object.keys(excelData?.[0] || {}).forEach((key, index) => {
-      const cell = headerRow.getCell(index + 1); // +1 because ExcelJS column index starts at 1
-      cell.value = key; // Use key as the header
+      const cell = headerRow.getCell(index + 1);
+      cell.value = key;
       cell.fill = {
         type: "pattern",
         pattern: "solid",
         fgColor: { argb: "FBB900" }, // Yellow background
       };
-      cell.font = { bold: true, color: { argb: "000000" } }; // Bold and black text
-      cell.alignment = { horizontal: "center" }; // Center-align text
+      cell.font = { bold: true, color: { argb: "000000" } };
+      cell.alignment = { horizontal: "center" };
     });
 
     headerRow.commit(); // Commit changes to the second row

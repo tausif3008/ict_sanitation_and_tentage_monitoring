@@ -366,6 +366,16 @@ const IncidentReports = () => {
           };
         });
 
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, filesName, {}, [
+          {
+            name: "Total Unit",
+            value: unitCount,
+            colIndex: 4,
+          },
+        ]);
+
       // const pdfData =
       //   !isExcel &&
       //   res?.data?.listings?.map((data, index) => [
@@ -381,12 +391,6 @@ const IncidentReports = () => {
       //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
       //       : "",
       //   ]);
-
-      // Call the export function
-      isExcel &&
-        exportToExcel(myexcelData, filesName, {
-          "Total Unit": unitCount,
-        });
 
       // Call the export function
       // !isExcel &&

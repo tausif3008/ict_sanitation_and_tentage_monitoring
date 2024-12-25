@@ -28,13 +28,6 @@ import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
-// import { Image } from "antd";
-// import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-// import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-// import { getAllCircleList } from "../Reports/CircleSlice/circleSlices";
-// import CircleSelector from "../Reports/CircleSlice/circleSelector";
-// import ExportToExcel from "../Reports/ExportToExcel";
-// import ExportToPDF from "../Reports/reportFile";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -50,8 +43,6 @@ const Monitoring = () => {
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
   const [filesName, setFilesName] = useState(null); // files Name
-
-  // const [excelData, setExcelData] = useState([]); // excel data
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
@@ -426,6 +417,16 @@ const Monitoring = () => {
           };
         });
 
+      // Call the export function
+      isExcel &&
+        exportToExcel(myexcelData, filesName, {}, [
+          {
+            name: "Total Unit",
+            value: unitCount,
+            colIndex: 4,
+          },
+        ]);
+
       const pdfData =
         !isExcel &&
         res?.data?.listings?.map((data, index) => [
@@ -443,20 +444,13 @@ const Monitoring = () => {
         ]);
 
       // Call the export function
-      isExcel &&
-        exportToExcel(myexcelData, filesName, {
-          "Total Unit": unitCount,
-        });
-
-      // Call the export function
       !isExcel &&
         ExportPdfFunction(
-          // "Toilet & Tentage Monitoring",
-          // "Monitoring Report",
           filesName,
           filesName,
           pdfHeader,
-          pdfData,
+          [...pdfData, ["", "Total Unit", "", unitCount, ""]],
+          true,
           true
         );
     } catch (error) {
@@ -469,13 +463,6 @@ const Monitoring = () => {
       <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
-          {/* <ExportToPDF
-            titleName={"Toilet & Tentage Monitoring"}
-            pdfName={"Monitoring Report"}
-            headerData={pdfHeader}
-            rows={pdfData}
-            landscape={true}
-          /> */}
           <Button
             type="primary"
             onClick={() => {
@@ -486,11 +473,6 @@ const Monitoring = () => {
           </Button>
         </div>
         <div>
-          {/* <ExportToExcel
-            excelData={excelData || []}
-            fileName={"Monitoring Report"}
-            dynamicFields={{ "Total Unit": details?.totalUnit }}
-          /> */}
           <Button
             type="primary"
             onClick={() => {

@@ -2,7 +2,7 @@ import React from "react";
 import { jsPDF } from "jspdf";
 import moment from "moment";
 import "jspdf-autotable";
-import { Button, message } from "antd";
+import { message } from "antd";
 import { IMAGELIST } from "../assets/Images/exportImages";
 
 // modified
@@ -11,7 +11,8 @@ export const ExportPdfFunction = (
   pdfName,
   headerData,
   rows,
-  landscape = false
+  landscape = false,
+  IsLastLineBold = false
 ) => {
   if (rows && rows?.length === 0) {
     message?.error("Data is not available");
@@ -89,6 +90,14 @@ export const ExportPdfFunction = (
     head: [headerData],
     body: rows,
     startY: 45, // Start after the horizontal line and other content (Y position adjusted)
+    didParseCell: function (data) {
+      const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
+      if (isLastRow && IsLastLineBold) {
+        data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
+        data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
+        data.cell.styles.fontSize = 10; // Increase font size for emphasis
+      }
+    },
   });
 
   // Add footer
