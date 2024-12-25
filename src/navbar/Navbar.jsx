@@ -31,19 +31,23 @@ import {
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
 import { revertAll } from "../Redux/action";
+import { checkLoginAvailability } from "../constant/const";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
 
   const loggedIn = localStorage.getItem("sessionToken");
-  const sessionData = localStorage.getItem("sessionData");
-  const jsonObject = JSON.parse(sessionData);
-  const tentageIdUser = jsonObject?.allocatedmaintype?.[0]?.asset_main_type_id;
+  // const sessionData = localStorage.getItem("sessionData");
+  // const jsonObject = JSON.parse(sessionData);
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const tentageIdUser = sessionData?.allocatedmaintype?.[0]?.asset_main_type_id;
 
   const [open, setOpen] = useState(false);
 
   const userRoleId = localStorage.getItem("role_id");
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   // logout
   const handleLogOut = async () => {
@@ -543,7 +547,14 @@ const Navbar = ({ lang, setLang }) => {
     setOpen(false);
   };
 
-  const navigate = useNavigate();
+  // click on name
+  const handleButtonClick = () => {
+    if (localStorage.getItem("sessionToken")) {
+      checkLoginAvailability(sessionData, navigate);
+    } else {
+      navigate("/login"); // Navigate to login if session token doesn't exist
+    }
+  };
 
   // const [logName, setLogName] = useState(false);
 
@@ -582,8 +593,9 @@ const Navbar = ({ lang, setLang }) => {
     <div className="px-3 font-nutino bg-white p-1 shadow-md">
       <div className="flex w-full justify-between items-center">
         <div className="flex gap-2 items-center">
-          <Link
-            to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+          <button
+            // to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
+            onClick={handleButtonClick}
             className="no-underline d-flex"
           >
             <img
@@ -601,21 +613,26 @@ const Navbar = ({ lang, setLang }) => {
               }`}
               alt="Maha Kumbh 2025 Logo"
             />
-          </Link>
+          </button>
 
           <div
             className="z-50  flex items-center h-12 m-auto  justify-start font-bold text-lg"
             style={{ color: "#FF9500" }}
           >
             <span className="capitalize mr-1">{title} </span>
-            <Link
-              to={
-                localStorage.getItem("sessionToken") ? "/dashboard" : "/login"
-              }
-              className="no-underline text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
+            <Button
+              // onClick={() => {
+              //   checkLoginAvailability(sessionData, navigate);
+              // }}
+              onClick={handleButtonClick}
+              // to={
+              //   localStorage.getItem("sessionToken") ? "/dashboard" : "/login"
+              // }
+              className="no-underline text-2xl md:text-lg lg:text-md xl:text-xl xxl:text-2xl mr-1 bg-transparent border-none hover:text-blue-700 text-blue-500  font-bold"
+              // className="font-bold bg-transparent border text-black hover:text-blue-500 text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
             >
               ICT Sanitation and Tentage Monitoring System
-            </Link>
+            </Button>
           </div>
         </div>
 

@@ -20,6 +20,8 @@ export const checkLoginAvailability = (loginData, navigate) => {
     } else {
       navigate("/sanitation-dashboard");
     }
+  } else {
+    navigate("/login");
   }
 };
 
