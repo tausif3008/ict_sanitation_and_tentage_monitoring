@@ -486,9 +486,13 @@ const AssetsList = () => {
 
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, heading, {
-          "Register Unit": unitCount,
-        });
+        exportToExcel(myexcelData, heading, {}, [
+          {
+            name: "Total Unit",
+            value: unitCount,
+            colIndex: 10,
+          },
+        ]);
 
       const pdfData =
         !isExcel &&
@@ -514,7 +518,13 @@ const AssetsList = () => {
           "Toilets & Tentage List",
           "Toilets & Tentage List",
           pdfHeader,
-          pdfData,
+          // pdfData,
+          // true
+          [
+            ...pdfData,
+            ["", "", "", "", "", "", "", "Total Unit", "", unitCount, ""],
+          ],
+          true,
           true
         );
     } catch (error) {
