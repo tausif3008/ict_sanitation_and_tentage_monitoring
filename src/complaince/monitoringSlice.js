@@ -3,31 +3,23 @@ import { revertAll } from "../Redux/action";
 import axiosInstance from "../Axios/commonAxios";
 
 const initialState = {
-  monitoringUpdateEl: null,
-  assetInfo: null,
-  isUpdated: false,
   loading: false,
   name: null,
+  daily_report: null,
 };
 
 export const monitoringSlice = createSlice({
   name: "monitoringSlice",
   initialState,
   reducers: {
-    setUpdateMonitoringEl: (state, action) => {
-      state.monitoringUpdateEl = action.payload.updateElement;
-    },
-    setAssetInfo: (state, action) => {
-      state.assetInfo = action.payload;
-    },
-    setMonitoringListIsUpdated: (state, action) => {
-      state.isUpdated = action.payload.isUpdated;
-    },
     setLoading: (state, action) => {
       state.loading = action.payload;
     },
     postAgent: (state, action) => {
       state.name = action.payload;
+    },
+    PostDailyReport: (state, action) => {
+      state.daily_report = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -48,11 +40,19 @@ export const getMonitoringAgent = (url) => async (dispatch) => {
   }
 };
 
-export const {
-  setUpdateMonitoringEl,
-  setMonitoringListIsUpdated,
-  setAssetInfo,
-  setLoading,
-  postAgent,
-} = monitoringSlice.actions;
+// get monitoring daily Report
+export const getMonitoringDailyReport = (url, param) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(`${url}`, { params: param });
+    dispatch(PostDailyReport(res?.data));
+  } catch (error) {
+    console.error("In get monitoring daily Report error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postAgent, PostDailyReport } =
+  monitoringSlice.actions;
 export default monitoringSlice.reducer;

@@ -76,6 +76,11 @@ const URLS = {
     version: "5.43",
   },
   monitoring: { path: "/monitoring", version: 5.43 },
+  monitoringDailyReport: {
+    // path: "/reporting/daily-asset-email-vendor",
+    path: "/reporting/daily-monitoring-email-vendor",
+    version: 5.43,
+  },
   monitoringDetails: { path: "/monitoring/details?id=", version: 5.43 },
 
   // asset

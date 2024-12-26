@@ -185,7 +185,7 @@ const MonitoringEngPdf = ({
     });
 
     const pageHeights = doc.internal.pageSize.getHeight();
-    if (doc.y + 10 > pageHeights) {
+    if (doc.y + 20 > pageHeights) {
       doc.addPage();
       doc.y = 10; // Reset Y position for the new page
     }

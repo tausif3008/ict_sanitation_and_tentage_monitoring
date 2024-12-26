@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
+import { Collapse, Form, Button, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 
-import { getMonitoringAgent } from "./monitoringSlice";
+import { getMonitoringDailyReport } from "./monitoringSlice";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
-import optionsMaker from "../urils/OptionMaker";
-import { dateOptions, getValueLabel } from "../constant/const";
+import { dateWeekOptions, getValueLabel } from "../constant/const";
 import URLS from "../urils/URLS";
-import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
 import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
-import CustomInput from "../commonComponents/CustomInput";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
+import MonitoringSelector from "./monitoringSelector";
 
-const Monitoring = () => {
+const MonitoringDailyReport = () => {
   const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
@@ -33,57 +30,30 @@ const Monitoring = () => {
     totalUnit: 0,
   });
   const [startDate, setStartDate] = useState(null);
-  const [assetMainType, setAssetMainType] = useState([]); // asset main type
-  const [assetTypes, setAssetTypes] = useState([]); // asset type
+  //   const [assetMainType, setAssetMainType] = useState([]); // asset main type
+  //   const [assetTypes, setAssetTypes] = useState([]); // asset type
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
   const [filesName, setFilesName] = useState(null); // files Name
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
-  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
+  const { DailyReport } = MonitoringSelector(); // daily report
 
-  // const ImageUrl = localStorage.getItem("ImageUrl") || "";
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
 
   const dispatch = useDispatch();
-  const params = useParams();
+  //   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [api, contextHolder] = notification.useNotification({ top: 100 });
-  const openNotificationWithIcon = (type) => {
-    api[type]({
-      message: "Note",
-      duration: 7,
-      description: "Please enter some information to perform the search.",
-    });
-  };
 
-  const categoryType = form.getFieldValue("asset_main_type_id");
-  const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
-  const GSD_name = form.getFieldValue("created_by");
-
-  const handleSelect = (value) => {
-    setAssetTypes([]); // get assset type
-    form.setFieldsValue({
-      asset_type_id: null,
-    });
-    optionsMaker(
-      "vendorAsset",
-      "assettypes",
-      "name",
-      setAssetTypes,
-      "?asset_main_type_id=" + value,
-      "asset_type_id"
-    );
-  };
 
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
-      ...values,
+      vendor_id: values?.vendor_id,
     };
     if (values?.form_date || values?.to_date) {
       const dayjsObjectFrom = dayjs(values?.form_date?.$d);
@@ -94,12 +64,24 @@ const Monitoring = () => {
       const end = dayjsObjectTo.format("YYYY-MM-DD");
       finalData.form_date = values?.form_date ? start : end;
       finalData.to_date = values?.to_date ? end : start;
+    } else if (values?.date_format === "Today") {
+      finalData.date = moment().format("YYYY-MM-DD");
     }
+
+    let url = URLS?.monitoringDailyReport?.path;
+
     const searchParams = generateSearchQuery(finalData);
-    if (searchParams === "&") {
-      openNotificationWithIcon("info");
-    }
-    setSearchQuery(searchParams);
+
+    dispatch(
+      getMonitoringDailyReport(
+        "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
+      )
+    );
+    // dispatch(getMonitoringDailyReport(url ,finalData));
+    // if (searchParams === "&") {
+    //   openNotificationWithIcon("info");
+    // }
+    // setSearchQuery(searchParams);
   };
 
   // reset form
@@ -130,84 +112,13 @@ const Monitoring = () => {
     );
   };
 
-  const getDetails = async () => {
-    setLoading(true);
-    let uri = URLS.monitoring.path + "?";
-    if (userRoleId === "8") {
-      uri = uri + `&vendor_id=${sessionData?.id}`;
-    }
-    if (params.page) {
-      uri = uri + params.page;
-    }
-    if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
-    if (searchQuery) {
-      uri = uri + searchQuery;
-    }
-
-    const extraHeaders = { "x-api-version": URLS.asset.version };
-    const res = await getData(uri, extraHeaders);
-
-    if (res) {
-      const data = res.data;
-      const list = data.listings.map((el, index) => {
-        return {
-          ...el,
-        };
-      });
-      const totalUnit = data?.listings?.reduce((total, start) => {
-        return total + Number(start?.unit_no);
-      }, 0);
-      setDetails(() => {
-        return {
-          list,
-          pageLength: data.paging[0].length,
-          currentPage: data.paging[0].currentpage,
-          totalUnit,
-          totalRecords: data.paging[0].totalrecords,
-        };
-      });
-
-      // const myexcelData = data?.listings?.map((data, index) => {
-      //   return {
-      //     sr: index + 1,
-      //     "Asset Type Name": data?.asset_type_name,
-      //     Code: Number(data?.asset_code),
-      //     Unit: Number(data?.unit_no),
-      //     "Monitoring Agent Name": data?.agent_name,
-      //     "Vendor Name": data?.vendor_name,
-      //     Sector: data?.sector_name,
-      //     Circle: data?.circle_name,
-      //     Date: data?.created_at
-      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-      //       : "",
-      //   };
-      // });
-      // setExcelData(myexcelData);
-    }
-    setLoading(false);
-  };
-
   // file name
   const getReportName = () => {
-    const catTypeName = getValueLabel(categoryType, assetMainType, "");
-    const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
     const vendorName = getValueLabel(vendor_id_name, VendorListDrop, "");
 
     let reportName = "";
     if (vendorName) {
       reportName += `${vendorName}`;
-    }
-    if (catTypeName) {
-      if (reportName) {
-        reportName += `-${catTypeName}`;
-      } else {
-        reportName += catTypeName;
-      }
-    }
-    if (assetTypeName) {
-      reportName += `(${assetTypeName})`;
     }
     return reportName
       ? `${reportName} -Toilet & Tentage Monitoring Report`
@@ -216,28 +127,10 @@ const Monitoring = () => {
 
   useEffect(() => {
     setFilesName(getReportName()); // file name
-  }, [categoryType, asset_type_id_name, vendor_id_name, GSD_name]);
+  }, [vendor_id_name]);
 
   useEffect(() => {
-    getDetails();
-  }, [params, searchQuery]);
-
-  useEffect(() => {
-    const urls = URLS?.monitoringAgent?.path;
-    dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    userRoleId != "8" && dispatch(getVendorList()); // vendor list
-  }, []);
-
-  useEffect(() => {
-    // get assset main type
-    optionsMaker(
-      "assetMainTypePerPage",
-      "assetmaintypes",
-      "name",
-      setAssetMainType,
-      "",
-      "asset_main_type_id"
-    );
+    dispatch(getVendorList()); // vendor list
   }, []);
 
   const columns = [
@@ -322,7 +215,7 @@ const Monitoring = () => {
           <div
             className="text-blue-500 cursor-pointer"
             onClick={() => {
-              navigate("/monitoring-report/" + record?.id);
+              navigate("/monitoring-report/" + record.id);
             }}
           >
             Monitoring
@@ -443,7 +336,7 @@ const Monitoring = () => {
 
   return (
     <div className="">
-      <CommonDivider label={"Toilet & Tentage Monitoring"}></CommonDivider>
+      <CommonDivider label={"Monitoring Daily Report"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <div>
           <Button
@@ -487,52 +380,18 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    {userRoleId != "8" && (
-                      <>
-                        <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"created_by"}
-                            label={"Select GSD"}
-                            placeholder={"Select GSD"}
-                            options={monitoringAgentDrop || []}
-                            // search dropdown
-                            isOnSearchFind={true}
-                            apiAction={getMonitoringAgent}
-                            onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                          />
-                        </Col>
-                        <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"vendor_id"}
-                            label={"Select Vendor"}
-                            placeholder={"Select Vendor"}
-                            options={VendorListDrop || []}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={assetMainType || []}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={assetTypes || []}
-                      />
-                    </Col>
-                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name={"code"}
-                        label={" Item QR Code"}
-                        placeholder={" Item QR Code"}
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Vendor!",
+                          },
+                        ]}
                       />
                     </Col>
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
@@ -541,7 +400,13 @@ const Monitoring = () => {
                         label={"Select Date Type"}
                         placeholder={"Select Date Type"}
                         onSelect={handleDateSelect}
-                        options={dateOptions || []}
+                        options={dateWeekOptions || []}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select Date Type!",
+                          },
+                        ]}
                       />
                     </Col>
                     {showDateRange && (
@@ -632,7 +497,6 @@ const Monitoring = () => {
             },
           ]}
         />
-        {contextHolder}
       </div>
 
       <CommonTable
@@ -648,4 +512,4 @@ const Monitoring = () => {
   );
 };
 
-export default Monitoring;
+export default MonitoringDailyReport;

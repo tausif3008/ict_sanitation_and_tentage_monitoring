@@ -101,6 +101,7 @@ import {
   vendorDash_param,
   wasteDash_param,
 } from "./constant/permission";
+import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 // import { Provider, useDispatch } from "react-redux";
 // import store from "./Redux/store";
 // import URLS from "./urils/URLS"
@@ -622,6 +623,15 @@ function App() {
             <ProtectedRoute
               condition={monitoring_reports?.includes(userRoleId)}
               component={Monitoring}
+            />
+          }
+        />
+        <Route
+          path="monitoring-daily-report"
+          element={
+            <ProtectedRoute
+              condition={monitoring_reports?.includes(userRoleId)}
+              component={MonitoringDailyReport}
             />
           }
         />
