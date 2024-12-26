@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { revertAll } from "../Redux/action";
+import { revertAll, revertMonitoringSlice } from "../Redux/action";
 import axiosInstance from "../Axios/commonAxios";
 
 const initialState = {
@@ -24,6 +24,7 @@ export const monitoringSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
+    builder.addCase(revertMonitoringSlice, () => initialState);
   },
 });
 
