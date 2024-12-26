@@ -79,8 +79,8 @@ const MonitoringEngPdf = ({
     const dateString = moment().format("DD-MMM-YYYY hh:mm A");
 
     // Calculate positions for the title and date
-    const titleX = 54; // Left align title
-    const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
+    const titleX = 54;
+    const dateX = pageWidth - doc.getTextWidth(dateString) - 34;
 
     doc.y += 8;
 
@@ -152,17 +152,17 @@ const MonitoringEngPdf = ({
     } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
 
     doc.setFontSize(12);
-    doc.setFont("normal"); // Set the font style to normal (not bold)
+    doc.setFont("normal");
     const instructionDataLines = doc.splitTextToSize(
       instructionData,
       pageWidth - 40
     );
     doc.y += 15;
 
-    const backgroundHeight = 33; // Adjust height of the background box if necessary
-    doc.setFillColor(220, 220, 220);
+    const backgroundHeight = 33;
+    doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-    doc.text(instructionDataLines, 15, doc.y); // Adjust X position to leave some space between text and the left edge
+    doc.text(instructionDataLines, 15, doc.y);
 
     doc.y += 35;
 
@@ -201,7 +201,7 @@ const MonitoringEngPdf = ({
 
     doc.y += 13;
 
-    doc.setFillColor(220, 220, 220);
+    doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 30, "F");
     doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
 
