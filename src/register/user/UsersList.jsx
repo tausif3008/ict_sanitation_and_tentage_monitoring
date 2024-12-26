@@ -277,7 +277,13 @@ const UserList = () => {
         label={"User List"}
         compo={
           <Button
-            onClick={() => navigate("/user-registration")}
+            onClick={() =>
+              navigate("/user-registration", {
+                state: {
+                  key: "AddKey",
+                },
+              })
+            }
             className="bg-orange-300 mb-1"
           >
             Add User

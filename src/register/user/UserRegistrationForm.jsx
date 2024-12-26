@@ -25,12 +25,17 @@ const UserRegistrationForm = () => {
 
   const onFinish = async (values) => {
     setLoading(true);
-    values.status = 1;
+    const finalValue = {
+      ...values,
+      status: 1,
+    };
+
     if (key === "UpdateKey") {
-      values.user_id = record.user_id;
+      finalValue.user_id = record.user_id;
     }
+
     const res = await postData(
-      getFormData(values),
+      getFormData(finalValue),
       key === "UpdateKey" ? URLS.editUser.path : URLS.register.path,
       {
         version: URLS.register.version,
@@ -107,7 +112,7 @@ const UserRegistrationForm = () => {
                 },
               ]}
             />
-            {!key === "UpdateKey" && (
+            {key === "AddKey" && (
               <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
