@@ -280,7 +280,11 @@ const VendorList = () => {
             <Button
               className="bg-orange-300 mb-1"
               onClick={() => {
-                navigate("/vendor-registration");
+                navigate("/vendor-registration", {
+                  state: {
+                    key: "AddKey",
+                  },
+                });
               }}
             >
               Add Vendor

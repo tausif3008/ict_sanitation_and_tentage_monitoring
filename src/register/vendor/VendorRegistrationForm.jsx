@@ -111,14 +111,7 @@ const VendorRegistrationForm = () => {
               state_id={record?.state_id}
               city_id={record?.city_id}
             />
-            <CustomInput
-              type="textarea"
-              label={<div className="font-semibold">Address</div>}
-              name="address"
-              rules={[{ required: true, message: "Please enter the address" }]}
-              placeholder={"Address"}
-            />
-            {!key === "UpdateKey" && (
+            {key === "AddKey" && (
               <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
@@ -138,6 +131,13 @@ const VendorRegistrationForm = () => {
                 ]}
               />
             )}
+            <CustomInput
+              type="textarea"
+              label={<div className="font-semibold">Address</div>}
+              name="address"
+              rules={[{ required: true, message: "Please enter the address" }]}
+              placeholder={"Address"}
+            />
           </div>
           <div className="flex justify-end">
             <Form.Item>
