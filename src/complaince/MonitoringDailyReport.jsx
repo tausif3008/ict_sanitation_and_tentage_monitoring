@@ -71,12 +71,12 @@ const MonitoringDailyReport = () => {
 
     const searchParams = generateSearchQuery(finalData);
 
-    dispatch(
-      getMonitoringDailyReport(
-        "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
-      )
-    );
-    // dispatch(getMonitoringDailyReport(url ,finalData));
+    // dispatch(
+    //   getMonitoringDailyReport(
+    //     "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
+    //   )
+    // );
+    dispatch(getMonitoringDailyReport(url ,finalData));
     // if (searchParams === "&") {
     //   openNotificationWithIcon("info");
     // }

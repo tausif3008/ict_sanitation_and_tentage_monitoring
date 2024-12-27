@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { Collapse, Form, Button, Row, Col, message } from "antd";
+
+import search from "../../assets/Dashboard/icon-search.png";
 import { EditOutlined } from "@ant-design/icons";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import { getData } from "../../Fetch/Axios";
-import URLS from "../../urils/URLS";
+import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import CustomInput from "../../commonComponents/CustomInput";
+import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { vehicleType } from "../../constant/const";
+import { getVehicleList } from "./Slice/vehicleSlice";
+import VehicleSelectors from "./Slice/vehicleSelector";
 
 const VehicleList = () => {
-  const [loading, setLoading] = useState(false);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -16,37 +23,76 @@ const VehicleList = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const params = useParams();
+  const [form] = Form.useForm();
+
+  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { VehicleData, loading } = VehicleSelectors(); // vehicle
+  const { paging, vehicles } = VehicleData?.data || {};
+
+  // fiter finish
+  const onFinishForm = (values) => {
+    const allUndefined = Object.values(values).every(
+      (value) => value === undefined
+    );
+    if (allUndefined) {
+      message.error("Please Select any field");
+      return;
+    }
+    const finalValues = {
+      ...values,
+      page: "1",
+      per_page: "25",
+    };
+    dispatch(getVehicleList(finalValues)); // get vehicle list
+  };
+
+  // reset form
+  const resetForm = () => {
+    form.resetFields();
+    const myParam = {
+      page: "1",
+      per_page: "25",
+    };
+    dispatch(getVehicleList(myParam));
+  };
+
+  // param
+  const getCurrentParam = () => {
+    const newParams = new URLSearchParams(params?.page);
+    let result = {};
+    for (const [key, value] of newParams.entries()) {
+      result[key] = value;
+    }
+    return result;
+  };
 
   const getUsers = async () => {
-    setLoading(true);
-    let uri = URLS.vehicles.path + "/?";
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
+    const myParam = getCurrentParam();
+    dispatch(getVehicleList(myParam));
+  };
 
-    const extraHeaders = { "x-api-version": URLS.vehicles.version };
-    const res = await getData(uri, extraHeaders);
-
-    if (res) {
-      const data = res?.data;
-      setLoading(false);
+  useEffect(() => {
+    if (VehicleData) {
       setDetails(() => {
         return {
-          list: data?.vehicles,
-          pageLength: data?.paging[0].length,
-          currentPage: data?.paging[0].currentPage,
-          totalRecords: data?.paging[0].totalrecords,
+          list: vehicles,
+          pageLength: paging[0].length,
+          currentPage: paging[0].currentPage,
+          totalRecords: paging[0].totalrecords,
         };
       });
     }
-  };
+  }, [VehicleData]);
 
   useEffect(() => {
     getUsers();
   }, [params]);
+
+  useEffect(() => {
+    dispatch(getVendorList()); // vendor list
+  }, []);
 
   const columns = [
     {
@@ -115,13 +161,99 @@ const VehicleList = () => {
         compo={
           <Button
             onClick={() => navigate("/vehicle-registration")}
-            // className="mb-1 bg-green-400"
             className="bg-orange-300 mb-1"
           >
             Add Vehicle
           </Button>
         }
       />
+      <div>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={form}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <Row gutter={[16, 16]} align="middle">
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="type" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        label="Vehicle Type"
+                        name="type"
+                        placeholder={"Select Vehicle Type"}
+                        options={vehicleType || []}
+                      />
+                    </Col>
+                    <Col key="number" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        label="Vehicle Number"
+                        name="number"
+                        placeholder="Enter Vehicle Number"
+                      />
+                    </Col>
+                    <Col key="imei" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        label="IMEI Number"
+                        name="imei"
+                        placeholder="Enter IMEI Number"
+                      />
+                    </Col>
+                    <Col key="chassis_no" xs={24} sm={12} md={6} lg={5}>
+                      <CustomInput
+                        label="Chassis Number"
+                        name="chassis_no"
+                        placeholder="Enter Chassis Number"
+                      />
+                    </Col>
+                    <div className="flex justify-start my-4 space-x-2 ml-3">
+                      <div>
+                        <Button
+                          loading={loading}
+                          type="button"
+                          className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                          onClick={resetForm}
+                        >
+                          Reset
+                        </Button>
+                      </div>
+                      <div>
+                        <Button
+                          loading={loading}
+                          type="button"
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                        >
+                          Search
+                        </Button>
+                      </div>
+                    </div>
+                  </Row>
+                </Form>
+              ),
+            },
+          ]}
+        />
+      </div>
 
       <CommonTable
         loading={loading}
