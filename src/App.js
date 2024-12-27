@@ -1,13 +1,6 @@
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
-import {
-  // BrowserRouter,
-  Navigate,
-  Route,
-  Routes,
-  // useLocation,
-  useNavigate,
-} from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import LandingPage from "./landingPage/LandingPage";
 import "bootstrap/dist/css/bootstrap.min.css";
 import Login from "./Login/Login";
@@ -82,7 +75,6 @@ import { revertAll } from "./Redux/action";
 import TermsAndConditions from "./pages/term-and-conditions";
 import AboutUs from "./pages/about-us";
 import LoginSelectors from "./Login/slice/loginSelector";
-import { logOutUser } from "./Login/slice/loginSlice";
 import AddParkingForm from "./register/parking/AddParking";
 import ProtectedRoute from "./protectiveRoutes";
 import {
@@ -102,10 +94,6 @@ import {
   wasteDash_param,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
-// import { Provider, useDispatch } from "react-redux";
-// import store from "./Redux/store";
-// import URLS from "./urils/URLS"
-// import VendorWiseReport from "./Reports/VendorWiseReport";
 
 function App() {
   const navigate = useNavigate();
@@ -126,45 +114,14 @@ function App() {
     }
   }, [token]);
 
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     if (location.pathname.includes("login")) {
-  //       const link = `/sanitation-dashboard`;
-  //       navigate(link);
-  //     } else {
-  //       if (
-  //         (location.pathname === "/sanitation-dashboard" ||
-  //           location.pathname === "/") &&
-  //         RoleId === "8"
-  //       ) {
-  //         const link = `/vendor-dashboard`;
-  //         navigate(link);
-  //       } else if (location.pathname === "/") {
-  //         const link = `/sanitation-dashboard`;
-  //         navigate(link);
-  //       } else {
-  //         const link = `${location.pathname}`;
-  //         navigate(link);
-  //       }
-  //     }
-  //   } else {
-  //     const link = `/login`;
-  //     navigate(link, { replace: true });
-  //   }
-  // }, [loggedIn, RoleId, location.pathname, navigate]);
-
   // login page call
   const showLoginPage = async () => {
-    // const result = await dispatch(logOutUser())
-    // if (result?.data?.success) {
     dispatch(revertAll());
     localStorage.clear();
     sessionStorage.clear();
     setTimeout(() => {
       navigate(link, { replace: true });
-      // navigate("/");
     }, 1000);
-    // }
   };
 
   // pass the token

@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from "react";
-import Footer from "../footer/Footer";
 import { Outlet, useLocation } from "react-router";
+import Footer from "../footer/Footer";
 import MainNavbar from "../navbar/MainNavbar";
 import CopyWrite from "../footer/Copywrite";
 import { DICT } from "../utils/dictionary";
 import footerBg from "../assets/Dashboard/footerBg.png";
-import { Dropdown, Select } from "antd";
 
 const Layout = () => {
+  const location = useLocation();
   const localLang = localStorage.getItem("lang");
-
   const [lang, setLang] = useState(localLang || "en");
 
   useEffect(() => {
@@ -22,7 +21,6 @@ const Layout = () => {
   const [pageWidthFull, setPageWidthFull] = useState(false);
   const [classWidth, setClassWidth] = useState();
 
-  const location = useLocation();
   useEffect(() => {
     if (location.pathname) {
       const wFullCondition =
