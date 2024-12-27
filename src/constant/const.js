@@ -70,6 +70,17 @@ export const dateWeekOptions = [
   },
 ];
 
+export const dateDayOptions = [
+  {
+    label: "Today",
+    value: "Today",
+  },
+  {
+    label: "Select Date",
+    value: "date",
+  },
+];
+
 export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
 
 // dashboard
