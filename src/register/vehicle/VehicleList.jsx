@@ -37,7 +37,7 @@ const VehicleList = () => {
       (value) => value === undefined
     );
     if (allUndefined) {
-      message.error("Please Select any field");
+      message.error("Please Select any search field");
       return;
     }
     const finalValues = {
@@ -82,13 +82,22 @@ const VehicleList = () => {
   };
 
   useEffect(() => {
-    if (VehicleData) {
+    if (VehicleData?.success) {
       setDetails(() => {
         return {
-          list: vehicles,
-          pageLength: paging[0].length,
-          currentPage: paging[0].currentPage,
-          totalRecords: paging[0].totalrecords,
+          list: vehicles || [],
+          pageLength: vehicles?.length || 1,
+          currentPage: paging[0].currentpage || 1,
+          totalRecords: paging[0].totalrecords || 1,
+        };
+      });
+    } else {
+      setDetails(() => {
+        return {
+          list: [],
+          pageLength: 0,
+          currentPage: 1,
+          totalRecords: 0,
         };
       });
     }
