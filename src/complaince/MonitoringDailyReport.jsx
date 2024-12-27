@@ -71,12 +71,13 @@ const MonitoringDailyReport = () => {
 
     const searchParams = generateSearchQuery(finalData);
 
-    // dispatch(
-    //   getMonitoringDailyReport(
-    //     "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
-    //   )
-    // );
-    dispatch(getMonitoringDailyReport(url ,finalData));
+    dispatch(
+      getMonitoringDailyReport(
+        "/reporting/daily-monitoring-email-vendor?vendor_id=142&date=2024-12-24"
+        // "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
+      )
+    );
+    // dispatch(getMonitoringDailyReport(url ,finalData));
     // if (searchParams === "&") {
     //   openNotificationWithIcon("info");
     // }
@@ -138,7 +139,8 @@ const MonitoringDailyReport = () => {
   useEffect(() => {
     if (DailyReport) {
       const element = document.createElement("div");
-      element.innerHTML = DailyReport?.data?.html;
+      element.innerHTML = DailyReport;
+      // element.innerHTML = DailyReport?.data?.html;
 
       // Use html2pdf to generate the PDF with custom styles
       html2pdf().from(element).save("Monitoring-Daily-Report.pdf");

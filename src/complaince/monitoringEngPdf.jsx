@@ -146,8 +146,10 @@ const MonitoringEngPdf = ({
     const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
       tableObject?.submitted_date
     ).format("DD-MMM-YYYY hh:mm A")} you have been sent “${
-      tableObject?.unit_no
-    }” number of SMS alerts on your registered Mobile Number “9999252341” individually for each ${
+      tableObject?.smscount || ""
+    }” number of SMS alerts on your registered Mobile Number “${
+      tableObject?.vendor_phone || ""
+    }” individually for each ${
       tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
     } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
 

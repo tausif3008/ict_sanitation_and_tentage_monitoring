@@ -41,7 +41,11 @@ const VehicleList = () => {
       return;
     }
     const finalValues = {
-      ...values,
+      ...(values?.user_id && { user_id: `${values?.user_id}` }),
+      ...(values?.type && { type: `${values?.type}` }),
+      ...(values?.number && { number: `${values?.number}` }),
+      ...(values?.chassis_no && { chassis_no: `${values?.chassis_no}` }),
+      ...(values?.imei && { imei: `${values?.imei}` }),
       page: "1",
       per_page: "25",
     };
@@ -70,7 +74,11 @@ const VehicleList = () => {
 
   const getUsers = async () => {
     const myParam = getCurrentParam();
-    dispatch(getVehicleList(myParam));
+    const newParam = {
+      ...myParam,
+      ...form.getFieldsValue(),
+    };
+    dispatch(getVehicleList(newParam));
   };
 
   useEffect(() => {
@@ -188,9 +196,9 @@ const VehicleList = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="user_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"vendor_id"}
+                        name={"user_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
                         options={VendorListDrop || []}

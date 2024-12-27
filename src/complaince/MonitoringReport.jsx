@@ -87,6 +87,8 @@ const MonitoringReport = () => {
         mela_road_name: monitoringData?.mela_road_name || null,
         mela_patri_name: monitoringData?.mela_patri_name || null,
         sanstha_name_hi: monitoringData?.sanstha_name_hi || null,
+        smscount: monitoringData?.smscount || null,
+        vendor_phone: monitoringData?.vendor_phone || null,
         unit_no: monitoringData?.unit_no || "N/A",
         submitted_date: monitoringData?.updated_at
           ? moment(monitoringData?.updated_at).format("YYYY-MM-DD HH:mm:ss")
