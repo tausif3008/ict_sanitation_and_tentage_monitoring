@@ -88,6 +88,7 @@ const MonitoringEngPdf = ({
     doc.setFontSize(12);
     doc.setFont("bold");
     doc.text(title, titleX - 35, doc.y);
+    doc.setFont("helvetica", "normal"); // make font normal
     doc.setFont("normal");
     doc.setFontSize(10);
     doc.text(dateString, dateX + 30, doc.y);
@@ -143,28 +144,93 @@ const MonitoringEngPdf = ({
       },
     });
 
-    const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
-      tableObject?.submitted_date
-    ).format("DD-MMM-YYYY hh:mm A")} you have been sent “${
-      tableObject?.smscount || ""
-    }” number of SMS alerts on your registered Mobile Number “${
-      tableObject?.vendor_phone || ""
-    }” individually for each ${
-      tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
-    } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
+    // const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
+    //   tableObject?.submitted_date
+    // ).format("DD-MMM-YYYY hh:mm A")} you have been sent “${
+    //   tableObject?.smscount || ""
+    // }” number of SMS alerts on your registered Mobile Number “${
+    //   tableObject?.vendor_phone || ""
+    // }” individually for each ${
+    //   tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
+    // } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
 
+    // doc.setFontSize(12);
+    // doc.setFont("helvetica", "normal"); // make font normal
+    // doc.setFont("normal");
+    // const instructionDataLines = doc.splitTextToSize(
+    //   instructionData,
+    //   pageWidth - 40
+    // );
+    // doc.y += 15;
+
+    // const backgroundHeight = 33;
+    // doc.setFillColor(240, 240, 240);
+    // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
+    // doc.text(instructionDataLines, 15, doc.y);
+
+    // Split instructionData into parts
+    const instructionDataParts = [
+      "You are hereby being put to notice that upon inspection on ",
+      {
+        text: moment(tableObject?.submitted_date).format("DD-MMM-YYYY hh:mm A"),
+        bold: true,
+      },
+      " you have been sent ",
+      { text: tableObject?.smscount || "", bold: true },
+      " number of SMS alerts on your registered Mobile Number ",
+      { text: tableObject?.vendor_phone || "", bold: true },
+      " individually for each ",
+      {
+        text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+        bold: true,
+      },
+      " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
+    ];
+
+    // Set up the font size and initial position
     doc.setFontSize(12);
-    doc.setFont("normal");
-    const instructionDataLines = doc.splitTextToSize(
-      instructionData,
-      pageWidth - 40
-    );
-    doc.y += 15;
+    let currentY = doc.y;
+    const margin = 15;
+    let currentX = margin;
+    const lineHeight = 5;
 
     const backgroundHeight = 33;
     doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-    doc.text(instructionDataLines, 15, doc.y);
+
+    // Loop through the parts and add them to the document
+    instructionDataParts?.forEach((part) => {
+      // Apply the correct font style (normal or bold)
+      if (typeof part === "string") {
+        doc.setFont("helvetica", "normal");
+        doc.setFont("normal");
+      } else if (part.bold) {
+        doc.setFont("helvetica", "bold");
+        doc.setFont("bold");
+      }
+
+      const text = typeof part === "string" ? part : part?.text;
+      const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
+
+      textArray?.forEach((line, index) => {
+        const textWidth = doc.getTextWidth(line);
+
+        // Move to the next line if the current line exceeds the page width
+        if (currentX + textWidth > pageWidth - margin) {
+          currentX = margin;
+          currentY += lineHeight;
+        }
+
+        doc.text(line, currentX, currentY);
+        currentX += textWidth;
+
+        // Add a line break after each line (except the last line)
+        if (index < textArray?.length - 1) {
+          currentX = margin;
+          currentY += lineHeight;
+        }
+      });
+    });
 
     doc.y += 35;
 
@@ -195,7 +261,6 @@ const MonitoringEngPdf = ({
     const introduction2 =
       "You are directed to take the requisite remedial actions/measures in connection with the report being enclosed, as may be required, forthwith, within 24 hours, and apprise the Authority of the curative action(s) taken in the form of an Action Taken Report. Please note failure to abide by this notice shall not only tantamount breach of contract but would also entitle the Authority to proceed further as per the terms and conditions of agreement.";
     doc.setFontSize(12);
-    doc.setFont("normal"); // Set the font style to normal (not bold)
     const instructionDataLines2 = doc.splitTextToSize(
       introduction2,
       pageWidth - 40
