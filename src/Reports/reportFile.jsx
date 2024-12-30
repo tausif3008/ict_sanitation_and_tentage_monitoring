@@ -12,6 +12,7 @@ const ExportToPDF = ({
   rows,
   landscape = false,
   IsLastLineBold = false,
+  IsNoBold = false,
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -19,6 +20,7 @@ const ExportToPDF = ({
       return "";
     }
     const doc = new jsPDF(landscape ? "landscape" : "");
+    doc.y = 15;
 
     // Centered ICT heading
     const ictHeading = "Maha Kumbh 2025";
@@ -26,7 +28,7 @@ const ExportToPDF = ({
     const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
     doc.setFontSize(23); // Increase font size for better prominence
     doc.setFont("helvetica", "bold");
-    doc.text(ictHeading, ictX - 12, 15); // Heading position
+    doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
     // Image on the Left (Company Logo or similar image)
     const leftImageX = 10; // X position (from the left)
@@ -61,56 +63,56 @@ const ExportToPDF = ({
       undefined,
       "FAST" // Adds compression for smaller file size
     );
+    doc.y += 15;
 
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
-    const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
+    const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2;
     doc.setFontSize(16);
     doc.setFont("bold");
-    doc.text(subHeading, subHeadingX + 30, 30); // Position it below the images (Y position is adjusted)
+    doc.text(subHeading, subHeadingX + 30, doc.y);
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
     const dateString = moment().format("DD-MMM-YYYY HH:MM A");
 
-    // -------------------------
-
-    // Calculate positions for the title and date
-    // const titleX = 54; // Left align title
-    // const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
-
-    // // Add title and date below the subheading
-    // doc.setFontSize(12);
-    // doc.setFont("bold");
-    // doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
-    // doc.setFont("normal");
-    // doc.setFontSize(10); // Smaller font size for date
-    // doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
-
-    // -------------------------
-
     const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
+
+    doc.y += 10;
 
     // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
+    doc.text(title, titleX - 35, doc.y);
 
     // Add date on the next line, maintaining the same X position for horizontal alignment
     doc.setFont("normal");
-    doc.setFontSize(10); // Smaller font size for date
-    const dateY = 40 + 10; // Increase the Y position by the height of the title text (approx. 10 units)
-    doc.text(dateString, dateX + 30, dateY); // Date position (on the next line below the title)
+    doc.setFontSize(10);
+    doc.y += 10;
+    doc.text(dateString, dateX + 30, doc.y);
+    doc.y += 5;
 
     // Table header and content
     doc.autoTable({
       head: [headerData],
       body: rows,
-      startY: 45 + 10, // Start after the horizontal line and other content (Y position adjusted)
+      startY: doc.y,
+      didDrawPage: function (data) {
+        doc.y = data.cursor.y;
+      },
       didParseCell: function (data) {
         const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
-        if (isLastRow && IsLastLineBold) {
+        const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
+        const isFirstColumn = data.column.index === 0;
+
+        if (
+          (isLastRow && IsLastLineBold) ||
+          (IsNoBold &&
+            isNumber &&
+            !isFirstColumn &&
+            Number(data.cell.text) !== 0)
+        ) {
           data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
           data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
           data.cell.styles.fontSize = 10; // Increase font size for emphasis

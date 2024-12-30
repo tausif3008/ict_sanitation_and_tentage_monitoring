@@ -237,6 +237,7 @@ const SectorWiseReport = () => {
             pdfName={filesName ? filesName : `Sector-Wise-Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
+            IsNoBold={true}
             rows={[
               ...pdfData,
               [
