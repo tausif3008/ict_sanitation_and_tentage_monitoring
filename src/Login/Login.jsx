@@ -116,6 +116,7 @@ const Login = () => {
 
   // forgot password
   const handleForgotPassword = async (value) => {
+    console.log("value", value);
     if (Number(value?.captcha) !== Number(value?.enter_captcha)) {
       message.error("Please Add Correct Captcha!");
       return "";
@@ -123,7 +124,7 @@ const Login = () => {
     setPhone(value?.phone);
     try {
       const formData = new FormData();
-      formData.append("phone", value);
+      formData.append("phone", value?.phone);
 
       const response = await fetch(`${URLS.baseUrl}/resetpasswordrequest`, {
         method: "POST",
@@ -292,7 +293,9 @@ const Login = () => {
                           onClick={(e) => {
                             forgotForm.resetFields();
                             e.preventDefault(); // Prevent default anchor behavior
-                            setForgotPasswordVisible(true);
+                            setTimeout(() => {
+                              setForgotPasswordVisible(true);
+                            }, 500);
                           }}
                           className="text-blue-500 text-sm underline ml-2"
                         >
