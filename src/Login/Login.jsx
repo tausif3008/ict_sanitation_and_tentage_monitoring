@@ -214,29 +214,6 @@ const Login = () => {
                     autoComplete="off"
                   >
                     <BeforeLoginUserTypeDropDown form={form} />
-                    {/* <Form.Item
-                      name="username"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your mobile number!",
-                        },
-                        {
-                          pattern: /^[0-9]{10}$/,
-                          message:
-                            "Please enter a valid 10-digit mobile number",
-                        },
-                      ]}
-                      className="my-8"
-                    >
-                      <Input
-                        maxLength={10}
-                        autoComplete="off"
-                        prefix={<UserOutlined />}
-                        placeholder="Mobile Number"
-                        className="rounded-none"
-                      />
-                    </Form.Item> */}
                     <CustomInput
                       name="username"
                       // type="text"  // use max length
@@ -278,29 +255,6 @@ const Login = () => {
                       ]}
                       className={"mt-2"}
                     />
-                    {/* <Form.Item
-                      name="password"
-                      rules={[
-                        {
-                          required: true,
-                          message: "Please enter your password!",
-                        },
-                      ]}
-                    >
-                      <Input.Password
-                        autoComplete="off"
-                        prefix={<LockOutlined />}
-                        placeholder="Password"
-                        className="rounded-none"
-                        onKeyDown={(event) => {
-                          const invalidChars = ["'", '"', ";", "-", "\\"];
-                          if (invalidChars.includes(event.key)) {
-                            event.preventDefault();
-                          }
-                        }}
-                      />
-                    </Form.Item> */}
-
                     <NumericCaptcha
                       setisInvalidCaptcha={setisInvalidCaptcha}
                       isInvalidCaptcha={isInvalidCaptcha}
@@ -385,26 +339,6 @@ const Login = () => {
                 accept={"onlyNumber"}
                 className={"mt-2"}
               />
-              {/* <Form.Item
-                label="Phone Number"
-                name="phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter your phone number!",
-                  },
-                  {
-                    pattern: /^[0-9]{10}$/,
-                    message: "Please enter a valid 10-digit phone number!",
-                  },
-                ]}
-              >
-                <Input
-                  placeholder="Enter your phone number"
-                  type="Number"
-                  className="rounded-none"
-                />
-              </Form.Item> */}
               <div className="text-center mt-2">
                 <Button type="primary" htmlType="submit" className="w-[30%]">
                   Get OTP
@@ -413,13 +347,6 @@ const Login = () => {
             </>
           ) : (
             <>
-              {/* <Form.Item
-                label="One Time Password (OTP)"
-                name="otp"
-                rules={[{ required: true, message: "Please enter OTP!" }]}
-              >
-                <Input placeholder="Enter OTP" className="rounded-none" />
-              </Form.Item> */}
               <CustomInput
                 name="otp"
                 label="One Time Password (OTP)"
@@ -443,22 +370,6 @@ const Login = () => {
                 ]}
                 className={"mt-2"}
               />
-              {/* <Form.Item
-                label="New Password"
-                name="newPassword"
-                rules={[
-                  { required: true, message: "Please enter a new password!" },
-                  {
-                    min: 6,
-                    message: "Password must be at least 6 characters.",
-                  },
-                ]}
-              >
-                <Input.Password
-                  placeholder="Enter new password"
-                  className="rounded-none"
-                />
-              </Form.Item> */}
               <div className="text-center">
                 <Button type="primary" htmlType="submit" className="w-[30%]">
                   Save
