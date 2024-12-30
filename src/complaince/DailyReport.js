@@ -21,20 +21,20 @@ export const MonitoringDailyReportPdf = (
   let col = [];
   let tableRow = [];
   const headerData = ["Que No", "Questions (English)"];
-  
+
   tableObject?.incidence_array?.[0]?.incidence_que_array?.forEach((element) => {
     col.push(`Q - ${element?.question_id}`);
   });
-  
+
   let questionArray = tableObject?.questions?.map((data, index) => {
     return [index + 1, data?.que_eng];
   });
-  
+
   tableRow.push(tableObject?.incidence_array?.[0]?.sector_id);
   tableObject?.incidence_array?.[0]?.incidence_que_array?.forEach((element) => {
     tableRow.push(`${element?.incidence_count}`);
   });
-  
+
   tableRow.push(tableObject?.smscount || 0);
   const columnNames = ["Sector ID", ...col, "Total"];
   const doc = new jsPDF(landscape ? "landscape" : "");
@@ -135,19 +135,84 @@ export const MonitoringDailyReportPdf = (
     },
   });
 
-  const instructionData = `You are hereby being put to notice that upon inspection on ${tableObject?.date} you have been sent “${tableObject?.vendor_phone}” number of SMS alerts on your registered Mobile Number “${tableObject?.smscount}” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
-  doc.setFontSize(12);
-  doc.setFont("normal");
-  const instructionDataLines = doc.splitTextToSize(
-    instructionData,
-    pageWidth - 40
-  );
+  doc.setFont("helvetica", "normal"); // make font normal
   doc.y += 15;
 
-  const backgroundHeight = 33; // Adjust height of the background box if necessary
+  // const instructionData = `You are hereby being put to notice that upon inspection on ${tableObject?.date} you have been sent “${tableObject?.vendor_phone}” number of SMS alerts on your registered Mobile Number “${tableObject?.smscount}” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
+  // doc.setFontSize(12);
+  // doc.setFont("normal");
+  // const instructionDataLines = doc.splitTextToSize(
+  //   instructionData,
+  //   pageWidth - 40
+  // );
+
+  // const backgroundHeight = 33; // Adjust height of the background box if necessary
+  // doc.setFillColor(240, 240, 240);
+  // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
+  // doc.text(instructionDataLines, 15, doc.y);
+
+  const instructionDataParts = [
+    "You are hereby being put to notice that upon inspection on ",
+    {
+      text: moment(tableObject?.date).format("DD-MMM-YYYY hh:mm A"),
+      bold: true,
+    },
+    " you have been sent ",
+    { text: tableObject?.smscount || "", bold: true },
+    " number of SMS alerts on your registered Mobile Number ",
+    { text: tableObject?.vendor_phone || "", bold: true },
+    " individually for each ",
+    {
+      text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+      bold: true,
+    },
+    " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
+  ];
+
+  // Set up the font size and initial position
+  doc.setFontSize(12);
+  let currentY = doc.y;
+  const margin = 15;
+  let currentX = margin;
+  const lineHeight = 5;
+
+  const backgroundHeight = 33;
   doc.setFillColor(240, 240, 240);
   doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-  doc.text(instructionDataLines, 15, doc.y);
+
+  // Loop through the parts and add them to the document
+  instructionDataParts?.forEach((part) => {
+    // Apply the correct font style (normal or bold)
+    if (typeof part === "string") {
+      doc.setFont("helvetica", "normal");
+      doc.setFont("normal");
+    } else if (part.bold) {
+      doc.setFont("helvetica", "bold");
+      doc.setFont("bold");
+    }
+
+    const text = typeof part === "string" ? part : part?.text;
+    const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
+
+    textArray?.forEach((line, index) => {
+      const textWidth = doc.getTextWidth(line);
+
+      // Move to the next line if the current line exceeds the page width
+      if (currentX + textWidth > pageWidth - margin) {
+        currentX = margin;
+        currentY += lineHeight;
+      }
+
+      doc.text(line, currentX, currentY);
+      currentX += textWidth;
+
+      // Add a line break after each line (except the last line)
+      if (index < textArray?.length - 1) {
+        currentX = margin;
+        currentY += lineHeight;
+      }
+    });
+  });
 
   doc.y += 30;
 
