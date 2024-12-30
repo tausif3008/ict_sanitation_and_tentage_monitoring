@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Collapse, Form, Button, Row, Col } from "antd";
+import { Collapse, Form, Button, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
 
@@ -108,8 +108,10 @@ const MonitoringDailyReport = () => {
     }
   };
 
+  console.log("DailyReport", DailyReport);
+
   useEffect(() => {
-    if (DailyReport) {
+    if (DailyReport?.success) {
       MonitoringDailyReportPdf(
         DailyReport?.data,
         filesName
@@ -124,13 +126,11 @@ const MonitoringDailyReport = () => {
       // const element = document.createElement("div");
       // element.innerHTML = DailyReport;
       // // element.innerHTML = DailyReport?.data?.html;
-
       // // Use html2pdf to generate the PDF with custom styles
       // html2pdf().from(element).save("Monitoring-Daily-Report.pdf");
-      form.resetFields();
-      dispatch(revertMonitoringSlice());
-      setValue();
-      setFilesName(null);
+      resetForm();
+    } else if (DailyReport) {
+      message.error("Report Not Available");
       resetForm();
     }
   }, [DailyReport]);

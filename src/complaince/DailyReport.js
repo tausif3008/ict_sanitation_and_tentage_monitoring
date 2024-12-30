@@ -20,24 +20,23 @@ export const MonitoringDailyReportPdf = (
 
   let col = [];
   let tableRow = [];
-  const columnNames = ["Sector ID", ...col, "Total"];
   const headerData = ["Que No", "Questions (English)"];
-
+  
   tableObject?.incidence_array?.[0]?.incidence_que_array?.forEach((element) => {
     col.push(`Q - ${element?.question_id}`);
   });
-
+  
   let questionArray = tableObject?.questions?.map((data, index) => {
     return [index + 1, data?.que_eng];
   });
-
+  
   tableRow.push(tableObject?.incidence_array?.[0]?.sector_id);
   tableObject?.incidence_array?.[0]?.incidence_que_array?.forEach((element) => {
     tableRow.push(`${element?.incidence_count}`);
   });
-
+  
   tableRow.push(tableObject?.smscount || 0);
-
+  const columnNames = ["Sector ID", ...col, "Total"];
   const doc = new jsPDF(landscape ? "landscape" : "");
   doc.y = 15;
 
