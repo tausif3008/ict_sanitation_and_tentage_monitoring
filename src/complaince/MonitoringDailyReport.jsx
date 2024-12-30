@@ -108,8 +108,6 @@ const MonitoringDailyReport = () => {
     }
   };
 
-  console.log("DailyReport", DailyReport);
-
   useEffect(() => {
     if (DailyReport?.success) {
       MonitoringDailyReportPdf(

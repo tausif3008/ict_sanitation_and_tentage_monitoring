@@ -1,6 +1,9 @@
 import { message } from "antd";
 import axios from "axios";
-import axiosInstance, { basicUrl } from "../Axios/commonAxios";
+import axiosInstance, {
+  basicUrl,
+  loginAxiosInstance,
+} from "../Axios/commonAxios";
 import { sessionToken } from "../constant/const";
 
 // const loginFetch = async (data, setCanProceed) => {
@@ -44,7 +47,7 @@ const loginFetch = async (data, setCanProceed) => {
   const url = basicUrl + "/login";
 
   try {
-    const response = await axiosInstance.post(url, data, {
+    const response = await loginAxiosInstance.post(url, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },

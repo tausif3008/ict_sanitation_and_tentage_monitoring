@@ -21,4 +21,13 @@ const axiosInstance = axios.create({
   },
 });
 
+export const loginAxiosInstance = axios.create({
+  baseURL: basicUrl,
+  //   timeout: 10000, // Timeout for requests
+  headers: {
+    "Content-Type": "application/json",
+    "x-platform": "Web",
+  },
+});
+
 export default axiosInstance;
