@@ -172,19 +172,24 @@ const MonitoringEngPdf = ({
     const instructionDataParts = [
       "You are hereby being put to notice that upon inspection on ",
       {
-        text: moment(tableObject?.submitted_date).format("DD-MMM-YYYY hh:mm A"),
+        text: moment(tableObject?.submitted_date).format("DD-MMM-YYYY"),
         bold: true,
       },
       " you have been sent ",
       { text: tableObject?.smscount || "", bold: true },
       " number of SMS alerts on your registered Mobile Number ",
       { text: tableObject?.vendor_phone || "", bold: true },
-      " individually for each ",
+      " individually for ",
       {
-        text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+        // text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+        text:
+          tableObject?.asset_main_type_id === "2"
+            ? `${`${tableObject?.code}-${tableObject?.unit_no}`} TAF ID`
+            : `${`${tableObject?.code}-${tableObject?.unit_no}`} PTC ID`,
         bold: true,
       },
-      " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
+      " for the infractions/lacunas/defects discovered with respect to the above mentioned",
+      "type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
     ];
 
     // Set up the font size and initial position
@@ -234,7 +239,7 @@ const MonitoringEngPdf = ({
 
     doc.y += 35;
 
-    const tableTitle = "Monitoring Report";
+    const tableTitle = "Unit Wise Monitoring Report";
     const tableTitleIndex = (pageWidth - doc.getTextWidth(tableTitle)) / 2;
     doc.setFontSize(16);
     doc.setFont("bold");
@@ -268,9 +273,13 @@ const MonitoringEngPdf = ({
 
     doc.y += 13;
 
+    doc.setFont("helvetica", "bold");
+    doc.setFont("bold");
     doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 30, "F");
     doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
+    doc.setFont("helvetica", "normal");
+    doc.setFont("normal");
 
     // Add footer
     const footerText1 =
