@@ -112,7 +112,7 @@ const MonitoringDailyReport = () => {
   useEffect(() => {
     if (DailyReport?.success) {
       MonitoringDailyReportPdf(
-        DailyReport,
+        DailyReport?.data,
         "Daily Monitoring Report",
         filesName
           ? `${filesName}- Daily Monitoring Report`
