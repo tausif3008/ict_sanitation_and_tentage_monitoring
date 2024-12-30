@@ -106,18 +106,17 @@ const MonitoringDailyReport = () => {
     if (userRoleId === "8") {
       form.setFieldValue("vendor_id", userId);
     }
+    form.setFieldValue("date_format", "Today");
   };
 
   useEffect(() => {
     if (DailyReport?.success) {
       MonitoringDailyReportPdf(
-        DailyReport?.data,
+        DailyReport,
+        "Daily Monitoring Report",
         filesName
-          ? `${filesName}- Monitoring Daily Report`
-          : "Monitoring Daily Report",
-        filesName
-          ? `${filesName}- Monitoring Daily Report`
-          : "Monitoring Daily Report",
+          ? `${filesName}- Daily Monitoring Report`
+          : "Daily Monitoring Report",
         false,
         false
       );
@@ -140,7 +139,7 @@ const MonitoringDailyReport = () => {
 
   return (
     <div className="">
-      <CommonDivider label={"Monitoring Daily Report"}></CommonDivider>
+      <CommonDivider label={"Daily Monitoring Report"}></CommonDivider>
       <div>
         <Collapse
           defaultActiveKey={["1"]}

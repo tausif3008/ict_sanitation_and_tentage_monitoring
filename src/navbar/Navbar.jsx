@@ -424,7 +424,7 @@ const Navbar = ({ lang, setLang }) => {
             className="text-black no-underline hover:text-green"
             to="/monitoring-daily-report"
           >
-            Monitoring Daily Report
+            Daily Monitoring Report
           </Link>
         ),
       },
