@@ -40,9 +40,9 @@ const NumericCaptcha = ({
         </div>
       </div>
 
-      <div className="flex flex-col w-28">
+      <div className="flex flex-col w-40">
         <Input
-          size="small"
+          size="lg"
           type="text"
           placeholder="Enter CAPTCHA"
           value={userInput}

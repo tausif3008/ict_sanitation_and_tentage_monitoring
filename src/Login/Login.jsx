@@ -12,7 +12,8 @@ import { checkLoginAvailability } from "../constant/const";
 import CustomInput from "../commonComponents/CustomInput";
 import { useDispatch } from "react-redux";
 import { storeToken } from "./slice/loginSlice";
-import NumericCaptcha from "./NumericCaptcha";
+// import NumericCaptcha from "./NumericCaptcha";
+import CustomNumericCaptcha from "../commonComponents/CustomNumericCaptcha";
 
 const headers = {
   "x-api-key": "YunHu873jHds83hRujGJKd873",
@@ -32,10 +33,10 @@ const Login = () => {
   const [otpStep, setOtpStep] = useState(false);
 
   // handle captchat
-  const [isInvalidCaptcha, setisInvalidCaptcha] = useState(false);
-  const [captcha, setCaptcha] = useState("");
-  const [userInput, setUserInput] = useState("");
-  const [errorMessage, setErrorMessage] = useState("");
+  // const [isInvalidCaptcha, setisInvalidCaptcha] = useState(false);
+  // const [captcha, setCaptcha] = useState("");
+  // const [userInput, setUserInput] = useState("");
+  // const [errorMessage, setErrorMessage] = useState("");
 
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm(); // forgot
@@ -52,65 +53,73 @@ const Login = () => {
     }
   }, [sessionData]);
 
-  const handleValidate = () => {
-    if (userInput !== captcha) {
-      setErrorMessage("Invalid Captcha!");
-      setisInvalidCaptcha(true);
+  // const handleValidate = () => {
+  //   if (userInput !== captcha) {
+  //     setErrorMessage("Invalid Captcha!");
+  //     setisInvalidCaptcha(true);
 
-      return false;
-    } else {
-      return true;
-    }
-  };
+  //     return false;
+  //   } else {
+  //     return true;
+  //   }
+  // };
 
   const onFinish = async (values) => {
-    const isCorrect = handleValidate();
-    if (isCorrect) {
-      setUserInput("");
+    if (Number(values?.captcha) !== Number(values?.enter_captcha)) {
+      message.error("Please Add Correct Captcha!");
+      return "";
     }
+    // const isCorrect = handleValidate();
+    // if (isCorrect) {
+    //   setUserInput("");
+    // }
 
     const formData = new FormData();
     formData.append("user_type_id", values.user_type_id);
     formData.append("username", values.username);
     formData.append("platform", "Web");
     formData.append("password", values.password);
-    // setLoading(true);
+    setLoading(true);
 
-    // const res = await loginFetch(formData, setCanProceed);
-    // const resData = res?.data?.sessionData?.[0];
-    // dispatch(storeToken(res?.sessionToken));
+    const res = await loginFetch(formData, setCanProceed);
+    const resData = res?.data?.sessionData?.[0];
+    dispatch(storeToken(res?.sessionToken));
 
-    // setLoading(false);
-    // if (resData) {
-    //   setTimeout(() => {
-    //     checkLoginAvailability(resData, navigate);
-    //   }, 1000);
-    // }
-
-    if (isCorrect) {
-      setLoading(true);
-      const res = await loginFetch(formData, setCanProceed);
-      const resData = res?.data?.sessionData?.[0];
-      dispatch(storeToken(res?.sessionToken));
-      setLoading(false);
-      if (res) {
-        setisInvalidCaptcha(true);
-        setErrorMessage("");
-        if (resData) {
-          setTimeout(() => {
-            checkLoginAvailability(resData, navigate);
-          }, 1000);
-        }
-      } else {
-        setUserInput("");
-        setErrorMessage("");
-        setisInvalidCaptcha(true);
-      }
+    setLoading(false);
+    if (resData) {
+      setTimeout(() => {
+        checkLoginAvailability(resData, navigate);
+      }, 1000);
     }
+
+    // if (isCorrect) {
+    //   setLoading(true);
+    //   const res = await loginFetch(formData, setCanProceed);
+    //   const resData = res?.data?.sessionData?.[0];
+    //   dispatch(storeToken(res?.sessionToken));
+    //   setLoading(false);
+    //   if (res) {
+    //     setisInvalidCaptcha(true);
+    //     setErrorMessage("");
+    //     if (resData) {
+    //       setTimeout(() => {
+    //         checkLoginAvailability(resData, navigate);
+    //       }, 1000);
+    //     }
+    //   } else {
+    //     setUserInput("");
+    //     setErrorMessage("");
+    //     setisInvalidCaptcha(true);
+    //   }
+    // }
   };
 
   // forgot password
   const handleForgotPassword = async (value) => {
+    if (Number(value?.captcha) !== Number(value?.enter_captcha)) {
+      message.error("Please Add Correct Captcha!");
+      return "";
+    }
     setPhone(value?.phone);
     try {
       const formData = new FormData();
@@ -255,7 +264,7 @@ const Login = () => {
                       ]}
                       className={"mt-2"}
                     />
-                    <NumericCaptcha
+                    {/* <NumericCaptcha
                       setisInvalidCaptcha={setisInvalidCaptcha}
                       isInvalidCaptcha={isInvalidCaptcha}
                       captcha={captcha}
@@ -264,7 +273,9 @@ const Login = () => {
                       setUserInput={setUserInput}
                       errorMessage={errorMessage}
                       setErrorMessage={setErrorMessage}
-                    ></NumericCaptcha>
+                    ></NumericCaptcha> */}
+
+                    <CustomNumericCaptcha form={form} />
 
                     <Form.Item noStyle>
                       <div className="flex justify-between">
@@ -332,13 +343,14 @@ const Login = () => {
                     message: "Please enter a valid 10-digit phone number!",
                   },
                 ]}
-                type="number"
+                // type="number"
                 placeholder="Phone Number"
                 maxLength={10}
                 autoComplete="off"
                 accept={"onlyNumber"}
                 className={"mt-2"}
               />
+              <CustomNumericCaptcha form={forgotForm} />
               <div className="text-center mt-2">
                 <Button type="primary" htmlType="submit" className="w-[30%]">
                   Get OTP
