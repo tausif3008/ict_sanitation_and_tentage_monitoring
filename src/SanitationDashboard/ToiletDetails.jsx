@@ -14,7 +14,10 @@ import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
 import QuestionSelector from "../register/questions/questionSelector";
-import { priorityToiletTypes_Id } from "../constant/const";
+import {
+  priorityToiletTypes_Id,
+  VendorWiseReportcolumns,
+} from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import CustomSelect from "../commonComponents/CustomSelect";
 import { getQuestionList } from "../register/questions/questionSlice";
@@ -27,8 +30,16 @@ const ToiletDetails = () => {
   const [dict, lang] = useOutletContext();
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
-  const [showTable, setShowTable] = useState(false); // total quantity
-  const [showTableList, setTableList] = useState({ list: [] }); // vendor list
+  const [showData, setShowData] = useState(null);
+  const [totalRegistered, setTotalRegistered] = useState(0);
+  const [totalClean, setTotalClean] = useState(0);
+  const [totalUnclean, setTotalUnclean] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [vendorDetails, setVendorDetails] = useState({
+    list: [],
+    pageLength: 25,
+    currentPage: 1,
+  });
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
@@ -38,6 +49,7 @@ const ToiletDetails = () => {
   const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
   const { vendorReports } = VendorSelectors(); // vendor Reports
+  const vendorsData = vendorReports?.data?.vendors || [];
   const toiletData = assetData?.asset_types || [];
 
   const userRoleId = localStorage.getItem("role_id");
@@ -62,16 +74,12 @@ const ToiletDetails = () => {
 
   // close module
   const handleCancel = () => {
-    setShowTable(false);
+    setShowData(null);
   };
 
   // show module
   const handleCleanData = async (data) => {
     const formValue = form.getFieldsValue();
-    // console.log("data", form.getFieldsValue());
-    // console.log("data", data);
-    // setShowTable(false);
-
     const finalData = {
       asset_main_type_id: data?.asset_main_type_id,
       asset_type_id: data?.asset_type_id,
@@ -79,12 +87,11 @@ const ToiletDetails = () => {
       date: dayjs(formValue?.date).format("YYYY-MM-DD"),
     };
 
-    console.log("finalData", finalData);
     const formData = await getFormData(finalData);
     const url = URLS?.vendorReporting?.path;
     dispatch(getVendorReports(url, formData)); // vendor reports
+    setShowData(data);
   };
-  console.log("vendorReports", vendorReports);
 
   // Handle form submission
   const onFinish = async (values) => {
@@ -141,6 +148,43 @@ const ToiletDetails = () => {
         asset_type_id: Number(item?.asset_type_id),
       }))
       ?.sort((a, b) => a?.asset_type_id - b?.asset_type_id) || []; // Sort in ascending order
+
+  useEffect(() => {
+    if (vendorReports) {
+      const total = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.total),
+        0
+      );
+      const totalReg = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.registered),
+        0
+      );
+      const totalClean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.clean),
+        0
+      );
+      const totalUnclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.unclean),
+        0
+      );
+      setTotal(total);
+      setTotalRegistered(totalReg);
+      setTotalClean(totalClean);
+      setTotalUnclean(totalUnclean);
+    }
+  }, [vendorReports]);
+
+  useEffect(() => {
+    if (vendorReports) {
+      setVendorDetails((prevDetails) => ({
+        ...prevDetails,
+        list: vendorReports?.data?.vendors || [],
+        pageLength: vendorReports?.data?.paging?.[0]?.length || 0,
+        currentPage: vendorReports?.data?.paging?.[0]?.currentpage || 1,
+        totalRecords: vendorReports?.data?.paging?.[0]?.totalrecords || 0,
+      }));
+    }
+  }, [vendorReports]);
 
   // total quantity
   const tableColumn = [
@@ -364,12 +408,22 @@ const ToiletDetails = () => {
 
       {/* total quantity */}
       <ViewVendorsSectors
-        title={"Toilet List"}
-        openModal={showTable}
+        title={`                        ${
+          lang === "en" ? showData?.name : showData?.name_hi
+        }`}
+        openModal={showData}
         handleCancel={handleCancel}
-        tableData={showTableList?.list || []}
-        column={tableColumn || []}
-        // footer={`Total Quantity : ${allQuantity}`}
+        tableData={vendorDetails?.list || []}
+        column={VendorWiseReportcolumns || []}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Total Vendors: {vendorsData?.length}</strong>
+            <strong>Total : {total}</strong>
+            <strong>Total Registered: {totalRegistered}</strong>
+            <strong>Total Clean : {totalClean}</strong>
+            <strong>Total Unclean: {totalUnclean}</strong>
+          </div>
+        )}
       />
     </>
   );

@@ -81,6 +81,34 @@ export const dateDayOptions = [
   },
 ];
 
+export const VendorWiseReportcolumns = [
+  {
+    title: "Vendor Name",
+    dataIndex: "name",
+    key: "name",
+  },
+  {
+    title: "Total Quantity",
+    dataIndex: "total",
+    key: "total",
+  },
+  {
+    title: "Registered",
+    dataIndex: "registered",
+    key: "registered",
+  },
+  {
+    title: "Clean",
+    dataIndex: "clean",
+    key: "clean",
+  },
+  {
+    title: "Unclean",
+    dataIndex: "unclean",
+    key: "unclean",
+  },
+];
+
 export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
 
 // dashboard

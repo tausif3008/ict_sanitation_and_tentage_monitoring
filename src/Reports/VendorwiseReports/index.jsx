@@ -12,7 +12,7 @@ import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getValueLabel } from "../../constant/const";
+import { getValueLabel, VendorWiseReportcolumns } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
 import {
   getAssetMainTypes,
@@ -223,34 +223,6 @@ const VendorReports = () => {
     }
   }, [vendorReports]);
 
-  const columns = [
-    {
-      title: "Vendor Name",
-      dataIndex: "name",
-      key: "name",
-    },
-    {
-      title: "Total Quantity",
-      dataIndex: "total",
-      key: "total",
-    },
-    {
-      title: "Registered",
-      dataIndex: "registered",
-      key: "registered",
-    },
-    {
-      title: "Clean",
-      dataIndex: "clean",
-      key: "clean",
-    },
-    {
-      title: "Unclean",
-      dataIndex: "unclean",
-      key: "unclean",
-    },
-  ];
-
   // pdf header
   const pdfHeader = [
     "Sr No",
@@ -408,7 +380,7 @@ const VendorReports = () => {
 
       <Table
         loading={loading}
-        columns={columns}
+        columns={VendorWiseReportcolumns || []}
         dataSource={vendorDetails?.list || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
