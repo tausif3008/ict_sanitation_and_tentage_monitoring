@@ -1,13 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 import { useDispatch } from "react-redux";
-import {
-  CheckCircleOutlined,
-  ExclamationCircleOutlined,
-  EyeOutlined,
-  CheckOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import card_green from "../assets/Dashboard/card_green.png";
 import card_orange from "../assets/Dashboard/card_orange.png";
 import card_red from "../assets/Dashboard/card_red.png";
@@ -17,7 +11,6 @@ import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
-import { Icon } from "@iconify/react/dist/iconify.js";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();

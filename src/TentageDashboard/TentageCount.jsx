@@ -28,8 +28,15 @@ const TentageCount = () => {
   const { AssetType } = AssetTypeSelectors(); // asset type
 
   const { TentageDash_data } = TentageSelector(); // tentage dashboard
-  const { total, registered, under_monitoring, off_monitoring } =
-    TentageDash_data?.data?.asset_counts || {};
+  const {
+    total,
+    registered,
+    under_monitoring,
+    off_monitoring,
+    todays_registered = 0,
+    todays_allocated = 0,
+  } = TentageDash_data?.data?.asset_counts || {};
+  
   const Role = localStorage.getItem("role");
   const name = localStorage.getItem("name");
   const userId = localStorage.getItem("userId");

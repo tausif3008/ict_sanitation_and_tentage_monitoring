@@ -31,14 +31,16 @@ const ToiletDetails = () => {
   const [assetData, setAssetData] = useState([]);
   const [showAll, setShowAll] = useState(false);
   const [showData, setShowData] = useState(null);
-  const [totalRegistered, setTotalRegistered] = useState(0);
-  const [totalClean, setTotalClean] = useState(0);
-  const [totalUnclean, setTotalUnclean] = useState(0);
-  const [total, setTotal] = useState(0);
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
+  });
+  const [count, setCount] = useState({
+    total: 0,
+    registered: 0,
+    clean: 0,
+    unclean: 0,
   });
 
   const dateFormat = "YYYY-MM-DD";
@@ -75,6 +77,12 @@ const ToiletDetails = () => {
   // close module
   const handleCancel = () => {
     setShowData(null);
+    setCount({
+      total: 0,
+      registered: 0,
+      clean: 0,
+      unclean: 0,
+    });
   };
 
   // show module
@@ -152,25 +160,27 @@ const ToiletDetails = () => {
   useEffect(() => {
     if (vendorReports) {
       const total = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.total),
+        (acc, circle) => acc + Number(circle?.total) || 0,
         0
       );
       const totalReg = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.registered),
+        (acc, circle) => acc + Number(circle?.registered) || 0,
         0
       );
       const totalClean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.clean),
+        (acc, circle) => acc + Number(circle?.clean) || 0,
         0
       );
       const totalUnclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.unclean),
+        (acc, circle) => acc + Number(circle?.unclean) || 0,
         0
       );
-      setTotal(total);
-      setTotalRegistered(totalReg);
-      setTotalClean(totalClean);
-      setTotalUnclean(totalUnclean);
+      setCount({
+        total: total,
+        registered: totalReg,
+        clean: totalClean,
+        unclean: totalUnclean,
+      });
     }
   }, [vendorReports]);
 
@@ -185,16 +195,6 @@ const ToiletDetails = () => {
       }));
     }
   }, [vendorReports]);
-
-  // total quantity
-  const tableColumn = [
-    {
-      title: "Total Quantity",
-      dataIndex: "total_quantity",
-      key: "total_quantity",
-      width: "20%",
-    },
-  ];
 
   return (
     <>
@@ -408,9 +408,7 @@ const ToiletDetails = () => {
 
       {/* total quantity */}
       <ViewVendorsSectors
-        title={`                        ${
-          lang === "en" ? showData?.name : showData?.name_hi
-        }`}
+        title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
         openModal={showData}
         handleCancel={handleCancel}
         tableData={vendorDetails?.list || []}
@@ -418,10 +416,10 @@ const ToiletDetails = () => {
         footer={() => (
           <div className="flex justify-between">
             <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {total}</strong>
-            <strong>Total Registered: {totalRegistered}</strong>
-            <strong>Total Clean : {totalClean}</strong>
-            <strong>Total Unclean: {totalUnclean}</strong>
+            <strong>Total : {count?.total || 0}</strong>
+            <strong>Total Registered: {count?.registered || 0}</strong>
+            <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Unclean: {count?.unclean || 0}</strong>
           </div>
         )}
       />
