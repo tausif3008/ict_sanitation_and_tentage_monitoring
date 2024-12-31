@@ -144,98 +144,105 @@ const MonitoringEngPdf = ({
       },
     });
 
-    // const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
-    //   tableObject?.submitted_date
-    // ).format("DD-MMM-YYYY hh:mm A")} you have been sent “${
-    //   tableObject?.smscount || ""
-    // }” number of SMS alerts on your registered Mobile Number “${
-    //   tableObject?.vendor_phone || ""
-    // }” individually for each ${
-    //   tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
-    // } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
+    const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
+      tableObject?.submitted_date
+    ).format("DD-MMM-YYYY")} you have been sent “${
+      tableObject?.smscount || ""
+    }” number of SMS alerts on your registered Mobile Number “${
+      tableObject?.vendor_phone || ""
+    }” individually for each ${
+      tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID"
+    } for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
 
-    // doc.setFontSize(12);
-    // doc.setFont("helvetica", "normal"); // make font normal
-    // doc.setFont("normal");
-    // const instructionDataLines = doc.splitTextToSize(
-    //   instructionData,
-    //   pageWidth - 40
-    // );
-    // doc.y += 15;
-
-    // const backgroundHeight = 33;
-    // doc.setFillColor(240, 240, 240);
-    // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-    // doc.text(instructionDataLines, 15, doc.y);
-
-    // Split instructionData into parts
-    const instructionDataParts = [
-      "You are hereby being put to notice that upon inspection on ",
-      {
-        text: moment(tableObject?.submitted_date).format("DD-MMM-YYYY"),
-        bold: true,
-      },
-      " you have been sent ",
-      { text: tableObject?.smscount || "", bold: true },
-      " number of SMS alerts on your registered Mobile Number ",
-      { text: tableObject?.vendor_phone || "", bold: true },
-      " individually for ",
-      {
-        // text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
-        text:
-          tableObject?.asset_main_type_id === "2"
-            ? `${`${tableObject?.code}-${tableObject?.unit_no}`} TAF ID`
-            : `${`${tableObject?.code}-${tableObject?.unit_no}`} PTC ID`,
-        bold: true,
-      },
-      " for the infractions/lacunas/defects discovered with respect to the above mentioned",
-      "type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
-    ];
-
-    // Set up the font size and initial position
     doc.setFontSize(12);
-    let currentY = doc.y;
-    const margin = 15;
-    let currentX = margin;
-    const lineHeight = 5;
+    doc.setFont("helvetica", "bold"); // make font bold
+    doc.setFont("bold");
+    const instructionDataLines = doc.splitTextToSize(
+      instructionData,
+      pageWidth - 30
+    );
+    doc.y += 15;
 
     const backgroundHeight = 33;
     doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
+    // doc.text(instructionDataLines, 15, doc.y);
+    let currentY = doc.y - 3;
 
-    // Loop through the parts and add them to the document
-    instructionDataParts?.forEach((part) => {
-      // Apply the correct font style (normal or bold)
-      if (typeof part === "string") {
-        doc.setFont("helvetica", "normal");
-        doc.setFont("normal");
-      } else if (part.bold) {
-        doc.setFont("helvetica", "bold");
-        doc.setFont("bold");
-      }
-
-      const text = typeof part === "string" ? part : part?.text;
-      const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
-
-      textArray?.forEach((line, index) => {
-        const textWidth = doc.getTextWidth(line);
-
-        // Move to the next line if the current line exceeds the page width
-        if (currentX + textWidth > pageWidth - margin) {
-          currentX = margin;
-          currentY += lineHeight;
-        }
-
-        doc.text(line, currentX, currentY);
-        currentX += textWidth;
-
-        // Add a line break after each line (except the last line)
-        if (index < textArray?.length - 1) {
-          currentX = margin;
-          currentY += lineHeight;
-        }
-      });
+    // Render each line separately with proper vertical spacing
+    const lineHeight = 6;
+    instructionDataLines?.forEach((line, index) => {
+      doc.text(line, 15, currentY + index * lineHeight); // Adjusting the Y position for each line
     });
+
+    // Split instructionData into parts
+    // const instructionDataParts = [
+    //   "You are hereby being put to notice that upon inspection on ",
+    //   {
+    //     text: moment(tableObject?.submitted_date).format("DD-MMM-YYYY"),
+    //     bold: true,
+    //   },
+    //   " you have been sent ",
+    //   { text: tableObject?.smscount || "", bold: true },
+    //   " number of SMS alerts on your registered Mobile Number ",
+    //   { text: tableObject?.vendor_phone || "", bold: true },
+    //   " individually for ",
+    //   {
+    //     // text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+    //     text:
+    //       tableObject?.asset_main_type_id === "2"
+    //         ? `${`${tableObject?.code}-${tableObject?.unit_no}`} TAF ID`
+    //         : `${`${tableObject?.code}-${tableObject?.unit_no}`} PTC ID`,
+    //     bold: true,
+    //   },
+    //   " for the infractions/lacunas/defects discovered with respect to the above mentioned",
+    //   "type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
+    // ];
+
+    // // Set up the font size and initial position
+    // doc.setFontSize(12);
+    // let currentY = doc.y;
+    // const margin = 15;
+    // let currentX = margin;
+    // const lineHeight = 5;
+
+    // const backgroundHeight = 33;
+    // doc.setFillColor(240, 240, 240);
+    // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
+
+    // // Loop through the parts and add them to the document
+    // instructionDataParts?.forEach((part) => {
+    //   // Apply the correct font style (normal or bold)
+    //   if (typeof part === "string") {
+    //     doc.setFont("helvetica", "normal");
+    //     doc.setFont("normal");
+    //   } else if (part.bold) {
+    //     doc.setFont("helvetica", "bold");
+    //     doc.setFont("bold");
+    //   }
+
+    //   const text = typeof part === "string" ? part : part?.text;
+    //   const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
+
+    //   textArray?.forEach((line, index) => {
+    //     const textWidth = doc.getTextWidth(line);
+
+    //     // Move to the next line if the current line exceeds the page width
+    //     if (currentX + textWidth > pageWidth - margin) {
+    //       currentX = margin;
+    //       currentY += lineHeight;
+    //     }
+
+    //     doc.text(line, currentX, currentY);
+    //     currentX += textWidth;
+
+    //     // Add a line break after each line (except the last line)
+    //     if (index < textArray?.length - 1) {
+    //       currentX = margin;
+    //       currentY += lineHeight;
+    //     }
+    //   });
+    // });
 
     doc.y += 35;
 
@@ -268,7 +275,7 @@ const MonitoringEngPdf = ({
     doc.setFontSize(12);
     const instructionDataLines2 = doc.splitTextToSize(
       introduction2,
-      pageWidth - 40
+      pageWidth - 30
     );
 
     doc.y += 13;
@@ -276,8 +283,15 @@ const MonitoringEngPdf = ({
     doc.setFont("helvetica", "bold");
     doc.setFont("bold");
     doc.setFillColor(240, 240, 240);
-    doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 30, "F");
-    doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
+    doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 35, "F");
+    // doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
+    let currentYY = doc.y;
+
+    // Render each line separately with proper vertical spacing
+    instructionDataLines2.forEach((line, index) => {
+      doc.text(line, 15, currentYY + index * lineHeight); // Adjusting the Y position for each line
+    });
+
     doc.setFont("helvetica", "normal");
     doc.setFont("normal");
 
