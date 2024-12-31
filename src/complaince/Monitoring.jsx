@@ -398,7 +398,13 @@ const Monitoring = () => {
 
       // Calculate total units
       const unitCount = res?.data?.listings?.reduce((total, item) => {
-        return total + Number(item?.unit_no);
+        return total + Number(item?.unit_no) || 0;
+      }, 0);
+      const CleanCount = res?.data?.listings?.reduce((total, item) => {
+        return total + Number(item?.one_count) || 0;
+      }, 0);
+      const UncleanCount = res?.data?.listings?.reduce((total, item) => {
+        return total + Number(item?.zero_count) || 0;
       }, 0);
 
       // Map data for Excel
@@ -406,14 +412,16 @@ const Monitoring = () => {
         isExcel &&
         res?.data?.listings?.map((data, index) => {
           return {
-            sr: index + 1,
+            Sr: index + 1,
             "Asset Type Name": data?.asset_type_name,
             Code: Number(data?.asset_code),
             Unit: Number(data?.unit_no),
             "GSD Name": data?.agent_name || "GSD",
             "Vendor Name": data?.vendor_name,
             Sector: data?.sector_name,
-            Circle: data?.circle_name,
+            Clean: Number(data?.one_count) || 0,
+            Unclean: Number(data?.zero_count) || 0,
+            // Circle: data?.circle_name,
             Date: data?.created_at
               ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
               : "",
@@ -427,6 +435,16 @@ const Monitoring = () => {
             name: "Total Unit",
             value: unitCount,
             colIndex: 4,
+          },
+          {
+            name: "Total Clean",
+            value: CleanCount,
+            colIndex: 8,
+          },
+          {
+            name: "Total Unclean",
+            value: UncleanCount,
+            colIndex: 9,
           },
         ]);
 
@@ -454,7 +472,10 @@ const Monitoring = () => {
           filesName,
           filesName,
           pdfHeader,
-          [...pdfData, ["", "Total Unit", "", unitCount, ""]],
+          [
+            ...pdfData,
+            ["", "Total", unitCount, "", "", "", CleanCount, UncleanCount],
+          ],
           true,
           true
         );
