@@ -48,9 +48,11 @@ const MonitoringDailyReport = () => {
       finalData.form_date = values?.form_date ? start : end;
       finalData.to_date = values?.to_date ? end : start;
     } else if (values?.date_format === "Today") {
-      finalData.date = moment().format("YYYY-MM-DD");
+      finalData.form_date = moment().format("YYYY-MM-DD");
+      finalData.to_date = moment().format("YYYY-MM-DD");
     } else if (values?.date_format === "date") {
-      finalData.date = dayjs(values?.date).format("YYYY-MM-DD");
+      finalData.form_date = dayjs(values?.date).format("YYYY-MM-DD");
+      finalData.to_date = dayjs(values?.date).format("YYYY-MM-DD");
     }
 
     setFilesName(name);

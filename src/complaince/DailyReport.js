@@ -11,13 +11,21 @@ export const MonitoringDailyReportPdf = (
   titleName,
   pdfName,
   landscape = false,
-  IsLastLineBold = false
+  IsLastLineBold = false,
+  dailyReport = true
 ) => {
   let totalCount = 0;
   if (!tableObject || Object.keys(tableObject).length === 0) {
     message?.error("Data is not available");
     return "";
   }
+
+  const startDate = moment(tableObject?.form_date, "YYYY-MM-DD").format(
+    "DD-MMM-YYYY"
+  );
+  const endDate = moment(tableObject?.to_date, "YYYY-MM-DD").format(
+    "DD-MMM-YYYY"
+  );
 
   // tableObject = {
   //   date: "24-Dec-2024",
@@ -430,7 +438,10 @@ export const MonitoringDailyReportPdf = (
 
   // Table for dynamic fields (label-value pairs)
   const tableData = [
-    ["Date", `: ${moment(tableObject?.date).format("DD-MMM-YYYY") || ""}`],
+    [
+      "Date",
+      `: ${dailyReport ? startDate || "" : `${startDate} to ${endDate}` || ""}`,
+    ],
     ["Type", `: ${tableObject?.type || ""}`],
     ["Vendor Name", `: ${tableObject?.vendor_name || ""}`],
     ["Sir/Ma'am,"],
@@ -458,11 +469,9 @@ export const MonitoringDailyReportPdf = (
   doc.setFont("helvetica", "normal"); // make font normal
   doc.y += 15;
 
-  const instructionData = `You are hereby being put to notice that upon inspection on ${moment(
-    tableObject?.date
-  ).format(
-    "DD-MMM-YYYY"
-  )} you have been sent “${totalCount}” number of SMS alerts on your registered Mobile Number “${
+  const instructionData = `You are hereby being put to notice that upon inspection on ${
+    dailyReport ? startDate || "" : `${startDate} to ${endDate}` || ""
+  } you have been sent “${totalCount}” number of SMS alerts on your registered Mobile Number “${
     tableObject?.vendor_phone || ""
   }” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
   doc.setFontSize(12);

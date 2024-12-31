@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import { Collapse, Form, Button, Row, Col, message } from "antd";
 import dayjs from "dayjs";
 import moment from "moment/moment";
-import { dateDayOptions, getValueLabel } from "../../constant/const";
+import { getValueLabel } from "../../constant/const";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CommonDivider from "../../commonComponents/CommonDivider";
@@ -12,13 +12,11 @@ import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/V
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import search from "../../assets/Dashboard/icon-search.png";
+import { getMonitoringDailyReport } from "../../complaince/monitoringSlice";
+import { MonitoringDailyReportPdf } from "../../complaince/DailyReport";
 
-// import search from "../assets/Dashboard/icon-search.png";
-
-const RegistrationReport = () => {
+const WeeklyMonitoringReport = () => {
   const [startDate, setStartDate] = useState(null);
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [showDate, setShowDate] = useState(false);
   const [filesName, setFilesName] = useState(null); // files Name
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
@@ -45,10 +43,6 @@ const RegistrationReport = () => {
       const end = dayjsObjectTo.format("YYYY-MM-DD");
       finalData.form_date = values?.form_date ? start : end;
       finalData.to_date = values?.to_date ? end : start;
-    } else if (values?.date_format === "Today") {
-      finalData.date = moment().format("YYYY-MM-DD");
-    } else if (values?.date_format === "date") {
-      finalData.date = dayjs(values?.date).format("YYYY-MM-DD");
     }
 
     setFilesName(name);
@@ -60,36 +54,15 @@ const RegistrationReport = () => {
     //     // "/reporting/daily-monitoring-email-vendor?vendor_id=136&date=2024-12-25"
     //   )
     // );
-    // dispatch(getMonitoringDailyReport(url, finalData));
+    dispatch(getMonitoringDailyReport(url, finalData));
   };
 
   // reset form
   const resetForm = () => {
     form.resetFields();
-    setShowDateRange(false);
-    setShowDate(false);
     setFilesName(null);
     setValue();
     // dispatch(revertMonitoringSlice());
-  };
-
-  const handleDateSelect = (value) => {
-    if (value === "Date Range") {
-      setShowDateRange(true);
-      setShowDate(false);
-    } else if (value === "date") {
-      setShowDate(true);
-      form.setFieldsValue({
-        date: null,
-      });
-    } else {
-      form.setFieldsValue({
-        form_date: null,
-        to_date: null,
-      });
-      setShowDateRange(false);
-      setShowDate(false);
-    }
   };
 
   const disabledDate = (current) => {
@@ -109,15 +82,16 @@ const RegistrationReport = () => {
 
   useEffect(() => {
     if (DailyReport?.success) {
-      //   MonitoringDailyReportPdf(
-      //     DailyReport?.data,
-      //     "Registration Report",
-      //     filesName
-      //       ? `${filesName}- Registration Report`
-      //       : "Registration Report",
-      //     false,
-      //     false
-      //   );
+      MonitoringDailyReportPdf(
+        DailyReport?.data,
+        "Weekly Monitoring Report",
+        filesName
+          ? `${filesName}- Weekly Monitoring Report`
+          : "Weekly Monitoring Report",
+        false,
+        false,
+        false
+      );
       // const element = document.createElement("div");
       // element.innerHTML = DailyReport;
       // // element.innerHTML = DailyReport?.data?.html;
@@ -137,7 +111,7 @@ const RegistrationReport = () => {
 
   return (
     <div className="">
-      <CommonDivider label={"Registration Report"}></CommonDivider>
+      <CommonDivider label={"Weekly Monitoring Report"}></CommonDivider>
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -174,97 +148,62 @@ const RegistrationReport = () => {
                         ]}
                       />
                     </Col>
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"date_format"}
-                        label={"Select Date Type"}
-                        placeholder={"Select Date Type"}
-                        onSelect={handleDateSelect}
-                        options={dateDayOptions || []}
+                    <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"form_date"}
+                        label={"From Date"}
+                        className="w-full"
+                        placeholder={"From Date"}
                         rules={[
                           {
                             required: true,
-                            message: "Please select Date Type!",
+                            message: "Please select a start date!",
                           },
                         ]}
+                        onChange={(date) => {
+                          const dayjsObjectFrom = dayjs(date?.$d);
+                          const startDate = dayjsObjectFrom;
+
+                          const dayjsObjectTo = dayjs(
+                            form.getFieldValue("to_date")?.$d
+                          );
+                          const endDate = dayjsObjectTo;
+
+                          // Condition 1: If startDate is after endDate, set end_time to null
+                          if (startDate.isAfter(endDate)) {
+                            form.setFieldValue("to_date", null);
+                          }
+
+                          // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                          const daysDifference = endDate.diff(
+                            startDate,
+                            "days"
+                          );
+                          if (daysDifference > 7) {
+                            form.setFieldValue("to_date", null);
+                          } else {
+                            // If the difference is within the allowed range, you can keep the value or process further if needed.
+                          }
+
+                          setStartDate(startDate.format("YYYY-MM-DD"));
+                        }}
                       />
                     </Col>
-                    {showDateRange && (
-                      <>
-                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"form_date"}
-                            label={"From Date"}
-                            className="w-full"
-                            placeholder={"From Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a start date!",
-                              },
-                            ]}
-                            onChange={(date) => {
-                              const dayjsObjectFrom = dayjs(date?.$d);
-                              const startDate = dayjsObjectFrom;
-
-                              const dayjsObjectTo = dayjs(
-                                form.getFieldValue("to_date")?.$d
-                              );
-                              const endDate = dayjsObjectTo;
-
-                              // Condition 1: If startDate is after endDate, set end_time to null
-                              if (startDate.isAfter(endDate)) {
-                                form.setFieldValue("to_date", null);
-                              }
-
-                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                              const daysDifference = endDate.diff(
-                                startDate,
-                                "days"
-                              );
-                              if (daysDifference > 7) {
-                                form.setFieldValue("to_date", null);
-                              } else {
-                                // If the difference is within the allowed range, you can keep the value or process further if needed.
-                              }
-
-                              setStartDate(startDate.format("YYYY-MM-DD"));
-                            }}
-                          />
-                        </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"to_date"}
-                            label={"To Date"}
-                            className="w-full"
-                            placeholder={"To Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a end date!",
-                              },
-                            ]}
-                            disabledDate={disabledDate}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    {showDate && (
-                      <Col key="date" xs={24} sm={12} md={6} lg={5}>
-                        <CustomDatepicker
-                          name={"date"}
-                          label={"Date"}
-                          className="w-full"
-                          placeholder={"Date"}
-                          rules={[
-                            {
-                              required: true,
-                              message: "Please select a end date!",
-                            },
-                          ]}
-                        />
-                      </Col>
-                    )}
+                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"to_date"}
+                        label={"To Date"}
+                        className="w-full"
+                        placeholder={"To Date"}
+                        rules={[
+                          {
+                            required: true,
+                            message: "Please select a end date!",
+                          },
+                        ]}
+                        disabledDate={disabledDate}
+                      />
+                    </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
@@ -298,4 +237,4 @@ const RegistrationReport = () => {
   );
 };
 
-export default RegistrationReport;
+export default WeeklyMonitoringReport;

@@ -433,9 +433,9 @@ const Navbar = ({ lang, setLang }) => {
         label: (
           <Link
             className="text-black no-underline hover:text-green"
-            to="/registration-report"
+            to="/weekly-monitoring-report"
           >
-            Registration Report
+            Weekly Monitoring Report
           </Link>
         ),
       },
