@@ -473,19 +473,26 @@ export const MonitoringDailyReportPdf = (
     dailyReport ? startDate || "" : `${startDate} to ${endDate}` || ""
   } you have been sent “${totalCount}” number of SMS alerts on your registered Mobile Number “${
     tableObject?.vendor_phone || ""
-  }” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
+  }” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the above mentioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold"); // make font normal
   doc.setFont("bold");
   const instructionDataLines = doc.splitTextToSize(
     instructionData,
-    pageWidth - 40
+    pageWidth - 30
   );
 
-  const backgroundHeight = 33; // Adjust height of the background box if necessary
+  const backgroundHeight = 37; // Adjust height of the background box if necessary
   doc.setFillColor(240, 240, 240);
   doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-  doc.text(instructionDataLines, 15, doc.y);
+  // doc.text(instructionDataLines, 15, doc.y);
+  let currentY = doc.y;
+
+  // Render each line separately with proper vertical spacing
+  const lineHeight = 6; // Adjust the height between lines as needed
+  instructionDataLines.forEach((line, index) => {
+    doc.text(line, 15, currentY + index * lineHeight); // Adjusting the Y position for each line
+  });
 
   // const instructionDataParts = [
   //   "You are hereby being put to notice that upon inspection on ",
@@ -550,7 +557,7 @@ export const MonitoringDailyReportPdf = (
   //   });
   // });
 
-  doc.y += 30;
+  doc.y += 33;
 
   const sectorTableStyles = {
     fontSize: 9,
@@ -590,15 +597,22 @@ export const MonitoringDailyReportPdf = (
   doc.setFont("bold");
   const instructionDataLines2 = doc.splitTextToSize(
     instructionData2,
-    pageWidth - 40
+    pageWidth - 30
   );
   doc.y += 20;
 
   doc.setFillColor(240, 240, 240);
-  doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-  doc.text(instructionDataLines2, 15, doc.y);
+  const backgroundHeight2 = 39; // Adjust height of the background box if necessary
+  doc.rect(10, doc.y - 13, pageWidth - 20, backgroundHeight2, "F");
+  // doc.text(instructionDataLines2, 15, doc.y);
+  let currentYY = doc.y - 3;
 
-  doc.y += 35;
+  // Render each line separately with proper vertical spacing
+  instructionDataLines2.forEach((line, index) => {
+    doc.text(line, 15, currentYY + index * lineHeight); // Adjusting the Y position for each line
+  });
+
+  doc.y += 37;
   doc.setFontSize(12);
   doc.setFont("helvetica", "normal"); // make font normal
   doc.setFont("normal");

@@ -68,9 +68,11 @@ const WeeklyMonitoringReport = () => {
 
   const disabledDate = (current) => {
     const maxDate = moment(startDate).clone().add(8, "days");
+    const minDate = moment(startDate).clone().add(1, "day"); // Set minimum date to one day after startDate
+
     return (
       current &&
-      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+      (current.isBefore(minDate, "day") || current.isAfter(maxDate, "day"))
     );
   };
 
@@ -171,6 +173,10 @@ const WeeklyMonitoringReport = () => {
                           const endDate = dayjsObjectTo;
 
                           // Condition 1: If startDate is after endDate, set end_time to null
+                          if (startDate.isSame(endDate, "day")) {
+                            form.setFieldValue("to_date", null);
+                          }
+
                           if (startDate.isAfter(endDate)) {
                             form.setFieldValue("to_date", null);
                           }
