@@ -308,6 +308,24 @@ const Monitoring = () => {
       width: 120,
     },
     {
+      title: "Clean",
+      dataIndex: "one_count",
+      key: "one_count",
+      render: (text) => {
+        return text ? text : "";
+      },
+      width: 70,
+    },
+    {
+      title: "Unclean",
+      dataIndex: "zero_count",
+      key: "zero_count",
+      render: (text) => {
+        return text ? text : "";
+      },
+      width: 90,
+    },
+    {
       title: "remark",
       dataIndex: "remark",
       key: "remark",
@@ -337,11 +355,13 @@ const Monitoring = () => {
     "Sr No",
     "Type Name",
     "Code",
-    "Unit",
+    // "Unit",
     "GSD Name",
     "Vendor Name",
     "Sector",
-    "Circle",
+    "Clean",
+    "Unclean",
+    // "Circle",
     "Date",
   ];
 
@@ -415,12 +435,14 @@ const Monitoring = () => {
         res?.data?.listings?.map((data, index) => [
           index + 1,
           data?.asset_type_name,
-          data?.asset_code,
-          data?.unit_no,
+          `${data?.asset_code}-${data?.unit_no}`,
+          // data?.unit_no,
           data?.agent_name ? data?.agent_name : "GSD",
           data?.vendor_name,
           data?.sector_name,
-          data?.circle_name,
+          data?.one_count ? data?.one_count : "",
+          data?.zero_count ? data?.zero_count : "",
+          // data?.circle_name,
           data?.created_at
             ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
             : "",

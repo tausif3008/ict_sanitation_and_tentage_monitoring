@@ -341,6 +341,14 @@ export const DICT = {
     en: "Registered Toilets",
     hi: "पंजीकृत शौचालय",
   },
+  total_registered: {
+    en: "Total Registered",
+    hi: "कुल पंजीकृत",
+  },
+  todays_registered: {
+    en: "Today`s Registered",
+    hi: "आज पंजीकृत",
+  },
   under_monitoring: {
     en: "Under Monitoring",
     hi: "निगरानी में",
