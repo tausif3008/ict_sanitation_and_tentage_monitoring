@@ -418,13 +418,24 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       monitoring_reports?.includes(userRoleId) && {
-        key: "2",
+        key: "10",
         label: (
           <Link
             className="text-black no-underline hover:text-green"
             to="/monitoring-daily-report"
           >
             Daily Monitoring Report
+          </Link>
+        ),
+      },
+      monitoring_reports?.includes(userRoleId) && {
+        key: "11",
+        label: (
+          <Link
+            className="text-black no-underline hover:text-green"
+            to="/registration-report"
+          >
+            Registration Report
           </Link>
         ),
       },

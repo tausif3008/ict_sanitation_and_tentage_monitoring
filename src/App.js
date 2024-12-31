@@ -94,6 +94,7 @@ import {
   wasteDash_param,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
+import RegistrationReport from "./Reports/RegistrationReport";
 
 function App() {
   const navigate = useNavigate();
@@ -589,6 +590,15 @@ function App() {
             <ProtectedRoute
               condition={monitoring_reports?.includes(userRoleId)}
               component={MonitoringDailyReport}
+            />
+          }
+        />
+        <Route
+          path="registration-report"
+          element={
+            <ProtectedRoute
+              condition={monitoring_reports?.includes(userRoleId)}
+              component={RegistrationReport}
             />
           }
         />
