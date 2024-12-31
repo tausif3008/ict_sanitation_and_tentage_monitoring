@@ -178,17 +178,11 @@ const ToiletsCount = () => {
                 <div className="flex items-center gap-2">
                   {/* <CheckOutlined className="text-orange-600 absolute right-[5px]" /> */}
                   <Icon
-                    icon="ic:outline-barcode"
-                    width="30"
-                    height="35"
+                    icon="wpf:qr-code"
+                    width="26"
+                    height="26"
                     className="text-orange-600 absolute right-[5px]"
                   />
-                  {/* <Icon
-                    icon="wpf:todo-list"
-                    width="20"
-                    height="20"
-                    className="text-orange-600 absolute right-[5px]"
-                  /> */}
                   <span className="text-[#eab308]">
                     {dict.total_registered[lang]}
                   </span>
@@ -198,7 +192,7 @@ const ToiletsCount = () => {
                 </h2>
               </div>
             </div>
-            <div className="absolute bottom-0 right-0 h-full w-auto object-cover ">
+            <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
               <div className="bg-white mt-10">
                 <h6 className="text-center p-1 text-[#eab308] mr-2">
                   {dict.todays_registered[lang]}

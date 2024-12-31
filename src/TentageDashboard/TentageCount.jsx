@@ -181,9 +181,9 @@ const TentageCount = () => {
                 <div className="flex items-center gap-2">
                   {/* <CheckOutlined className="text-orange-600 absolute right-[5px]" /> */}
                   <Icon
-                    icon="ic:outline-barcode"
-                    width="30"
-                    height="35"
+                    icon="wpf:qr-code"
+                    width="26"
+                    height="26"
                     className="text-orange-600 absolute right-[5px]"
                   />
                   <span className="text-[#eab308]">
