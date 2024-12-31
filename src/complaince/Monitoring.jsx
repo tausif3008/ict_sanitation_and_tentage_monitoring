@@ -210,7 +210,7 @@ const Monitoring = () => {
       reportName += `(${assetTypeName})`;
     }
     return reportName
-      ? `${reportName} -Toilet & Tentage Monitoring Report`
+      ? `${reportName} - Monitoring Report`
       : "Toilet & Tentage Monitoring Report";
   };
 
