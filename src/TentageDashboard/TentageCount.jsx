@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 import { useDispatch } from "react-redux";
+import { Icon } from "@iconify/react/dist/iconify.js";
 import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
@@ -29,14 +30,14 @@ const TentageCount = () => {
 
   const { TentageDash_data } = TentageSelector(); // tentage dashboard
   const {
-    total,
-    registered,
-    under_monitoring,
-    off_monitoring,
+    total = 0,
+    registered = 0,
+    under_monitoring = 0,
+    off_monitoring = 0,
     todays_registered = 0,
     todays_allocated = 0,
   } = TentageDash_data?.data?.asset_counts || {};
-  
+
   const Role = localStorage.getItem("role");
   const name = localStorage.getItem("name");
   const userId = localStorage.getItem("userId");
@@ -120,7 +121,13 @@ const TentageCount = () => {
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
-                  <UserOutlined className="text-green absolute right-[5px]" />
+                  {/* <UserOutlined className="text-green absolute right-[5px]" /> */}
+                  <Icon
+                    icon="fa-solid:user-tie"
+                    width="30"
+                    height="30"
+                    className="text-green absolute right-[5px]"
+                  />
                   <span className="text-orange-600">{"Welcome"}</span>
                 </div>
                 <h2 className="text-2xl font-bold ">{`${name || ""}`}</h2>
@@ -145,7 +152,13 @@ const TentageCount = () => {
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
-                  <CheckCircleOutlined className="text-green absolute right-[5px]" />
+                  {/* <CheckCircleOutlined className="text-green absolute right-[5px]" /> */}
+                  <Icon
+                    icon="material-symbols-light:list-alt-outline-sharp"
+                    width="30"
+                    height="30"
+                    className="text-green absolute right-[5px]"
+                  />
                   <span className="text-green-600">
                     {dict.total_tentage[lang]}
                   </span>
@@ -166,9 +179,15 @@ const TentageCount = () => {
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
-                  <CheckOutlined className="text-orange-600 absolute right-[5px]" />
+                  {/* <CheckOutlined className="text-orange-600 absolute right-[5px]" /> */}
+                  <Icon
+                    icon="ic:outline-barcode"
+                    width="30"
+                    height="35"
+                    className="text-orange-600 absolute right-[5px]"
+                  />
                   <span className="text-[#eab308]">
-                    {dict.registered_tentage[lang]}
+                    {dict.total_registered[lang]}
                   </span>
                 </div>
                 <h2 className="text-2xl font-bold">
@@ -176,17 +195,33 @@ const TentageCount = () => {
                 </h2>
               </div>
             </div>
-            <img
+            <div className="absolute bottom-0 right-0 h-full w-auto object-cover ">
+              <div className="bg-white mt-10">
+                <h6 className="text-center p-1 text-[#eab308] mr-2">
+                  {dict.todays_registered[lang]}
+                </h6>
+                <p className="text-l text-center text-blue-600 font-bold">
+                  {formatNumber(todays_registered)}
+                </p>
+              </div>
+            </div>
+            {/* <img
               src={card_orange}
               alt="Registered Toilets Icon"
               className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            />
+            /> */}
           </div>
           <div className="relative p-3 border rounded-md shadow-md bg-red-50">
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
-                  <EyeOutlined className="text-violet-600 absolute right-[5px]" />
+                  {/* <EyeOutlined className="text-violet-600 absolute right-[5px]" /> */}
+                  <Icon
+                    icon="wpf:todo-list"
+                    width="24"
+                    height="24"
+                    className="text-orange-600 absolute right-[5px]"
+                  />
                   <span className="text-[#db2777]">
                     {dict.under_monitoring[lang]}
                   </span>
@@ -206,7 +241,13 @@ const TentageCount = () => {
             <div className="text-start">
               <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
                 <div className="flex items-center gap-2">
-                  <ExclamationCircleOutlined className="text-violet-600 absolute right-[5px]" />
+                  {/* <ExclamationCircleOutlined className="text-violet-600 absolute right-[5px]" /> */}
+                  <Icon
+                    icon="lucide:monitor-off"
+                    width="24"
+                    height="24"
+                    className="text-violet-600 absolute right-[5px]"
+                  />
                   <span className="text-purple-600">
                     {dict.off_monitoring[lang]}
                   </span>
