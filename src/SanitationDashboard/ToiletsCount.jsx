@@ -185,11 +185,17 @@ const ToiletsCount = () => {
                 <div className="flex items-center gap-2">
                   {/* <CheckOutlined className="text-orange-600 absolute right-[5px]" /> */}
                   <Icon
+                    icon="ic:outline-barcode"
+                    width="30"
+                    height="35"
+                    className="text-orange-600 absolute right-[5px]"
+                  />
+                  {/* <Icon
                     icon="wpf:todo-list"
                     width="20"
                     height="20"
                     className="text-orange-600 absolute right-[5px]"
-                  />
+                  /> */}
                   <span className="text-[#eab308]">
                     {dict.total_registered[lang]}
                   </span>
@@ -222,11 +228,17 @@ const ToiletsCount = () => {
                 <div className="flex items-center gap-2">
                   {/* <EyeOutlined className="text-violet-600 absolute right-[5px]" /> */}
                   <Icon
+                    icon="wpf:todo-list"
+                    width="24"
+                    height="24"
+                    className="text-orange-600 absolute right-[5px]"
+                  />
+                  {/* <Icon
                     icon="eos-icons:monitoring"
                     width="24"
                     height="24"
                     className="text-violet-600 absolute right-[5px]"
-                  />
+                  /> */}
                   <span className="text-[#db2777]">
                     {dict.under_monitoring[lang]}
                   </span>

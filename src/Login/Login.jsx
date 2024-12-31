@@ -116,7 +116,6 @@ const Login = () => {
 
   // forgot password
   const handleForgotPassword = async (value) => {
-    console.log("value", value);
     if (Number(value?.captcha) !== Number(value?.enter_captcha)) {
       message.error("Please Add Correct Captcha!");
       return "";

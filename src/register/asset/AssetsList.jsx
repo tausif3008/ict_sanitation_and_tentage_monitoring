@@ -46,6 +46,8 @@ import { dateWeekOptions } from "../../constant/const";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { DeleteOutlined } from "@ant-design/icons";
 import { asset_delete_permisssion } from "../../constant/permission";
+import ParkingSelector from "../parking/parkingSelector";
+import { getParkingData } from "../parking/parkingSlice";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -84,6 +86,7 @@ const AssetsList = () => {
   // const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { parkingDrop } = ParkingSelector(); // parking
 
   // handle category
   const handleSelect = (value) => {
@@ -252,6 +255,8 @@ const AssetsList = () => {
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
+    const url = URLS?.parking?.path;
+    dispatch(getParkingData(url)); // get parking data
     // dispatch(getAllCircleList()); // all circle list
     handleSelect("1"); // call asset type api
   }, []);
@@ -628,6 +633,14 @@ const AssetsList = () => {
                         label={"Select Sector"}
                         placeholder={"Select Sector"}
                         options={SectorListDrop || []}
+                      />
+                    </Col>
+                    <Col key="parking_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"parking_id"}
+                        label={"Select Parking"}
+                        placeholder={"Select Parking"}
+                        options={parkingDrop || []}
                       />
                     </Col>
                     {/* <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
