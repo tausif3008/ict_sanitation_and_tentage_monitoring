@@ -330,7 +330,7 @@ export const MonitoringDailyReportPdf = (
 
   const myNewArray = tableObject?.incidence_array?.map((item) => {
     let arr = [];
-    arr?.push(`Id - ${item?.sector_id}`);
+    arr?.push(`Sector- ${item?.sector_id}`);
 
     const rohitArray =
       Array.from(item?.incidence_que_array || [])
@@ -458,81 +458,82 @@ export const MonitoringDailyReportPdf = (
   doc.setFont("helvetica", "normal"); // make font normal
   doc.y += 15;
 
-  // const instructionData = `You are hereby being put to notice that upon inspection on ${tableObject?.date} you have been sent “${tableObject?.vendor_phone}” number of SMS alerts on your registered Mobile Number “${tableObject?.smscount}” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
-  // doc.setFontSize(12);
-  // doc.setFont("normal");
-  // const instructionDataLines = doc.splitTextToSize(
-  //   instructionData,
-  //   pageWidth - 40
-  // );
-
-  // const backgroundHeight = 33; // Adjust height of the background box if necessary
-  // doc.setFillColor(240, 240, 240);
-  // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-  // doc.text(instructionDataLines, 15, doc.y);
-
-  const instructionDataParts = [
-    "You are hereby being put to notice that upon inspection on ",
-    {
-      text: moment(tableObject?.date).format("DD-MMM-YYYY"),
-      bold: true,
-    },
-    " you have been sent ",
-    { text: totalCount || "", bold: true },
-    " number of SMS alerts on your registered Mobile Number ",
-    { text: tableObject?.vendor_phone || "", bold: true },
-    " individually for each ",
-    {
-      text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
-      bold: true,
-    },
-    " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
-  ];
-
-  // Set up the font size and initial position
+  const instructionData = `You are hereby being put to notice that upon inspection on ${tableObject?.date} you have been sent “${tableObject?.vendor_phone}” number of SMS alerts on your registered Mobile Number “${totalCount}” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
   doc.setFontSize(12);
-  let currentY = doc.y;
-  const margin = 15;
-  let currentX = margin;
-  const lineHeight = 5;
+  doc.setFont("helvetica", "bold"); // make font normal
+  doc.setFont("bold");
+  const instructionDataLines = doc.splitTextToSize(
+    instructionData,
+    pageWidth - 40
+  );
 
-  const backgroundHeight = 33;
+  const backgroundHeight = 33; // Adjust height of the background box if necessary
   doc.setFillColor(240, 240, 240);
   doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
+  doc.text(instructionDataLines, 15, doc.y);
 
-  // Loop through the parts and add them to the document
-  instructionDataParts?.forEach((part) => {
-    // Apply the correct font style (normal or bold)
-    if (typeof part === "string") {
-      doc.setFont("helvetica", "normal");
-      doc.setFont("normal");
-    } else if (part.bold) {
-      doc.setFont("helvetica", "bold");
-      doc.setFont("bold");
-    }
+  // const instructionDataParts = [
+  //   "You are hereby being put to notice that upon inspection on ",
+  //   {
+  //     text: moment(tableObject?.date).format("DD-MMM-YYYY"),
+  //     bold: true,
+  //   },
+  //   " you have been sent ",
+  //   { text: totalCount || "", bold: true },
+  //   " number of SMS alerts on your registered Mobile Number ",
+  //   { text: tableObject?.vendor_phone || "", bold: true },
+  //   " individually for each ",
+  //   {
+  //     text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
+  //     bold: true,
+  //   },
+  //   " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
+  // ];
 
-    const text = typeof part === "string" ? part : part?.text;
-    const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
+  // // Set up the font size and initial position
+  // doc.setFontSize(12);
+  // let currentY = doc.y;
+  // const margin = 15;
+  // let currentX = margin;
+  // const lineHeight = 5;
 
-    textArray?.forEach((line, index) => {
-      const textWidth = doc.getTextWidth(line);
+  // const backgroundHeight = 33;
+  // doc.setFillColor(240, 240, 240);
+  // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
 
-      // Move to the next line if the current line exceeds the page width
-      if (currentX + textWidth > pageWidth - margin) {
-        currentX = margin;
-        currentY += lineHeight;
-      }
+  // // Loop through the parts and add them to the document
+  // instructionDataParts?.forEach((part) => {
+  //   // Apply the correct font style (normal or bold)
+  //   if (typeof part === "string") {
+  //     doc.setFont("helvetica", "normal");
+  //     doc.setFont("normal");
+  //   } else if (part.bold) {
+  //     doc.setFont("helvetica", "bold");
+  //     doc.setFont("bold");
+  //   }
 
-      doc.text(line, currentX, currentY);
-      currentX += textWidth;
+  //   const text = typeof part === "string" ? part : part?.text;
+  //   const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
 
-      // Add a line break after each line (except the last line)
-      if (index < textArray?.length - 1) {
-        currentX = margin;
-        currentY += lineHeight;
-      }
-    });
-  });
+  //   textArray?.forEach((line, index) => {
+  //     const textWidth = doc.getTextWidth(line);
+
+  //     // Move to the next line if the current line exceeds the page width
+  //     if (currentX + textWidth > pageWidth - margin) {
+  //       currentX = margin;
+  //       currentY += lineHeight;
+  //     }
+
+  //     doc.text(line, currentX, currentY);
+  //     currentX += textWidth;
+
+  //     // Add a line break after each line (except the last line)
+  //     if (index < textArray?.length - 1) {
+  //       currentX = margin;
+  //       currentY += lineHeight;
+  //     }
+  //   });
+  // });
 
   doc.y += 30;
 
@@ -556,6 +557,13 @@ export const MonitoringDailyReportPdf = (
         data.cell.styles.fontStyle = "bold";
         data.cell.styles.textColor = [10, 10, 10];
         data.cell.styles.fontSize = 10;
+      }
+      const isLastColumn = data.column.index === columnNames.length - 1;
+      if (isLastColumn) {
+        // Apply bold styling to the last column
+        data.cell.styles.fontStyle = "bold";
+        data.cell.styles.textColor = [10, 10, 10]; // Optional: change the text color
+        data.cell.styles.fontSize = 10; // Optional: adjust font size
       }
     },
   });
