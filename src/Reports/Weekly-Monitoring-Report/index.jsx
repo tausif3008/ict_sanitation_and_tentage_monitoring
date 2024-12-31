@@ -14,6 +14,7 @@ import MonitoringSelector from "../../complaince/monitoringSelector";
 import search from "../../assets/Dashboard/icon-search.png";
 import { getMonitoringDailyReport } from "../../complaince/monitoringSlice";
 import { MonitoringDailyReportPdf } from "../../complaince/DailyReport";
+import { revertMonitoringSlice } from "../../Redux/action";
 
 const WeeklyMonitoringReport = () => {
   const [startDate, setStartDate] = useState(null);
@@ -62,7 +63,7 @@ const WeeklyMonitoringReport = () => {
     form.resetFields();
     setFilesName(null);
     setValue();
-    // dispatch(revertMonitoringSlice());
+    dispatch(revertMonitoringSlice());
   };
 
   const disabledDate = (current) => {
