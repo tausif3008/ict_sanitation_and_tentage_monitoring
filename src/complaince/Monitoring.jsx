@@ -14,7 +14,10 @@ import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
-import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import {
+  getAssetTypeWiseVendorList,
+  getVendorList,
+} from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
@@ -39,7 +42,7 @@ const Monitoring = () => {
   const [showDateRange, setShowDateRange] = useState(false);
   const [filesName, setFilesName] = useState(null); // files Name
 
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
 
   // const ImageUrl = localStorage.getItem("ImageUrl") || "";
@@ -78,6 +81,13 @@ const Monitoring = () => {
       "?asset_main_type_id=" + value,
       "asset_type_id"
     );
+  };
+
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    value && userRoleId !== "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // fiter finish
@@ -193,7 +203,7 @@ const Monitoring = () => {
   const getReportName = () => {
     const catTypeName = getValueLabel(categoryType, assetMainType, "");
     const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
-    const vendorName = getValueLabel(vendor_id_name, VendorListDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
 
     let reportName = "";
     if (vendorName) {
@@ -225,7 +235,6 @@ const Monitoring = () => {
   useEffect(() => {
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    userRoleId != "8" && dispatch(getVendorList()); // vendor list
   }, []);
 
   useEffect(() => {
@@ -270,43 +279,22 @@ const Monitoring = () => {
     //     );
     //   },
     // },
-    ...(userRoleId !== "8"
-      ? [
-          {
-            title: "GSD Name",
-            dataIndex: "agent_name",
-            key: "agent_name",
-            render: (text) => {
-              return text ? text : "GSD";
-            },
-          },
-        ]
-      : []),
-    {
-      title: "Vendor Name",
-      dataIndex: "vendor_name",
-      key: "vendor_name",
-    },
     {
       title: "Sector Name",
       dataIndex: "sector_name",
       key: "sector_name",
       width: 110,
     },
+    {
+      title: "Vendor Name",
+      dataIndex: "vendor_name",
+      key: "vendor_name",
+    },
     // {
     //   title: "Circle Name",
     //   dataIndex: "circle_name",
     //   key: "circle_name",
     // },
-    {
-      title: "Date",
-      dataIndex: "created_at",
-      key: "created_at",
-      render: (text) => {
-        return text ? moment(text).format("DD-MMM-YYYY") : "";
-      },
-      width: 120,
-    },
     {
       title: "Clean",
       dataIndex: "one_count",
@@ -325,6 +313,27 @@ const Monitoring = () => {
       },
       width: 90,
     },
+    {
+      title: "Date",
+      dataIndex: "created_at",
+      key: "created_at",
+      render: (text) => {
+        return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
+      width: 120,
+    },
+    ...(userRoleId !== "8"
+      ? [
+          {
+            title: "GSD Name",
+            dataIndex: "agent_name",
+            key: "agent_name",
+            render: (text) => {
+              return text ? text : "GSD";
+            },
+          },
+        ]
+      : []),
     {
       title: "remark",
       dataIndex: "remark",
@@ -356,13 +365,13 @@ const Monitoring = () => {
     "Type Name",
     "Code",
     // "Unit",
-    "GSD Name",
-    "Vendor Name",
     "Sector",
+    "Vendor Name",
     "Clean",
     "Unclean",
     // "Circle",
     "Date",
+    "GSD Name",
   ];
 
   // pdf data
@@ -455,15 +464,15 @@ const Monitoring = () => {
           data?.asset_type_name,
           `${data?.asset_code}-${data?.unit_no}`,
           // data?.unit_no,
-          data?.agent_name ? data?.agent_name : "GSD",
-          data?.vendor_name,
           data?.sector_name,
+          data?.vendor_name,
           data?.one_count ? data?.one_count : "",
           data?.zero_count ? data?.zero_count : "",
           // data?.circle_name,
           data?.created_at
             ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
             : "",
+          data?.agent_name ? data?.agent_name : "GSD",
         ]);
 
       // Call the export function
@@ -474,7 +483,7 @@ const Monitoring = () => {
           pdfHeader,
           [
             ...pdfData,
-            ["", "Total", unitCount, "", "", "", CleanCount, UncleanCount],
+            ["", "Total", unitCount, "", "", CleanCount, UncleanCount],
           ],
           true,
           true
@@ -530,30 +539,6 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    {userRoleId != "8" && (
-                      <>
-                        <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"created_by"}
-                            label={"Select GSD"}
-                            placeholder={"Select GSD"}
-                            options={monitoringAgentDrop || []}
-                            // search dropdown
-                            isOnSearchFind={true}
-                            apiAction={getMonitoringAgent}
-                            onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                          />
-                        </Col>
-                        <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"vendor_id"}
-                            label={"Select Vendor"}
-                            placeholder={"Select Vendor"}
-                            options={VendorListDrop || []}
-                          />
-                        </Col>
-                      </>
-                    )}
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
@@ -569,8 +554,33 @@ const Monitoring = () => {
                         label={"Select Type"}
                         placeholder={"Select Type"}
                         options={assetTypes || []}
+                        onSelect={handleTypeSelect}
                       />
                     </Col>
+                    {userRoleId !== "8" && (
+                      <>
+                        <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"vendor_id"}
+                            label={"Select Vendor"}
+                            placeholder={"Select Vendor"}
+                            options={AssetTypeVendorDrop || []}
+                          />
+                        </Col>
+                        <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"created_by"}
+                            label={"Select GSD"}
+                            placeholder={"Select GSD"}
+                            options={monitoringAgentDrop || []}
+                            // search dropdown
+                            isOnSearchFind={true}
+                            apiAction={getMonitoringAgent}
+                            onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
+                          />
+                        </Col>
+                      </>
+                    )}
                     <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"code"}
