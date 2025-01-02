@@ -206,11 +206,15 @@ const ToiletDetails = () => {
           <div className="flex items-center mb-4 mr-6">
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-              <span className="text-xl">{dict.clean[lang]}</span>
+              <span className="text-sm">{dict.clean[lang]}</span>
+            </div>
+            <div className="flex items-center mr-6">
+              <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
+              <span className="text-sm">{dict.maintenance_required[lang]}</span>
             </div>
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-              <span className="text-xl">{dict.unclean[lang]}</span>
+              <span className="text-sm">{dict.unclean[lang]}</span>
             </div>
           </div>
         </div>
@@ -278,20 +282,20 @@ const ToiletDetails = () => {
                 <Button
                   loading={loading}
                   type="button"
-                  className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                  onClick={handleReset}
+                  htmlType="submit"
+                  className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                 >
-                  {langingPage?.reset[lang]}
+                  {dict?.search[lang]}
                 </Button>
               </div>
               <div>
                 <Button
                   loading={loading}
                   type="button"
-                  htmlType="submit"
-                  className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                  className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-400"
+                  onClick={handleReset}
                 >
-                  {dict?.search[lang]}
+                  {langingPage?.reset[lang]}
                 </Button>
               </div>
             </div>
@@ -359,6 +363,15 @@ const ToiletDetails = () => {
                         className="flex items-center"
                         onClick={(e) => e.stopPropagation()}
                       >
+                        <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
+                        <span className="text-sm font-semibold">
+                          {item?.unclean}
+                        </span>
+                      </div>
+                      <div
+                        className="flex items-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
                           {item?.unclean}
@@ -419,6 +432,7 @@ const ToiletDetails = () => {
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
             <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Maintenance : {count?.clean || 0}</strong>
             <strong>Total Unclean: {count?.unclean || 0}</strong>
           </div>
         )}

@@ -385,6 +385,10 @@ export const DICT = {
     en: "Unclean",
     hi: "अशुद्ध",
   },
+  maintenance_required: {
+    en: "Maintenance Required",
+    hi: "संरक्षण की आवश्यकता है",
+  },
   no_data_available: {
     en: "No data available",
     hi: "कोई डेटा मौजूद नहीं",

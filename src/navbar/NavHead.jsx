@@ -98,7 +98,7 @@ const NavHead = ({ lang, setLang }) => {
               </div>
             </div> */}
 
-            <div className=" bg-white flex justify-center items-center rounded w-8 h-8 cursor-pointer">
+            {/* <div className=" bg-white flex justify-center items-center rounded w-8 h-8 cursor-pointer">
               <div className="flex justify-center items-center ">
                 <Badge size="small" status="success" offset={[7, 0]} count={5}>
                   <img
@@ -108,7 +108,7 @@ const NavHead = ({ lang, setLang }) => {
                   ></img>
                 </Badge>
               </div>
-            </div>
+            </div> */}
             <div
               onClick={() => {
                 if (token) {
