@@ -9,63 +9,39 @@ import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import RouteSelector from "./routeSelector";
 
-const columns = [
-  {
-    title: "Sr. No",
-    dataIndex: "sr",
-    key: "sr",
-    width: 80,
-  },
-  {
-    title: "Route Name",
-    dataIndex: "route_name",
-    key: "route_name",
-  },
-  {
-    title: "Start Point",
-    dataIndex: "start_point",
-    key: "start_point",
-  },
-  {
-    title: "End Point",
-    dataIndex: "end_point",
-    key: "end_point",
-  },
-  {
-    title: "Distance (meters)",
-    dataIndex: "distance",
-    key: "distance",
-  },
-  {
-    title: "Sector",
-    dataIndex: "sector",
-    key: "sector",
-  },
-
-  {
-    title: "Action",
-    dataIndex: "action",
-    key: "action",
-    fixed: "right",
-    width: 100,
-  },
-];
-
 const RouteList = () => {
-  const navigate = useNavigate();
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
 
+  const navigate = useNavigate();
+  const params = useParams();
   const { loading } = RouteSelector();
 
-  const params = useParams();
+  const getDatas = async () => {
+    const queryString = params?.page ? params?.page : params?.per_page;
+    const urlParam = new URLSearchParams(queryString);
+    const page = urlParam.get("page"); // "1"
+    const perPage = urlParam.get("per_page"); // "50"
+
+    const finalData = {
+      date_format: "Date Range",
+      page: page?.toString() || "1",
+      per_page: perPage?.toString() || "100",
+    };
+
+    // setColumnDate(() => ({
+    //   start: moment(finalData?.form_date).format("DD-MMM-YYYY"),
+    //   end: moment(finalData?.to_date).format("DD-MMM-YYYY"),
+    // }));
+
+    // const formData = getFormData(finalData);
+    // finalData?.form_date && dispatch(getInspectionReportData(formData)); // Fetch the data
+  };
 
   const getUsers = async () => {
-    // setLoading(true);
-
     let uri = URLS?.routes?.path + "/?";
     if (params.page) {
       uri = uri + params.page;
@@ -77,30 +53,10 @@ const RouteList = () => {
     const res = await getData(uri, extraHeaders);
 
     if (res) {
-      const data = res.data;
-      // setLoading(false);
-
-      const list = data.routes?.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-          action: (
-            <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el.name + index}
-              onClick={() => {
-                navigate("/add-route");
-              }}
-            >
-              <EditOutlined></EditOutlined>
-            </Button>
-          ),
-        };
-      });
-
+      const data = res?.data;
       setDetails(() => {
         return {
-          list,
+          list: data.routes,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentPage,
           totalRecords: data.paging[0].totalrecords,
@@ -113,13 +69,79 @@ const RouteList = () => {
     getUsers();
   }, [params]);
 
+  const columns = [
+    {
+      title: "Sr. No",
+      dataIndex: "sr",
+      key: "sr",
+      width: 80,
+    },
+    {
+      title: "Route Name",
+      dataIndex: "route_name",
+      key: "route_name",
+    },
+    {
+      title: "Start Point",
+      dataIndex: "start_point",
+      key: "start_point",
+    },
+    {
+      title: "End Point",
+      dataIndex: "end_point",
+      key: "end_point",
+    },
+    {
+      title: "Distance (meters)",
+      dataIndex: "distance",
+      key: "distance",
+    },
+    {
+      title: "Sector",
+      dataIndex: "sector",
+      key: "sector",
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: 80,
+      render: (text, record) => (
+        <>
+          <div className="flex justify-between">
+            <Button
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              onClick={() => {
+                navigate(`/add-route`, {
+                  state: {
+                    key: "UpdateKey",
+                    record: record, // Pass the record as part of the state
+                  },
+                });
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </div>
+        </>
+      ),
+    },
+  ];
+
   return (
     <div className="">
       <CommonDivider
         label={"GPS - Route List"}
         compo={
           <Button
-            onClick={() => navigate("/add-route")}
+            onClick={() => {
+              navigate(`/add-route`, {
+                state: {
+                  key: "AddKey",
+                },
+              });
+            }}
             className="mb-1 bg-green-400"
           >
             Add Route
@@ -129,9 +151,9 @@ const RouteList = () => {
 
       <CommonTable
         loading={loading}
-        uri={"routes"}
-        columns={columns}
-        details={details}
+        uri={"route-list"}
+        columns={columns || []}
+        details={details || []}
         scroll={{ x: 300, y: 400 }}
       ></CommonTable>
     </div>
