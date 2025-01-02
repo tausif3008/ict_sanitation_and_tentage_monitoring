@@ -21,6 +21,7 @@ import { VendorWiseReportcolumns } from "../constant/const";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
 import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
 import URLS from "../urils/URLS";
+import { getSanitationDashData } from "../SanitationDashboard/Slice/sanitationDashboard";
 
 const TentageDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -28,6 +29,7 @@ const TentageDetails = () => {
     total: 0,
     registered: 0,
     clean: 0,
+    maintenance: 0,
     unclean: 0,
   });
   const [showData, setShowData] = useState(null);
@@ -63,6 +65,7 @@ const TentageDetails = () => {
       total: 0,
       registered: 0,
       clean: 0,
+      maintenance: 0,
       unclean: 0,
     });
   };
@@ -77,8 +80,14 @@ const TentageDetails = () => {
       ...(userRoleId === "8" && { vendor_id: user_Id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
-    const formData = await getFormData(finalValues);
+    callApi(finalValues);
+  };
+
+  // API`s
+  const callApi = async (formField) => {
+    const formData = await getFormData(formField);
     dispatch(getTentageDashboardData(formData)); // tentage dashboard
+    dispatch(getSanitationDashData(formData));
   };
 
   // today date
@@ -91,8 +100,7 @@ const TentageDetails = () => {
       date: newDate,
       ...(userRoleId === "8" && { vendor_id: user_Id }),
     };
-    const formData = await getFormData(finalData);
-    dispatch(getTentageDashboardData(formData)); // tentage dashboard
+    callApi(finalData);
   };
 
   // show module
@@ -109,7 +117,9 @@ const TentageDetails = () => {
     const formData = await getFormData(finalData);
     const url = URLS?.vendorReporting?.path;
     dispatch(getVendorReports(url, formData)); // vendor reports
-    setShowData(data);
+    setTimeout(() => {
+      setShowData(data);
+    }, 500);
   };
 
   useEffect(() => {
@@ -130,10 +140,15 @@ const TentageDetails = () => {
         (acc, circle) => acc + Number(circle?.unclean) || 0,
         0
       );
+      const totalMaintenance = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.maintenance) || 0,
+        0
+      );
       setCount({
         total: total,
         registered: totalReg,
         clean: totalClean,
+        maintenance: totalMaintenance,
         unclean: totalUnclean,
       });
     }
@@ -293,7 +308,7 @@ const TentageDetails = () => {
       {/* total quantity */}
       <ViewVendorsSectors
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
-        openModal={showData}
+        openModal={showData && !loading}
         handleCancel={handleCancel}
         tableData={vendorDetails?.list || []}
         column={VendorWiseReportcolumns || []}
@@ -303,6 +318,7 @@ const TentageDetails = () => {
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
             <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
             <strong>Total Unclean: {count?.unclean || 0}</strong>
           </div>
         )}

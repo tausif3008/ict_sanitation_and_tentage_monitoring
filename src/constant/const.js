@@ -103,6 +103,11 @@ export const VendorWiseReportcolumns = [
     key: "clean",
   },
   {
+    title: "Maintenance",
+    dataIndex: "maintenance",
+    key: "maintenance",
+  },
+  {
     title: "Unclean",
     dataIndex: "unclean",
     key: "unclean",

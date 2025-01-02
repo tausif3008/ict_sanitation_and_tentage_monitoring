@@ -116,6 +116,8 @@ import TentageCount from "./TentageCount";
 import TentageDetails from "./TentageDetails";
 import MapData from "./MapData";
 import HelplineNo from "../SanitationDashboard/helplineNo";
+import IncidentReportAnalysis from "../SanitationDashboard/IncidentReportAnalysis";
+import VendorPerformance from "../SanitationDashboard/VendorPerformance";
 // import phone from "../assets/Dashboard/phone.png";
 // import phoneIcon from "../assets/Dashboard/phone-alt.png";
 // import FurnitureCount from "./FurnitureCount";
@@ -149,10 +151,10 @@ const TentageDashboard = () => {
         {/* <FileStorageWrapper {...props}></FileStorageWrapper> */}
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        {/* <IncidentReportAnalysis {...props}></IncidentReportAnalysis> */}
+        <IncidentReportAnalysis {...props}></IncidentReportAnalysis>
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        {/* <VendorPerformance {...props}></VendorPerformance> */}
+        <VendorPerformance {...props}></VendorPerformance>
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>

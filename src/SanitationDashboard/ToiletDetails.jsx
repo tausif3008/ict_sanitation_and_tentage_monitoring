@@ -40,6 +40,7 @@ const ToiletDetails = () => {
     total: 0,
     registered: 0,
     clean: 0,
+    maintenance: 0,
     unclean: 0,
   });
 
@@ -81,6 +82,7 @@ const ToiletDetails = () => {
       total: 0,
       registered: 0,
       clean: 0,
+      maintenance: 0,
       unclean: 0,
     });
   };
@@ -98,7 +100,9 @@ const ToiletDetails = () => {
     const formData = await getFormData(finalData);
     const url = URLS?.vendorReporting?.path;
     dispatch(getVendorReports(url, formData)); // vendor reports
-    setShowData(data);
+    setTimeout(() => {
+      setShowData(data);
+    }, 500);
   };
 
   // Handle form submission
@@ -175,10 +179,15 @@ const ToiletDetails = () => {
         (acc, circle) => acc + Number(circle?.unclean) || 0,
         0
       );
+      const totalMaintenance = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.maintenance) || 0,
+        0
+      );
       setCount({
         total: total,
         registered: totalReg,
         clean: totalClean,
+        maintenance: totalMaintenance,
         unclean: totalUnclean,
       });
     }
@@ -422,7 +431,7 @@ const ToiletDetails = () => {
       {/* total quantity */}
       <ViewVendorsSectors
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
-        openModal={showData}
+        openModal={showData && !loading}
         handleCancel={handleCancel}
         tableData={vendorDetails?.list || []}
         column={VendorWiseReportcolumns || []}
@@ -432,7 +441,7 @@ const ToiletDetails = () => {
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
             <strong>Total Clean : {count?.clean || 0}</strong>
-            <strong>Total Maintenance : {count?.clean || 0}</strong>
+            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
             <strong>Total Unclean: {count?.unclean || 0}</strong>
           </div>
         )}

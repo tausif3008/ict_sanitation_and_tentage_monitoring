@@ -35,6 +35,7 @@ const TentageCount = () => {
     under_monitoring = 0,
     off_monitoring = 0,
     todays_registered = 0,
+    todays_under_monitoring = 0,
     todays_allocated = 0,
   } = TentageDash_data?.data?.asset_counts || {};
 
@@ -231,11 +232,21 @@ const TentageCount = () => {
                 </h2>
               </div>
             </div>
-            <img
+            <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
+              <div className="bg-white mt-10">
+                <h6 className="text-center p-1 text-[#db2777] mr-2">
+                  {dict.todays_under_monitoring[lang]}
+                </h6>
+                <p className="text-l text-center text-blue-600 font-bold">
+                  {formatNumber(todays_under_monitoring)}
+                </p>
+              </div>
+            </div>
+            {/* <img
               src={card_red}
               alt="Under Monitoring Icon"
               className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            />
+            /> */}
           </div>
           <div className="relative p-3 border rounded-md shadow-md bg-purple-50">
             <div className="text-start">
