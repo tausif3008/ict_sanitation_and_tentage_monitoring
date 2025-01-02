@@ -210,6 +210,18 @@ const UserList = () => {
     // "Country",
   ];
 
+  const columnPercentages = [
+    4, // Sr No (10%)
+    13, // User Type (15%)
+    15, // Name (20%)
+    10, // Phone (15%)
+    20, // Email (20%)
+    20, // Address (10%)
+    9, // City (9%)
+    9, // State (5%)
+    // 0   // Country (0%) – if unused, no space is allocated for this column
+  ];
+
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
@@ -264,7 +276,9 @@ const UserList = () => {
           `${fileName}`,
           pdfHeader,
           pdfData,
-          true
+          true,
+          false,
+          columnPercentages
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);

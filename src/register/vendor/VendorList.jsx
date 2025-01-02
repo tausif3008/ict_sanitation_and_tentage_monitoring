@@ -212,6 +212,17 @@ const VendorList = () => {
     "State",
   ];
 
+  const columnPercentages = [
+    4,
+    15,
+    15,
+    10,
+    13,
+    25,
+    9,
+    9, // 0   // Country (0%) – if unused, no space is allocated for this column
+  ];
+
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
@@ -264,7 +275,9 @@ const VendorList = () => {
           `${fileName}`,
           pdfHeader,
           pdfData,
-          true
+          true,
+          false,
+          columnPercentages
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);

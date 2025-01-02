@@ -43,7 +43,11 @@ const SectorsListing = () => {
     <div>
       <>
         <CommonDivider label={"Sectors List"} />
-        <CommonTable columns={columns} details={details} />
+        <CommonTable
+          columns={columns}
+          details={details}
+          scroll={{ x: 1000, y: 400 }}
+        />
       </>
     </div>
   );

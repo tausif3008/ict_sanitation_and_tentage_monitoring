@@ -186,6 +186,8 @@ const VendorSupervisorRegistration = () => {
     "Phone",
   ];
 
+  const columnPercentages = [6, 26, 23, 30, 15];
+
   // excel && pdf file
   const exportToFile = async (isExcel) => {
     try {
@@ -232,7 +234,9 @@ const VendorSupervisorRegistration = () => {
           `${fileName}`,
           pdfHeader,
           pdfData,
-          true
+          true,
+          false,
+          columnPercentages
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
