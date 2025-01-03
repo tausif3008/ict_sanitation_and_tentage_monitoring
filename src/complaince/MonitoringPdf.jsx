@@ -16,7 +16,7 @@ export const MonitoringPdfNew = (
   columnPercentages = [], // column percentage
   pdfTitleData = {} // monitoring title
 ) => {
-  if (rows && rows?.length === 0) {
+  if (rows && rows?.length === 1) {
     message?.error("Data is not available");
     return "";
   }
@@ -26,15 +26,16 @@ export const MonitoringPdfNew = (
   const ictHeading = "Maha Kumbh 2025";
   const pageWidth = doc.internal.pageSize.getWidth();
   const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-  doc.setFontSize(23); // Increase font size for better prominence
+  doc.setFontSize(20); // Increase font size for better prominence
   doc.setFont("helvetica", "bold");
+  doc.setTextColor(255, 140, 0); // Set text color to orange (RGB: 255, 165, 0)
   doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
   // Image on the Left (Company Logo or similar image)
-  const leftImageX = 10; // X position (from the left)
-  const leftImageY = 7; // Y position (from the top)
-  const leftImageWidth = 25; // Image width (adjust as needed)
-  const leftImageHeight = 25; // Image height (adjust as needed)
+  const leftImageX = 10;
+  const leftImageY = 7;
+  const leftImageWidth = 25;
+  const leftImageHeight = 25;
   doc.addImage(
     `${IMAGELIST?.govt_logo}`,
     "JPEG",
@@ -48,10 +49,10 @@ export const MonitoringPdfNew = (
   );
 
   // Image on the Right (Another logo or image)
-  const rightImageX = pageWidth - 35; // X position (from the right)
-  const rightImageY = 7; // Y position (from the top)
-  const rightImageWidth = 25; // Image width (adjust as needed)
-  const rightImageHeight = 25; // Image height (adjust as needed)
+  const rightImageX = pageWidth - 35;
+  const rightImageY = 7;
+  const rightImageWidth = 25;
+  const rightImageHeight = 25;
   doc.addImage(
     `${IMAGELIST?.kumbhMela}`,
     "JPEG",
@@ -64,14 +65,14 @@ export const MonitoringPdfNew = (
     "FAST" // Adds compression for smaller file size
   );
 
-  doc.y += 15;
+  doc.y += 10;
 
-  // Add subheading centered between the images
   const subHeading = "ICT Sanitation and Tentage Monitoring System";
   const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
-  doc.setFontSize(16);
+  doc.setFontSize(15);
   doc.setFont("bold");
-  doc.text(subHeading, subHeadingX + 30, doc.y); // Position it below the images (Y position is adjusted)
+  doc.text(subHeading, subHeadingX + 15, doc.y);
+  doc.setTextColor(0, 0, 0);
 
   // Add report title and date on the same line, below the subheading
   const title = `${titleName}`;
@@ -80,27 +81,23 @@ export const MonitoringPdfNew = (
   const DateRange = `Frequency : ${pdfTitleData?.date}`;
   const dateString = moment().format("DD-MMM-YYYY hh:mm A");
 
-  // Calculate positions for the title and date
-  const titleX = 54; // Left align title
-  const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
+  const titleX = 54;
+  const dateX = pageWidth - doc.getTextWidth(dateString) - 34;
 
   doc.y += 10;
-  // Add title and date below the subheading
   doc.setFontSize(12);
   doc.setFont("bold");
-  doc.text(title, subHeadingX + 45, doc.y); // Title position (Y position adjusted to be below the subheading)
-  doc.text(dateString, dateX + 30, doc.y); // Date position (Y position adjusted to be below the title)
-  // doc.setFont("helvetica", "normal"); // make font normal
-  // doc.setFont("normal");
-  doc.setFontSize(11); // Smaller font size for date
+  doc.text(title, subHeadingX + 30, doc.y);
+  doc.setFontSize(11);
+  doc.text(dateString, dateX + 30, doc.y + 10);
   doc.y += 8;
-  doc.text(category, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
+  doc.text(category, titleX - 35, doc.y);
   doc.y += 8;
-  doc.text(type, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
+  doc.text(type, titleX - 35, doc.y);
   doc.y += 8;
-  doc.text(DateRange, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
+  doc.text(DateRange, titleX - 35, doc.y);
   doc.setFont("normal");
-  doc.setFontSize(10); // Smaller font size for date
+  doc.setFontSize(10);
 
   doc.y += 5;
   const availableWidth = pageWidth - 20; // Reserve 20 units for padding (adjust as needed)
@@ -114,7 +111,10 @@ export const MonitoringPdfNew = (
     body: rows,
     startY: doc.y,
     columnStyles: headerData?.reduce((styles, header, index) => {
-      styles[index] = { cellWidth: columnWidths[index] }; // Assign width based on calculated value
+      styles[index] = {
+        cellWidth: columnWidths[index], // Assign width based on calculated value
+        halign: "center", // Horizontally align the content to the center
+      };
       return styles;
     }, {}),
     didParseCell: function (data) {
@@ -124,6 +124,8 @@ export const MonitoringPdfNew = (
         data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
         data.cell.styles.fontSize = 10; // Increase font size for emphasis
       }
+      // Align the text in the center for all cells in all rows
+      data.cell.styles.halign = "center";
     },
   });
 

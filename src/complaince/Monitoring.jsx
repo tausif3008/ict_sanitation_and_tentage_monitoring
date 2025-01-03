@@ -496,7 +496,7 @@ const Monitoring = () => {
       // Call the export function
       !isExcel &&
         MonitoringPdfNew(
-          filesName,
+          "Toilet & Tentage Monitoring Report",
           filesName,
           pdfHeader,
           [
