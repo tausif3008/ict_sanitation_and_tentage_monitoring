@@ -50,10 +50,7 @@ function TaskSchedule() {
                   className="flex items-center  text-sm justify-between w-full"
                 >
                   <div>{el.time}</div>
-                  <div
-                    className="text-gray-700 text-lg justify-center text-center m-auto font-semibold "
-                    style={{ color: "orange" }}
-                  >
+                  <div className="text-gray-700 text-lg justify-center text-center m-auto font-semibold ">
                     {el.task}
                   </div>
                   <div className="flex justify-end">

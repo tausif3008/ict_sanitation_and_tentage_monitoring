@@ -209,7 +209,6 @@ const MonitoringReport = () => {
         <div className="mt-3" ref={contentRef}>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[40%,40%,20%]">
             <table
-              style={{ borderCollapse: "collapse" }}
               className="table-auto w-full text-left border-collapse border-none" // Apply border-none to table
             >
               <tbody>

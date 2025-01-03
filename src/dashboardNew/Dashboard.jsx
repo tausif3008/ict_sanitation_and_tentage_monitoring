@@ -54,23 +54,14 @@ const Dashboard = () => {
       </div>
 
       <div className="lg:col-span-1 lg:hidden col-span-4 sm:col-span-2 md:col-span-2 flex gap-2 flex-col">
-        <div
-          className="col-span-2 flex-wrap h-full  rounded-md "
-          style={{ height: "424px" }}
-        >
+        <div className="col-span-2 flex-wrap  h-[425px] rounded-md ">
           <Notifications></Notifications>
         </div>
-        <div
-          className="col-span-2  hidden lg:flex w-full flex-wrap rounded-md"
-          style={{ height: "375px" }}
-        >
+        <div className="col-span-2  hidden lg:flex w-full h-[375px] flex-wrap rounded-md">
           <Alerts></Alerts>
         </div>
       </div>
-      <div
-        className="col-span-4 sm:col-span-2 flex lg:hidden w-full flex-wrap "
-        style={{ height: "425px" }}
-      >
+      <div className="col-span-4 sm:col-span-2 flex lg:hidden h-[425px] w-full flex-wrap ">
         <Alerts></Alerts>
       </div>
 
@@ -79,16 +70,10 @@ const Dashboard = () => {
       </div>
 
       <div className="lg:col-span-1 hidden lg:flex col-span-4 sm:col-span-2 md:col-span-2 gap-2 flex-col">
-        <div
-          className="col-span-2 flex-wrap h-full  rounded-md "
-          style={{ height: "424px" }}
-        >
+        <div className="col-span-2 flex-wrap  h-[425px] rounded-md ">
           <Notifications></Notifications>
         </div>
-        <div
-          className="col-span-2  hidden lg:flex w-full flex-wrap rounded-md"
-          style={{ height: "375px" }}
-        >
+        <div className="col-span-2  hidden lg:flex w-full h-[375px] flex-wrap rounded-md">
           <Alerts></Alerts>
         </div>
       </div>

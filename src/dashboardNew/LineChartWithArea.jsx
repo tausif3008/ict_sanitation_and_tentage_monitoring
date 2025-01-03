@@ -219,7 +219,7 @@ const LineChartWithArea = () => {
           series={chartData.series}
           type="area"
           height={350}
-          style={{ marginTop: "-5px" }}
+          className="mt-[-5px]"
         />
       </div>
     </div>

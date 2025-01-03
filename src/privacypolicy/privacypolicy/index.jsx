@@ -2,7 +2,8 @@ import React from "react";
 
 const PrivacyPolicy = () => {
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    // <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+    <div className="p-5 font-sans">
       <h1>Privacy Policy</h1>
       <p>
         Last updated: <strong>{new Date().toLocaleDateString()}</strong>

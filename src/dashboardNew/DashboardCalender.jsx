@@ -240,16 +240,13 @@ const DashboardCalender = () => {
           events={events}
           startAccessor="start"
           endAccessor="end"
-          style={{ height: "550px", width: "100%" }}
+          className="h-[550px] w-full"
           eventPropGetter={eventStyleGetter} // Apply custom styles to events
         />
       </div>
 
       <div className="hidden lg:flex w-full  col-span-2 xl:col-span-2 shadow-md rounded-md">
-        <div
-          className="bg-white flex flex-col w-full rounded-md"
-          style={{ height: "640px" }}
-        >
+        <div className="bg-white flex flex-col w-full h-[640px] rounded-md">
           <DashboardTitle title="Response Time"></DashboardTitle>
           <div className="border-b mb-2"></div>
           <div className="px-2 flex flex-col gap-2">

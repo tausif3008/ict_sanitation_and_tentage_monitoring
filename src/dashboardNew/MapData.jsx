@@ -177,7 +177,6 @@ const toiletLatLong = [
   },
 ];
 
-
 const MapComponent = ({ tentage = true }) => {
   const mapRef = useRef(null);
   const [userLocation, setUserLocation] = useState({
@@ -260,7 +259,7 @@ const MapComponent = ({ tentage = true }) => {
         zoom={13}
         minZoom={10}
         maxZoom={18}
-        style={{ height: "425px", width: "100%", zIndex: 1 }}
+        className="h-[425px] w-full z-10"
         whenCreated={(mapInstance) => {
           mapRef.current = mapInstance;
         }}
@@ -298,7 +297,12 @@ const MapComponent = ({ tentage = true }) => {
                 <br />
                 <span>Average response time: {place.responseTime}</span>
                 <br />
-                <span className="flex mt-1"  style={getStatusStyle(place.status)}>{place.status}</span>
+                <span
+                  className="flex mt-1"
+                  style={getStatusStyle(place.status)}
+                >
+                  {place.status}
+                </span>
               </div>
             </Popup>
           </Marker>

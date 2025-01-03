@@ -46,11 +46,9 @@ const Layout = () => {
       </div>
       <div className="h-10"></div>
       <div className="w-full mt-auto">
-        <div style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 3)" }}>
-          <div
-            className="relative flex overflow-hidden"
-            style={{ background: "#ebf9fc" }}
-          >
+        <div className="shadow-sm">
+          {/* style={{ boxShadow: "0 2px 4px rgba(0, 0, 0, 3)" }} */}
+          <div className="relative flex overflow-hidden bg-blue-100">
             <div className="md:w-10/12 w-11/12 xl:w-10/12 2xl:w-9/12  flex flex-col m-auto z-30 p-2">
               <Footer {...props}></Footer>
             </div>

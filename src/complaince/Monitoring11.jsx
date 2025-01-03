@@ -45,7 +45,6 @@ const Monitoring = () => {
           setData(transformedData);
           setFilteredData(transformedData); // Initialize filtered data
         } else {
-          
           message.error(result.message || "Failed to load assets");
         }
       } catch (error) {
@@ -126,14 +125,7 @@ const Monitoring = () => {
         <div className="">
           {/* Success Message */}
           {successMessage && (
-            <div
-              style={{
-                textAlign: "center",
-                color: "green",
-                fontWeight: "bold",
-                marginBottom: "20px",
-              }}
-            >
+            <div className="text-center text-green-500 font-bold mb-5">
               {successMessage}
             </div>
           )}
@@ -145,8 +137,7 @@ const Monitoring = () => {
                 <Search
                   placeholder="Search assets"
                   onSearch={handleSearch}
-                  style={{ width: 300 }}
-                  className=""
+                  className="w-[300px]"
                 />
               </div>
               <Table
@@ -169,15 +160,12 @@ const Monitoring = () => {
             onCancel={handleCancel}
             footer={null}
           >
-            <div
-              style={{ textAlign: "center" }}
-              className="flex justify-center items-center"
-            >
+            <div className="flex justify-center items-center text-center">
               {qrCodeUrl ? (
                 <img
                   src={"http://filemanagement.metaxpay.in:8001" + qrCodeUrl}
                   alt="QR Code"
-                  style={{ maxWidth: "200px" }}
+                  className="w-[200px]"
                 />
               ) : (
                 <QRCode value={qrCodeData} />

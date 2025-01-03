@@ -343,12 +343,9 @@ const ToiletDetails = () => {
                   arrow={{ pointAtCenter: true }}
                 >
                   <div
-                    className={`relative p-3 border rounded-md shadow-md flex flex-col justify-between bg-gray-50 ${
+                    className={`relative p-3 border rounded-md shadow-md flex min-h-[110px] flex-col justify-between bg-gray-50 ${
                       showAll ? "" : "h-40"
                     }`}
-                    style={{
-                      minHeight: "110px",
-                    }}
                     onClick={(e) => {
                       handleCleanData(item);
                     }}
@@ -409,8 +406,7 @@ const ToiletDetails = () => {
               size="medium"
               type="primary"
               onClick={() => setShowAll(true)}
-              className="w-32 bg-orange-400 font-semibold"
-              style={{ flexShrink: 0 }}
+              className="w-32 bg-orange-400 font-semibold flex-shrink-0"
             >
               {dict.see_more[lang]}
             </Button>
@@ -419,8 +415,7 @@ const ToiletDetails = () => {
               size="medium"
               type="primary"
               onClick={() => setShowAll(false)}
-              className="w-32 bg-orange-400 font-semibold"
-              style={{ flexShrink: 0 }}
+              className="w-32 bg-orange-400 font-semibold flex-shrink-0"
             >
               {dict.show_less[lang]}
             </Button>

@@ -36,13 +36,7 @@ const ParkingList = () => {
   );
 
   const footer = () => (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        padding: "8px 16px",
-      }}
-    >
+    <div className="flex justify-between p-2 px-4">
       <strong>Total Parking Count: {filteredParkings?.length}</strong>
     </div>
   );
@@ -70,7 +64,7 @@ const ParkingList = () => {
         placeholder="Search by Parking Name"
         onSearch={(value) => setSearchText(value)} // Update search text on search
         enterButton
-        style={{ marginBottom: "16px" }}
+        className="mb-4"
       />
       <Table
         columns={columns}

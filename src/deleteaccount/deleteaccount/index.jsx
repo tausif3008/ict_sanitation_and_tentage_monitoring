@@ -35,14 +35,7 @@ const DeleteAccount = () => {
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "400px",
-        margin: "auto",
-        padding: "20px",
-        textAlign: "center",
-      }}
-    >
+    <div className="max-w-[400px] mx-auto p-5 text-center">
       <h3>Delete Account</h3>
       <p>Deleting your account is permanent and cannot be undone.</p>
       <label>
@@ -57,14 +50,11 @@ const DeleteAccount = () => {
       <button
         onClick={handleDelete}
         disabled={!isConfirmed || isSubmitting}
-        style={{
-          backgroundColor: isSubmitting ? "#ccc" : "red",
-          color: "white",
-          padding: "10px 20px",
-          border: "none",
-          cursor: isSubmitting ? "not-allowed" : "pointer",
-          marginTop: "10px",
-        }}
+        className={`text-white p-2.5 px-5 border-none mt-2 ${
+          isSubmitting
+            ? "bg-gray-300 cursor-not-allowed"
+            : "bg-red-500 cursor-pointer"
+        }`}
       >
         {isSubmitting ? "Deleting..." : "Delete Account"}
       </button>

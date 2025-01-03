@@ -4,7 +4,7 @@ import Navbar from "./Navbar";
 
 const MainNavbar = (props) => {
   const [isSticky, setIsSticky] = useState(false);
-  
+
   useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY;
@@ -26,12 +26,11 @@ const MainNavbar = (props) => {
     <div className="w-full m-auto">
       <NavHead {...props}></NavHead>
       <div
-        className={`${
+        className={`transition-all duration-[10000ms] ${
           isSticky
             ? "fixed top-0 left-0 w-full shadow-lg z-50 transition-all navbar-transition"
             : ""
         }`}
-        style={{ transition: "10s" }}
       >
         <Navbar {...props}></Navbar>
       </div>{" "}

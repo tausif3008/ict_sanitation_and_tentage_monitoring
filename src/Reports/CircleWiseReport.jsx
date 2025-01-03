@@ -162,7 +162,7 @@ const CircleWiseReport = () => {
   }, [CircleData]);
 
   return (
-    <div style={{ padding: "24px" }}>
+    <div className="p-[24px]">
       <CommonDivider label={"Circle-Wise Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>

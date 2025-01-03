@@ -109,8 +109,8 @@ const CustomInput = ({
           suffix={
             isPassword && (
               <span
+                className="cursor-pointer"
                 onClick={handlePasswordVisibility}
-                style={{ cursor: "pointer" }}
               >
                 {passwordVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
               </span>
@@ -134,8 +134,8 @@ const CustomInput = ({
           suffix={
             isPassword && (
               <span
+                className="cursor-pointer"
                 onClick={handlePasswordVisibility}
-                style={{ cursor: "pointer" }}
               >
                 {passwordVisible ? <EyeOutlined /> : <EyeInvisibleOutlined />}
               </span>
