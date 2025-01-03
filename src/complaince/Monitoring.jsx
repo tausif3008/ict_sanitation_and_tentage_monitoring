@@ -25,7 +25,6 @@ import CustomInput from "../commonComponents/CustomInput";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
-import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
 import { MonitoringPdfNew } from "./MonitoringPdf";
 
 const Monitoring = () => {
@@ -565,7 +564,7 @@ const Monitoring = () => {
                         label={"Select Category"}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
-                        options={assetMainType || []}
+                        options={assetMainType?.slice(0, 2) || []}
                       />
                     </Col>
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>

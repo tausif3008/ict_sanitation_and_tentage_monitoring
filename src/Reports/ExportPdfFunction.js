@@ -25,8 +25,9 @@ export const ExportPdfFunction = (
   const ictHeading = "Maha Kumbh 2025";
   const pageWidth = doc.internal.pageSize.getWidth();
   const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-  doc.setFontSize(23); // Increase font size for better prominence
+  doc.setFontSize(20); // Increase font size for better prominence
   doc.setFont("helvetica", "bold");
+  doc.setTextColor(255, 140, 0);
   doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
   // Image on the Left (Company Logo or similar image)
@@ -63,14 +64,15 @@ export const ExportPdfFunction = (
     "FAST" // Adds compression for smaller file size
   );
 
-  doc.y += 15;
+  doc.y += 10;
 
   // Add subheading centered between the images
   const subHeading = "ICT Sanitation and Tentage Monitoring System";
   const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
-  doc.setFontSize(16);
+  doc.setFontSize(15);
   doc.setFont("bold");
-  doc.text(subHeading, subHeadingX + 30, doc.y); // Position it below the images (Y position is adjusted)
+  doc.text(subHeading, subHeadingX + 20, doc.y); // Position it below the images (Y position is adjusted)
+  doc.setTextColor(0, 0, 0);
 
   // Add report title and date on the same line, below the subheading
   const title = `${titleName}`;
@@ -80,7 +82,7 @@ export const ExportPdfFunction = (
   const titleX = 54; // Left align title
   const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
-  doc.y += 10;
+  doc.y += 13;
   // Add title and date below the subheading
   doc.setFontSize(12);
   doc.setFont("bold");
@@ -106,6 +108,7 @@ export const ExportPdfFunction = (
     }, {}),
     didParseCell: function (data) {
       const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
+      data.cell.styles.halign = "center";
       if (isLastRow && IsLastLineBold) {
         data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
         data.cell.styles.textColor = [10, 10, 10]; // Set text color to black

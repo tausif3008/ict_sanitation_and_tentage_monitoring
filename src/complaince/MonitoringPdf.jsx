@@ -28,7 +28,7 @@ export const MonitoringPdfNew = (
   const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
   doc.setFontSize(20); // Increase font size for better prominence
   doc.setFont("helvetica", "bold");
-  doc.setTextColor(255, 140, 0); // Set text color to orange (RGB: 255, 165, 0)
+  doc.setTextColor(255, 140, 0);
   doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
   // Image on the Left (Company Logo or similar image)

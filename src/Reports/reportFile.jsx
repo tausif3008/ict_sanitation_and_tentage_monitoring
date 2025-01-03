@@ -26,8 +26,9 @@ const ExportToPDF = ({
     const ictHeading = "Maha Kumbh 2025";
     const pageWidth = doc.internal.pageSize.getWidth();
     const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-    doc.setFontSize(23); // Increase font size for better prominence
+    doc.setFontSize(20); // Increase font size for better prominence
     doc.setFont("helvetica", "bold");
+    doc.setTextColor(255, 140, 0); // Set text color to orange (RGB: 255, 165, 0)
     doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
     // Image on the Left (Company Logo or similar image)
@@ -63,14 +64,15 @@ const ExportToPDF = ({
       undefined,
       "FAST" // Adds compression for smaller file size
     );
-    doc.y += 15;
+    doc.y += 10;
 
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
     const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2;
-    doc.setFontSize(16);
+    doc.setFontSize(15);
     doc.setFont("bold");
-    doc.text(subHeading, subHeadingX + 30, doc.y);
+    doc.text(subHeading, subHeadingX + 25, doc.y);
+    doc.setTextColor(0, 0, 0);
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
@@ -79,7 +81,7 @@ const ExportToPDF = ({
     const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
-    doc.y += 10;
+    doc.y += 13;
 
     // Add title and date below the subheading
     doc.setFontSize(12);
@@ -105,6 +107,7 @@ const ExportToPDF = ({
         const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
         const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
         const isFirstColumn = data.column.index === 0;
+        data.cell.styles.halign = "center";
 
         if (
           (isLastRow && IsLastLineBold) ||
