@@ -7,13 +7,13 @@ import { IMAGELIST } from "../assets/Images/exportImages";
 
 // modified
 export const ExportPdfFunction = (
-  titleName,
-  pdfName,
-  headerData,
-  rows,
+  titleName, // title
+  pdfName, // pdf name
+  headerData, // header
+  rows, // rows
   landscape = false,
   IsLastLineBold = false,
-  columnPercentages = []
+  columnPercentages = [] // column percentage
 ) => {
   if (rows && rows?.length === 0) {
     message?.error("Data is not available");

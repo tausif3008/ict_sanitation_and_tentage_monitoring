@@ -166,6 +166,7 @@ const AssetTypeForm = () => {
               ]}
               placeholder="Select SLA Type"
               options={SLATypeDrop || []}
+              mode="multiple"
             />
             <CustomSelect
               name={"questions"}

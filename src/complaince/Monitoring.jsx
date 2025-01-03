@@ -368,26 +368,14 @@ const Monitoring = () => {
     "Sector",
     "Vendor Name",
     "Clean",
+    "Maintenance",
     "Unclean",
     // "Circle",
     "Date",
     "GSD Name",
   ];
 
-  // pdf data
-  // const pdfData = details?.list?.map((data, index) => [
-  //   index + 1,
-  //   data?.asset_type_name,
-  //   data?.asset_code,
-  //   data?.unit_no,
-  //   data?.agent_name ? data?.agent_name : "GSD",
-  //   data?.vendor_name,
-  //   data?.sector_name,
-  //   data?.circle_name,
-  //   data?.created_at
-  //     ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-  //     : "",
-  // ]);
+  const columnPercentages = [4, 13, 10, 10, 16, 9, 9, 9, 10, 10];
 
   // excel && pdf file
   const exportToFile = async (isExcel) => {
@@ -467,6 +455,7 @@ const Monitoring = () => {
           data?.sector_name,
           data?.vendor_name,
           data?.one_count ? data?.one_count : "",
+          data?.maintenance ? data?.maintenance : 0,
           data?.zero_count ? data?.zero_count : "",
           // data?.circle_name,
           data?.created_at
@@ -486,7 +475,8 @@ const Monitoring = () => {
             ["", "Total", unitCount, "", "", CleanCount, UncleanCount],
           ],
           true,
-          true
+          true,
+          columnPercentages
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
