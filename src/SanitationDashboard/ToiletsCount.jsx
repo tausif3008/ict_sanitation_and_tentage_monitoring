@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useOutletContext } from "react-router";
 import { useDispatch } from "react-redux";
-import { Icon } from "@iconify/react/dist/iconify.js";
-import card_green from "../assets/Dashboard/card_green.png";
-import card_orange from "../assets/Dashboard/card_orange.png";
-import card_red from "../assets/Dashboard/card_red.png";
-import card_purple from "../assets/Dashboard/card_purple.png";
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import URLS from "../urils/URLS";
 import { getAssetTypes } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
+import UserCard from "../commonComponents/DashboardCard/UserCard";
+import TotalToilte from "../commonComponents/DashboardCard/TotalToilte";
+import TotalRegister from "../commonComponents/DashboardCard/TotalRegister";
+import UnderMonitoring from "../commonComponents/DashboardCard/UnderMonitoring";
+import OffMonitoring from "../commonComponents/DashboardCard/OffMonitoring";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
@@ -21,9 +21,6 @@ const ToiletsCount = () => {
   const dispatch = useDispatch();
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard ( api call in details page of vendor dashboard)
   const { AssetType } = AssetTypeSelectors(); // asset type
-
-  const Role = localStorage.getItem("role");
-  const name = localStorage.getItem("name");
 
   useEffect(() => {
     if (AssetType) {
@@ -41,23 +38,19 @@ const ToiletsCount = () => {
     todays_allocated = 0,
   } = SanitationDash_data?.data?.asset_counts || {};
 
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat("en-IN").format(number);
-  };
-
   const url = URLS?.assetType?.path + 1;
 
   // total quantity
-  const handleTotal = async () => {
+  const handleTotal = useCallback(async () => {
     dispatch(getAssetTypes(url)); // get assset type
     setShowTable(true);
-  };
+  }, [url]);
 
   // register quantity
-  const handleRegister = async () => {
+  const handleRegister = useCallback(async () => {
     dispatch(getAssetTypes(url)); // get assset type
     setShowRegisterTable(true);
-  };
+  }, [url]);
 
   // close module
   const handleCancel = () => {
@@ -109,170 +102,23 @@ const ToiletsCount = () => {
 
   return (
     <>
-      <div className="p-3 mx-auto bg-white rounded-xl space-y-4 b">
-        <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
-          <div className="relative p-3 border rounded-md shadow-md bg-blue-50">
-            <div className="text-start">
-              <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
-                <div className="flex items-center gap-2">
-                  {/* <UserOutlined className="text-green absolute right-[5px]" /> */}
-                  <Icon
-                    icon="fa-solid:user-tie"
-                    width="30"
-                    height="30"
-                    className="text-green absolute right-[5px]"
-                  />
-                  <span className="text-orange-600">{"Welcome"}</span>
-                </div>
-                <h2 className="text-2xl font-bold ">{`${name || ""}`}</h2>
-                <i>{Role}</i>
-              </div>
-            </div>
-            <img
-              src={card_orange}
-              alt="Total Toilets Icon"
-              className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            />
-          </div>
-        </div>
-      </div>
+      <UserCard />
       <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
         <div className="text-xl font-bold mb-4">
           {dict.sanitation_toilets_count[lang]}
         </div>
-
         <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
-          <div
-            className="relative p-3 border rounded-md shadow-md bg-blue-50"
-            onClick={handleTotal}
-          >
-            <div className="text-start">
-              <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
-                <div className="flex items-center gap-2">
-                  {/* <CheckCircleOutlined className="text-green absolute right-[5px]" /> */}
-                  <Icon
-                    icon="material-symbols-light:list-alt-outline-sharp"
-                    width="30"
-                    height="30"
-                    className="text-green absolute right-[5px]"
-                  />
-                  <span className="text-green-600">
-                    {dict.total_toilets[lang]}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold">{formatNumber(total)}</h2>
-              </div>
-            </div>
-            <img
-              src={card_green}
-              alt="Total Toilets Icon"
-              className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            />
-          </div>
-
-          <div
-            className="relative p-3 border rounded-md shadow-md bg-orange-50"
-            onClick={handleRegister}
-          >
-            <div className="text-start">
-              <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
-                <div className="flex items-center gap-2">
-                  {/* <CheckOutlined className="text-orange-600 absolute right-[5px]" /> */}
-                  <Icon
-                    icon="wpf:qr-code"
-                    width="26"
-                    height="26"
-                    className="text-orange-600 absolute right-[5px]"
-                  />
-                  <span className="text-[#eab308]">
-                    {dict.total_registered[lang]}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold">
-                  {formatNumber(registered)}
-                </h2>
-              </div>
-            </div>
-            <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
-              <div className="bg-white mt-10">
-                <h6 className="text-center p-1 text-[#eab308] mr-2">
-                  {dict.todays_registered[lang]}
-                </h6>
-                <p className="text-l text-center text-blue-600 font-bold">
-                  {formatNumber(todays_registered)}
-                </p>
-              </div>
-            </div>
-            {/* <img
-              src={card_orange}
-              alt="Registered Toilets Icon"
-              className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            /> */}
-          </div>
-
-          <div className="relative p-3 border rounded-md shadow-md bg-red-50">
-            <div className="text-start">
-              <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
-                <div className="flex items-center gap-2">
-                  {/* <EyeOutlined className="text-violet-600 absolute right-[5px]" /> */}
-                  <Icon
-                    icon="wpf:todo-list"
-                    width="24"
-                    height="24"
-                    className="text-orange-600 absolute right-[5px]"
-                  />
-                  <span className="text-[#db2777]">
-                    {dict.under_monitoring[lang]}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold">
-                  {formatNumber(under_monitoring)}
-                </h2>
-              </div>
-            </div>
-            <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
-              <div className="bg-white mt-10">
-                <h6 className="text-center p-1 text-[#db2777] mr-2">
-                  {dict.todays_under_monitoring[lang]}
-                </h6>
-                <p className="text-l text-center text-blue-600 font-bold">
-                  {formatNumber(todays_under_monitoring)}
-                </p>
-              </div>
-            </div>
-            {/* <img
-              src={card_red}
-              alt="Under Monitoring Icon"
-              className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            /> */}
-          </div>
-
-          <div className="relative p-3 border rounded-md shadow-md bg-purple-50">
-            <div className="text-start">
-              <div className="text-blue-600 font-semibold flex flex-col gap-2 items-start relative">
-                <div className="flex items-center gap-2">
-                  {/* <ExclamationCircleOutlined className="text-violet-600 absolute right-[5px]" /> */}
-                  <Icon
-                    icon="lucide:monitor-off"
-                    width="24"
-                    height="24"
-                    className="text-violet-600 absolute right-[5px]"
-                  />
-                  <span className="text-purple-600">
-                    {dict.off_monitoring[lang]}
-                  </span>
-                </div>
-                <h2 className="text-2xl font-bold">
-                  {formatNumber(off_monitoring)}
-                </h2>
-              </div>
-            </div>
-            <img
-              src={card_purple}
-              alt="Off Monitoring Icon"
-              className="absolute bottom-0 right-0 h-full w-auto object-cover"
-            />
-          </div>
+          <TotalToilte handleTotal={handleTotal} total={total} />
+          <TotalRegister
+            handleRegister={handleRegister}
+            registered={registered}
+            today={todays_registered}
+          />
+          <UnderMonitoring
+            total={under_monitoring}
+            today={todays_under_monitoring}
+          />
+          <OffMonitoring total={off_monitoring} />
         </div>
 
         {/* total quantity */}
