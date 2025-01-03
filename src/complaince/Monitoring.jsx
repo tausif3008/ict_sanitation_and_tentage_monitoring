@@ -26,6 +26,7 @@ import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { ExportPdfFunction } from "../Reports/ExportPdfFunction";
+import { MonitoringPdfNew } from "./MonitoringPdf";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
@@ -41,6 +42,11 @@ const Monitoring = () => {
   const [searchQuery, setSearchQuery] = useState();
   const [showDateRange, setShowDateRange] = useState(false);
   const [filesName, setFilesName] = useState(null); // files Name
+  const [pdfTitleData, setPdfTitleData] = useState({
+    category: "Combined",
+    type: "Combined",
+    date: "Combined",
+  }); // pdf title data
 
   const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
@@ -68,6 +74,13 @@ const Monitoring = () => {
   const vendor_id_name = form.getFieldValue("vendor_id");
   const GSD_name = form.getFieldValue("created_by");
 
+  const catTypeName = getValueLabel(categoryType, assetMainType, "");
+  const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
+  const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+
+  // console.log("pdfTitleData", pdfTitleData);
+  // console.log("rohit", form.getFieldsValue());
+
   const handleSelect = (value) => {
     setAssetTypes([]); // get assset type
     form.setFieldsValue({
@@ -92,6 +105,26 @@ const Monitoring = () => {
 
   // fiter finish
   const onFinishForm = (values) => {
+    let pdfDateOpt = null;
+    if (values?.date_format === "Today") {
+      pdfDateOpt = moment().format("DD-MMM-YYYY");
+    } else if (values?.date_format === "Current Month") {
+      const startDate = moment().startOf("month").format("DD-MMM-YYYY");
+      const endDate = moment().endOf("month").format("DD-MMM-YYYY");
+      pdfDateOpt = `${startDate} to ${endDate}`;
+    } else if (values?.date_format === "Date Range") {
+      const startDate = dayjs(values?.form_date).format("DD-MMM-YYYY");
+      const endDate = dayjs(values?.to_date).format("DD-MMM-YYYY");
+      pdfDateOpt = `${startDate} to ${endDate}`;
+    }
+
+    setPdfTitleData((pre) => ({
+      ...pre,
+      category: values?.asset_main_type_id ? catTypeName : "Combined",
+      type: values?.asset_type_id ? assetTypeName : "Combined",
+      date: pdfDateOpt || "Combined",
+    }));
+
     const finalData = {
       ...values,
     };
@@ -201,10 +234,6 @@ const Monitoring = () => {
 
   // file name
   const getReportName = () => {
-    const catTypeName = getValueLabel(categoryType, assetMainType, "");
-    const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
-    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
-
     let reportName = "";
     if (vendorName) {
       reportName += `${vendorName}`;
@@ -375,7 +404,7 @@ const Monitoring = () => {
     "GSD Name",
   ];
 
-  const columnPercentages = [4, 13, 10, 10, 16, 9, 9, 9, 10, 10];
+  const columnPercentages = [5, 15, 9, 9, 18, 7, 9, 8, 10, 10];
 
   // excel && pdf file
   const exportToFile = async (isExcel) => {
@@ -466,17 +495,18 @@ const Monitoring = () => {
 
       // Call the export function
       !isExcel &&
-        ExportPdfFunction(
+        MonitoringPdfNew(
           filesName,
           filesName,
           pdfHeader,
           [
             ...pdfData,
-            ["", "Total", unitCount, "", "", CleanCount, UncleanCount],
+            ["", "Total", unitCount, "", "", CleanCount, "", UncleanCount],
           ],
           true,
           true,
-          columnPercentages
+          columnPercentages,
+          pdfTitleData
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
