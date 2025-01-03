@@ -11,6 +11,7 @@ import TotalToilte from "../commonComponents/DashboardCard/TotalToilte";
 import TotalRegister from "../commonComponents/DashboardCard/TotalRegister";
 import UnderMonitoring from "../commonComponents/DashboardCard/UnderMonitoring";
 import OffMonitoring from "../commonComponents/DashboardCard/OffMonitoring";
+import { registerColumn, tableColumn } from "../constant/const";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
@@ -65,40 +66,6 @@ const ToiletsCount = () => {
   const RegisteredQuantity = showTableList?.list?.reduce((data, data2) => {
     return data + (Number(data2?.registered) || 0);
   }, 0); // register quantity
-
-  const nameColumn = [
-    {
-      title: "Name",
-      dataIndex: "name",
-      key: "name",
-      // width: "60%",
-    },
-  ];
-
-  // total quantity
-  const tableColumn = [
-    ...nameColumn,
-    {
-      title: "Total Quantity",
-      dataIndex: "total_quantity",
-      key: "total_quantity",
-      width: "20%",
-    },
-  ];
-
-  // register quantity
-  const registerColumn = [
-    ...nameColumn,
-    {
-      title: "Registered Quantity",
-      dataIndex: "registered",
-      key: "registered",
-      width: "20%",
-      render: (text) => {
-        return text ? text : 0;
-      },
-    },
-  ];
 
   return (
     <>

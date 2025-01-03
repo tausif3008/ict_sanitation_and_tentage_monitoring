@@ -114,13 +114,37 @@ export const VendorWiseReportcolumns = [
   },
 ];
 
-export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
-
-// dashboard
-export const priorityToiletTypes = [
-  "Type-1 FRP Septic Tank",
-  "Type-2 FRP Soak Pit",
-  "Type-3 FRP Urinals",
-  "Type-4 Prefab Steel Septic Tank",
-  "Type-5 Prefab Steel Soak Pit",
+const nameColumn = [
+  {
+    title: "Name",
+    dataIndex: "name",
+    key: "name",
+  },
 ];
+
+// total quantity
+export const tableColumn = [
+  ...nameColumn,
+  {
+    title: "Total Quantity",
+    dataIndex: "total_quantity",
+    key: "total_quantity",
+    width: "20%",
+  },
+];
+
+// register quantity
+export const registerColumn = [
+  ...nameColumn,
+  {
+    title: "Registered Quantity",
+    dataIndex: "registered",
+    key: "registered",
+    width: "20%",
+    render: (text) => {
+      return text ? text : 0;
+    },
+  },
+];
+
+export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
