@@ -28,7 +28,7 @@ const Counts = () => {
     total = 0,
     registered = 0,
     todays_registered = 0,
-    todays_under_monitoring = 0,
+    todays_monitaring = 0,
     todays_allocated = 0,
   } = SanitationDash_data?.data?.asset_counts || {};
 
@@ -83,10 +83,7 @@ const Counts = () => {
             registered={registered}
             today={todays_registered}
           />
-          <UnderMonitoring
-            total={under_monitoring}
-            today={todays_under_monitoring}
-          />
+          <UnderMonitoring total={under_monitoring} today={todays_monitaring} />
           <OffMonitoring total={off_monitoring} />
         </div>
 

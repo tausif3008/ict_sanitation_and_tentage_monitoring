@@ -87,7 +87,7 @@ export const MonitoringPdfNew = (
   doc.y += 10;
   doc.setFontSize(12);
   doc.setFont("bold");
-  doc.text(title, subHeadingX + 30, doc.y);
+  doc.text(title, subHeadingX + 40, doc.y);
   doc.setFontSize(11);
   doc.text(dateString, dateX + 30, doc.y + 10);
   doc.y += 8;
