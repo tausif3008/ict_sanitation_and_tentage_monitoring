@@ -5,7 +5,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 import { postData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { getFormData } from "../../urils/getFormData";
-import { yesNoType } from "../../constant/const";
+import { QuestionType, yesNoType } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 
@@ -22,6 +22,8 @@ const QuestionRegistrationForm = () => {
   useEffect(() => {
     if (key === "UpdateKey") {
       form.setFieldsValue(record);
+    } else {
+      form.setFieldValue("type", "C");
     }
   }, [record, key]);
 
@@ -83,7 +85,7 @@ const QuestionRegistrationForm = () => {
             name="question_hi"
             placeholder="Enter question in Hindi"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <CustomSelect
               label="Is Image"
               name="is_image"
@@ -104,6 +106,13 @@ const QuestionRegistrationForm = () => {
               rules={[{ required: true, message: "Please select an option" }]}
               placeholder="Select if primary"
               options={yesNoType || []}
+            />
+            <CustomSelect
+              label="Question Type"
+              name="type"
+              rules={[{ required: true, message: "Please select an Type" }]}
+              placeholder="Select type"
+              options={QuestionType || []}
             />
           </div>
           <CustomInput

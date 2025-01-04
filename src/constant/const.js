@@ -35,6 +35,11 @@ export const yesNoType = [
   { value: "0", label: "No" },
 ];
 
+export const QuestionType = [
+  { value: "M", label: "Maintenance" },
+  { value: "C", label: "Cleaning" },
+];
+
 export const vehicleType = [
   { value: "Compactor", label: "Compactor" },
   { value: "Tipper", label: "Tipper" },

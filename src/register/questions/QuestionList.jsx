@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useDispatch } from "react-redux";
 import { Button } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import CommonTable from "../../commonComponents/CommonTable";
@@ -17,7 +16,6 @@ const QuestionList = () => {
   });
 
   const navigate = useNavigate();
-  const dispatch = useDispatch();
   const params = useParams();
 
   const getUsers = async () => {
@@ -55,7 +53,7 @@ const QuestionList = () => {
       title: "Sr. No", // Asset main type
       dataIndex: "sr",
       key: "sr",
-      width: 80,
+      width: 70,
     },
     {
       title: "Question (English)",
@@ -70,22 +68,32 @@ const QuestionList = () => {
       width: 300,
     },
     {
+      title: "Question Type",
+      dataIndex: "type",
+      key: "type",
+      render: (value) => (value === "C" ? "Cleaning" : "Maintenance"),
+      width: 130,
+    },
+    {
       title: "Image Require",
       dataIndex: "is_image",
       key: "is_image",
-      render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
+      render: (value) => (value === "1" ? "Yes" : "No"),
+      width: 130,
     },
     {
       title: "Image Require ON",
       dataIndex: "is_image_on",
       key: "is_image_on",
-      render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
+      render: (value) => (value === "1" ? "Yes" : "No"),
+      width: 130,
     },
     {
       title: "Primary Question",
       dataIndex: "is_primary",
       key: "is_primary",
-      render: (value) => (value === "1" ? "Yes" : "No"), // Render "Yes" for 1 and "No" for 0
+      render: (value) => (value === "1" ? "Yes" : "No"),
+      width: 130,
     },
     {
       title: "Action",
@@ -134,7 +142,7 @@ const QuestionList = () => {
         uri={"questions"}
         columns={columns}
         details={userDetails}
-        scroll={{ x: 300, y: 400 }}
+        scroll={{ x: 1000, y: 400 }}
       ></CommonTable>
     </div>
   );
