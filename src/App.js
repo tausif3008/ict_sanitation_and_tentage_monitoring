@@ -390,7 +390,7 @@ function App() {
         {/* user access registration end */}
 
         <Route
-          path="asset-registration"
+          path="asset-registration-form"
           element={<AssetRegistrationForm></AssetRegistrationForm>}
         ></Route>
         <Route
@@ -496,7 +496,10 @@ function App() {
           path="change-password"
           element={<ChangePassword></ChangePassword>}
         ></Route>
-        <Route path="route-list" element={<RouteList></RouteList>}></Route>
+        <Route
+          path="route-list/:page?/:per_page?"
+          element={<RouteList></RouteList>}
+        ></Route>
         <Route
           path="pickup-point/:page?/:per_page?"
           element={<PickUpPoint></PickUpPoint>}

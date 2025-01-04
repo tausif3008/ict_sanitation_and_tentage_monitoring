@@ -112,19 +112,19 @@ const CommonSearchForm = ({
                     <div>
                       <Button
                         type="button"
-                        className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                        onClick={resetForm}
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                       >
-                        Reset
+                        Search
                       </Button>
                     </div>
                     <div>
                       <Button
                         type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                        className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
+                        onClick={resetForm}
                       >
-                        Search
+                        Reset
                       </Button>
                     </div>
                   </div>

@@ -274,20 +274,20 @@ const MonitoringDailyReport = () => {
                         <Button
                           loading={loading}
                           type="button"
-                          className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                          onClick={resetForm}
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                         >
-                          Reset
+                          Search
                         </Button>
                       </div>
                       <div>
                         <Button
                           loading={loading}
                           type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                          onClick={resetForm}
                         >
-                          Get Report
+                          Reset
                         </Button>
                       </div>
                     </div>

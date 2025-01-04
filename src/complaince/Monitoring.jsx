@@ -14,10 +14,7 @@ import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
-import {
-  getAssetTypeWiseVendorList,
-  getVendorList,
-} from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
+import { getAssetTypeWiseVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
@@ -76,9 +73,6 @@ const Monitoring = () => {
   const catTypeName = getValueLabel(categoryType, assetMainType, "");
   const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
   const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
-
-  // console.log("pdfTitleData", pdfTitleData);
-  // console.log("rohit", form.getFieldsValue());
 
   const handleSelect = (value) => {
     setAssetTypes([]); // get assset type
@@ -317,6 +311,7 @@ const Monitoring = () => {
       title: "Vendor Name",
       dataIndex: "vendor_name",
       key: "vendor_name",
+      width: 210,
     },
     // {
     //   title: "Circle Name",
@@ -331,6 +326,15 @@ const Monitoring = () => {
         return text ? text : "";
       },
       width: 70,
+    },
+    {
+      title: "Maintenance",
+      dataIndex: "maintenance",
+      key: "maintenance",
+      render: (text) => {
+        return text ? text : 0;
+      },
+      width: 130,
     },
     {
       title: "Unclean",
@@ -431,6 +435,9 @@ const Monitoring = () => {
       const UncleanCount = res?.data?.listings?.reduce((total, item) => {
         return total + Number(item?.zero_count) || 0;
       }, 0);
+      const MaintenanceCount = res?.data?.listings?.reduce((total, item) => {
+        return total + Number(item?.maintenance) || 0;
+      }, 0);
 
       // Map data for Excel
       const myexcelData =
@@ -445,6 +452,7 @@ const Monitoring = () => {
             "Vendor Name": data?.vendor_name,
             Sector: data?.sector_name,
             Clean: Number(data?.one_count) || 0,
+            Maintenance: Number(data?.maintenance) || 0,
             Unclean: Number(data?.zero_count) || 0,
             // Circle: data?.circle_name,
             Date: data?.created_at
@@ -467,9 +475,14 @@ const Monitoring = () => {
             colIndex: 8,
           },
           {
+            name: "Total Maintenance",
+            value: MaintenanceCount,
+            colIndex: 9,
+          },
+          {
             name: "Total Unclean",
             value: UncleanCount,
-            colIndex: 9,
+            colIndex: 10,
           },
         ]);
 
@@ -500,7 +513,16 @@ const Monitoring = () => {
           pdfHeader,
           [
             ...pdfData,
-            ["", "Total", unitCount, "", "", CleanCount, "", UncleanCount],
+            [
+              "",
+              "Total",
+              unitCount,
+              "",
+              "",
+              CleanCount,
+              MaintenanceCount,
+              UncleanCount,
+            ],
           ],
           true,
           true,
@@ -681,20 +703,20 @@ const Monitoring = () => {
                         <Button
                           loading={loading}
                           type="button"
-                          className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                          onClick={resetForm}
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                         >
-                          Reset
+                          Search
                         </Button>
                       </div>
                       <div>
                         <Button
                           loading={loading}
                           type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                          onClick={resetForm}
                         >
-                          Search
+                          Reset
                         </Button>
                       </div>
                     </div>
@@ -708,13 +730,13 @@ const Monitoring = () => {
       </div>
 
       <CommonTable
-        columns={columns}
+        columns={columns || []}
         uri={"monitoring"}
-        details={details}
+        details={details || []}
         loading={loading}
         subtotalName={"Total Unit"}
         subtotalCount={details?.totalUnit}
-        scroll={{ x: 1000, y: 400 }}
+        scroll={{ x: 1400, y: 400 }}
       ></CommonTable>
     </div>
   );

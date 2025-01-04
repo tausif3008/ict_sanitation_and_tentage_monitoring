@@ -44,7 +44,7 @@ import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import CustomInput from "../../commonComponents/CustomInput";
 import { dateWeekOptions } from "../../constant/const";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { asset_delete_permisssion } from "../../constant/permission";
 import ParkingSelector from "../parking/parkingSelector";
 import { getParkingData } from "../parking/parkingSlice";
@@ -161,37 +161,19 @@ const AssetsList = () => {
 
     if (res) {
       const data = res.data;
-      setLoading(false);
-      const list = data.listings.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-          action: (
-            <Button
-              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full "
-              key={el?.name + index}
-              onClick={() => {
-                navigate(`/asset-details/${el?.assets_id}`);
-              }}
-            >
-              Details
-            </Button>
-          ),
-        };
-      });
       setDetails(() => {
         return {
-          list,
+          list: data.listings,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentpage,
           totalRecords: data.paging[0].totalrecords,
         };
       });
 
-      const unitCount = data?.listings?.reduce((acc, listing) => {
-        return acc + (listing?.units?.length || 0);
-      }, 0);
-      setTotalUnit(unitCount);
+      // const unitCount = data?.listings?.reduce((acc, listing) => {
+      //   return acc + (listing?.units?.length || 0);
+      // }, 0);
+      // setTotalUnit(unitCount);
 
       // const myexcelData = data?.listings?.map((data, index) => {
       //   return {
@@ -212,6 +194,7 @@ const AssetsList = () => {
       // });
       // setExcelData(myexcelData);
     }
+    setLoading(false);
   };
 
   const handleCancel = () => {
@@ -414,19 +397,34 @@ const AssetsList = () => {
             dataIndex: "action",
             key: "action",
             fixed: "right",
-            width: 80,
-            render: (text, record) => {
-              return (
-                <Button
-                  className="bg-red-100 border-red-500 focus:ring-red-500 hover:bg-red-200 rounded-full"
-                  onClick={() => {
-                    handleDelete(record);
-                  }}
-                >
-                  <DeleteOutlined />
-                </Button>
-              );
-            },
+            width: 130,
+            render: (text, record) => (
+              <>
+                <div className="flex justify-between">
+                  <Button
+                    className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+                    onClick={() => {
+                      navigate(`/asset-registration-form`, {
+                        state: {
+                          key: "UpdateKey",
+                          record: record, // Pass the record as part of the state
+                        },
+                      });
+                    }}
+                  >
+                    <EditOutlined />
+                  </Button>
+                  <Button
+                    className="bg-red-100 border-red-500 focus:ring-red-500 hover:bg-red-200 rounded-full"
+                    onClick={() => {
+                      handleDelete(record);
+                    }}
+                  >
+                    <DeleteOutlined />
+                  </Button>
+                </div>
+              </>
+            ),
           },
         ]
       : []),
@@ -739,20 +737,20 @@ const AssetsList = () => {
                         <Button
                           loading={loading}
                           type="button"
-                          className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                          onClick={resetForm}
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                         >
-                          Reset
+                          Search
                         </Button>
                       </div>
                       <div>
                         <Button
                           loading={loading}
                           type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                          onClick={resetForm}
                         >
-                          Search
+                          Reset
                         </Button>
                       </div>
                     </div>

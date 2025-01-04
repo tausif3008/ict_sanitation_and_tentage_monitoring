@@ -85,6 +85,8 @@ const URLS = {
 
   // asset
   assetList: { path: "/asset", version: 5.43 },
+  addAssetList: { path: "/asset/entry", version: 5.43 },
+  edtAssetList: { path: "/asset/edit", version: 5.43 },
   deleteAssetList: { path: "/asset/delete", version: 5.43 },
   assetDetails: { path: "/asset/details?assets_id=", version: 5.43 },
 

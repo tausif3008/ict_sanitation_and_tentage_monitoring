@@ -350,8 +350,8 @@ export const DICT = {
     hi: "आज पंजीकृत",
   },
   todays_under_monitoring: {
-    en: "Today`s Under Monitoring",
-    hi: "आज निगरानी में है",
+    en: "Today`s Monitoring",
+    hi: "आज की निगरानी",
   },
   under_monitoring: {
     en: "Under Monitoring",
