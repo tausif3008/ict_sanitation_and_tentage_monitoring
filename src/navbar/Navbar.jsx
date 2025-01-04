@@ -208,6 +208,14 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       {
+        key: "14",
+        label: (
+          <Link className="text-black no-underline" to="/pickup-point">
+            Pickup Point
+          </Link>
+        ),
+      },
+      {
         key: "4",
         label: (
           <Link className="text-black no-underline" to="/route-list">

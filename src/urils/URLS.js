@@ -200,6 +200,21 @@ const URLS = {
     path: "/vehicle-tracking?page=1&per_page=200&date_format=Today",
     version: 5.43,
   },
+
+  // pick up point
+  getPickUpPoint: {
+    // path: `pickup-point/details?pickup_point_id=${1}`,
+    path: "/pickup-point",
+    version: 5.43,
+  },
+  addPickUpPoint: {
+    path: "/pickup-point/entry",
+    version: 5.43,
+  },
+  editPickUpPoint: {
+    path: "/pickup-point/edit",
+    version: 5.43,
+  },
 };
 
 export default URLS;

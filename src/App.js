@@ -95,6 +95,8 @@ import {
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
+import PickUpPoint from "./register/route/RoutePoint";
+import AddPickUpPointForm from "./register/route/AddPickUpPointForm";
 
 function App() {
   const navigate = useNavigate();
@@ -495,6 +497,14 @@ function App() {
           element={<ChangePassword></ChangePassword>}
         ></Route>
         <Route path="route-list" element={<RouteList></RouteList>}></Route>
+        <Route
+          path="pickup-point/:page?/:per_page?"
+          element={<PickUpPoint></PickUpPoint>}
+        ></Route>
+        <Route
+          path="pickup-point-form"
+          element={<AddPickUpPointForm></AddPickUpPointForm>}
+        ></Route>
         <Route
           path="assigned-routelist"
           element={<AssignedRouteList></AssignedRouteList>}
