@@ -207,12 +207,30 @@ const URLS = {
     path: "/pickup-point",
     version: 5.43,
   },
+  getPickUpPointDrop: {
+    path: "/pickup-point?page=1&per_page=100",
+    version: 5.43,
+  },
   addPickUpPoint: {
     path: "/pickup-point/entry",
     version: 5.43,
   },
   editPickUpPoint: {
     path: "/pickup-point/edit",
+    version: 5.43,
+  },
+
+  // Route list
+  getPickUpRoute: {
+    path: "/pickup-route",
+    version: 5.43,
+  },
+  addPickUpRoute: {
+    path: "/pickup-route/entry",
+    version: 5.43,
+  },
+  editPickUpRoute: {
+    path: "/pickup-route/edit",
     version: 5.43,
   },
 };

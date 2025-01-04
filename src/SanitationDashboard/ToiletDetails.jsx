@@ -371,7 +371,7 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.unclean}
+                          {item?.maintenance}
                         </span>
                       </div>
                       <div

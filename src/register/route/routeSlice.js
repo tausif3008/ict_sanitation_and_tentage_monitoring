@@ -9,6 +9,7 @@ const initialState = {
   loading: false,
   name: null,
   point: null,
+  dropdown_data: null,
 };
 
 export const routeSlice = createSlice({
@@ -24,6 +25,9 @@ export const routeSlice = createSlice({
     postPickUp: (state, action) => {
       state.point = action.payload;
     },
+    postDrop: (state, action) => {
+      state.dropdown_data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
@@ -34,7 +38,7 @@ export const routeSlice = createSlice({
 export const getRouteList = (url) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${url}`);
+    const res = await axiosInstance.get(`${url}`);
     dispatch(postSuccess(res?.data));
   } catch (error) {
     console.error("In get route list error", error);
@@ -56,5 +60,19 @@ export const getRoutePickUpPoint = (url) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postPickUp } = routeSlice.actions;
+// get route pick up point
+export const getRoutePickUpPointDrop = () => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(`${URLS?.getPickUpPointDrop?.path}`);
+    dispatch(postDrop(res?.data));
+  } catch (error) {
+    console.error("In get route pick up point error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postPickUp, postDrop } =
+  routeSlice.actions;
 export default routeSlice.reducer;

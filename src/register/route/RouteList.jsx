@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import { Button } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
 import { EditOutlined } from "@ant-design/icons";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import RouteSelector from "./routeSelector";
+import { getRouteList } from "./routeSlice";
 
 const RouteList = () => {
   const [details, setDetails] = useState({
@@ -17,8 +18,9 @@ const RouteList = () => {
   });
 
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const params = useParams();
-  const { loading } = RouteSelector();
+  const { RouteLists, loading } = RouteSelector();
 
   const getDatas = async () => {
     const queryString = params?.page ? params?.page : params?.per_page;
@@ -27,46 +29,33 @@ const RouteList = () => {
     const perPage = urlParam.get("per_page"); // "50"
 
     const finalData = {
-      date_format: "Date Range",
       page: page?.toString() || "1",
-      per_page: perPage?.toString() || "100",
+      per_page: perPage?.toString() || "10",
     };
 
-    // setColumnDate(() => ({
-    //   start: moment(finalData?.form_date).format("DD-MMM-YYYY"),
-    //   end: moment(finalData?.to_date).format("DD-MMM-YYYY"),
-    // }));
+    let uri =
+      URLS?.getPickUpRoute?.path +
+      `?page=${finalData?.page}&per_page=${finalData?.per_page}`;
 
-    // const formData = getFormData(finalData);
-    // finalData?.form_date && dispatch(getInspectionReportData(formData)); // Fetch the data
-  };
-
-  const getUsers = async () => {
-    let uri = URLS?.routes?.path + "/?";
-    if (params.page) {
-      uri = uri + params.page;
-    } else if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
-
-    const extraHeaders = { "x-api-version": URLS?.routes?.version };
-    const res = await getData(uri, extraHeaders);
-
-    if (res) {
-      const data = res?.data;
-      setDetails(() => {
-        return {
-          list: data.routes,
-          pageLength: data.paging[0].length,
-          currentPage: data.paging[0].currentPage,
-          totalRecords: data.paging[0].totalrecords,
-        };
-      });
-    }
+    dispatch(getRouteList(uri)); // Fetch the data
   };
 
   useEffect(() => {
-    getUsers();
+    if (RouteLists) {
+      const data = RouteLists?.data;
+      setDetails(() => {
+        return {
+          list: data?.pickuproutes,
+          pageLength: data?.paging[0].length,
+          currentPage: data?.paging[0].currentPage,
+          totalRecords: data?.paging[0].totalrecords,
+        };
+      });
+    }
+  }, [RouteLists]);
+
+  useEffect(() => {
+    getDatas();
   }, [params]);
 
   const columns = [
@@ -77,29 +66,34 @@ const RouteList = () => {
       width: 80,
     },
     {
+      title: "Sector",
+      dataIndex: "sector_id",
+      key: "sector_id",
+    },
+    {
+      title: "Vehicle Number",
+      dataIndex: "vehicle_number",
+      key: "vehicle_number",
+    },
+    {
       title: "Route Name",
       dataIndex: "route_name",
       key: "route_name",
     },
     {
       title: "Start Point",
-      dataIndex: "start_point",
-      key: "start_point",
+      dataIndex: "start_point_name",
+      key: "start_point_name",
     },
     {
       title: "End Point",
-      dataIndex: "end_point",
-      key: "end_point",
+      dataIndex: "end_point_name",
+      key: "end_point_name",
     },
     {
       title: "Distance (meters)",
       dataIndex: "distance",
       key: "distance",
-    },
-    {
-      title: "Sector",
-      dataIndex: "sector",
-      key: "sector",
     },
     {
       title: "Action",

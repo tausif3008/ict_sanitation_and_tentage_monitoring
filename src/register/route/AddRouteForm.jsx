@@ -8,9 +8,13 @@ import CustomInput from "../../commonComponents/CustomInput";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import { getRoutePickUpPointDrop } from "./routeSlice";
+import RouteSelector from "./routeSelector";
+import { postData } from "../../Fetch/Axios";
+import { getFormData } from "../../urils/getFormData";
+import URLS from "../../urils/URLS";
 
 const AddRouteForm = () => {
-  const [loading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -19,33 +23,35 @@ const AddRouteForm = () => {
   const record = location.state?.record;
 
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { PickUpPointDropdownData, loading } = RouteSelector(); // route pick up point
 
   const onFinish = async (values) => {
-    setLoading(true);
+    const finalData = {
+      ...values,
+    };
 
-    values.status = 1;
+    if (key === "UpdateKey") {
+      finalData.pickup_route_id = record?.pickup_route_id;
+    }
 
-    // if (vehicleUpdateElSelector) {
-    //   values.vehicle_id = vehicleUpdateElSelector.vehicle_id;
-    // }
-
-    // const res = await postData(
-    //   getFormData(values),
-    //   vehicleUpdateElSelector ? URLS.editVehicle.path : URLS.addVehicle.path,
-    //   {
-    //     version: URLS.addVehicle.version,
-    //   }
-    // );
-
-    // if (res?.data?.success) {
-    //   form.resetFields();
-    //   navigate("/route-list");
-    // }
-    setLoading(false);
+    const res = await postData(
+      getFormData(finalData),
+      key === "UpdateKey"
+        ? URLS?.editPickUpRoute?.path
+        : URLS?.addPickUpRoute?.path,
+      {
+        version: URLS?.editPickUpRoute?.version,
+      }
+    );
+    if (res?.data?.success) {
+      form.resetFields();
+      navigate("/route-list");
+    }
   };
 
   useEffect(() => {
     dispatch(getSectorsList()); // all sectors
+    dispatch(getRoutePickUpPointDrop()); // get pickup point dropdown
   }, []);
 
   // set value
@@ -86,9 +92,14 @@ const AddRouteForm = () => {
               options={SectorListDrop || []}
             />
             <CustomInput
+              label="Vehicle Number"
+              placeholder="Vehicle Number"
+              name="vehicle_number"
+            />
+            <CustomInput
               label="Route Name"
               placeholder="Route Name"
-              name="name"
+              name="route_name"
               rules={[
                 {
                   required: true,
@@ -96,32 +107,26 @@ const AddRouteForm = () => {
                 },
               ]}
             />
-            <CustomInput
+            <CustomSelect
               label="Start Point"
               placeholder="Start Point"
-              name="start_point"
-            />
-            <CustomInput
-              label="End Point"
-              placeholder="End Point"
-              name="end_point"
+              name="start_point_id"
+              options={PickUpPointDropdownData || []}
             />
             <CustomSelect
-              name={"middle_points"}
+              name={"middle_point_id"}
               label={"Select Middle Points"}
-              mode="multiple"
               placeholder={"Select Middle Points"}
-              options={
-                [
-                  { value: "point1", label: "Point 1" },
-                  { value: "point2", label: "Point 2" },
-                  { value: "point3", label: "Point 3" },
-                  { value: "point4", label: "Point 4" },
-                ] || []
-              }
+              options={PickUpPointDropdownData || []}
+            />
+            <CustomSelect
+              label="End Point"
+              placeholder="End Point"
+              name="end_point_id"
+              options={PickUpPointDropdownData || []}
             />
             <CustomInput
-              label="Distance"
+              label="Distance (meters)"
               placeholder="Distance"
               name="distance"
             />

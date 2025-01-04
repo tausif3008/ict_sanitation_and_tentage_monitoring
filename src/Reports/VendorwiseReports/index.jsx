@@ -24,10 +24,14 @@ import search from "../../assets/Dashboard/icon-search.png";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const VendorReports = () => {
-  const [totalRegistered, setTotalRegistered] = useState(0);
-  const [totalClean, setTotalClean] = useState(0);
-  const [totalUnclean, setTotalUnclean] = useState(0);
   const [total, setTotal] = useState(0);
+  const [count, setCount] = useState({
+    total: 0,
+    registered: 0,
+    clean: 0,
+    maintenance: 0,
+    unclean: 0,
+  });
 
   const [excelData, setExcelData] = useState([]);
   const [filesName, setFilesName] = useState(null); // files Name
@@ -132,10 +136,17 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.unclean),
         0
       );
-      setTotal(total);
-      setTotalRegistered(totalReg);
-      setTotalClean(totalClean);
-      setTotalUnclean(totalUnclean);
+      const totalMaintenance = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.maintenance) || 0,
+        0
+      );
+      setCount({
+        total: total,
+        registered: totalReg,
+        clean: totalClean,
+        maintenance: totalMaintenance,
+        unclean: totalUnclean,
+      });
     }
   }, [vendorReports]);
 
@@ -216,6 +227,7 @@ const VendorReports = () => {
           Total: Number(data?.total),
           Registered: Number(data?.registered),
           Clean: Number(data?.clean),
+          Maintenance: Number(data?.maintenance),
           Unclean: Number(data?.unclean),
         };
       });
@@ -230,6 +242,7 @@ const VendorReports = () => {
     "Total",
     "Registered",
     "Clean",
+    "Maintenance",
     "Unclean",
   ];
 
@@ -242,6 +255,7 @@ const VendorReports = () => {
         opt?.Total,
         opt?.Registered,
         opt?.Clean,
+        opt?.Maintenance,
         opt?.Unclean,
       ]) || []
     );
@@ -259,7 +273,15 @@ const VendorReports = () => {
             IsLastLineBold={true}
             rows={[
               ...pdfData,
-              ["", "Total", total, totalRegistered, totalClean, totalUnclean],
+              [
+                "",
+                "Total",
+                count?.total,
+                count?.registered,
+                count?.clean,
+                count?.maintenance,
+                count?.unclean,
+              ],
             ]}
           />
         </div>
@@ -270,23 +292,28 @@ const VendorReports = () => {
             dynamicArray={[
               {
                 name: "Total",
-                value: total,
+                value: count?.total,
                 colIndex: 3,
               },
               {
                 name: "Register Unit",
-                value: totalRegistered,
+                value: count?.registered,
                 colIndex: 4,
               },
               {
                 name: "Clean",
-                value: totalClean,
+                value: count?.clean,
                 colIndex: 5,
               },
               {
-                name: "Unclean",
-                value: totalUnclean,
+                name: "Maintenance",
+                value: count?.maintenance,
                 colIndex: 6,
+              },
+              {
+                name: "Unclean",
+                value: count?.unclean,
+                colIndex: 7,
               },
             ]}
           />
@@ -353,20 +380,20 @@ const VendorReports = () => {
                         <Button
                           loading={loading}
                           type="button"
-                          className="w-fit rounded-none text-white bg-orange-400 hover:bg-orange-600"
-                          onClick={resetForm}
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                         >
-                          Reset
+                          Search
                         </Button>
                       </div>
                       <div>
                         <Button
                           loading={loading}
                           type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                          onClick={resetForm}
                         >
-                          Search
+                          Reset
                         </Button>
                       </div>
                     </div>
@@ -388,10 +415,11 @@ const VendorReports = () => {
         footer={() => (
           <div className="flex justify-between">
             <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {total}</strong>
-            <strong>Total Registered: {totalRegistered}</strong>
-            <strong>Total Clean : {totalClean}</strong>
-            <strong>Total Unclean: {totalUnclean}</strong>
+            <strong>Total : {count?.total || 0}</strong>
+            <strong>Total Registered: {count?.registered || 0}</strong>
+            <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
+            <strong>Total Unclean: {count?.unclean || 0}</strong>
           </div>
         )}
       />
