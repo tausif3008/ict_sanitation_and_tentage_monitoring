@@ -44,8 +44,8 @@ const MonitoringReport = () => {
               data?.answer === "1"
                 ? "Yes"
                 : data?.answer === "0"
-                ? "No"
-                : "Maintenance",
+                  ? "No"
+                  : "Maintenance",
             image: data?.image,
           };
         });
@@ -64,8 +64,8 @@ const MonitoringReport = () => {
               data?.answer === "1"
                 ? "Yes"
                 : data?.answer === "0"
-                ? "No"
-                : "Maintenance",
+                  ? "No"
+                  : "Maintenance",
           };
         });
       setExcelData(myexcelDatas);
@@ -140,13 +140,12 @@ const MonitoringReport = () => {
       key: "answer",
       render: (answer) => (
         <div
-          className={`p-1 px-3 rounded-md flex w-fit text-xs ${
-            answer === "Yes"
-              ? "bg-green-500"
-              : answer === "No"
+          className={`p-1 px-3 rounded-md flex w-fit text-xs ${answer === "Yes"
+            ? "bg-green-500"
+            : answer === "No"
               ? "bg-orange-500"
               : "bg-blue-200"
-          }`}
+            }`}
         >
           {answer}
         </div>
@@ -161,7 +160,7 @@ const MonitoringReport = () => {
   };
 
   // pdf header
-  const pdfHeader = ["Sr no", "Question (Eng)", "Answer"];
+  const pdfHeader = ["Sr no", "Question", "Answer"];
 
   // pdf data
   const pdfData = details?.map((opt, index) => [
@@ -288,9 +287,8 @@ const MonitoringReport = () => {
                   </td>
                   <td className="border-0">
                     :{" "}
-                    {`${assetDetails?.code || "NA"}-${
-                      assetDetails?.unit_no || "NA"
-                    }`}
+                    {`${assetDetails?.code || "NA"}-${assetDetails?.unit_no || "NA"
+                      }`}
                   </td>
                 </tr>
                 {assetDetails?.asset_main_type_id === "2" && (
@@ -311,8 +309,8 @@ const MonitoringReport = () => {
                     :
                     {assetDetails?.submitted_date
                       ? ` ${moment(assetDetails?.submitted_date).format(
-                          "DD-MMM-YYYY hh:mm A"
-                        )}`
+                        "DD-MMM-YYYY hh:mm A"
+                      )}`
                       : "NA"}
                   </td>
                 </tr>
