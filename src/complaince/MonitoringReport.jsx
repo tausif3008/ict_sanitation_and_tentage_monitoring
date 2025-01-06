@@ -44,8 +44,8 @@ const MonitoringReport = () => {
               data?.answer === "1"
                 ? "Yes"
                 : data?.answer === "0"
-                  ? "No"
-                  : "Maintenance",
+                ? "No"
+                : "Maintenance",
             image: data?.image,
           };
         });
@@ -64,8 +64,8 @@ const MonitoringReport = () => {
               data?.answer === "1"
                 ? "Yes"
                 : data?.answer === "0"
-                  ? "No"
-                  : "Maintenance",
+                ? "No"
+                : "Maintenance",
           };
         });
       setExcelData(myexcelDatas);
@@ -140,12 +140,13 @@ const MonitoringReport = () => {
       key: "answer",
       render: (answer) => (
         <div
-          className={`p-1 px-3 rounded-md flex w-fit text-xs ${answer === "Yes"
-            ? "bg-green-500"
-            : answer === "No"
+          className={`p-1 px-3 rounded-md flex w-fit text-xs ${
+            answer === "Yes"
+              ? "bg-green-500"
+              : answer === "No"
               ? "bg-orange-500"
               : "bg-blue-200"
-            }`}
+          }`}
         >
           {answer}
         </div>
@@ -238,7 +239,7 @@ const MonitoringReport = () => {
                   </td>
                 </tr>
                 {/* tentage */}
-                {assetDetails?.asset_main_type_id === "2" ? (
+                {assetDetails?.asset_main_type_id === "2" && (
                   <>
                     <tr>
                       <td className="font-semibold w-[40%] border-0">
@@ -257,13 +258,6 @@ const MonitoringReport = () => {
                       </td>
                     </tr>
                   </>
-                ) : (
-                  <tr>
-                    <td className="font-semibold w-[40%] border-0">Circle</td>
-                    <td className="border-0">
-                      : {assetDetails?.circle_name || "NA"}
-                    </td>
-                  </tr>
                 )}
               </tbody>
             </table>
@@ -287,8 +281,9 @@ const MonitoringReport = () => {
                   </td>
                   <td className="border-0">
                     :{" "}
-                    {`${assetDetails?.code || "NA"}-${assetDetails?.unit_no || "NA"
-                      }`}
+                    {`${assetDetails?.code || "NA"}-${
+                      assetDetails?.unit_no || "NA"
+                    }`}
                   </td>
                 </tr>
                 {assetDetails?.asset_main_type_id === "2" && (
@@ -309,8 +304,8 @@ const MonitoringReport = () => {
                     :
                     {assetDetails?.submitted_date
                       ? ` ${moment(assetDetails?.submitted_date).format(
-                        "DD-MMM-YYYY hh:mm A"
-                      )}`
+                          "DD-MMM-YYYY hh:mm A"
+                        )}`
                       : "NA"}
                   </td>
                 </tr>
@@ -386,7 +381,7 @@ const MonitoringReport = () => {
           <>
             <Table
               columns={dateColumns || []}
-              dataSource={details}
+              dataSource={details || []}
               pagination={false}
               scroll={{ x: 1000, y: 350 }}
               bordered
@@ -396,7 +391,7 @@ const MonitoringReport = () => {
           </>
         ) : (
           <div className="mt-3 font-semibold text-orange-500 text-center">
-            No Report Found
+            Compliance completed successfully
           </div>
         )}
       </div>

@@ -346,12 +346,12 @@ export const DICT = {
     hi: "कुल पंजीकृत",
   },
   todays_registered: {
-    en: "Today`s Registered",
-    hi: "आज पंजीकृत",
+    en: "Today",
+    hi: "आज",
   },
   todays_under_monitoring: {
-    en: "Today`s Monitoring",
-    hi: "आज की निगरानी",
+    en: "Today",
+    hi: "आज",
   },
   under_monitoring: {
     en: "Under Monitoring",
