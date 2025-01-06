@@ -269,12 +269,13 @@ const IncidentReports = () => {
       render: (text, record) => {
         return text ? text : "GSD";
       },
-      width: "10%",
+      width: 180,
     },
     {
       title: "Asset Type Name",
       dataIndex: "asset_types_name",
       key: "asset_types_name",
+      width: 180,
     },
     ...(userRoleId === "8"
       ? []
@@ -290,7 +291,7 @@ const IncidentReports = () => {
       title: "Incidence Date",
       dataIndex: "incidence_at",
       key: "incidence_at",
-      width: "8%",
+      width: 180,
       render: (text, record) => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
@@ -299,7 +300,7 @@ const IncidentReports = () => {
       title: "Resolved Date",
       dataIndex: "resolved_at",
       key: "resolved_at",
-      width: "8%",
+      width: 180,
       render: (text, record) => {
         const date = moment(text).format("DD-MMM-YYYY");
         return text ? (date === "Invalid date" ? "NA" : date) : "";
@@ -309,7 +310,7 @@ const IncidentReports = () => {
       title: "Code",
       dataIndex: "code",
       key: "code",
-      width: "7%",
+      width: 120,
       render: (text, record) => {
         return text ? `${text} -${record?.unit_no || ""}` : "";
       },
@@ -318,13 +319,13 @@ const IncidentReports = () => {
       title: "Question (Eng)",
       dataIndex: "question_en",
       key: "question_en",
-      width: "37%",
+      width: 270,
     },
     {
       title: "SLA Time",
       dataIndex: "sla",
       key: "sla",
-      width: "5%",
+      width: 100,
     },
   ];
 

@@ -34,6 +34,15 @@ export const yesNoType = [
   { value: "1", label: "Yes" },
   { value: "0", label: "No" },
 ];
+export const cleanStatus = [
+  { value: "clean", label: "Clean" },
+  { value: "unclean", label: "Unclean" },
+];
+export const CompliantStatus = [
+  { value: "compliant", label: "Compliant" },
+  { value: "partial_compliant", label: "Partial Compliant" },
+  { value: "not_compliant", label: "Not Compliant" },
+];
 
 export const QuestionType = [
   { value: "M", label: "Maintenance" },

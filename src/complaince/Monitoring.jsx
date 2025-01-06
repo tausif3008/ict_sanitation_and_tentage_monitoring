@@ -9,7 +9,12 @@ import { getMonitoringAgent } from "./monitoringSlice";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
 import optionsMaker from "../urils/OptionMaker";
-import { dateOptions, getValueLabel } from "../constant/const";
+import {
+  cleanStatus,
+  CompliantStatus,
+  dateOptions,
+  getValueLabel,
+} from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
@@ -333,16 +338,16 @@ const Monitoring = () => {
       width: 110,
     },
     {
-      title: "Compliance Status",
+      title: "Compliant Status",
       dataIndex: "zero_count",
       key: "zero_count",
       render: (text) => {
         return text
           ? Number(text) === 0
-            ? "Compliance"
+            ? "Compliant"
             : Number(text) > 7
-            ? "Not Compliance"
-            : "Partial Compliance"
+            ? "Not Compliant"
+            : "Partial Compliant"
           : "";
       },
       width: 110,
@@ -429,7 +434,7 @@ const Monitoring = () => {
     "Sector",
     "Vendor Name",
     "Clean Status",
-    "Compliance Status",
+    "Compliant Status",
     // "Clean",
     // "Maintenance",
     // "Unclean",
@@ -486,12 +491,12 @@ const Monitoring = () => {
             )
               ? "Unclean"
               : "Clean",
-            "Compliance Status": data?.zero_count
+            "Compliant Status": data?.zero_count
               ? Number(data?.zero_count) === 0
-                ? "Compliance"
+                ? "Compliant"
                 : Number(data?.zero_count) > 7
-                ? "Not Compliance"
-                : "Partial Compliance"
+                ? "Not Compliant"
+                : "Partial Compliant"
               : "",
             // Clean: Number(data?.one_count) || 0,
             // Maintenance: Number(data?.maintenance) || 0,
@@ -543,10 +548,10 @@ const Monitoring = () => {
             : "Clean",
           data?.zero_count
             ? Number(data?.zero_count) === 0
-              ? "Compliance"
+              ? "Compliant"
               : Number(data?.zero_count) > 7
-              ? "Not Compliance"
-              : "Partial Compliance"
+              ? "Not Compliant"
+              : "Partial Compliant"
             : "",
           // data?.one_count ? data?.one_count : "",
           // data?.maintenance ? data?.maintenance : 0,
@@ -751,6 +756,22 @@ const Monitoring = () => {
                         </Col>
                       </>
                     )}
+                    <Col key="clean_status" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"clean_status"}
+                        label={"Select Clean Status"}
+                        placeholder={"Select Clean Status"}
+                        options={cleanStatus || []}
+                      />
+                    </Col>{" "}
+                    <Col key="compliant_status" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"compliant_status"}
+                        label={"Select Compliant Status"}
+                        placeholder={"Select Compliant Status"}
+                        options={CompliantStatus || []}
+                      />
+                    </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
