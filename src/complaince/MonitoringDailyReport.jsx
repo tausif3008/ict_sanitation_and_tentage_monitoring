@@ -35,7 +35,7 @@ const MonitoringDailyReport = () => {
   // fiter finish
   const onFinishForm = async (values) => {
     const finalData = {
-      vendor_id: values?.vendor_id,
+      vendor_id: userRoleId === "8" ? userId : values?.vendor_id,
     };
     const name = getValueLabel(values?.vendor_id, VendorListDrop, "");
     if (values?.form_date || values?.to_date) {
@@ -105,9 +105,6 @@ const MonitoringDailyReport = () => {
   };
 
   const setValue = () => {
-    if (userRoleId === "8") {
-      form.setFieldValue("vendor_id", userId);
-    }
     form.setFieldValue("date_format", "Today");
   };
 
@@ -135,7 +132,7 @@ const MonitoringDailyReport = () => {
   }, [DailyReport]);
 
   useEffect(() => {
-    dispatch(getVendorList()); // vendor list
+    userRoleId !== "8" && dispatch(getVendorList()); // vendor list
     setValue();
   }, []);
 
@@ -163,21 +160,22 @@ const MonitoringDailyReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        disabled={userRoleId === "8" ? true : false}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select Vendor!",
-                          },
-                        ]}
-                      />
-                    </Col>
+                    {userRoleId !== "8" && (
+                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"vendor_id"}
+                          label={"Select Vendor"}
+                          placeholder={"Select Vendor"}
+                          options={VendorListDrop || []}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select Vendor!",
+                            },
+                          ]}
+                        />
+                      </Col>
+                    )}
                     <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"date_format"}
