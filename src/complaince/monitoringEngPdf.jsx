@@ -279,13 +279,21 @@ const MonitoringEngPdf = ({
     );
 
     doc.y += 13;
+    let currentYY = doc.y;
+
+    const pageHeight = doc.internal.pageSize.height;
+
+    if (doc.y > pageHeight - 40) {
+      doc.addPage();
+      doc.y = 15;
+      currentYY = doc.y;
+    }
 
     doc.setFont("helvetica", "bold");
     doc.setFont("bold");
     doc.setFillColor(240, 240, 240);
     doc.rect(10, doc.y + 2 - 7, pageWidth - 20, 35, "F");
     // doc.text(instructionDataLines2, 15, doc.y); // Adjust X position to leave some space between text and the left edge
-    let currentYY = doc.y;
 
     // Render each line separately with proper vertical spacing
     instructionDataLines2.forEach((line, index) => {

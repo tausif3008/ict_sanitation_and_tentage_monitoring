@@ -32,6 +32,7 @@ const Monitoring = () => {
     currentPage: 1,
     totalUnit: 0,
   });
+  const checkQuestions = "Is the toilet clean?";
   const [startDate, setStartDate] = useState(null);
   const [assetMainType, setAssetMainType] = useState([]); // asset main type
   const [assetTypes, setAssetTypes] = useState([]); // asset type
@@ -319,32 +320,60 @@ const Monitoring = () => {
     //   key: "circle_name",
     // },
     {
-      title: "Clean",
-      dataIndex: "one_count",
-      key: "one_count",
-      render: (text) => {
-        return text ? text : "";
+      title: "Clean Status",
+      dataIndex: "zero_count",
+      key: "zero_count",
+      render: (text, record) => {
+        if (record?.issue?.some((que) => que?.question_en === checkQuestions)) {
+          return "Unclean";
+        } else {
+          return "Clean";
+        }
       },
-      width: 70,
+      width: 110,
     },
     {
-      title: "Maintenance",
-      dataIndex: "maintenance",
-      key: "maintenance",
-      render: (text) => {
-        return text ? text : 0;
-      },
-      width: 130,
-    },
-    {
-      title: "Unclean",
+      title: "Compliance Status",
       dataIndex: "zero_count",
       key: "zero_count",
       render: (text) => {
-        return text ? text : "";
+        return text
+          ? Number(text) === 0
+            ? "Compliance"
+            : Number(text) > 7
+            ? "Not Compliance"
+            : "Partial Compliance"
+          : "";
       },
-      width: 90,
+      width: 110,
     },
+    // {
+    //   title: "Clean",
+    //   dataIndex: "one_count",
+    //   key: "one_count",
+    //   render: (text) => {
+    //     return text ? text : "";
+    //   },
+    //   width: 70,
+    // },
+    // {
+    //   title: "Maintenance",
+    //   dataIndex: "maintenance",
+    //   key: "maintenance",
+    //   render: (text) => {
+    //     return text ? text : 0;
+    //   },
+    //   width: 130,
+    // },
+    // {
+    //   title: "Unclean",
+    //   dataIndex: "zero_count",
+    //   key: "zero_count",
+    //   render: (text) => {
+    //     return text ? text : "";
+    //   },
+    //   width: 90,
+    // },
     {
       title: "Date",
       dataIndex: "created_at",
@@ -399,15 +428,17 @@ const Monitoring = () => {
     // "Unit",
     "Sector",
     "Vendor Name",
-    "Clean",
-    "Maintenance",
-    "Unclean",
+    "Clean Status",
+    "Compliance Status",
+    // "Clean",
+    // "Maintenance",
+    // "Unclean",
     // "Circle",
     "Date",
     "GSD Name",
   ];
 
-  const columnPercentages = [5, 15, 9, 9, 18, 7, 9, 8, 10, 10];
+  const columnPercentages = [5, 16, 9, 9, 20, 7, 9, 10, 15];
 
   // excel && pdf file
   const exportToFile = async (isExcel) => {
@@ -429,15 +460,15 @@ const Monitoring = () => {
       const unitCount = res?.data?.listings?.reduce((total, item) => {
         return total + Number(item?.unit_no) || 0;
       }, 0);
-      const CleanCount = res?.data?.listings?.reduce((total, item) => {
-        return total + Number(item?.one_count) || 0;
-      }, 0);
-      const UncleanCount = res?.data?.listings?.reduce((total, item) => {
-        return total + Number(item?.zero_count) || 0;
-      }, 0);
-      const MaintenanceCount = res?.data?.listings?.reduce((total, item) => {
-        return total + Number(item?.maintenance) || 0;
-      }, 0);
+      // const CleanCount = res?.data?.listings?.reduce((total, item) => {
+      //   return total + Number(item?.one_count) || 0;
+      // }, 0);
+      // const UncleanCount = res?.data?.listings?.reduce((total, item) => {
+      //   return total + Number(item?.zero_count) || 0;
+      // }, 0);
+      // const MaintenanceCount = res?.data?.listings?.reduce((total, item) => {
+      //   return total + Number(item?.maintenance) || 0;
+      // }, 0);
 
       // Map data for Excel
       const myexcelData =
@@ -448,16 +479,28 @@ const Monitoring = () => {
             "Asset Type Name": data?.asset_type_name,
             Code: Number(data?.asset_code),
             Unit: Number(data?.unit_no),
-            "GSD Name": data?.agent_name || "GSD",
-            "Vendor Name": data?.vendor_name,
             Sector: data?.sector_name,
-            Clean: Number(data?.one_count) || 0,
-            Maintenance: Number(data?.maintenance) || 0,
-            Unclean: Number(data?.zero_count) || 0,
+            "Vendor Name": data?.vendor_name,
+            "Clean Status": data?.issue?.some(
+              (que) => que?.question_en === checkQuestions
+            )
+              ? "Unclean"
+              : "Clean",
+            "Compliance Status": data?.zero_count
+              ? Number(data?.zero_count) === 0
+                ? "Compliance"
+                : Number(data?.zero_count) > 7
+                ? "Not Compliance"
+                : "Partial Compliance"
+              : "",
+            // Clean: Number(data?.one_count) || 0,
+            // Maintenance: Number(data?.maintenance) || 0,
+            // Unclean: Number(data?.zero_count) || 0,
             // Circle: data?.circle_name,
             Date: data?.created_at
               ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
               : "",
+            "GSD Name": data?.agent_name || "GSD",
           };
         });
 
@@ -469,21 +512,21 @@ const Monitoring = () => {
             value: unitCount,
             colIndex: 4,
           },
-          {
-            name: "Total Clean",
-            value: CleanCount,
-            colIndex: 8,
-          },
-          {
-            name: "Total Maintenance",
-            value: MaintenanceCount,
-            colIndex: 9,
-          },
-          {
-            name: "Total Unclean",
-            value: UncleanCount,
-            colIndex: 10,
-          },
+          // {
+          //   name: "Total Clean",
+          //   value: CleanCount,
+          //   colIndex: 8,
+          // },
+          // {
+          //   name: "Total Maintenance",
+          //   value: MaintenanceCount,
+          //   colIndex: 9,
+          // },
+          // {
+          //   name: "Total Unclean",
+          //   value: UncleanCount,
+          //   colIndex: 10,
+          // },
         ]);
 
       const pdfData =
@@ -495,9 +538,19 @@ const Monitoring = () => {
           // data?.unit_no,
           data?.sector_name,
           data?.vendor_name,
-          data?.one_count ? data?.one_count : "",
-          data?.maintenance ? data?.maintenance : 0,
-          data?.zero_count ? data?.zero_count : "",
+          data?.issue?.some((que) => que?.question_en === checkQuestions)
+            ? "Unclean"
+            : "Clean",
+          data?.zero_count
+            ? Number(data?.zero_count) === 0
+              ? "Compliance"
+              : Number(data?.zero_count) > 7
+              ? "Not Compliance"
+              : "Partial Compliance"
+            : "",
+          // data?.one_count ? data?.one_count : "",
+          // data?.maintenance ? data?.maintenance : 0,
+          // data?.zero_count ? data?.zero_count : "",
           // data?.circle_name,
           data?.created_at
             ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
@@ -519,9 +572,9 @@ const Monitoring = () => {
               unitCount,
               "",
               "",
-              CleanCount,
-              MaintenanceCount,
-              UncleanCount,
+              // CleanCount,
+              // MaintenanceCount,
+              // UncleanCount,
             ],
           ],
           true,
