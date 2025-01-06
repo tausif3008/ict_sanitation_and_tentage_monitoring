@@ -26,14 +26,14 @@ const URLS = {
 
   // vendor
   vendors: {
-    path: "/users?page=1&per_page=100&user_type_id=8",
+    path: "/users?page=1&per_page=200&user_type_id=8",
     version: "5.43",
   },
   AssetTypeWiseVendors: {
     path: "/vendor-details?page=1&per_page=100&asset_type_id=",
     version: "5.43",
   },
-  vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
+  // vendorUsers: { path: "/users/details?user_id=", version: "5.43" },
   vendorwiseSupervisor: {
     path: "/users?page=1&per_page=100&vendor_id=",
     version: "5.43",

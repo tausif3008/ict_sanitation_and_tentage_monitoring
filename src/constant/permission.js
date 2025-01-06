@@ -22,8 +22,8 @@ export const superAdmin = [
   "20",
 ];
 export const sanitationDash_param = [
-  "1",
-  "2",
+  "1", // super admin
+  "2", // Admin
   "3", // Mela Adhikari
   "4", // Additional Mela Adhikari
   "5", // Incharge Sanitation

@@ -19,14 +19,16 @@ export const VendorDetailsPdfFunction = (
   }
 
   const doc = new jsPDF(landscape ? "landscape" : "");
+  doc.y = 15;
 
   // Centered ICT heading
   const ictHeading = "Maha Kumbh 2025";
   const pageWidth = doc.internal.pageSize.getWidth();
   const ictX = (pageWidth - doc.getTextWidth(ictHeading)) / 2; // Center the heading
-  doc.setFontSize(23); // Increase font size for better prominence
+  doc.setFontSize(20); // Increase font size for better prominence
   doc.setFont("helvetica", "bold");
-  doc.text(ictHeading, ictX - 12, 15); // Heading position
+  doc.setTextColor(255, 140, 0); // Set text color to orange (RGB: 255, 165, 0)
+  doc.text(ictHeading, ictX - 12, doc.y); // Heading position
 
   // Image on the Left (Company Logo or similar image)
   const leftImageX = 10; // X position (from the left)
@@ -62,12 +64,14 @@ export const VendorDetailsPdfFunction = (
     "FAST" // Adds compression for smaller file size
   );
 
+  doc.y += 15;
+
   // Add subheading centered between the images
   const subHeading = "ICT Sanitation and Tentage Monitoring System";
   const subHeadingX = (pageWidth - doc.getTextWidth(subHeading)) / 2; // Center the subheading
   doc.setFontSize(16);
   doc.setFont("bold");
-  doc.text(subHeading, subHeadingX + 30, 30); // Position it below the images (Y position is adjusted)
+  doc.text(subHeading, subHeadingX + 25, doc.y); // Position it below the images (Y position is adjusted)
 
   // Add report title and date on the same line, below the subheading
   const title = `${titleName}`;
@@ -77,13 +81,17 @@ export const VendorDetailsPdfFunction = (
   const titleX = 54; // Left align title
   const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
+  doc.y += 10;
+  //40
+
   // Add title and date below the subheading
   doc.setFontSize(12);
   doc.setFont("bold");
-  doc.text(title, titleX - 35, 40); // Title position (Y position adjusted to be below the subheading)
+  doc.setTextColor(0, 0, 0);
+  doc.text(title, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
   doc.setFont("normal");
   doc.setFontSize(10); // Smaller font size for date
-  doc.text(dateString, dateX + 30, 40); // Date position (Y position adjusted to be below the title)
+  doc.text(dateString, dateX + 30, doc.y); // Date position (Y position adjusted to be below the title)
 
   // Table header and content
   let startY = 45; // Start after the horizontal line and other content (Y position adjusted)

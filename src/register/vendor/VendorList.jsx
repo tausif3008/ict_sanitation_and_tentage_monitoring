@@ -69,7 +69,7 @@ const VendorList = () => {
       uri = uri + searchQuery;
     }
 
-    const extraHeaders = { "x-api-version": URLS.users.version };
+    const extraHeaders = { "x-api-version": URLS.vendors.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {

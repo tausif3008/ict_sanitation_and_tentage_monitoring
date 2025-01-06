@@ -1,14 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MenuOutlined } from "@ant-design/icons";
 import { Drawer, Button } from "antd";
 import "./navbar.css";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
 import { DICT } from "../utils/dictionary";
 
 import {
-  circle_wise_reports,
   DMS_param,
   gsd_wise_regi_reports,
   incident_reports,
@@ -19,8 +18,6 @@ import {
   reports_param,
   sanitationDash_param,
   sector_wise_reports,
-  SLADash_param,
-  superAdmin,
   tentageDash_param,
   userAccess_param,
   vendor_wise_regi_reports,
@@ -602,7 +599,6 @@ const Navbar = ({ lang, setLang }) => {
   //   }
   // };
 
-  // const location = useLocation();
   const [title, setTitle] = useState("");
 
   // useEffect(() => {

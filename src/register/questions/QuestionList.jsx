@@ -27,7 +27,7 @@ const QuestionList = () => {
       uri = uri + "&" + params.per_page;
     }
 
-    const extraHeaders = { "x-api-version": URLS.users.version };
+    const extraHeaders = { "x-api-version": URLS.questions.version };
     const res = await getData(uri, extraHeaders);
 
     if (res) {
