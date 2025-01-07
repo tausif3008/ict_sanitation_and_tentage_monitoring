@@ -97,6 +97,7 @@ import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
 import PickUpPoint from "./register/route/RoutePoint";
 import AddPickUpPointForm from "./register/route/AddPickUpPointForm";
+import NoInternetModal from "./commonComponents/NoInternetModal";
 
 function App() {
   const navigate = useNavigate();
@@ -166,547 +167,560 @@ function App() {
     }
   );
 
-  console.log("navigator.onLine",navigator.onLine)
-
   return (
-    // <Provider store={store}>
-    <Routes>
-      <Route
-        path="/"
-        element={
-          loggedIn ? (
-            <>
-              <Navigate to={"/sanitation-dashboard"}></Navigate>
-            </>
-          ) : (
-            <Navigate to={"/login"} />
-          )
-        }
-      ></Route>
+    <>
+      <Routes>
+        <Route
+          path="/"
+          element={
+            loggedIn ? (
+              <>
+                <Navigate to={"/sanitation-dashboard"}></Navigate>
+              </>
+            ) : (
+              <Navigate to={"/login"} />
+            )
+          }
+        ></Route>
 
-      <Route path="/" element={<Layout></Layout>}>
-        <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
+        <Route path="/" element={<Layout></Layout>}>
+          <Route path="/dashboard" element={<Dashboard></Dashboard>}></Route>
 
-        {/* dashboard */}
-        {/* <Route
+          {/* dashboard */}
+          {/* <Route
           path="/sanitation-dashboard"
           element={<SanitationDashboard></SanitationDashboard>}
         ></Route> */}
-        <Route
-          path="/sanitation-dashboard"
-          element={
-            <ProtectedRoute
-              condition={sanitationDash_param?.includes(userRoleId)}
-              component={SanitationDashboard}
-            />
-          }
-        />
-        {/* <Route
+          <Route
+            path="/sanitation-dashboard"
+            element={
+              <ProtectedRoute
+                condition={sanitationDash_param?.includes(userRoleId)}
+                component={SanitationDashboard}
+              />
+            }
+          />
+          {/* <Route
           path="/vendor-dashboard"
           element={<VendorDashboard></VendorDashboard>}
         ></Route> */}
-        <Route
-          path="/vendor-dashboard"
-          element={
-            <ProtectedRoute
-              condition={
-                vendorDash_param.includes(userRoleId) && tentageIdUser != "2"
-              }
-              component={VendorDashboard}
-            />
-          }
-        />
-        {/* <Route
+          <Route
+            path="/vendor-dashboard"
+            element={
+              <ProtectedRoute
+                condition={
+                  vendorDash_param.includes(userRoleId) && tentageIdUser != "2"
+                }
+                component={VendorDashboard}
+              />
+            }
+          />
+          {/* <Route
           path="/tentage-dashboard"
           element={<TentageDashboard></TentageDashboard>}
         ></Route> */}
-        <Route
-          path="/tentage-dashboard"
-          element={
-            <ProtectedRoute
-              condition={
-                tentageDash_param?.includes(userRoleId) || tentageIdUser === "2"
-              }
-              component={TentageDashboard}
-            />
-          }
-        />
-        {/* <Route
+          <Route
+            path="/tentage-dashboard"
+            element={
+              <ProtectedRoute
+                condition={
+                  tentageDash_param?.includes(userRoleId) ||
+                  tentageIdUser === "2"
+                }
+                component={TentageDashboard}
+              />
+            }
+          />
+          {/* <Route
             path="/waste-dashboard"
             element={<WastesDashboard></WastesDashboard>}
           ></Route> */}
-        <Route
-          path="/waste-dashboard"
-          element={
-            <ProtectedRoute
-              condition={wasteDash_param?.includes(userRoleId)}
-              component={WastesDashboard}
-            />
-          }
-        />
-        {/* <Route
+          <Route
+            path="/waste-dashboard"
+            element={
+              <ProtectedRoute
+                condition={wasteDash_param?.includes(userRoleId)}
+                component={WastesDashboard}
+              />
+            }
+          />
+          {/* <Route
             path="/incident-dashboard"
             element={<IncidentDashboard></IncidentDashboard>}
           ></Route> */}
-        <Route
-          path="/incident-dashboard"
-          element={
-            <ProtectedRoute
-              condition={incidentDash_param?.includes(userRoleId)}
-              component={IncidentDashboard}
-            />
-          }
-        />
-        <Route
-          path="/DMS-dashboard"
-          element={<DMSDashboard></DMSDashboard>}
-        ></Route>
-        <Route
-          path="/SLA-dashboard"
-          element={<SLADashboard></SLADashboard>}
-        ></Route>
-        {/* dashboard Close*/}
+          <Route
+            path="/incident-dashboard"
+            element={
+              <ProtectedRoute
+                condition={incidentDash_param?.includes(userRoleId)}
+                component={IncidentDashboard}
+              />
+            }
+          />
+          <Route
+            path="/DMS-dashboard"
+            element={<DMSDashboard></DMSDashboard>}
+          ></Route>
+          <Route
+            path="/SLA-dashboard"
+            element={<SLADashboard></SLADashboard>}
+          ></Route>
+          {/* dashboard Close*/}
 
-        <Route path="/home" element={<LandingPage></LandingPage>}></Route>
+          <Route path="/home" element={<LandingPage></LandingPage>}></Route>
 
-        {/* user access registration */}
-        {/* <Route
+          {/* user access registration */}
+          {/* <Route
           path="users/:page?/:per_page?"
           element={<UserList></UserList>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
             path="user-registration"
             element={<UserRegistrationForm></UserRegistrationForm>}
           ></Route> */}
-        {/* <Route
+          {/* <Route
           path="vendor/:page?/:per_page?"
           element={<VendorList></VendorList>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="vendor-registration"
           element={<VendorRegistrationForm></VendorRegistrationForm>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="vendor/add-vendor-details/:id?/:page?/:per_page?"
           element={<VendorDetails></VendorDetails>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="vendor/add-vendor-details-form/:id"
           element={<VendorDetailsForm></VendorDetailsForm>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="asset-list/:page?/:per_page?"
           element={<AssetsList></AssetsList>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="/vendor-supervisor-registration/:page?/:per_page?"
           element={
             <VendorSupervisorRegistration></VendorSupervisorRegistration>
           }
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="/vendor-supervisor-form"
           element={<VendorSupervisorForm></VendorSupervisorForm>}
         ></Route> */}
-        <Route
-          path="users/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={UserList}
-            />
-          }
-        />
-        <Route
-          path="user-registration"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={UserRegistrationForm}
-            />
-          }
-        />
-        <Route
-          path="vendor/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorList}
-            />
-          }
-        />
-        <Route
-          path="vendor-registration"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorRegistrationForm}
-            />
-          }
-        />
-        <Route
-          path="vendor/add-vendor-details/:id?/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorDetails}
-            />
-          }
-        />
-        <Route
-          path="vendor/add-vendor-details-form/:id"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorDetailsForm}
-            />
-          }
-        />
-        <Route
-          path="asset-list/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={AssetsList}
-            />
-          }
-        />
-        <Route
-          path="/vendor-supervisor-registration/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorSupervisorRegistration}
-            />
-          }
-        />
-        <Route
-          path="/vendor-supervisor-form"
-          element={
-            <ProtectedRoute
-              condition={userAccess_param?.includes(userRoleId)}
-              component={VendorSupervisorForm}
-            />
-          }
-        />
-        {/* user access registration end */}
+          <Route
+            path="users/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={UserList}
+              />
+            }
+          />
+          <Route
+            path="user-registration"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={UserRegistrationForm}
+              />
+            }
+          />
+          <Route
+            path="vendor/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorList}
+              />
+            }
+          />
+          <Route
+            path="vendor-registration"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorRegistrationForm}
+              />
+            }
+          />
+          <Route
+            path="vendor/add-vendor-details/:id?/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorDetails}
+              />
+            }
+          />
+          <Route
+            path="vendor/add-vendor-details-form/:id"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorDetailsForm}
+              />
+            }
+          />
+          <Route
+            path="asset-list/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={AssetsList}
+              />
+            }
+          />
+          <Route
+            path="/vendor-supervisor-registration/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorSupervisorRegistration}
+              />
+            }
+          />
+          <Route
+            path="/vendor-supervisor-form"
+            element={
+              <ProtectedRoute
+                condition={userAccess_param?.includes(userRoleId)}
+                component={VendorSupervisorForm}
+              />
+            }
+          />
+          {/* user access registration end */}
 
-        <Route
-          path="asset-registration-form"
-          element={<AssetRegistrationForm></AssetRegistrationForm>}
-        ></Route>
-        <Route
-          path="gis-services"
-          element={<GisServices></GisServices>}
-        ></Route>
-        <Route path="gis-list" element={<GisList></GisList>}></Route>
-        <Route
-          path="gps-fleet-registration"
-          element={<GPSFleetRegistration></GPSFleetRegistration>}
-        ></Route>
+          <Route
+            path="asset-registration-form"
+            element={<AssetRegistrationForm></AssetRegistrationForm>}
+          ></Route>
+          <Route
+            path="gis-services"
+            element={<GisServices></GisServices>}
+          ></Route>
+          <Route path="gis-list" element={<GisList></GisList>}></Route>
+          <Route
+            path="gps-fleet-registration"
+            element={<GPSFleetRegistration></GPSFleetRegistration>}
+          ></Route>
 
-        {/* 
+          {/* 
             <Route
               path="vendor-proposed-sectors/:page?/:per_page?"
               element={<VendorProposedSectors></VendorProposedSectors>}
             ></Route> */}
 
-        <Route
-          path="asset-type-registration"
-          element={<AssetTypeForm></AssetTypeForm>}
-        ></Route>
+          <Route
+            path="asset-type-registration"
+            element={<AssetTypeForm></AssetTypeForm>}
+          ></Route>
 
-        <Route
-          path="asset-type-list/:page?/:per_page?/:search?"
-          element={<AssetTypeList />}
-        />
-        <Route
-          path="add-question-form"
-          element={<AddQuestionForm></AddQuestionForm>}
-        ></Route>
-        <Route path="questions/:page?/:per_page?" element={<QuestionList />} />
-        <Route path="vendor-list" element={<VendorList></VendorList>}></Route>
-        <Route
-          path="vehicle-registration"
-          element={<AddVehicleForm></AddVehicleForm>}
-        ></Route>
-        <Route
-          path="vehicle/:page?/:per_page?"
-          element={<VehicleList></VehicleList>}
-        ></Route>
-        <Route
-          path="manpower-assignment"
-          element={<ManPowerAssignmentForm></ManPowerAssignmentForm>}
-        ></Route>
-        <Route
-          path="assigning-monitoring-manpower"
-          element={<AssigningMonitoringManPower></AssigningMonitoringManPower>}
-        ></Route>
-        <Route
-          path="asset-allotment"
-          element={<AssetAllotment></AssetAllotment>}
-        ></Route>
-        <Route
-          path="scheduling-and-deployment"
-          element={<SchedulingAndDeploymentForm></SchedulingAndDeploymentForm>}
-        ></Route>
-        <Route
-          path="waste-management-schedule"
-          element={<WasteManagementSchedule></WasteManagementSchedule>}
-        ></Route>
-        <Route
-          path="create-tentage-schedule"
-          element={<CreateTentageSchedule></CreateTentageSchedule>}
-        ></Route>
-        <Route
-          path="create-sanitation-schedule"
-          element={<CreateSanitationSchedule></CreateSanitationSchedule>}
-        ></Route>
-        <Route
-          path="monthly-report"
-          element={<MonthlyReport></MonthlyReport>}
-        ></Route>
+          <Route
+            path="asset-type-list/:page?/:per_page?/:search?"
+            element={<AssetTypeList />}
+          />
+          <Route
+            path="add-question-form"
+            element={<AddQuestionForm></AddQuestionForm>}
+          ></Route>
+          <Route
+            path="questions/:page?/:per_page?"
+            element={<QuestionList />}
+          />
+          <Route path="vendor-list" element={<VendorList></VendorList>}></Route>
+          <Route
+            path="vehicle-registration"
+            element={<AddVehicleForm></AddVehicleForm>}
+          ></Route>
+          <Route
+            path="vehicle/:page?/:per_page?"
+            element={<VehicleList></VehicleList>}
+          ></Route>
+          <Route
+            path="manpower-assignment"
+            element={<ManPowerAssignmentForm></ManPowerAssignmentForm>}
+          ></Route>
+          <Route
+            path="assigning-monitoring-manpower"
+            element={
+              <AssigningMonitoringManPower></AssigningMonitoringManPower>
+            }
+          ></Route>
+          <Route
+            path="asset-allotment"
+            element={<AssetAllotment></AssetAllotment>}
+          ></Route>
+          <Route
+            path="scheduling-and-deployment"
+            element={
+              <SchedulingAndDeploymentForm></SchedulingAndDeploymentForm>
+            }
+          ></Route>
+          <Route
+            path="waste-management-schedule"
+            element={<WasteManagementSchedule></WasteManagementSchedule>}
+          ></Route>
+          <Route
+            path="create-tentage-schedule"
+            element={<CreateTentageSchedule></CreateTentageSchedule>}
+          ></Route>
+          <Route
+            path="create-sanitation-schedule"
+            element={<CreateSanitationSchedule></CreateSanitationSchedule>}
+          ></Route>
+          <Route
+            path="monthly-report"
+            element={<MonthlyReport></MonthlyReport>}
+          ></Route>
 
-        <Route
-          path="asset-monitoring-report/:page?/:per_page?"
-          element={<MonitoringReport></MonitoringReport>}
-        ></Route>
-        <Route
-          path="notification"
-          element={<NotificationAdd></NotificationAdd>}
-        ></Route>
-        <Route
-          path="/user-profile"
-          element={<UserProfile></UserProfile>}
-        ></Route>
-        <Route
-          path="sectors-listing"
-          element={<SectorsListing></SectorsListing>}
-        ></Route>
-        <Route path="parking" element={<ParkingList></ParkingList>}></Route>
-        <Route
-          path="add-parking-form"
-          element={<AddParkingForm></AddParkingForm>}
-        ></Route>
+          <Route
+            path="asset-monitoring-report/:page?/:per_page?"
+            element={<MonitoringReport></MonitoringReport>}
+          ></Route>
+          <Route
+            path="notification"
+            element={<NotificationAdd></NotificationAdd>}
+          ></Route>
+          <Route
+            path="/user-profile"
+            element={<UserProfile></UserProfile>}
+          ></Route>
+          <Route
+            path="sectors-listing"
+            element={<SectorsListing></SectorsListing>}
+          ></Route>
+          <Route path="parking" element={<ParkingList></ParkingList>}></Route>
+          <Route
+            path="add-parking-form"
+            element={<AddParkingForm></AddParkingForm>}
+          ></Route>
 
-        <Route path="shift/:page?/:per_page?" element={<Shift></Shift>}></Route>
-        <Route
-          path="add-shift-form"
-          element={<AddShiftForm></AddShiftForm>}
-        ></Route>
-        <Route
-          path="change-password"
-          element={<ChangePassword></ChangePassword>}
-        ></Route>
-        <Route
-          path="route-list/:page?/:per_page?"
-          element={<RouteList></RouteList>}
-        ></Route>
-        <Route
-          path="pickup-point/:page?/:per_page?"
-          element={<PickUpPoint></PickUpPoint>}
-        ></Route>
-        <Route
-          path="pickup-point-form"
-          element={<AddPickUpPointForm></AddPickUpPointForm>}
-        ></Route>
-        <Route
-          path="assigned-routelist"
-          element={<AssignedRouteList></AssignedRouteList>}
-        ></Route>
-        <Route
-          path="assign-route"
-          element={<AssignRouteForm></AssignRouteForm>}
-        ></Route>
-        <Route path="add-route" element={<AddRouteForm></AddRouteForm>}></Route>
-        <Route
-          path="/user-type-permission/:page?/:per_page?"
-          element={<UserTypePermission></UserTypePermission>}
-        ></Route>
-        <Route
-          path="/user-permission-type-form"
-          element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
-        ></Route>
+          <Route
+            path="shift/:page?/:per_page?"
+            element={<Shift></Shift>}
+          ></Route>
+          <Route
+            path="add-shift-form"
+            element={<AddShiftForm></AddShiftForm>}
+          ></Route>
+          <Route
+            path="change-password"
+            element={<ChangePassword></ChangePassword>}
+          ></Route>
+          <Route
+            path="route-list/:page?/:per_page?"
+            element={<RouteList></RouteList>}
+          ></Route>
+          <Route
+            path="pickup-point/:page?/:per_page?"
+            element={<PickUpPoint></PickUpPoint>}
+          ></Route>
+          <Route
+            path="pickup-point-form"
+            element={<AddPickUpPointForm></AddPickUpPointForm>}
+          ></Route>
+          <Route
+            path="assigned-routelist"
+            element={<AssignedRouteList></AssignedRouteList>}
+          ></Route>
+          <Route
+            path="assign-route"
+            element={<AssignRouteForm></AssignRouteForm>}
+          ></Route>
+          <Route
+            path="add-route"
+            element={<AddRouteForm></AddRouteForm>}
+          ></Route>
+          <Route
+            path="/user-type-permission/:page?/:per_page?"
+            element={<UserTypePermission></UserTypePermission>}
+          ></Route>
+          <Route
+            path="/user-permission-type-form"
+            element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
+          ></Route>
 
-        <Route
-          path="/sector-allocation/:page?/:per_page?"
-          element={<VendorSectorAllocation></VendorSectorAllocation>}
-        ></Route>
-        <Route
-          path="/sector-allocation-form"
-          element={<VendorSectorForm></VendorSectorForm>}
-        ></Route>
-        <Route
-          path="/config-setting"
-          element={<ConfigSetting></ConfigSetting>}
-        ></Route>
-        <Route
-          path="/config-setting-form"
-          element={<ConfigSettingForm></ConfigSettingForm>}
-        ></Route>
-        <Route
-          path="/privacypolicy"
-          element={<PrivacyPolicy></PrivacyPolicy>}
-        ></Route>
-        <Route
-          path="/deleteaccount"
-          element={<DeleteAccount></DeleteAccount>}
-        ></Route>
-        <Route
-          path="/contactus"
-          element={<ContactUsPage></ContactUsPage>}
-        ></Route>
+          <Route
+            path="/sector-allocation/:page?/:per_page?"
+            element={<VendorSectorAllocation></VendorSectorAllocation>}
+          ></Route>
+          <Route
+            path="/sector-allocation-form"
+            element={<VendorSectorForm></VendorSectorForm>}
+          ></Route>
+          <Route
+            path="/config-setting"
+            element={<ConfigSetting></ConfigSetting>}
+          ></Route>
+          <Route
+            path="/config-setting-form"
+            element={<ConfigSettingForm></ConfigSettingForm>}
+          ></Route>
+          <Route
+            path="/privacypolicy"
+            element={<PrivacyPolicy></PrivacyPolicy>}
+          ></Route>
+          <Route
+            path="/deleteaccount"
+            element={<DeleteAccount></DeleteAccount>}
+          ></Route>
+          <Route
+            path="/contactus"
+            element={<ContactUsPage></ContactUsPage>}
+          ></Route>
 
-        {/* report start */}
-        {/* <Route
+          {/* report start */}
+          {/* <Route
           path="monitoring/:page?/:per_page?"
           element={<Monitoring></Monitoring>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="monitoring-report/:id/:page?/:per_page?"
           element={<MonitoringReport></MonitoringReport>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="sector-wise-report"
           element={<SectorWiseReport></SectorWiseReport>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="circle-wise-report"
           element={<CircleWiseReport></CircleWiseReport>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="vendor-wise-report/:page?/:per_page?"
           element={<VendorReports></VendorReports>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="gsd-wise-registration-report/:page?/:per_page?"
           element={<GsdRegistrationReport></GsdRegistrationReport>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="/incident-report/:page?/:per_page?"
           element={<IncidentReports></IncidentReports>}
         ></Route> */}
-        {/* <Route
+          {/* <Route
           path="/inspection-report/:page?/:per_page?"
           element={<InspectionReports></InspectionReports>}
         ></Route> */}
-        <Route
-          path="monitoring/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={monitoring_reports?.includes(userRoleId)}
-              component={Monitoring}
-            />
-          }
-        />
-        <Route
-          path="monitoring-daily-report"
-          element={
-            <ProtectedRoute
-              condition={monitoring_reports?.includes(userRoleId)}
-              component={MonitoringDailyReport}
-            />
-          }
-        />
-        <Route
-          path="weekly-monitoring-report"
-          element={
-            <ProtectedRoute
-              condition={monitoring_reports?.includes(userRoleId)}
-              component={WeeklyMonitoringReport}
-            />
-          }
-        />
-        <Route
-          path="monitoring-report/:id/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={monitoring_reports?.includes(userRoleId)}
-              component={MonitoringReport}
-            />
-          }
-        />
-        <Route
-          path="sector-wise-report"
-          element={
-            <ProtectedRoute
-              condition={sector_wise_reports?.includes(userRoleId)}
-              component={SectorWiseReport}
-            />
-          }
-        />
-        <Route
-          path="circle-wise-report"
-          element={
-            <ProtectedRoute
-              condition={circle_wise_reports?.includes(userRoleId)}
-              component={CircleWiseReport}
-            />
-          }
-        />
-        <Route
-          path="vendor-wise-report/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={vendor_wise_reports?.includes(userRoleId)}
-              component={VendorReports}
-            />
-          }
-        />
-        <Route
-          path="gsd-wise-registration-report/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={gsd_wise_regi_reports?.includes(userRoleId)}
-              component={GsdRegistrationReport}
-            />
-          }
-        />
-        <Route
-          path="vendor-wise-registration-report"
-          element={
-            <ProtectedRoute
-              condition={vendor_wise_regi_reports?.includes(userRoleId)}
-              component={VendorRegistrationReport}
-            />
-          }
-        />
-        <Route
-          path="vendor-wise-registration-report"
-          element={<VendorRegistrationReport></VendorRegistrationReport>}
-        ></Route>
+          <Route
+            path="monitoring/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={monitoring_reports?.includes(userRoleId)}
+                component={Monitoring}
+              />
+            }
+          />
+          <Route
+            path="monitoring-daily-report"
+            element={
+              <ProtectedRoute
+                condition={monitoring_reports?.includes(userRoleId)}
+                component={MonitoringDailyReport}
+              />
+            }
+          />
+          <Route
+            path="weekly-monitoring-report"
+            element={
+              <ProtectedRoute
+                condition={monitoring_reports?.includes(userRoleId)}
+                component={WeeklyMonitoringReport}
+              />
+            }
+          />
+          <Route
+            path="monitoring-report/:id/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={monitoring_reports?.includes(userRoleId)}
+                component={MonitoringReport}
+              />
+            }
+          />
+          <Route
+            path="sector-wise-report"
+            element={
+              <ProtectedRoute
+                condition={sector_wise_reports?.includes(userRoleId)}
+                component={SectorWiseReport}
+              />
+            }
+          />
+          <Route
+            path="circle-wise-report"
+            element={
+              <ProtectedRoute
+                condition={circle_wise_reports?.includes(userRoleId)}
+                component={CircleWiseReport}
+              />
+            }
+          />
+          <Route
+            path="vendor-wise-report/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={vendor_wise_reports?.includes(userRoleId)}
+                component={VendorReports}
+              />
+            }
+          />
+          <Route
+            path="gsd-wise-registration-report/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={gsd_wise_regi_reports?.includes(userRoleId)}
+                component={GsdRegistrationReport}
+              />
+            }
+          />
+          <Route
+            path="vendor-wise-registration-report"
+            element={
+              <ProtectedRoute
+                condition={vendor_wise_regi_reports?.includes(userRoleId)}
+                component={VendorRegistrationReport}
+              />
+            }
+          />
+          <Route
+            path="vendor-wise-registration-report"
+            element={<VendorRegistrationReport></VendorRegistrationReport>}
+          ></Route>
 
-        <Route
-          path="/incident-report/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={incident_reports?.includes(userRoleId)}
-              component={IncidentReports}
-            />
-          }
-        />
-        <Route
-          path="/inspection-report/:page?/:per_page?"
-          element={
-            <ProtectedRoute
-              condition={inspections_reports?.includes(userRoleId)}
-              component={InspectionReports}
-            />
-          }
-        />
-        {/* Report close */}
+          <Route
+            path="/incident-report/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={incident_reports?.includes(userRoleId)}
+                component={IncidentReports}
+              />
+            }
+          />
+          <Route
+            path="/inspection-report/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={inspections_reports?.includes(userRoleId)}
+                component={InspectionReports}
+              />
+            }
+          />
+          {/* Report close */}
 
-        {/* pages */}
-        <Route
-          path="/terms-and-conditions"
-          element={<TermsAndConditions></TermsAndConditions>}
-        ></Route>
-        <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
-      </Route>
-      <Route path="*" element={<AppError></AppError>}></Route>
-      <Route path="login" element={<Login></Login>}></Route>
-    </Routes>
-    // </Provider>
+          {/* pages */}
+          <Route
+            path="/terms-and-conditions"
+            element={<TermsAndConditions></TermsAndConditions>}
+          ></Route>
+          <Route path="/about-us" element={<AboutUs></AboutUs>}></Route>
+        </Route>
+        <Route path="*" element={<AppError></AppError>}></Route>
+        <Route path="login" element={<Login></Login>}></Route>
+      </Routes>
+      <NoInternetModal isOpen={!navigator.onLine} />
+    </>
   );
 }
 

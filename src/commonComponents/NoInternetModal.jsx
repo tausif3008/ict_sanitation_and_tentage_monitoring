@@ -19,7 +19,7 @@ const NoInternetModal = ({ isOpen }) => {
               window.location.reload(); // Refresh the page
             }}
           >
-            Close
+            Refresh Page
           </button>
         </div>
       </div>
