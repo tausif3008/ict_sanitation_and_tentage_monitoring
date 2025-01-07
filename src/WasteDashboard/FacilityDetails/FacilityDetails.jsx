@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import dayjs from "dayjs";
+import moment from "moment";
 import { Collapse, Form, Button, message } from "antd";
 
 import CustomSelect from "../../commonComponents/CustomSelect";
@@ -10,11 +12,14 @@ import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/V
 import VehicleSelectors from "../../register/vehicle/Slice/vehicleSelector";
 import { getVehicleList } from "../../register/vehicle/Slice/vehicleSlice";
 import CustomInput from "../../commonComponents/CustomInput";
-import { vehicleType } from "../../constant/const";
+import { dateWeekOptions, vehicleType } from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomTable from "../../commonComponents/CustomTable";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const FacilityDetails = ({ title }) => {
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [startDate, setStartDate] = useState(null);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -47,6 +52,19 @@ const FacilityDetails = ({ title }) => {
       page: "1",
       per_page: "25",
     };
+    if (values?.date_format === "Today") {
+      finalValues.form_date = moment().format("YYYY-MM-DD");
+      finalValues.to_date = moment().format("YYYY-MM-DD");
+    } else if (values?.form_date || values?.to_date) {
+      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
+      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
+      const start = dayjsObjectFrom.format("YYYY-MM-DD");
+      const end = dayjsObjectTo.format("YYYY-MM-DD");
+      finalValues.form_date = values?.form_date ? start : end;
+      finalValues.to_date = values?.to_date ? end : start;
+    }
     dispatch(getVehicleList(finalValues)); // get vehicle list
   };
 
@@ -58,6 +76,19 @@ const FacilityDetails = ({ title }) => {
       per_page: "25",
     };
     dispatch(getVehicleList(myParam));
+    setShowDateRange(false);
+  };
+
+  const handleDateSelect = (value) => {
+    if (value === "Date Range") {
+      setShowDateRange(true);
+    } else {
+      form.setFieldsValue({
+        form_date: null,
+        to_date: null,
+      });
+      setShowDateRange(false);
+    }
   };
 
   const getUsers = async (dataObj = {}) => {
@@ -67,6 +98,14 @@ const FacilityDetails = ({ title }) => {
       ...form.getFieldsValue(),
     };
     dispatch(getVehicleList(newParam));
+  };
+
+  const disabledDate = (current) => {
+    const maxDate = moment(startDate).clone().add(8, "days");
+    return (
+      current &&
+      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+    );
   };
 
   useEffect(() => {
@@ -124,6 +163,11 @@ const FacilityDetails = ({ title }) => {
       title: "Chassis Number",
       dataIndex: "chassis_no",
       key: "chassis_no",
+    },
+    {
+      title: "Runnable (Kilometer)",
+      dataIndex: "",
+      key: "",
     },
   ];
 
@@ -188,6 +232,69 @@ const FacilityDetails = ({ title }) => {
                         name="chassis_no"
                         placeholder="Enter Chassis Number"
                       />
+                      <CustomSelect
+                        name={"date_format"}
+                        label={"Select Date Type"}
+                        placeholder={"Select Date Type"}
+                        onSelect={handleDateSelect}
+                        options={dateWeekOptions || []}
+                      />
+                      {showDateRange && (
+                        <>
+                          <CustomDatepicker
+                            name={"form_date"}
+                            label={"From Date"}
+                            className="w-full"
+                            placeholder={"From Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a start date!",
+                              },
+                            ]}
+                            onChange={(date) => {
+                              const dayjsObjectFrom = dayjs(date?.$d);
+                              const startDate = dayjsObjectFrom;
+
+                              const dayjsObjectTo = dayjs(
+                                form.getFieldValue("to_date")?.$d
+                              );
+                              const endDate = dayjsObjectTo;
+
+                              // Condition 1: If startDate is after endDate, set end_time to null
+                              if (startDate.isAfter(endDate)) {
+                                form.setFieldValue("to_date", null);
+                              }
+
+                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                              const daysDifference = endDate.diff(
+                                startDate,
+                                "days"
+                              );
+                              if (daysDifference > 7) {
+                                form.setFieldValue("to_date", null);
+                              } else {
+                                // If the difference is within the allowed range, you can keep the value or process further if needed.
+                              }
+
+                              setStartDate(startDate.format("YYYY-MM-DD"));
+                            }}
+                          />
+                          <CustomDatepicker
+                            name={"to_date"}
+                            label={"To Date"}
+                            className="w-full"
+                            placeholder={"To Date"}
+                            rules={[
+                              {
+                                required: true,
+                                message: "Please select a end date!",
+                              },
+                            ]}
+                            disabledDate={disabledDate}
+                          />
+                        </>
+                      )}
                       <div className="flex justify-start my-4 space-x-2 ml-3">
                         <div>
                           <Button
