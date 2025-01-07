@@ -45,7 +45,7 @@ export const sanitationDash_param = [
 ];
 export const tentageDash_param = ["1", "2", "3", "4"]; // vendor view permission added to the navbar
 // export const tentageDash_param = ["1", "2", "3", "4", "8"];
-export const wasteDash_param = ["1", "2", "3", "4", "5", "9"]; // vehicle
+export const vehicleDash_param = ["1", "2", "3", "4", "5", "9"]; // vehicle
 export const incidentDash_param = ["1", "2", "3", "4"];
 export const vendorDash_param = ["8"]; // vendor dashboard
 export const SLADash_param = ["1", "2", "3", "4"];

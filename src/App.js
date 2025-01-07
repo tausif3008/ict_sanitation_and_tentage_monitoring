@@ -91,7 +91,7 @@ import {
   vendor_wise_regi_reports,
   vendor_wise_reports,
   vendorDash_param,
-  wasteDash_param,
+  vehicleDash_param,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -232,14 +232,14 @@ function App() {
             }
           />
           {/* <Route
-            path="/waste-dashboard"
+            path="/vehicle-dashboard"
             element={<WastesDashboard></WastesDashboard>}
           ></Route> */}
           <Route
-            path="/waste-dashboard"
+            path="/vehicle-dashboard/:page?/:per_page?"
             element={
               <ProtectedRoute
-                condition={wasteDash_param?.includes(userRoleId)}
+                condition={vehicleDash_param?.includes(userRoleId)}
                 component={WastesDashboard}
               />
             }

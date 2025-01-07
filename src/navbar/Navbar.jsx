@@ -23,7 +23,7 @@ import {
   vendor_wise_regi_reports,
   vendor_wise_reports,
   vendorDash_param,
-  wasteDash_param,
+  vehicleDash_param,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -83,14 +83,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      wasteDash_param?.includes(userRoleId) && {
+      vehicleDash_param?.includes(userRoleId) && {
         key: "4",
         label: (
           <Link
             className="text-black no-underline hover:text-green"
-            to="/waste-dashboard"
+            to="/vehicle-dashboard"
           >
-            Waste Dashboard
+            Vehicle Dashboard
           </Link>
         ),
       },
