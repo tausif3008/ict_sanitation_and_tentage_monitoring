@@ -166,6 +166,8 @@ function App() {
     }
   );
 
+  console.log("navigator.onLine",navigator.onLine)
+
   return (
     // <Provider store={store}>
     <Routes>

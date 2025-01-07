@@ -216,19 +216,18 @@ const ToiletDetails = () => {
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-yellow-400 rounded-full mr-2"></div>
               {/* <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div> */}
-              <span className="text-sm">{"Partial Complaint"}</span>
               {/* <span className="text-sm">{dict.clean[lang]}</span> */}
+              <span className="text-sm">{dict.Partial_Complaint[lang]}</span>
             </div>
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
               {/* <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div> */}
-              <span className="text-sm">{"Not Compliant"}</span>
-              {/* <span className="text-sm">{dict.maintenance_required[lang]}</span> */}
+              {/* <span className="text-sm">{"Not Compliant"}</span> */}
+              <span className="text-sm">{dict.not_Complaint[lang]}</span>
             </div>
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-              <span className="text-sm">{"Unclean "}</span>
-              {/* <span className="text-sm">{dict.unclean[lang]}</span> */}
+              <span className="text-sm">{dict.unclean[lang]}</span>
             </div>
           </div>
         </div>
@@ -365,18 +364,19 @@ const ToiletDetails = () => {
                         className="flex items-center"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+                        <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.clean}
+                          {item?.compliant?.[0]?.partially_compliant}
                         </span>
                       </div>
                       <div
                         className="flex items-center"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
+                        <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.maintenance}
+                          {/* {item?.clean} */}
+                          {item?.compliant?.[0]?.not_compliant}
                         </span>
                       </div>
                       <div

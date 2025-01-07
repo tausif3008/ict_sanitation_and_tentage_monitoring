@@ -333,6 +333,14 @@ export const DICT = {
     en: "Sanitation Toilets Count",
     hi: "स्वच्छता शौचालय गिनती",
   },
+  Partial_Complaint: {
+    en: "Partial Complaint",
+    hi: "आंशिक शिकायत",
+  },
+  not_Complaint: {
+    en: "Not Complaint",
+    hi: "सम्मत नहीं है",
+  },
   total_toilets: {
     en: "Total Toilets",
     hi: "कुल शौचालय",
