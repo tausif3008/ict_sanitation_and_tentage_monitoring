@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router";
 import { EditOutlined } from "@ant-design/icons";
 import { Button, message, Modal, Table } from "antd";
@@ -12,26 +12,7 @@ import CommonSearchForm from "../../commonComponents/CommonSearchForm";
 import CommonFormDropDownMaker from "../../commonComponents/CommonFormDropDownMaker";
 import AssetTypeSelectors from "./assetTypeSelectors";
 import ViewVendorsSectors from "./viewVendors";
-
-const vendorColumn = [
-  {
-    title: "Sr No",
-    dataIndex: "sr_no",
-    key: "sr_no",
-    width: "10%",
-  },
-  {
-    title: "Vendor Name",
-    dataIndex: "user_name",
-    key: "user_name",
-  },
-  {
-    title: "Allotted Quantity",
-    dataIndex: "total_allotted_quantity",
-    key: "total_allotted_quantity",
-    width: "20%",
-  },
-];
+import { vendorColumn } from "../../constant/const";
 
 const AssetTypeList = () => {
   const [questions, setQuestions] = useState([]); // To store questions for the selected asset type
@@ -51,10 +32,6 @@ const AssetTypeList = () => {
   const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
   const [rowRecord, setRowRecord] = useState(); // vendor list all quantity
   const { VendorListAssetType } = AssetTypeSelectors(); // asset type wise vendor list
-
-  const isUpdatedSelector = useSelector(
-    (state) => state.assetTypeUpdateEl?.isUpdated
-  );
 
   const params = useParams();
   const navigate = useNavigate();
@@ -89,6 +66,14 @@ const AssetTypeList = () => {
       });
     } else {
       setLoading(false);
+      setDetails(() => {
+        return {
+          list: [],
+          pageLength: 25,
+          currentPage: 1,
+          totalRecords: 0,
+        };
+      });
     }
   };
 

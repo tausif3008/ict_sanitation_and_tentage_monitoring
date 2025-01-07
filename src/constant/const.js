@@ -128,6 +128,27 @@ export const VendorWiseReportcolumns = [
   },
 ];
 
+// asset type list and vehicle dashboard
+export const vendorColumn = [
+  {
+    title: "Sr No",
+    dataIndex: "sr_no",
+    key: "sr_no",
+    width: "10%",
+  },
+  {
+    title: "Vendor Name",
+    dataIndex: "user_name",
+    key: "user_name",
+  },
+  {
+    title: "Allotted Quantity",
+    dataIndex: "total_allotted_quantity",
+    key: "total_allotted_quantity",
+    width: "20%",
+  },
+];
+
 const nameColumn = [
   {
     title: "Name",
