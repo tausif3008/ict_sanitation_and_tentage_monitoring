@@ -27,7 +27,7 @@ export const checkLoginAvailability = (loginData, navigate) => {
 
 export const getPercentage = (numerator, denominator) => {
   if (!numerator || !denominator) {
-    return "";
+    return 0;
   }
   const num = Number(numerator) || 0;
   const den = Number(denominator) || 1;
