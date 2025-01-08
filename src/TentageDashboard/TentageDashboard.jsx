@@ -118,6 +118,7 @@ import MapData from "./MapData";
 import HelplineNo from "../SanitationDashboard/helplineNo";
 import IncidentReportAnalysis from "../SanitationDashboard/IncidentReportAnalysis";
 import VendorPerformance from "../SanitationDashboard/VendorPerformance";
+import TentageSelector from "./Slice/tentageSelector";
 // import phone from "../assets/Dashboard/phone.png";
 // import phoneIcon from "../assets/Dashboard/phone-alt.png";
 // import FurnitureCount from "./FurnitureCount";
@@ -127,6 +128,9 @@ const TentageDashboard = () => {
   const localLang = localStorage.getItem("lang");
   const [lang, setLang] = useState(localLang || "en");
   const props = { dict: DICT, lang: lang };
+  const { TentageDash_data } = TentageSelector(); // tentage dashboard
+  const performanceData = TentageDash_data?.data || [];
+
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3 ">
       <div className="w-full border lg:col-span-1 col-span-4 shadow-md bg-white rounded-md">
@@ -151,10 +155,10 @@ const TentageDashboard = () => {
         {/* <FileStorageWrapper {...props}></FileStorageWrapper> */}
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <IncidentReportAnalysis {...props}></IncidentReportAnalysis>
+        <IncidentReportAnalysis performanceData={performanceData} />
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <VendorPerformance {...props}></VendorPerformance>
+        <VendorPerformance performanceData={performanceData} />
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>

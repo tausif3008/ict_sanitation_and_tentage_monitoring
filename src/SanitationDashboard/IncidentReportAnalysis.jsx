@@ -1,11 +1,8 @@
 import React from "react";
 import { useOutletContext } from "react-router";
-import TentageSelector from "../TentageDashboard/Slice/tentageSelector";
 
-const IncidentReportAnalysis = () => {
+const IncidentReportAnalysis = ({ performanceData = [] }) => {
   const [dict, lang] = useOutletContext();
-  const { TentageDash_data } = TentageSelector(); // tentage dashboard
-  const performanceData = TentageDash_data?.data || [];
 
   return (
     <div className="bg-white p-2 rounded-md">

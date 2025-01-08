@@ -33,7 +33,8 @@ export const getPercentage = (numerator, denominator) => {
   const den = Number(denominator) || 1;
   const percentage = (num * 100) / den;
 
-  return Number(percentage.toFixed(2));
+  // return Number(percentage.toFixed(2));
+  return Math.round(percentage); // Round the percentage to the nearest integer
 };
 
 export const statusOptions = [
@@ -126,6 +127,46 @@ export const VendorWiseReportcolumns = [
     title: "Monitoring",
     dataIndex: "todaysmonitaring",
     key: "todaysmonitaring",
+  },
+  {
+    title: "Partially Compliant",
+    dataIndex: "compliant",
+    key: "compliant",
+    render: (text, record) => {
+      return record?.compliant?.[0]?.partially_compliant
+        ? record?.compliant?.[0]?.partially_compliant
+        : 0;
+    },
+  },
+  {
+    title: "Compliant",
+    dataIndex: "compliant",
+    key: "compliant",
+    render: (text, record) => {
+      return record?.compliant?.[0]?.compliant
+        ? record?.compliant?.[0]?.compliant
+        : 0;
+    },
+  },
+  {
+    title: "Not Compliant",
+    dataIndex: "compliant",
+    key: "compliant",
+    render: (text, record) => {
+      return record?.compliant?.[0]?.not_compliant
+        ? record?.compliant?.[0]?.not_compliant
+        : 0;
+    },
+  },
+  {
+    title: "Toilet Unclean",
+    dataIndex: "compliant",
+    key: "compliant",
+    render: (text, record) => {
+      return record?.compliant?.[0]?.toiletunclean
+        ? record?.compliant?.[0]?.toiletunclean
+        : 0;
+    },
   },
   // {
   //   title: "Clean",

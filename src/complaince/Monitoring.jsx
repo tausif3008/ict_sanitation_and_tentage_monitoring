@@ -325,7 +325,7 @@ const Monitoring = () => {
     //   key: "circle_name",
     // },
     {
-      title: "Clean Status",
+      title: "Clean",
       dataIndex: "zero_count",
       key: "zero_count",
       render: (text, record) => {
@@ -338,7 +338,7 @@ const Monitoring = () => {
       width: 110,
     },
     {
-      title: "Compliant Status",
+      title: "Compliant",
       dataIndex: "zero_count",
       key: "zero_count",
       render: (text) => {
@@ -759,16 +759,16 @@ const Monitoring = () => {
                     <Col key="clean_status" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"clean_status"}
-                        label={"Select Clean Status"}
-                        placeholder={"Select Clean Status"}
+                        label={"Select Clean"}
+                        placeholder={"Select Clean"}
                         options={cleanStatus || []}
                       />
                     </Col>{" "}
                     <Col key="compliant_status" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"compliant_status"}
-                        label={"Select Compliant Status"}
-                        placeholder={"Select Compliant Status"}
+                        label={"Select Compliant"}
+                        placeholder={"Select Compliant"}
                         options={CompliantStatus || []}
                       />
                     </Col>
@@ -808,8 +808,11 @@ const Monitoring = () => {
         uri={"monitoring"}
         details={details || []}
         loading={loading}
-        subtotalName={"Total Unit"}
-        subtotalCount={details?.totalUnit}
+        // subtotalName={"Total Unit"}
+        // subtotalCount={details?.totalUnit}
+        tableSubheading={{
+          "Total Unit": `${details?.totalUnit || 0} per page`,
+        }}
         scroll={{ x: 1400, y: 400 }}
       ></CommonTable>
     </div>

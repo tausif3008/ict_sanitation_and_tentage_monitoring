@@ -254,12 +254,12 @@ const AssetsList = () => {
   };
 
   const columns = [
-    {
-      title: "Sr.No",
-      dataIndex: "sr",
-      key: "sr",
-      width: 55,
-    },
+    // {
+    //   title: "Sr.No",
+    //   dataIndex: "sr",
+    //   key: "sr",
+    //   width: 55,
+    // },
     {
       title: "Category",
       dataIndex: "asset_main_type_name",

@@ -7,6 +7,7 @@ import VendorPerformance from "./VendorPerformance";
 import MajorIssuesCount from "./MajorIssuesCount";
 import { DICT } from "../utils/dictionary";
 import HelplineNo from "./helplineNo";
+import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 // import FileStorageWrapper from "./FileStorageWrapper";
 // import MapData from "./MapData";
 // import phone from "../assets/Dashboard/phone.png";
@@ -16,6 +17,9 @@ const SanitationDashboard = () => {
   const localLang = localStorage.getItem("lang");
   const [lang, setLang] = useState(localLang || "en");
   const props = { dict: DICT, lang: lang };
+  const { SanitationDash_data } = SanitationDashSelector(); // sanitation dashboard
+  const performanceData = SanitationDash_data?.data || [];
+
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3 ">
       <div className="w-full border lg:col-span-1 col-span-4 shadow-md bg-white rounded-md">
@@ -35,10 +39,10 @@ const SanitationDashboard = () => {
         <FileStorageWrapper {...props}></FileStorageWrapper>
       </div> */}
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <IncidentReportAnalysis {...props}></IncidentReportAnalysis>
+        <IncidentReportAnalysis performanceData={performanceData} />
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
-        <VendorPerformance {...props}></VendorPerformance>
+        <VendorPerformance performanceData={performanceData} />
       </div>
       {/* <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>

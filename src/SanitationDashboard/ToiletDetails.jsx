@@ -7,8 +7,6 @@ import { useDispatch } from "react-redux";
 import lines from "../assets/Dashboard/lines.png";
 import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
@@ -26,6 +24,8 @@ import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import URLS from "../urils/URLS";
 import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
+import { getVendorListCategoryType } from "../register/AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const ToiletDetails = () => {
   const [dict, lang] = useOutletContext();
@@ -49,7 +49,8 @@ const ToiletDetails = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
+
   const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
   const { vendorReports } = VendorSelectors(); // vendor Reports
@@ -148,7 +149,8 @@ const ToiletDetails = () => {
 
   useEffect(() => {
     todayData(); // today data
-    dispatch(getVendorList()); // vendor details
+    // dispatch(getVendorList()); // vendor details
+    dispatch(getVendorListCategoryType("1")); // asset type wise vendor list
     dispatch(getSectorsList()); // all sectors
     // userRoleId != "9" && dispatch(getSectorsList()); // all sectors
     dispatch(getQuestionList()); // get question
@@ -262,7 +264,7 @@ const ToiletDetails = () => {
               name={"vendor_id"}
               label={`${dict?.select_vendor[lang]}`}
               placeholder={`${dict?.select_vendor[lang]}`}
-              options={VendorListDrop || []}
+              options={VendorListCategoryType || []}
             />
             <Form.Item
               label={`${DICT?.select_toilet[lang]}`}
@@ -465,6 +467,7 @@ const ToiletDetails = () => {
 
       {/* total quantity */}
       <ViewVendorsSectors
+        width={900}
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
         openModal={showData && !loading}
         handleCancel={handleCancel}

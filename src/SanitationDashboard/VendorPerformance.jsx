@@ -1,11 +1,8 @@
 import React from "react";
 import { useOutletContext } from "react-router";
-import TentageSelector from "../TentageDashboard/Slice/tentageSelector";
 
-const VendorPerformance = () => {
+const VendorPerformance = ({ performanceData = [] }) => {
   const [dict, lang] = useOutletContext();
-  const { TentageDash_data } = TentageSelector(); // tentage dashboard
-  const performanceData = TentageDash_data?.data || [];
 
   return (
     <div className="bg-white p-2 rounded-md">
@@ -40,10 +37,10 @@ const VendorPerformance = () => {
                         : vendor?.vendor_name_hi}
                     </span>
                     <span className="font-semibold w-[20%]">
-                      {vendor?.incidents}
+                      {vendor?.incidents || 0}
                     </span>
                     <span className="font-semibold w-[20%]">
-                      {vendor?.sla_baunces}
+                      {vendor?.sla_baunces || 0}
                     </span>
                   </li>
                 ))}
@@ -76,10 +73,10 @@ const VendorPerformance = () => {
                         : vendor?.vendor_name_hi}
                     </span>
                     <span className="font-semibold w-[20%]">
-                      {vendor?.incidents}
+                      {vendor?.incidents || 0}
                     </span>
                     <span className="font-semibold w-[20%]">
-                      {vendor?.sla_baunces}
+                      {vendor?.sla_baunces || 0}
                     </span>
                   </li>
                 ))}

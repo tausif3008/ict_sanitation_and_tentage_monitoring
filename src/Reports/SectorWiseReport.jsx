@@ -189,6 +189,11 @@ const SectorWiseReport = () => {
   const columns = [
     { title: "Sector Name", dataIndex: "name", key: "name" },
     { title: "Total Quantity", dataIndex: "total", key: "total" },
+    {
+      title: "Monitoring",
+      dataIndex: "todaysmonitaring",
+      key: "todaysmonitaring",
+    },
     { title: "Total Registered", dataIndex: "registered", key: "registered" },
     { title: "Clean", dataIndex: "clean", key: "clean" },
     { title: "Unclean", dataIndex: "unclean", key: "unclean" },

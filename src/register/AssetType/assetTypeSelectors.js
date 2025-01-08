@@ -13,8 +13,6 @@ const AssetTypeSelectors = () => {
     (state) => state?.assetTypeUpdateEl.vendor_categoryType
   ); // asset main type wise vendor list
 
-  console.log("VendorCategoryType", VendorCategoryType);
-
   // asset main type dropdown
   const AssetMainTypeDrop = useMemo(() => {
     return (
