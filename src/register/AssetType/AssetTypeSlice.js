@@ -10,6 +10,7 @@ const initialState = {
   type_data: null,
   sla_data: null,
   vendor_assetType: null,
+  vendor_categoryType: null,
 };
 
 const assetTypeSlice = createSlice({
@@ -30,6 +31,9 @@ const assetTypeSlice = createSlice({
     },
     postVendorAssetType: (state, action) => {
       state.vendor_assetType = action.payload;
+    },
+    postVendorCategory: (state, action) => {
+      state.vendor_categoryType = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -91,11 +95,27 @@ export const getVendorListAssetType = (Id) => async (dispatch) => {
   }
 };
 
+// get asset main type wise vendor list
+export const getVendorListCategoryType = (Id) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(
+      `${URLS?.vendorDetailsCategoryType?.path}${Id}`
+    );
+    dispatch(postVendorCategory(res?.data));
+  } catch (error) {
+    console.error("In get asset main type wise vendor list error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
 export const {
   setLoading,
   postSuccess,
   postType,
   postSla,
   postVendorAssetType,
+  postVendorCategory,
 } = assetTypeSlice.actions;
 export default assetTypeSlice.reducer;

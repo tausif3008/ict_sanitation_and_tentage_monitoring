@@ -53,6 +53,10 @@ const URLS = {
     path: "/vendor-details?asset_type_id=",
     version: "5.43",
   }, // asset type wise vendor list / details
+  vendorDetailsCategoryType: {
+    path: "/vendor-details?page=1&per_page=200&asset_main_type_id=",
+    version: "5.43",
+  }, // asset type wise vendor list / details
 
   // questions
   questions: { path: "/questions", version: "5.43" },

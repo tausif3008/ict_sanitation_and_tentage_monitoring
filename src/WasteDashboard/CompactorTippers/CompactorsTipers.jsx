@@ -169,7 +169,7 @@ const CompactorsTippers = () => {
             }}
           >
             <div className=" font-semibold -mt-0">
-              {AssetType?.data?.assettypes?.[0]?.total_quantity}
+              {AssetType?.data?.assettypes?.[0]?.total_quantity || 0}
             </div>
             <div className="text-lg">Compactors</div>
             <ReactApexChart
@@ -191,7 +191,7 @@ const CompactorsTippers = () => {
             }}
           >
             <div className=" font-semibold -mt-0">
-              {AssetType?.data?.assettypes?.[1]?.total_quantity}
+              {AssetType?.data?.assettypes?.[1]?.total_quantity || 0}
             </div>
             <div className="text-lg">Tippers</div>
             <ReactApexChart

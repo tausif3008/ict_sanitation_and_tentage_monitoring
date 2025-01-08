@@ -9,6 +9,11 @@ const AssetTypeSelectors = () => {
   const VendorListAssetType = useSelector(
     (state) => state?.assetTypeUpdateEl.vendor_assetType
   ); // asset type wise vendor list
+  const VendorCategoryType = useSelector(
+    (state) => state?.assetTypeUpdateEl.vendor_categoryType
+  ); // asset main type wise vendor list
+
+  console.log("VendorCategoryType", VendorCategoryType);
 
   // asset main type dropdown
   const AssetMainTypeDrop = useMemo(() => {
@@ -46,6 +51,18 @@ const AssetTypeSelectors = () => {
     );
   }, [SlaData]);
 
+  // asset main type vendor list dropdown
+  const VendorListCategoryType = useMemo(() => {
+    return (
+      VendorCategoryType?.data?.userdetails?.map((data) => {
+        return {
+          value: data?.user_id,
+          label: data?.user_name,
+        };
+      }) || []
+    );
+  }, [VendorCategoryType]);
+
   return {
     AssetMainType,
     loading,
@@ -54,6 +71,8 @@ const AssetTypeSelectors = () => {
     AssetType,
     SLATypeDrop,
     VendorListAssetType,
+    VendorCategoryType,
+    VendorListCategoryType,
   };
 };
 

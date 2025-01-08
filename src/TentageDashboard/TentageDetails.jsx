@@ -6,10 +6,8 @@ import { useOutletContext } from "react-router";
 import { useDispatch } from "react-redux";
 
 import lines from "../assets/Dashboard/lines.png";
-import { getVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import { getSectorsList } from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import TentageSelector from "./Slice/tentageSelector";
 import { langingPage } from "../utils/dictionary";
 import CustomSelect from "../commonComponents/CustomSelect";
@@ -21,6 +19,8 @@ import { VendorWiseReportcolumns } from "../constant/const";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
 import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
 import URLS from "../urils/URLS";
+import { getVendorListCategoryType } from "../register/AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const TentageDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -42,7 +42,7 @@ const TentageDetails = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor list
+  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
   const { TentageDash_data, loading } = TentageSelector(); // tentage dashboard
   const toiletData = TentageDash_data?.data?.asset_types || [];
   const { vendorReports } = VendorSelectors(); // vendor Reports
@@ -130,24 +130,24 @@ const TentageDetails = () => {
         (acc, circle) => acc + Number(circle?.registered) || 0,
         0
       );
-      const totalClean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.clean) || 0,
-        0
-      );
-      const totalUnclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.unclean) || 0,
-        0
-      );
-      const totalMaintenance = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.maintenance) || 0,
-        0
-      );
+      // const totalClean = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.clean) || 0,
+      //   0
+      // );
+      // const totalUnclean = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.unclean) || 0,
+      //   0
+      // );
+      // const totalMaintenance = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.maintenance) || 0,
+      //   0
+      // );
       setCount({
         total: total,
         registered: totalReg,
-        clean: totalClean,
-        maintenance: totalMaintenance,
-        unclean: totalUnclean,
+        // clean: totalClean,
+        // maintenance: totalMaintenance,
+        // unclean: totalUnclean,
       });
     }
   }, [vendorReports]);
@@ -165,7 +165,7 @@ const TentageDetails = () => {
   }, [vendorReports]);
 
   useEffect(() => {
-    userRoleId !== "8" && dispatch(getVendorList()); // vendor details
+    userRoleId !== "8" && dispatch(getVendorListCategoryType("2")); // asset type wise vendor list
     dispatch(getSectorsList()); // all sectors
     todayData();
   }, []);
@@ -213,7 +213,7 @@ const TentageDetails = () => {
                 name={"vendor_id"}
                 label={`${dict?.select_vendor[lang]}`}
                 placeholder={`${dict?.select_vendor[lang]}`}
-                options={VendorListDrop || []}
+                options={VendorListCategoryType || []}
               />
             )}
             <div className="flex justify-start my-4 space-x-2">

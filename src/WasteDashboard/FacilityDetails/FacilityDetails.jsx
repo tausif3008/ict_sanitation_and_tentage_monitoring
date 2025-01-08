@@ -7,8 +7,6 @@ import { Collapse, Form, Button, message } from "antd";
 
 import CustomSelect from "../../commonComponents/CustomSelect";
 import DashboardTitle from "../DashboardTitle";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import VehicleSelectors from "../../register/vehicle/Slice/vehicleSelector";
 import { getVehicleList } from "../../register/vehicle/Slice/vehicleSlice";
 import CustomInput from "../../commonComponents/CustomInput";
@@ -16,6 +14,8 @@ import { dateWeekOptions, vehicleType } from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomTable from "../../commonComponents/CustomTable";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
+import { getVendorListCategoryType } from "../../register/AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 
 const FacilityDetails = ({ title }) => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -30,7 +30,7 @@ const FacilityDetails = ({ title }) => {
   const params = useParams();
   const [form] = Form.useForm();
 
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
   const { VehicleData, loading } = VehicleSelectors(); // vehicle
   const { paging, vehicles } = VehicleData?.data || {};
 
@@ -135,7 +135,8 @@ const FacilityDetails = ({ title }) => {
   }, [params]);
 
   useEffect(() => {
-    dispatch(getVendorList()); // vendor list
+    // dispatch(getVendorList()); // vendor list
+    dispatch(getVendorListCategoryType("5")); // asset type wise vendor list
   }, []);
 
   const columns = [
@@ -209,7 +210,7 @@ const FacilityDetails = ({ title }) => {
                         name={"user_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
+                        options={VendorListCategoryType || []}
                       />
                       <CustomSelect
                         label="Vehicle Type"
