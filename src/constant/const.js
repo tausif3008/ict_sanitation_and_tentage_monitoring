@@ -25,6 +25,17 @@ export const checkLoginAvailability = (loginData, navigate) => {
   }
 };
 
+export const getPercentage = (numerator, denominator) => {
+  if (!numerator || !denominator) {
+    return "";
+  }
+  const num = Number(numerator) || 0;
+  const den = Number(denominator) || 1;
+  const percentage = (num * 100) / den;
+
+  return Number(percentage.toFixed(2));
+};
+
 export const statusOptions = [
   { value: 1, label: "Active" },
   { value: 2, label: "Deactive" },

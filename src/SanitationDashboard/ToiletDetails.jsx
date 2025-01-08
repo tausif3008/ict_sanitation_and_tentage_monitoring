@@ -214,6 +214,10 @@ const ToiletDetails = () => {
         <div className="flex justify-start items-center space-x-6 mb-1">
           <div className="flex items-center mb-4 mr-6">
             <div className="flex items-center mr-6">
+              <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+              <span className="text-sm">{dict.todays_monitoring[lang]}</span>
+            </div>
+            <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-yellow-400 rounded-full mr-2"></div>
               {/* <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div> */}
               {/* <span className="text-sm">{dict.clean[lang]}</span> */}
@@ -354,11 +358,25 @@ const ToiletDetails = () => {
                       handleCleanData(item);
                     }}
                   >
-                    <div className="text-start flex-1">
+                    <div className="flex justify-between">
                       <div className="text-sm text-gray-500 font-bold">
                         {lang === "en" ? item?.name : item?.name_hi}
                       </div>
+                      <div
+                        className="flex items-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+                        <span className="text-sm font-semibold">
+                          {item?.todaysmonitaring || 0}
+                        </span>
+                      </div>
                     </div>
+                    {/* <div className="text-start flex-1">
+                      <div className="text-sm text-gray-500 font-bold">
+                        {lang === "en" ? item?.name : item?.name_hi}
+                      </div>
+                    </div> */}
                     <div className="absolute bottom-4 left-3 right-3 flex justify-between">
                       <div
                         className="flex items-center"
@@ -366,7 +384,7 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.compliant?.[0]?.partially_compliant}
+                          {item?.compliant?.[0]?.partially_compliant || 0}
                         </span>
                       </div>
                       <div
@@ -376,7 +394,7 @@ const ToiletDetails = () => {
                         <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
                           {/* {item?.clean} */}
-                          {item?.compliant?.[0]?.not_compliant}
+                          {item?.compliant?.[0]?.not_compliant || 0}
                         </span>
                       </div>
                       <div
@@ -385,7 +403,7 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.unclean}
+                          {item?.compliant?.[0]?.toiletunclean || 0}
                         </span>
                       </div>
                     </div>

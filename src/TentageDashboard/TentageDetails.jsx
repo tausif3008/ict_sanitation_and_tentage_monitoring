@@ -21,7 +21,6 @@ import { VendorWiseReportcolumns } from "../constant/const";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
 import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
 import URLS from "../urils/URLS";
-import { getSanitationDashData } from "../SanitationDashboard/Slice/sanitationDashboard";
 
 const TentageDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -87,7 +86,6 @@ const TentageDetails = () => {
   const callApi = async (formField) => {
     const formData = await getFormData(formField);
     dispatch(getTentageDashboardData(formData)); // tentage dashboard
-    dispatch(getSanitationDashData(formData));
   };
 
   // today date

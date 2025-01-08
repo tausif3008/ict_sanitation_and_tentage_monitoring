@@ -1,11 +1,11 @@
 import React from "react";
 import { useOutletContext } from "react-router";
-import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
+import TentageSelector from "../TentageDashboard/Slice/tentageSelector";
 
 const IncidentReportAnalysis = () => {
   const [dict, lang] = useOutletContext();
-  const { SanitationDash_data } = SanitationDashSelector(); // sanitation dashboard
-  const performanceData = SanitationDash_data?.data || [];
+  const { TentageDash_data } = TentageSelector(); // tentage dashboard
+  const performanceData = TentageDash_data?.data || [];
 
   return (
     <div className="bg-white p-2 rounded-md">
