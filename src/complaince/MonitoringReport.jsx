@@ -342,40 +342,6 @@ const MonitoringReport = () => {
               </div>
             </div>
           </div>
-
-          {/* <div className="flex justify-between mt-2 mb-3">
-            <div className="flex flex-col text-center font-semibold">
-              <span>QR Code</span>
-              {assetDetails?.qrCode ? (
-                <Image
-                  width={130}
-                  src={`${ImageUrl}/${assetDetails?.qrCode}`}
-                  alt="QR Code"
-                />
-              ) : (
-                <span>No QR Code Available</span>
-              )}
-            </div>
-            <div className="flex flex-col text-center font-semibold mt-6">
-              <CoordinatesMap
-                coordinates={[assetDetails?.longitude, assetDetails?.latitude]}
-                showLocation={false}
-              />
-            </div>
-            <div className="flex flex-col text-center font-semibold">
-              <span>Asset Image</span>
-              {assetDetails?.photo ? (
-                <Image
-                  width={125}
-                  height={125}
-                  src={`${ImageUrl}/${assetDetails?.photo}`}
-                  alt="Asset"
-                />
-              ) : (
-                <span>No Image Available</span>
-              )}
-            </div>
-          </div> */}
         </div>
         {details?.length ? (
           <>

@@ -24,13 +24,13 @@ import search from "../../assets/Dashboard/icon-search.png";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 
 const VendorReports = () => {
-  const [total, setTotal] = useState(0);
   const [count, setCount] = useState({
     total: 0,
     registered: 0,
-    clean: 0,
-    maintenance: 0,
-    unclean: 0,
+    // clean: 0,
+    // maintenance: 0,
+    // unclean: 0,
+    monitoring: 0,
   });
 
   const [excelData, setExcelData] = useState([]);
@@ -128,24 +128,29 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.registered),
         0
       );
-      const totalClean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.clean),
-        0
-      );
-      const totalUnclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.unclean),
-        0
-      );
-      const totalMaintenance = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.maintenance) || 0,
+      // const totalClean = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.clean),
+      //   0
+      // );
+      // const totalUnclean = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.unclean),
+      //   0
+      // );
+      // const totalMaintenance = vendorsData?.reduce(
+      //   (acc, circle) => acc + Number(circle?.maintenance) || 0,
+      //   0
+      // );
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
         0
       );
       setCount({
         total: total,
         registered: totalReg,
-        clean: totalClean,
-        maintenance: totalMaintenance,
-        unclean: totalUnclean,
+        // clean: totalClean,
+        // maintenance: totalMaintenance,
+        // unclean: totalUnclean,
+        monitoring: totalMonitoring,
       });
     }
   }, [vendorReports]);
@@ -226,9 +231,10 @@ const VendorReports = () => {
           Name: data?.name,
           Total: Number(data?.total),
           Registered: Number(data?.registered),
-          Clean: Number(data?.clean),
-          Maintenance: Number(data?.maintenance),
-          Unclean: Number(data?.unclean),
+          // Clean: Number(data?.clean),
+          // Maintenance: Number(data?.maintenance),
+          // Unclean: Number(data?.unclean),
+          Monitoring: Number(data?.todaysmonitaring),
         };
       });
       setExcelData(myexcelData);
@@ -241,9 +247,10 @@ const VendorReports = () => {
     "Vendor Name",
     "Total",
     "Registered",
-    "Clean",
-    "Maintenance",
-    "Unclean",
+    // "Clean",
+    // "Maintenance",
+    // "Unclean",
+    "Monitoring",
   ];
 
   // pdf data
@@ -254,9 +261,10 @@ const VendorReports = () => {
         opt?.Name,
         opt?.Total,
         opt?.Registered,
-        opt?.Clean,
-        opt?.Maintenance,
-        opt?.Unclean,
+        // opt?.Clean,
+        // opt?.Maintenance,
+        // opt?.Unclean,
+        opt?.Monitoring,
       ]) || []
     );
   }, [excelData]);
@@ -278,9 +286,10 @@ const VendorReports = () => {
                 "Total",
                 count?.total,
                 count?.registered,
-                count?.clean,
-                count?.maintenance,
-                count?.unclean,
+                count?.monitoring,
+                // count?.clean,
+                // count?.maintenance,
+                // count?.unclean,
               ],
             ]}
           />
@@ -301,20 +310,25 @@ const VendorReports = () => {
                 colIndex: 4,
               },
               {
-                name: "Clean",
-                value: count?.clean,
+                name: "Monitoring",
+                value: count?.monitoring,
                 colIndex: 5,
               },
-              {
-                name: "Maintenance",
-                value: count?.maintenance,
-                colIndex: 6,
-              },
-              {
-                name: "Unclean",
-                value: count?.unclean,
-                colIndex: 7,
-              },
+              // {
+              //   name: "Clean",
+              //   value: count?.clean,
+              //   colIndex: 5,
+              // },
+              // {
+              //   name: "Maintenance",
+              //   value: count?.maintenance,
+              //   colIndex: 6,
+              // },
+              // {
+              //   name: "Unclean",
+              //   value: count?.unclean,
+              //   colIndex: 7,
+              // },
             ]}
           />
         </div>
@@ -417,9 +431,10 @@ const VendorReports = () => {
             <strong>Total Vendors: {vendorsData?.length}</strong>
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
-            <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Monitoring : {count?.monitoring || 0}</strong>
+            {/* <strong>Total Clean : {count?.clean || 0}</strong>
             <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong>
+            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
           </div>
         )}
       />

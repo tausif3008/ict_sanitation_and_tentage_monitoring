@@ -107,7 +107,8 @@ const MonitoringEngPdf = ({
             ["Mela Patri Name", `: ${tableObject?.mela_patri_name || ""}`],
             ["Mela Road Name", `: ${tableObject?.mela_road_name || ""}`],
           ]
-        : [["Circle", `: ${tableObject?.circle_name || ""}`]]),
+        : []),
+      // : [["Circle", `: ${tableObject?.circle_name || ""}`]]),
 
       // Always include these fields
       [

@@ -123,20 +123,25 @@ export const VendorWiseReportcolumns = [
     key: "registered",
   },
   {
-    title: "Clean",
-    dataIndex: "clean",
-    key: "clean",
+    title: "Monitoring",
+    dataIndex: "todaysmonitaring",
+    key: "todaysmonitaring",
   },
-  {
-    title: "Maintenance",
-    dataIndex: "maintenance",
-    key: "maintenance",
-  },
-  {
-    title: "Unclean",
-    dataIndex: "unclean",
-    key: "unclean",
-  },
+  // {
+  //   title: "Clean",
+  //   dataIndex: "clean",
+  //   key: "clean",
+  // },
+  // {
+  //   title: "Maintenance",
+  //   dataIndex: "maintenance",
+  //   key: "maintenance",
+  // },
+  // {
+  //   title: "Unclean",
+  //   dataIndex: "unclean",
+  //   key: "unclean",
+  // },
 ];
 
 // asset type list and vehicle dashboard

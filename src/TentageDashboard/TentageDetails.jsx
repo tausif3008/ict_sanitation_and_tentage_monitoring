@@ -315,9 +315,9 @@ const TentageDetails = () => {
             <strong>Total Vendors: {vendorsData?.length}</strong>
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
-            <strong>Total Clean : {count?.clean || 0}</strong>
+            {/* <strong>Total Clean : {count?.clean || 0}</strong>
             <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong>
+            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
           </div>
         )}
       />
