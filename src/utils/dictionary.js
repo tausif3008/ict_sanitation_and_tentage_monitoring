@@ -449,6 +449,10 @@ export const DICT = {
     en: "Incident Report Analysis",
     hi: "घटना रिपोर्ट विश्लेषण",
   },
+  sector_performance_overview: {
+    en: "Sector Performance Overview",
+    hi: "सेक्टर प्रदर्शन अवलोकन",
+  },
   last_24_hrs: {
     en: "Last 24 Hrs",
     hi: "पिछले 24 घंटे",
@@ -480,6 +484,14 @@ export const DICT = {
   high_frequency_sector: {
     en: "High Frequency Sectors",
     hi: "उच्च आवृत्ति क्षेत्र",
+  },
+  high_performing_sector: {
+    en: "High Performing Sectors",
+    hi: "उच्च प्रदर्शन करने वाले क्षेत्र",
+  },
+  low_performing_sector: {
+    en: "Low Performing Sectors",
+    hi: "कम प्रदर्शन करने वाले क्षेत्र",
   },
   low_frequency_sector: {
     en: "Low Frequency Sectors",

@@ -8,6 +8,8 @@ import MajorIssuesCount from "./MajorIssuesCount";
 import { DICT } from "../utils/dictionary";
 import HelplineNo from "./helplineNo";
 import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
+import PerformingSectors from "./PerformingSectors";
+import PerformingVendors from "./PerformingVendors";
 // import FileStorageWrapper from "./FileStorageWrapper";
 // import MapData from "./MapData";
 // import phone from "../assets/Dashboard/phone.png";
@@ -39,11 +41,17 @@ const SanitationDashboard = () => {
         <FileStorageWrapper {...props}></FileStorageWrapper>
       </div> */}
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
+        <PerformingSectors performanceData={performanceData} />
+      </div>
+      <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
+        <PerformingVendors performanceData={performanceData} />
+      </div>
+      {/* <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <IncidentReportAnalysis performanceData={performanceData} />
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <VendorPerformance performanceData={performanceData} />
-      </div>
+      </div> */}
       {/* <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>
       </div> */}
