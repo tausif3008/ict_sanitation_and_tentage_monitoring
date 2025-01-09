@@ -56,6 +56,15 @@ const ToiletDetails = () => {
   const vendorsData = vendorReports?.data?.vendors || [];
   const toiletData = assetData?.asset_types || [];
 
+  const typeDropdown = useMemo(() => {
+    return (
+      toiletData?.map((item) => ({
+        value: item?.asset_type_id,
+        label: item?.name,
+      })) || []
+    );
+  }, [toiletData]);
+
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -267,31 +276,12 @@ const ToiletDetails = () => {
               placeholder={`${dict?.select_vendor[lang]}`}
               options={VendorCatTypeDrop || []}
             />
-            <Form.Item
+            <CustomSelect
+              name={"asset_type_id"}
               label={`${DICT?.select_toilet[lang]}`}
-              name="asset_type_id"
-            >
-              <Select
-                placeholder={`${DICT?.select_toilet[lang]}`}
-                allowClear
-                showSearch
-                filterOption={(input, option) => {
-                  return option?.children
-                    ?.toLowerCase()
-                    ?.includes(input?.toLowerCase());
-                }}
-                className="rounded-none"
-              >
-                {toiletData?.map((option) => (
-                  <Select.Option
-                    key={option?.asset_type_id}
-                    value={option?.asset_type_id}
-                  >
-                    {option?.name}
-                  </Select.Option>
-                ))}
-              </Select>
-            </Form.Item>
+              placeholder={`${DICT?.select_toilet[lang]}`}
+              options={typeDropdown || []}
+            />
             <CustomSelect
               name="question_id" // This is the field name
               label={dict.select_question[lang]}
