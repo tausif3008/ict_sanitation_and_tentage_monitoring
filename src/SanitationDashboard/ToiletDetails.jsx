@@ -389,12 +389,11 @@ const ToiletDetails = () => {
                         <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
                           {getPercentage(
-                            Number(item?.compliant?.[0]?.partially_compliant) ||
-                              0,
-                            (Number(item?.compliant?.[0]?.toiletclean) || 0) +
-                              (Number(item?.compliant?.[0]?.toiletunclean) || 0)
+                            Number(item?.partially_compliant) || 0,
+                            (Number(item?.toiletclean) || 0) +
+                              (Number(item?.toiletunclean) || 0)
                           ) + "%"}
-                          {/* {item?.compliant?.[0]?.partially_compliant || 0} */}
+                          {/* {item?.partially_compliant || 0} */}
                         </span>
                       </div>
                       <div
@@ -404,11 +403,11 @@ const ToiletDetails = () => {
                         <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
                           {/* {item?.clean} */}
-                          {/* {item?.compliant?.[0]?.not_compliant || 0} */}
+                          {/* {item?.not_compliant || 0} */}
                           {getPercentage(
-                            Number(item?.compliant?.[0]?.not_compliant) || 0,
-                            (Number(item?.compliant?.[0]?.toiletclean) || 0) +
-                              (Number(item?.compliant?.[0]?.toiletunclean) || 0)
+                            Number(item?.not_compliant) || 0,
+                            (Number(item?.toiletclean) || 0) +
+                              (Number(item?.toiletunclean) || 0)
                           ) + "%"}
                         </span>
                       </div>
@@ -418,11 +417,11 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {/* {item?.compliant?.[0]?.toiletunclean || 0} */}
+                          {/* {item?.toiletunclean || 0} */}
                           {getPercentage(
-                            Number(item?.compliant?.[0]?.toiletunclean) || 0,
-                            (Number(item?.compliant?.[0]?.toiletclean) || 0) +
-                              (Number(item?.compliant?.[0]?.toiletunclean) || 0)
+                            Number(item?.toiletunclean) || 0,
+                            (Number(item?.toiletclean) || 0) +
+                              (Number(item?.toiletunclean) || 0)
                           ) + "%"}
                         </span>
                       </div>
