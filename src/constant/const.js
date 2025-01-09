@@ -112,21 +112,25 @@ export const VendorWiseReportcolumns = [
     title: "Vendor Name",
     dataIndex: "name",
     key: "name",
+    width: 350,
   },
   {
     title: "Total Quantity",
     dataIndex: "total",
     key: "total",
+    width: 50,
   },
   {
     title: "Registered",
     dataIndex: "registered",
     key: "registered",
+    width: 50,
   },
   {
     title: "Monitoring",
     dataIndex: "todaysmonitaring",
     key: "todaysmonitaring",
+    width: 50,
   },
   {
     title: "Partially Compliant",
@@ -137,6 +141,7 @@ export const VendorWiseReportcolumns = [
         ? record?.compliant?.[0]?.partially_compliant
         : 0;
     },
+    width: 50,
   },
   {
     title: "Compliant",
@@ -147,6 +152,7 @@ export const VendorWiseReportcolumns = [
         ? record?.compliant?.[0]?.compliant
         : 0;
     },
+    width: 50,
   },
   {
     title: "Not Compliant",
@@ -157,6 +163,7 @@ export const VendorWiseReportcolumns = [
         ? record?.compliant?.[0]?.not_compliant
         : 0;
     },
+    width: 50,
   },
   {
     title: "Toilet Unclean",
@@ -167,6 +174,7 @@ export const VendorWiseReportcolumns = [
         ? record?.compliant?.[0]?.toiletunclean
         : 0;
     },
+    width: 50,
   },
   // {
   //   title: "Clean",

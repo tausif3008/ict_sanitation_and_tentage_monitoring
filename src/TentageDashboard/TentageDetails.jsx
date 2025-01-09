@@ -17,10 +17,11 @@ import { getTentageDashboardData } from "./Slice/tentageSlice";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import { VendorWiseReportcolumns } from "../constant/const";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
-import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
+import {
+  getVendorCategoryTypeDrop,
+  getVendorReports,
+} from "../Reports/VendorwiseReports/vendorslice";
 import URLS from "../urils/URLS";
-import { getVendorListCategoryType } from "../register/AssetType/AssetTypeSlice";
-import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const TentageDetails = () => {
   const dateFormat = "YYYY-MM-DD";
@@ -42,10 +43,9 @@ const TentageDetails = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
   const { TentageDash_data, loading } = TentageSelector(); // tentage dashboard
   const toiletData = TentageDash_data?.data?.asset_types || [];
-  const { vendorReports } = VendorSelectors(); // vendor Reports
+  const { vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
 
   const userRoleId = localStorage.getItem("role_id");
@@ -165,7 +165,12 @@ const TentageDetails = () => {
   }, [vendorReports]);
 
   useEffect(() => {
-    userRoleId !== "8" && dispatch(getVendorListCategoryType("2")); // asset type wise vendor list
+    if (userRoleId !== "8") {
+      const paramData = {
+        asset_main_type_id: 2,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+    }
     dispatch(getSectorsList()); // all sectors
     todayData();
   }, []);
@@ -213,7 +218,7 @@ const TentageDetails = () => {
                 name={"vendor_id"}
                 label={`${dict?.select_vendor[lang]}`}
                 placeholder={`${dict?.select_vendor[lang]}`}
-                options={VendorListCategoryType || []}
+                options={VendorCatTypeDrop || []}
               />
             )}
             <div className="flex justify-start my-4 space-x-2">

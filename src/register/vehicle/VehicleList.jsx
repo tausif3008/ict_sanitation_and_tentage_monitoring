@@ -7,13 +7,13 @@ import search from "../../assets/Dashboard/icon-search.png";
 import { EditOutlined } from "@ant-design/icons";
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import { vehicleType } from "../../constant/const";
 import { getVehicleList } from "./Slice/vehicleSlice";
 import VehicleSelectors from "./Slice/vehicleSelector";
+import VendorSelectors from "../../Reports/VendorwiseReports/vendorSelectors";
+import { getVendorCategoryTypeDrop } from "../../Reports/VendorwiseReports/vendorslice";
 
 const VehicleList = () => {
   const [details, setDetails] = useState({
@@ -27,7 +27,7 @@ const VehicleList = () => {
   const params = useParams();
   const [form] = Form.useForm();
 
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { VehicleData, loading } = VehicleSelectors(); // vehicle
   const { paging, vehicles } = VehicleData?.data || {};
 
@@ -108,7 +108,10 @@ const VehicleList = () => {
   }, [params]);
 
   useEffect(() => {
-    dispatch(getVendorList()); // vendor list
+    const paramData = {
+      asset_main_type_id: 5,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
   }, []);
 
   const columns = [
@@ -210,7 +213,7 @@ const VehicleList = () => {
                         name={"user_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
+                        options={VendorCatTypeDrop || []}
                       />
                     </Col>
                     <Col key="type" xs={24} sm={12} md={6} lg={5}>

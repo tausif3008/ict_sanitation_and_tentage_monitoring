@@ -14,8 +14,8 @@ import { dateWeekOptions, vehicleType } from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomTable from "../../commonComponents/CustomTable";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import { getVendorListCategoryType } from "../../register/AssetType/AssetTypeSlice";
-import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import VendorSelectors from "../../Reports/VendorwiseReports/vendorSelectors";
+import { getVendorCategoryTypeDrop } from "../../Reports/VendorwiseReports/vendorslice";
 
 const FacilityDetails = ({ title }) => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -30,9 +30,9 @@ const FacilityDetails = ({ title }) => {
   const params = useParams();
   const [form] = Form.useForm();
 
-  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
   const { VehicleData, loading } = VehicleSelectors(); // vehicle
   const { paging, vehicles } = VehicleData?.data || {};
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -135,8 +135,10 @@ const FacilityDetails = ({ title }) => {
   }, [params]);
 
   useEffect(() => {
-    // dispatch(getVendorList()); // vendor list
-    dispatch(getVendorListCategoryType("5")); // asset type wise vendor list
+    const paramData = {
+      asset_main_type_id: 5,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
   }, []);
 
   const columns = [
@@ -210,7 +212,7 @@ const FacilityDetails = ({ title }) => {
                         name={"user_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
-                        options={VendorListCategoryType || []}
+                        options={VendorCatTypeDrop || []}
                       />
                       <CustomSelect
                         label="Vehicle Type"

@@ -22,10 +22,11 @@ import CustomSelect from "../commonComponents/CustomSelect";
 import { getQuestionList } from "../register/questions/questionSlice";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import URLS from "../urils/URLS";
-import { getVendorReports } from "../Reports/VendorwiseReports/vendorslice";
+import {
+  getVendorCategoryTypeDrop,
+  getVendorReports,
+} from "../Reports/VendorwiseReports/vendorslice";
 import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
-import { getVendorListCategoryType } from "../register/AssetType/AssetTypeSlice";
-import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const ToiletDetails = () => {
   const [dict, lang] = useOutletContext();
@@ -49,11 +50,9 @@ const ToiletDetails = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { VendorListCategoryType } = AssetTypeSelectors(); // vendor list
-
   const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
-  const { vendorReports } = VendorSelectors(); // vendor Reports
+  const { vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
   const toiletData = assetData?.asset_types || [];
 
@@ -96,6 +95,7 @@ const ToiletDetails = () => {
       asset_main_type_id: data?.asset_main_type_id,
       asset_type_id: data?.asset_type_id,
       ...(formValue?.vendor_id && { vendor_id: formValue?.vendor_id }),
+      ...(formValue?.sector_id && { sector_id: formValue?.sector_id }),
       date: dayjs(formValue?.date).format("YYYY-MM-DD"),
     };
 
@@ -149,10 +149,11 @@ const ToiletDetails = () => {
 
   useEffect(() => {
     todayData(); // today data
-    // dispatch(getVendorList()); // vendor details
-    dispatch(getVendorListCategoryType("1")); // asset type wise vendor list
+    const paramData = {
+      asset_main_type_id: 1,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
     dispatch(getSectorsList()); // all sectors
-    // userRoleId != "9" && dispatch(getSectorsList()); // all sectors
     dispatch(getQuestionList()); // get question
   }, []);
 
@@ -264,7 +265,7 @@ const ToiletDetails = () => {
               name={"vendor_id"}
               label={`${dict?.select_vendor[lang]}`}
               placeholder={`${dict?.select_vendor[lang]}`}
-              options={VendorListCategoryType || []}
+              options={VendorCatTypeDrop || []}
             />
             <Form.Item
               label={`${DICT?.select_toilet[lang]}`}

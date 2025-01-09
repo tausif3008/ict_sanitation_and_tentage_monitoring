@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { getVendorReports } from "./vendorslice";
+import { getVendorCategoryTypeDrop, getVendorReports } from "./vendorslice";
 import VendorSelectors from "./vendorSelectors";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
@@ -18,10 +18,11 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { getAssetTypeWiseVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 
 const VendorReports = () => {
   const [count, setCount] = useState({
@@ -44,11 +45,11 @@ const VendorReports = () => {
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { loading, vendorReports } = VendorSelectors(); // vendor reports
+  const { loading, vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
@@ -61,14 +62,29 @@ const VendorReports = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
+
+    const paramData = {
+      asset_main_type_id: value,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
   };
 
   // handle asset type
   const handleTypeSelect = (value) => {
+    const formValue = form.getFieldsValue();
+    // console.log("value", value);
+    // console.log("formValue", formValue);
     form.setFieldsValue({
       vendor_id: null,
     });
-    value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
+    if (value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+    }
+    // value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // fiter finish
@@ -81,6 +97,7 @@ const VendorReports = () => {
       }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.sector_id && { sector_id: values?.sector_id }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     callApi(finalValues);
@@ -95,17 +112,22 @@ const VendorReports = () => {
   // current data
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
-    form.setFieldsValue({
-      date: dayjs(newDate, dateFormat),
-      asset_main_type_id: "1",
-    });
-    const url = URLS?.assetType?.path + "1";
-    dispatch(getAssetTypes(url)); // get assset type
     const finalValues = {
       date: newDate,
       asset_main_type_id: "1",
     };
     callApi(finalValues);
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+      asset_main_type_id: "1",
+    });
+    const url = URLS?.assetType?.path + "1";
+    const paramData = {
+      asset_main_type_id: 1,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+
+    dispatch(getAssetTypes(url)); // get assset type
   };
 
   // reset form
@@ -159,7 +181,7 @@ const VendorReports = () => {
   const getReportName = () => {
     const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
     const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
 
     if (vendor_id_name && asset_type_id_name) {
       return `${vendorName} - ${assetTypeName} Report`;
@@ -187,7 +209,7 @@ const VendorReports = () => {
   //       AssetTypeDrop,
   //       ""
   //     );
-  //     const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+  //     const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
   //     if (vendor_id_name) {
   //       if (asset_type_id_name) {
   //         const name = `${vendorName} Wise ${assetTypeName} Report`;
@@ -212,6 +234,7 @@ const VendorReports = () => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    dispatch(getSectorsList()); // all sectors
     return () => {};
   }, []);
 
@@ -378,7 +401,15 @@ const VendorReports = () => {
                         name={"vendor_id"}
                         label={"Select Vendor"}
                         placeholder={"Select Vendor"}
-                        options={AssetTypeVendorDrop || []}
+                        options={VendorCatTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"sector_id"}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        options={SectorListDrop || []}
                       />
                     </Col>
                     <Col key="to_date" xs={24} sm={12} md={6} lg={5}>

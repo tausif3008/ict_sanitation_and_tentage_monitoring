@@ -58,6 +58,12 @@ const URLS = {
     version: "5.43",
   }, // asset type wise vendor list / details
 
+  vendorTypeCategoryDrop: {
+    path: "/vendor-details/get-vendor-by-types",
+    // path: "/vendor-details/get-vendor-by-types?asset_main_type_id=1&asset_type_id=1",
+    version: "5.43",
+  }, // vendor dropdown asset main type and asset type
+
   // questions
   questions: { path: "/questions", version: "5.43" },
   questionsEntry: { path: "/questions/entry", version: "5.43" },
