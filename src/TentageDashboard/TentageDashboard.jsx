@@ -116,9 +116,11 @@ import TentageCount from "./TentageCount";
 import TentageDetails from "./TentageDetails";
 import MapData from "./MapData";
 import HelplineNo from "../SanitationDashboard/helplineNo";
-import IncidentReportAnalysis from "../SanitationDashboard/IncidentReportAnalysis";
-import VendorPerformance from "../SanitationDashboard/VendorPerformance";
+// import IncidentReportAnalysis from "../SanitationDashboard/IncidentReportAnalysis";
+// import VendorPerformance from "../SanitationDashboard/VendorPerformance";
 import TentageSelector from "./Slice/tentageSelector";
+import PerformingSectors from "../SanitationDashboard/PerformingSectors";
+import PerformingVendors from "../SanitationDashboard/PerformingVendors";
 // import phone from "../assets/Dashboard/phone.png";
 // import phoneIcon from "../assets/Dashboard/phone-alt.png";
 // import FurnitureCount from "./FurnitureCount";
@@ -155,11 +157,17 @@ const TentageDashboard = () => {
         {/* <FileStorageWrapper {...props}></FileStorageWrapper> */}
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
+        <PerformingSectors performanceData={performanceData} />
+      </div>
+      <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
+        <PerformingVendors performanceData={performanceData} />
+      </div>
+      {/* <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <IncidentReportAnalysis performanceData={performanceData} />
       </div>
       <div className="col-span-4 md:col-span-2 shadow-md bg-white rounded-md">
         <VendorPerformance performanceData={performanceData} />
-      </div>
+      </div> */}
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <MapData {...props}></MapData>
       </div>

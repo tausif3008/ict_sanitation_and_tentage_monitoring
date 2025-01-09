@@ -109,6 +109,7 @@ const TentageDetails = () => {
       asset_type_id: data?.asset_type_id,
       ...(formValue?.vendor_id && { vendor_id: formValue?.vendor_id }),
       date: dayjs(formValue?.date).format("YYYY-MM-DD"),
+      ...(formValue?.sector_id && { sector_id: formValue?.sector_id }),
       ...(userRoleId === "8" && { vendor_id: user_Id }),
     };
 
