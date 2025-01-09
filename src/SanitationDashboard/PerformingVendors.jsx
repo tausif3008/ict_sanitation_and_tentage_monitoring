@@ -23,7 +23,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
                 <span>{dict.vendor[lang]}</span>
                 <span>{dict.not_Complaint[lang]}</span>
               </li>
-              {performanceData?.highperformingsectors
+              {performanceData?.highperformingvendors
                 ?.slice(0, 3)
                 ?.map((item, index) => (
                   <li
@@ -35,10 +35,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
                         ? item?.vendor_name_en
                         : item?.vendor_name_hi}
                     </span>
-                    <span className="font-semibold">
-                      {item?.not_compliant}
-                      {/* {` ${dict.incidents[lang]}`} */}
-                    </span>
+                    <span className="font-semibold">{item?.not_compliant}</span>
                   </li>
                 ))}
             </ul>
@@ -56,7 +53,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
                 <span>{dict.vendor[lang]}</span>
                 <span>{dict.not_Complaint[lang]}</span>
               </li>
-              {performanceData?.lowperformingsectors
+              {performanceData?.lowperformingvendors
                 ?.slice(0, 3)
                 ?.map((item, index) => (
                   <li
@@ -68,10 +65,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
                         ? item?.vendor_name_en
                         : item?.vendor_name_hi}
                     </span>
-                    <span className="font-semibold">
-                      {item?.not_compliant}
-                      {/* {` ${dict.incidents[lang]}`} */}
-                    </span>
+                    <span className="font-semibold">{item?.not_compliant}</span>
                   </li>
                 ))}
             </ul>
