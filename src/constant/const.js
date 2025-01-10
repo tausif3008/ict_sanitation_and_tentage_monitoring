@@ -121,15 +121,15 @@ export const VendorWiseReportcolumns = [
     width: 50,
   },
   {
-    title: "Registered",
-    dataIndex: "registered",
-    key: "registered",
-    width: 50,
-  },
-  {
     title: "Monitoring",
     dataIndex: "todaysmonitaring",
     key: "todaysmonitaring",
+    width: 50,
+  },
+  {
+    title: "Registered",
+    dataIndex: "registered",
+    key: "registered",
     width: 50,
   },
   {

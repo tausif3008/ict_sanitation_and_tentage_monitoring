@@ -243,14 +243,6 @@ const VendorReports = () => {
           acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
         0
       );
-      // const totalClean = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.clean),
-      //   0
-      // );
-      // const totalUnclean = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.unclean),
-      //   0
-      // );
       const toiletunclean = vendorsData?.reduce(
         (acc, circle) =>
           acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
@@ -629,8 +621,6 @@ const VendorReports = () => {
           ]}
         />
       </div>
-
-      {console.log("VendorReport_Loading", VendorReport_Loading)}
 
       <Table
         loading={VendorReport_Loading || SectorReport_Loading}

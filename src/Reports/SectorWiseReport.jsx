@@ -18,10 +18,14 @@ import {
 } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import { getFormData } from "../urils/getFormData";
-import { getValueLabel } from "../constant/const";
+import { getValueLabel, VendorWiseReportcolumns } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
-import { getVendorCategoryTypeDrop } from "./VendorwiseReports/vendorslice";
+import {
+  getVendorCategoryTypeDrop,
+  getVendorReports,
+} from "./VendorwiseReports/vendorslice";
 import VendorSelectors from "./VendorwiseReports/vendorSelectors";
+import ViewVendorsSectors from "../register/AssetType/viewVendors";
 
 const SectorWiseReport = () => {
   const [totalQuantity, setTotalQuantity] = useState({
@@ -29,8 +33,19 @@ const SectorWiseReport = () => {
     registered: 0,
     clean: 0,
     unclean: 0,
+    monitoring: 0,
   });
   const [filesName, setFilesName] = useState(null); // files Name
+  const [count, setCount] = useState({
+    total: 0,
+    registered: 0,
+    monitoring: 0,
+    partially_compliant: 0,
+    compliant: 0,
+    not_compliant: 0,
+    toiletunclean: 0,
+  });
+  const [showModal, setShowModal] = useState(null);
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
@@ -38,8 +53,11 @@ const SectorWiseReport = () => {
 
   const dispatch = useDispatch();
   const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
-  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+
+  const { VendorReport_Loading, vendorReports, VendorCatTypeDrop } =
+    VendorSelectors(); // vendor dropdown & Reports
+  const vendorsData = vendorReports?.data?.vendors || [];
 
   const userRoleId = localStorage.getItem("role_id");
   const sessionDataString = localStorage.getItem("sessionData");
@@ -47,6 +65,86 @@ const SectorWiseReport = () => {
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
+
+  useEffect(() => {
+    if (vendorReports) {
+      const total = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.total),
+        0
+      );
+      const totalReg = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.registered),
+        0
+      );
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+        0
+      );
+      const partially_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
+        0
+      );
+      const compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
+        0
+      );
+      const not_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        0
+      );
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
+        0
+      );
+
+      setCount({
+        total: total,
+        registered: totalReg,
+        monitoring: totalMonitoring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
+      });
+    }
+  }, [vendorReports]);
+
+  // close module
+  const handleCancel = () => {
+    setShowModal(null);
+    setCount({
+      total: 0,
+      registered: 0,
+      monitoring: 0,
+      partially_compliant: 0,
+      compliant: 0,
+      not_compliant: 0,
+      toiletunclean: 0,
+    });
+  };
+
+  // vendor click
+  const handleClick = (record) => {
+    const finalValues = {
+      ...(formValue?.asset_main_type_id && {
+        asset_main_type_id: formValue?.asset_main_type_id,
+      }),
+      ...(formValue?.asset_type_id && {
+        asset_type_id: formValue?.asset_type_id,
+      }),
+      ...(formValue?.vendor_id && { vendor_id: formValue?.vendor_id }),
+      sector_id: record?.sector_id,
+      ...(formValue?.date && {
+        date: dayjs(formValue?.date).format("YYYY-MM-DD"),
+      }),
+    };
+    setShowModal(record);
+    const url = URLS?.vendorReporting?.path;
+    dispatch(getVendorReports(url, finalValues)); // vendor reports
+  };
 
   // handle category
   const handleSelect = (value) => {
@@ -135,19 +233,23 @@ const SectorWiseReport = () => {
   useEffect(() => {
     if (sectorData) {
       const totalQty = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.total),
+        (acc, sector) => acc + Number(sector?.total) || 0,
         0
       );
       const totalRegister = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.registered),
+        (acc, sector) => acc + Number(sector?.registered) || 0,
         0
       );
       const totalClean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.clean),
+        (acc, sector) => acc + Number(sector?.clean) || 0,
         0
       );
       const totalUnclean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.unclean),
+        (acc, sector) => acc + Number(sector?.unclean) || 0,
+        0
+      );
+      const monitoring = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.todaysmonitaring) || 0,
         0
       );
       setTotalQuantity({
@@ -155,6 +257,7 @@ const SectorWiseReport = () => {
         registered: totalRegister,
         clean: totalClean,
         unclean: totalUnclean,
+        monitoring: monitoring,
       });
     }
   }, [sectorData]);
@@ -188,13 +291,19 @@ const SectorWiseReport = () => {
     getCurrentData(); // current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    // userRoleId != "8" && dispatch(getVendorList()); // vendor list
-
-    return () => {};
   }, []);
 
   const columns = [
-    { title: "Sector Name", dataIndex: "name", key: "name" },
+    {
+      title: "Sector Name",
+      dataIndex: "name",
+      key: "name",
+      render: (text, record) => {
+        return (
+          <span onClick={() => handleClick(record)}>{text ? text : ""}</span>
+        );
+      },
+    },
     { title: "Total Quantity", dataIndex: "total", key: "total" },
     {
       title: "Monitoring",
@@ -211,6 +320,7 @@ const SectorWiseReport = () => {
     "Sr No",
     "Sector Name",
     "Total",
+    "Monitoring",
     "Registered",
     "Clean",
     "Unclean",
@@ -220,10 +330,11 @@ const SectorWiseReport = () => {
   const pdfData = sectorData?.map((sector, index) => [
     index + 1,
     sector?.name,
-    Number(sector?.total),
-    Number(sector?.registered),
-    Number(sector?.clean),
-    Number(sector?.unclean),
+    Number(sector?.total) || 0,
+    Number(sector?.todaysmonitaring) || 0,
+    Number(sector?.registered) || 0,
+    Number(sector?.clean) || 0,
+    Number(sector?.unclean) || 0,
   ]);
 
   // excel data
@@ -233,6 +344,7 @@ const SectorWiseReport = () => {
       Name: data?.name,
       // "Name In Hindi": data?.name_hi,
       Quantity: Number(data?.total),
+      Monitoring: Number(data?.todaysmonitaring),
       Registered: Number(data?.registered),
       Clean: Number(data?.clean),
       Unclean: Number(data?.unclean),
@@ -256,6 +368,7 @@ const SectorWiseReport = () => {
                 "",
                 "Total",
                 totalQuantity?.totalQnty,
+                totalQuantity?.monitoring,
                 totalQuantity?.registered,
                 totalQuantity?.clean,
                 totalQuantity?.unclean,
@@ -274,19 +387,24 @@ const SectorWiseReport = () => {
                 colIndex: 3,
               },
               {
+                name: "Total Monitoring",
+                value: totalQuantity?.monitoring,
+                colIndex: 4,
+              },
+              {
                 name: "Total Register",
                 value: totalQuantity?.registered,
-                colIndex: 4,
+                colIndex: 5,
               },
               {
                 name: "Total Clean",
                 value: totalQuantity?.clean,
-                colIndex: 5,
+                colIndex: 6,
               },
               {
                 name: "Total Unclean",
                 value: totalQuantity?.unclean,
-                colIndex: 6,
+                colIndex: 7,
               },
             ]}
           />
@@ -380,7 +498,7 @@ const SectorWiseReport = () => {
         />
       </div>
       <Table
-        loading={SectorReport_Loading}
+        loading={SectorReport_Loading || VendorReport_Loading}
         columns={columns}
         dataSource={sectorData || []}
         rowKey="sector_id"
@@ -390,9 +508,40 @@ const SectorWiseReport = () => {
           <div className="flex justify-between">
             <strong>Total Sectors: {sectorData?.length}</strong>
             <strong>Total Quantity: {totalQuantity?.totalQnty}</strong>
+            <strong>Total Monitoring: {totalQuantity?.monitoring}</strong>
             <strong>Total Register: {totalQuantity?.registered}</strong>
             <strong>Total Clean: {totalQuantity?.clean}</strong>
             <strong>Total Unclean: {totalQuantity?.unclean}</strong>
+          </div>
+        )}
+      />
+
+      {/* total quantity */}
+      <ViewVendorsSectors
+        width={1200}
+        title={`Vendor Wise Report`}
+        openModal={showModal && !VendorReport_Loading}
+        handleCancel={handleCancel}
+        tableData={vendorsData || []}
+        tableHeaderData={[
+          {
+            label: "Sector Name",
+            value: `${showModal?.name}`,
+          },
+        ]}
+        column={VendorWiseReportcolumns || []}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Vendors: {vendorsData?.length}</strong>
+            <strong>Total: {count?.total || 0}</strong>
+            <strong>Monitoring : {count?.monitoring || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>
+              Partialy Compliant : {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+            <strong>Unclean: {count?.toiletunclean || 0}</strong>
           </div>
         )}
       />
