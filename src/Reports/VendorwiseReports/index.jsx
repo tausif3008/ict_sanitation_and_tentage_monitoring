@@ -11,7 +11,6 @@ import VendorSelectors from "./vendorSelectors";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getValueLabel, VendorWiseReportcolumns } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
 import {
@@ -23,6 +22,7 @@ import search from "../../assets/Dashboard/icon-search.png";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import ViewVendorsSectors from "../../register/AssetType/viewVendors";
 
 const VendorReports = () => {
   const [count, setCount] = useState({
@@ -53,6 +53,18 @@ const VendorReports = () => {
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
+
+  // close module
+  const handleCancel = () => {
+    // setShowData(null);
+    // setCount({
+    //   total: 0,
+    //   registered: 0,
+    //   clean: 0,
+    //   maintenance: 0,
+    //   unclean: 0,
+    // });
+  };
 
   // handle category
   const handleSelect = (value) => {
@@ -463,6 +475,26 @@ const VendorReports = () => {
             <strong>Total : {count?.total || 0}</strong>
             <strong>Total Registered: {count?.registered || 0}</strong>
             <strong>Total Monitoring : {count?.monitoring || 0}</strong>
+            {/* <strong>Total Clean : {count?.clean || 0}</strong>
+            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
+            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
+          </div>
+        )}
+      />
+
+      {/* total quantity */}
+      <ViewVendorsSectors
+        width={900}
+        title={`""`}
+        openModal={false}
+        handleCancel={handleCancel}
+        tableData={[] || []}
+        column={[] || []}
+        footer={() => (
+          <div className="flex justify-between">
+            {/* <strong>Total Vendors: {vendorsData?.length}</strong>
+            <strong>Total : {count?.total || 0}</strong>
+            <strong>Total Registered: {count?.registered || 0}</strong> */}
             {/* <strong>Total Clean : {count?.clean || 0}</strong>
             <strong>Total Maintenance : {count?.maintenance || 0}</strong>
             <strong>Total Unclean: {count?.unclean || 0}</strong> */}
