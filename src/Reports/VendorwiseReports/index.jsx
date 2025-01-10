@@ -11,7 +11,7 @@ import VendorSelectors from "./vendorSelectors";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
-import { getValueLabel, VendorWiseReportcolumns } from "../../constant/const";
+import { getValueLabel } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
 import {
   getAssetMainTypes,
@@ -23,18 +23,29 @@ import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import ViewVendorsSectors from "../../register/AssetType/viewVendors";
+import { getSectorReports } from "../SectorSlice/sectorSlice";
+import SectorReportSelectors from "../SectorSlice/sectorSelector";
 
 const VendorReports = () => {
   const [count, setCount] = useState({
     total: 0,
     registered: 0,
-    // clean: 0,
-    // maintenance: 0,
-    // unclean: 0,
     monitoring: 0,
+    partially_compliant: 0,
+    compliant: 0,
+    not_compliant: 0,
+    toiletunclean: 0,
+  });
+  const [modalQuantity, setModalQuantity] = useState({
+    total: 0,
+    monitoring: 0,
+    registered: 0,
+    clean: 0,
+    unclean: 0,
   });
 
   const [excelData, setExcelData] = useState([]);
+  const [showModal, setShowModal] = useState(null);
   const [filesName, setFilesName] = useState(null); // files Name
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
@@ -44,26 +55,82 @@ const VendorReports = () => {
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
   const dispatch = useDispatch();
-  const { loading, vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { VendorReport_Loading, vendorReports, VendorCatTypeDrop } =
+    VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
 
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
 
+  useEffect(() => {
+    if (sectorData) {
+      const totalQty = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.total),
+        0
+      );
+      const totalRegister = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.registered),
+        0
+      );
+      const totalClean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.clean),
+        0
+      );
+      const totalUnclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.unclean),
+        0
+      );
+      const monitaring = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.todaysmonitaring),
+        0
+      );
+      setModalQuantity({
+        totalQnty: totalQty,
+        monitoring: monitaring,
+        registered: totalRegister,
+        clean: totalClean,
+        unclean: totalUnclean,
+      });
+    }
+  }, [sectorData]);
+
   // close module
   const handleCancel = () => {
-    // setShowData(null);
-    // setCount({
-    //   total: 0,
-    //   registered: 0,
-    //   clean: 0,
-    //   maintenance: 0,
-    //   unclean: 0,
-    // });
+    setShowModal(null);
+    setModalQuantity({
+      total: 0,
+      registered: 0,
+      clean: 0,
+      maintenance: 0,
+      unclean: 0,
+    });
+  };
+
+  // vendor click
+  const handleClick = (record) => {
+    const finalValues = {
+      ...(formValue?.asset_main_type_id && {
+        asset_main_type_id: formValue?.asset_main_type_id,
+      }),
+      ...(formValue?.asset_type_id && {
+        asset_type_id: formValue?.asset_type_id,
+      }),
+      ...(formValue?.vendor_id && { vendor_id: formValue?.vendor_id }),
+      ...(formValue?.sector_id && { sector_id: formValue?.sector_id }),
+      vendor_id: record?.user_id,
+      ...(formValue?.date && {
+        date: dayjs(formValue?.date).format("YYYY-MM-DD"),
+      }),
+    };
+    const url = URLS?.sector_wise_report?.path;
+    dispatch(getSectorReports(url, finalValues)); // sector reports
+    setShowModal(record);
   };
 
   // handle category
@@ -83,9 +150,6 @@ const VendorReports = () => {
 
   // handle asset type
   const handleTypeSelect = (value) => {
-    const formValue = form.getFieldsValue();
-    // console.log("value", value);
-    // console.log("formValue", formValue);
     form.setFieldsValue({
       vendor_id: null,
     });
@@ -96,7 +160,6 @@ const VendorReports = () => {
       };
       dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
     }
-    // value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // fiter finish
@@ -137,7 +200,7 @@ const VendorReports = () => {
     const paramData = {
       asset_main_type_id: 1,
     };
-    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
 
     dispatch(getAssetTypes(url)); // get assset type
   };
@@ -162,6 +225,24 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.registered),
         0
       );
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+        0
+      );
+      const partially_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
+        0
+      );
+      const compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
+        0
+      );
+      const not_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        0
+      );
       // const totalClean = vendorsData?.reduce(
       //   (acc, circle) => acc + Number(circle?.clean),
       //   0
@@ -170,21 +251,20 @@ const VendorReports = () => {
       //   (acc, circle) => acc + Number(circle?.unclean),
       //   0
       // );
-      // const totalMaintenance = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.maintenance) || 0,
-      //   0
-      // );
-      const totalMonitoring = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
         0
       );
+
       setCount({
         total: total,
         registered: totalReg,
-        // clean: totalClean,
-        // maintenance: totalMaintenance,
-        // unclean: totalUnclean,
         monitoring: totalMonitoring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
       });
     }
   }, [vendorReports]);
@@ -209,38 +289,10 @@ const VendorReports = () => {
     }
     return "Vendor Wise Report";
   };
+
   useEffect(() => {
     setFilesName(getReportName()); // file name
   }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
-
-  // useEffect(() => {
-  //   if (categoryType || asset_type_id_name || vendor_id_name) {
-  //     const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
-  //     const assetTypeName = getValueLabel(
-  //       asset_type_id_name,
-  //       AssetTypeDrop,
-  //       ""
-  //     );
-  //     const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
-  //     if (vendor_id_name) {
-  //       if (asset_type_id_name) {
-  //         const name = `${vendorName} Wise ${assetTypeName} Report`;
-  //         setFilesName(name);
-  //       } else {
-  //         const name = `${vendorName} Wise ${catTypeName} Report`;
-  //         setFilesName(name);
-  //       }
-  //     } else if (asset_type_id_name) {
-  //       const name = `Vendor Wise ${catTypeName} (${assetTypeName}) Report`;
-  //       setFilesName(name);
-  //     } else {
-  //       const name = `Vendor Wise ${catTypeName} Report`;
-  //       setFilesName(name);
-  //     }
-  //   } else {
-  //     setFilesName("");
-  //   }
-  // }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
 
   useEffect(() => {
     getCurrentData(); // current data
@@ -264,17 +316,124 @@ const VendorReports = () => {
         return {
           Sr: index + 1,
           Name: data?.name,
-          Total: Number(data?.total),
-          Registered: Number(data?.registered),
-          // Clean: Number(data?.clean),
-          // Maintenance: Number(data?.maintenance),
-          // Unclean: Number(data?.unclean),
-          Monitoring: Number(data?.todaysmonitaring),
+          Total: Number(data?.total) || 0,
+          Registered: Number(data?.registered) || 0,
+          Monitoring: Number(data?.todaysmonitaring) || 0,
+          "Partially Compliant":
+            Number(data?.compliant?.[0]?.partially_compliant) || 0,
+          Compliant: Number(data?.compliant?.[0]?.compliant) || 0,
+          "Not Compliant": Number(data?.compliant?.[0]?.not_compliant) || 0,
+          "Toilet Clean": Number(data?.compliant?.[0]?.toiletunclean) || 0,
         };
       });
       setExcelData(myexcelData);
     }
   }, [vendorReports]);
+
+  const VendorWiseReportcolumn = [
+    {
+      title: "Vendor Name",
+      dataIndex: "name",
+      key: "name",
+      width: 350,
+      render: (text, record) => {
+        return (
+          <span onClick={() => handleClick(record)}>{text ? text : ""}</span>
+        );
+      },
+    },
+    {
+      title: "Total Quantity",
+      dataIndex: "total",
+      key: "total",
+      width: 50,
+    },
+    {
+      title: "Registered",
+      dataIndex: "registered",
+      key: "registered",
+      width: 50,
+    },
+    {
+      title: "Monitoring",
+      dataIndex: "todaysmonitaring",
+      key: "todaysmonitaring",
+      width: 50,
+    },
+    {
+      title: "Partially Compliant",
+      dataIndex: "compliant",
+      key: "compliant",
+      render: (text, record) => {
+        return record?.compliant?.[0]?.partially_compliant
+          ? record?.compliant?.[0]?.partially_compliant
+          : 0;
+      },
+      width: 50,
+    },
+    {
+      title: "Compliant",
+      dataIndex: "compliant",
+      key: "compliant",
+      render: (text, record) => {
+        return record?.compliant?.[0]?.compliant
+          ? record?.compliant?.[0]?.compliant
+          : 0;
+      },
+      width: 50,
+    },
+    {
+      title: "Not Compliant",
+      dataIndex: "compliant",
+      key: "compliant",
+      render: (text, record) => {
+        return record?.compliant?.[0]?.not_compliant
+          ? record?.compliant?.[0]?.not_compliant
+          : 0;
+      },
+      width: 50,
+    },
+    {
+      title: "Toilet Unclean",
+      dataIndex: "compliant",
+      key: "compliant",
+      render: (text, record) => {
+        return record?.compliant?.[0]?.toiletunclean
+          ? record?.compliant?.[0]?.toiletunclean
+          : 0;
+      },
+      width: 50,
+    },
+    // {
+    //   title: "Clean",
+    //   dataIndex: "clean",
+    //   key: "clean",
+    // },
+    // {
+    //   title: "Maintenance",
+    //   dataIndex: "maintenance",
+    //   key: "maintenance",
+    // },
+    // {
+    //   title: "Unclean",
+    //   dataIndex: "unclean",
+    //   key: "unclean",
+    // },
+  ];
+
+  // Modal columns
+  const columns = [
+    { title: "Sector Name", dataIndex: "name", key: "name" },
+    { title: "Total Quantity", dataIndex: "total", key: "total" },
+    { title: "Total Registered", dataIndex: "registered", key: "registered" },
+    {
+      title: "Monitoring",
+      dataIndex: "todaysmonitaring",
+      key: "todaysmonitaring",
+    },
+    { title: "Clean", dataIndex: "clean", key: "clean" },
+    { title: "Unclean", dataIndex: "unclean", key: "unclean" },
+  ];
 
   // pdf header
   const pdfHeader = [
@@ -282,10 +441,11 @@ const VendorReports = () => {
     "Vendor Name",
     "Total",
     "Registered",
-    // "Clean",
-    // "Maintenance",
-    // "Unclean",
     "Monitoring",
+    "Partially Compliant",
+    "Compliant",
+    "Not Compliant",
+    "Toilet Clean",
   ];
 
   // pdf data
@@ -296,10 +456,11 @@ const VendorReports = () => {
         opt?.Name,
         opt?.Total,
         opt?.Registered,
-        // opt?.Clean,
-        // opt?.Maintenance,
-        // opt?.Unclean,
         opt?.Monitoring,
+        opt?.["Partially Compliant"],
+        opt?.Compliant,
+        opt?.["Not Compliant"],
+        opt?.["Toilet Clean"],
       ]) || []
     );
   }, [excelData]);
@@ -314,6 +475,7 @@ const VendorReports = () => {
             pdfName={filesName ? filesName : `Vendor-Wise-Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
+            landscape={true}
             rows={[
               ...pdfData,
               [
@@ -322,9 +484,10 @@ const VendorReports = () => {
                 count?.total,
                 count?.registered,
                 count?.monitoring,
-                // count?.clean,
-                // count?.maintenance,
-                // count?.unclean,
+                count?.partially_compliant,
+                count?.compliant,
+                count?.not_compliant,
+                count?.toiletunclean,
               ],
             ]}
           />
@@ -349,21 +512,26 @@ const VendorReports = () => {
                 value: count?.monitoring,
                 colIndex: 5,
               },
-              // {
-              //   name: "Clean",
-              //   value: count?.clean,
-              //   colIndex: 5,
-              // },
-              // {
-              //   name: "Maintenance",
-              //   value: count?.maintenance,
-              //   colIndex: 6,
-              // },
-              // {
-              //   name: "Unclean",
-              //   value: count?.unclean,
-              //   colIndex: 7,
-              // },
+              {
+                name: "Partialy Compliant",
+                value: count?.partially_compliant,
+                colIndex: 6,
+              },
+              {
+                name: "Compliant",
+                value: count?.compliant,
+                colIndex: 7,
+              },
+              {
+                name: "Not Compliant",
+                value: count?.not_compliant,
+                colIndex: 8,
+              },
+              {
+                name: "Unclean",
+                value: count?.toiletunclean,
+                colIndex: 9,
+              },
             ]}
           />
         </div>
@@ -435,7 +603,7 @@ const VendorReports = () => {
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
-                          loading={loading}
+                          loading={VendorReport_Loading}
                           type="button"
                           htmlType="submit"
                           className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
@@ -445,7 +613,7 @@ const VendorReports = () => {
                       </div>
                       <div>
                         <Button
-                          loading={loading}
+                          loading={VendorReport_Loading}
                           type="button"
                           className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
                           onClick={resetForm}
@@ -462,22 +630,27 @@ const VendorReports = () => {
         />
       </div>
 
+      {console.log("VendorReport_Loading", VendorReport_Loading)}
+
       <Table
-        loading={loading}
-        columns={VendorWiseReportcolumns || []}
+        loading={VendorReport_Loading || SectorReport_Loading}
+        columns={VendorWiseReportcolumn || []}
         dataSource={vendorDetails?.list || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
         bordered
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {count?.total || 0}</strong>
-            <strong>Total Registered: {count?.registered || 0}</strong>
-            <strong>Total Monitoring : {count?.monitoring || 0}</strong>
-            {/* <strong>Total Clean : {count?.clean || 0}</strong>
-            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
+            <strong>Vendors: {vendorsData?.length}</strong>
+            <strong>Total: {count?.total || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>Monitoring : {count?.monitoring || 0}</strong>
+            <strong>
+              Partialy Compliant : {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+            <strong>Unclean: {count?.toiletunclean || 0}</strong>
           </div>
         )}
       />
@@ -485,19 +658,25 @@ const VendorReports = () => {
       {/* total quantity */}
       <ViewVendorsSectors
         width={900}
-        title={`""`}
-        openModal={false}
+        title={`Sector Wise Report`}
+        openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
-        tableData={[] || []}
-        column={[] || []}
+        tableData={sectorData || []}
+        tableHeaderData={[
+          {
+            label: "Vendor Name",
+            value: `${showModal?.name}`,
+          },
+        ]}
+        column={columns || []}
         footer={() => (
           <div className="flex justify-between">
-            {/* <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {count?.total || 0}</strong>
-            <strong>Total Registered: {count?.registered || 0}</strong> */}
-            {/* <strong>Total Clean : {count?.clean || 0}</strong>
-            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
+            <strong>Total Sectors: {sectorData?.length}</strong>
+            <strong>Total Quantity: {modalQuantity?.totalQnty}</strong>
+            <strong>Total Register: {modalQuantity?.registered}</strong>
+            <strong>Total Monitoring: {modalQuantity?.monitoring}</strong>
+            <strong>Total Clean: {modalQuantity?.clean}</strong>
+            <strong>Total Unclean: {modalQuantity?.unclean}</strong>
           </div>
         )}
       />

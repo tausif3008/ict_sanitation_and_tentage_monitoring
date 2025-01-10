@@ -52,7 +52,8 @@ const ToiletDetails = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
-  const { vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { vendorReports, VendorReport_Loading, VendorCatTypeDrop } =
+    VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
   const toiletData = assetData?.asset_types || [];
 
@@ -177,31 +178,45 @@ const ToiletDetails = () => {
   useEffect(() => {
     if (vendorReports) {
       const total = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.total) || 0,
+        (acc, circle) => acc + Number(circle?.total),
         0
       );
       const totalReg = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.registered) || 0,
+        (acc, circle) => acc + Number(circle?.registered),
         0
       );
-      const totalClean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.clean) || 0,
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
         0
       );
-      const totalUnclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.unclean) || 0,
+      const partially_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
         0
       );
-      const totalMaintenance = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.maintenance) || 0,
+      const compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
         0
       );
+      const not_compliant = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        0
+      );
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) =>
+          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
+        0
+      );
+
       setCount({
         total: total,
         registered: totalReg,
-        clean: totalClean,
-        maintenance: totalMaintenance,
-        unclean: totalUnclean,
+        monitoring: totalMonitoring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
       });
     }
   }, [vendorReports]);
@@ -457,7 +472,8 @@ const ToiletDetails = () => {
 
       {/* total quantity */}
       <ViewVendorsSectors
-        width={900}
+        width={1200}
+        loading={VendorReport_Loading}
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
         openModal={showData && !loading}
         handleCancel={handleCancel}
@@ -465,12 +481,19 @@ const ToiletDetails = () => {
         column={VendorWiseReportcolumns || []}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {count?.total || 0}</strong>
-            <strong>Total Registered: {count?.registered || 0}</strong>
-            {/* <strong>Total Clean : {count?.clean || 0}</strong>
-            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
+            <strong>Vendors: {vendorsData?.length}</strong>
+            <p></p>
+            <p></p>
+            <p></p>
+            <strong>Total: {count?.total || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>Monitoring : {count?.monitoring || 0}</strong>
+            <strong>
+              Partialy Compliant : {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+            <strong>Unclean: {count?.toiletunclean || 0}</strong>
           </div>
         )}
       />

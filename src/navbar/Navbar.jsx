@@ -94,17 +94,17 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      incidentDash_param?.includes(userRoleId) && {
-        key: "5",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/incident-dashboard"
-          >
-            Incident Dashboard
-          </Link>
-        ),
-      },
+      // incidentDash_param?.includes(userRoleId) && {
+      //   key: "5",
+      //   label: (
+      //     <Link
+      //       className="text-black no-underline hover:text-green"
+      //       to="/incident-dashboard"
+      //     >
+      //       Incident Dashboard
+      //     </Link>
+      //   ),
+      // },
       vendorDash_param.includes(userRoleId) &&
         tentageIdUser != "2" && {
           key: "6",

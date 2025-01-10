@@ -4,6 +4,7 @@ import { Modal, Table } from "antd";
 const ViewVendorsSectors = ({
   title,
   openModal,
+  loading = false,
   handleCancel,
   tableData,
   footer = 0,
@@ -19,6 +20,7 @@ const ViewVendorsSectors = ({
             <h5>{title} :</h5>
           </div>
         }
+        loading={loading}
         open={openModal}
         onCancel={handleCancel}
         footer={footer}

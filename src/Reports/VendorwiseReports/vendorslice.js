@@ -48,7 +48,7 @@ export const getVendorReports = (url, data) => async (dispatch) => {
 // get vendor list using asset main type and asset type
 export const getVendorCategoryTypeDrop = (param) => async (dispatch) => {
   try {
-    dispatch(setLoading(true));
+    // dispatch(setLoading(true));
     const res = await axiosInstance.get(
       `${URLS?.vendorTypeCategoryDrop?.path}`,
       { params: param }
@@ -57,7 +57,7 @@ export const getVendorCategoryTypeDrop = (param) => async (dispatch) => {
   } catch (error) {
     console.error("In get vendor dropdown data error", error);
   } finally {
-    dispatch(setLoading(false));
+    // dispatch(setLoading(false));
   }
 };
 

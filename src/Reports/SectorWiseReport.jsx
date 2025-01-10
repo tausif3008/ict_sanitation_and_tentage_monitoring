@@ -17,11 +17,11 @@ import {
   getAssetTypes,
 } from "../register/AssetType/AssetTypeSlice";
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
-import { getAssetTypeWiseVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
-import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import { getFormData } from "../urils/getFormData";
 import { getValueLabel } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
+import { getVendorCategoryTypeDrop } from "./VendorwiseReports/vendorslice";
+import VendorSelectors from "./VendorwiseReports/vendorSelectors";
 
 const SectorWiseReport = () => {
   const [totalQuantity, setTotalQuantity] = useState({
@@ -34,9 +34,11 @@ const SectorWiseReport = () => {
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
+
   const dispatch = useDispatch();
-  const { SectorReports, loading } = SectorReportSelectors(); // sector reports
-  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
+  const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
 
   const userRoleId = localStorage.getItem("role_id");
@@ -46,25 +48,19 @@ const SectorWiseReport = () => {
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
 
-  const sectorData = useMemo(() => {
-    return (
-      SectorReports?.data?.sectors?.map((item) => ({
-        ...item,
-        total: Number(item?.total),
-        registered: Number(item?.registered),
-        clean: Number(item?.clean),
-        unclean: Number(item?.unclean),
-      })) || []
-    );
-  }, [SectorReports]);
-
   // handle category
   const handleSelect = (value) => {
     form.setFieldsValue({
       asset_type_id: null,
+      vendor_id: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
+
+    const paramData = {
+      asset_main_type_id: value,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
   };
 
   // handle asset type
@@ -72,7 +68,13 @@ const SectorWiseReport = () => {
     form.setFieldsValue({
       vendor_id: null,
     });
-    value && userRoleId != "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
+    if (userRoleId !== "8" && value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
   };
 
   // fiter finish
@@ -110,7 +112,7 @@ const SectorWiseReport = () => {
   const getReportName = () => {
     const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
     const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-    const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
+    const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
 
     if (vendor_id_name && asset_type_id_name) {
       return `${vendorName} - ( ${assetTypeName} ) -Sector Report`;
@@ -131,7 +133,7 @@ const SectorWiseReport = () => {
   }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
 
   useEffect(() => {
-    if (SectorReports) {
+    if (sectorData) {
       const totalQty = sectorData?.reduce(
         (acc, sector) => acc + Number(sector?.total),
         0
@@ -155,7 +157,7 @@ const SectorWiseReport = () => {
         unclean: totalUnclean,
       });
     }
-  }, [SectorReports]);
+  }, [sectorData]);
 
   // current data
   const getCurrentData = () => {
@@ -166,6 +168,11 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + "1";
     dispatch(getAssetTypes(url)); // get assset type
+
+    const paramData = {
+      asset_main_type_id: "1",
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
 
     const finalValues = {
       date: newDate,
@@ -331,7 +338,7 @@ const SectorWiseReport = () => {
                           name={"vendor_id"}
                           label={"Select Vendor"}
                           placeholder={"Select Vendor"}
-                          options={AssetTypeVendorDrop || []}
+                          options={VendorCatTypeDrop || []}
                         />
                       </Col>
                     )}
@@ -346,7 +353,7 @@ const SectorWiseReport = () => {
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
-                          loading={loading}
+                          loading={SectorReport_Loading}
                           type="button"
                           htmlType="submit"
                           className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
@@ -356,7 +363,7 @@ const SectorWiseReport = () => {
                       </div>
                       <div>
                         <Button
-                          loading={loading}
+                          loading={SectorReport_Loading}
                           type="button"
                           className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
                           onClick={resetForm}
@@ -373,7 +380,7 @@ const SectorWiseReport = () => {
         />
       </div>
       <Table
-        loading={loading}
+        loading={SectorReport_Loading}
         columns={columns}
         dataSource={sectorData || []}
         rowKey="sector_id"
