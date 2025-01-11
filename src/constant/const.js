@@ -134,8 +134,8 @@ export const VendorWiseReportcolumns = [
   },
   {
     title: "Partially Compliant",
-    dataIndex: "compliant",
-    key: "compliant",
+    dataIndex: "partially_compliant",
+    key: "partially_compliant",
     width: 50,
   },
   {
@@ -146,14 +146,14 @@ export const VendorWiseReportcolumns = [
   },
   {
     title: "Not Compliant",
-    dataIndex: "compliant",
-    key: "compliant",
+    dataIndex: "not_compliant",
+    key: "not_compliant",
     width: 50,
   },
   {
     title: "Toilet Unclean",
-    dataIndex: "compliant",
-    key: "compliant",
+    dataIndex: "toiletunclean",
+    key: "toiletunclean",
     width: 50,
   },
 ];

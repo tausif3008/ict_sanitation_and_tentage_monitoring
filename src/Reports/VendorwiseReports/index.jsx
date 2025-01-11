@@ -27,6 +27,9 @@ import { getSectorReports } from "../SectorSlice/sectorSlice";
 import SectorReportSelectors from "../SectorSlice/sectorSelector";
 
 const VendorReports = () => {
+  const [excelData, setExcelData] = useState([]);
+  const [showModal, setShowModal] = useState(null);
+  const [filesName, setFilesName] = useState(null); // files Name
   const [count, setCount] = useState({
     total: 0,
     registered: 0,
@@ -34,7 +37,7 @@ const VendorReports = () => {
     partially_compliant: 0,
     compliant: 0,
     not_compliant: 0,
-    toiletclean: 0,
+    toiletunclean: 0,
   });
   const [modalQuantity, setModalQuantity] = useState({
     total: 0,
@@ -43,10 +46,6 @@ const VendorReports = () => {
     clean: 0,
     unclean: 0,
   });
-
-  const [excelData, setExcelData] = useState([]);
-  const [showModal, setShowModal] = useState(null);
-  const [filesName, setFilesName] = useState(null); // files Name
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
     pageLength: 25,
@@ -62,43 +61,10 @@ const VendorReports = () => {
   const vendorsData = vendorReports?.data?.vendors || [];
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
-
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
-
-  useEffect(() => {
-    if (sectorData) {
-      const totalQty = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.total),
-        0
-      );
-      const totalRegister = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.registered),
-        0
-      );
-      const totalClean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.clean),
-        0
-      );
-      const totalUnclean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.unclean),
-        0
-      );
-      const monitaring = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.todaysmonitaring),
-        0
-      );
-      setModalQuantity({
-        totalQnty: totalQty,
-        monitoring: monitaring,
-        registered: totalRegister,
-        clean: totalClean,
-        unclean: totalUnclean,
-      });
-    }
-  }, [sectorData]);
 
   // close module
   const handleCancel = () => {
@@ -201,7 +167,6 @@ const VendorReports = () => {
       asset_main_type_id: 1,
     };
     dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
-
     dispatch(getAssetTypes(url)); // get assset type
   };
 
@@ -215,6 +180,7 @@ const VendorReports = () => {
     setFilesName(null);
   };
 
+  // table quantity
   useEffect(() => {
     if (vendorReports) {
       const total = vendorsData?.reduce(
@@ -241,8 +207,8 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.not_compliant) || 0,
         0
       );
-      const toiletclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
         0
       );
 
@@ -253,10 +219,43 @@ const VendorReports = () => {
         partially_compliant: partially_compliant,
         compliant: compliant,
         not_compliant: not_compliant,
-        toiletclean: toiletclean,
+        toiletunclean: toiletunclean,
       });
     }
   }, [vendorReports]);
+
+  // modal quantity
+  useEffect(() => {
+    if (sectorData) {
+      const totalQty = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.total),
+        0
+      );
+      const totalRegister = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.registered),
+        0
+      );
+      const totalClean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.clean),
+        0
+      );
+      const totalUnclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.unclean),
+        0
+      );
+      const monitaring = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.todaysmonitaring),
+        0
+      );
+      setModalQuantity({
+        totalQnty: totalQty,
+        monitoring: monitaring,
+        registered: totalRegister,
+        clean: totalClean,
+        unclean: totalUnclean,
+      });
+    }
+  }, [sectorData]);
 
   // file name
   const getReportName = () => {
@@ -311,7 +310,7 @@ const VendorReports = () => {
           "Partially Compliant": Number(data?.partially_compliant) || 0,
           Compliant: Number(data?.compliant) || 0,
           "Not Compliant": Number(data?.not_compliant) || 0,
-          "Toilet Clean": Number(data?.toiletclean) || 0,
+          "Toilet Unclean": Number(data?.toiletunclean) || 0,
         };
       });
       setExcelData(myexcelData);
@@ -320,7 +319,7 @@ const VendorReports = () => {
 
   // Create a reusable render function
   const renderColumn = (text, record) => {
-    return <span onClick={() => handleClick(record)}>{text ? text : ""}</span>;
+    return <span onClick={() => handleClick(record)}>{text ? text : 0}</span>;
   };
 
   const VendorWiseReportcolumn = [
@@ -354,8 +353,8 @@ const VendorReports = () => {
     },
     {
       title: "Partially Compliant",
-      dataIndex: "compliant",
-      key: "compliant",
+      dataIndex: "partially_compliant",
+      key: "partially_compliant",
       width: 50,
       render: renderColumn,
     },
@@ -368,15 +367,15 @@ const VendorReports = () => {
     },
     {
       title: "Not Compliant",
-      dataIndex: "compliant",
-      key: "compliant",
+      dataIndex: "not_compliant",
+      key: "not_compliant",
       width: 50,
       render: renderColumn,
     },
     {
       title: "Toilet Unclean",
-      dataIndex: "compliant",
-      key: "compliant",
+      dataIndex: "toiletunclean",
+      key: "toiletunclean",
       width: 50,
       render: renderColumn,
     },
@@ -421,7 +420,7 @@ const VendorReports = () => {
         opt?.["Partially Compliant"],
         opt?.Compliant,
         opt?.["Not Compliant"],
-        opt?.["Toilet Clean"],
+        opt?.["Toilet Unclean"],
       ]) || []
     );
   }, [excelData]);
@@ -448,7 +447,7 @@ const VendorReports = () => {
                 count?.partially_compliant,
                 count?.compliant,
                 count?.not_compliant,
-                count?.toiletclean,
+                count?.toiletunclean,
               ],
             ]}
           />
@@ -490,7 +489,7 @@ const VendorReports = () => {
               },
               {
                 name: "Clean",
-                value: count?.toiletclean,
+                value: count?.toiletunclean,
                 colIndex: 9,
               },
             ]}
@@ -609,7 +608,7 @@ const VendorReports = () => {
             </strong>
             <strong>Compliant : {count?.compliant || 0}</strong>
             <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Clean: {count?.toiletclean || 0}</strong>
+            <strong>Unclean: {count?.toiletunclean || 0}</strong>
           </div>
         )}
       />
