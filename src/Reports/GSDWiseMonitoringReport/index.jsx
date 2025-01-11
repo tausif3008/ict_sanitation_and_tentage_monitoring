@@ -39,11 +39,11 @@ const GsdWiseMonitoringReport = () => {
 
   const dispatch = useDispatch();
   const { GSDReport_data, loading } = GsdRegistrationSelector(); // gsd selector
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
-  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
+  // const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
+  // const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
-  let uri = URLS?.gsdRegistrationReport?.path;
+  // let uri = URLS?.gsdRegistrationReport?.path;
   const [form] = Form.useForm();
 
   // fiter finish
@@ -92,14 +92,14 @@ const GsdWiseMonitoringReport = () => {
   };
 
   // handle asset main type
-  const handleSelect = (value) => {
-    form.setFieldsValue({
-      asset_type_id: null,
-      to_user_id: null,
-    });
-    const url = URLS?.assetType?.path + value;
-    dispatch(getAssetTypes(url)); // get assset type
-  };
+  // const handleSelect = (value) => {
+  //   form.setFieldsValue({
+  //     asset_type_id: null,
+  //     to_user_id: null,
+  //   });
+  //   const url = URLS?.assetType?.path + value;
+  //   dispatch(getAssetTypes(url)); // get assset type
+  // };
 
   // handle asset type
   //   const handleTypeSelect = (value) => {
@@ -142,8 +142,8 @@ const GsdWiseMonitoringReport = () => {
   // }, []);
 
   useEffect(() => {
-    const urls = URLS?.monitoringAgent?.path;
-    dispatch(getMonitoringAgent(urls)); // monitoring agent list
+    // const urls = URLS?.monitoringAgent?.path;
+    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
     dispatch(getSectorsList()); // all sectors
   }, []);
 
@@ -225,7 +225,7 @@ const GsdWiseMonitoringReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    {/* <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"created_by"}
                         label={"Select GSD"}
@@ -236,7 +236,7 @@ const GsdWiseMonitoringReport = () => {
                         apiAction={getMonitoringAgent}
                         onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                       />
-                    </Col>
+                    </Col> */}
                     <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"sector_id"}
