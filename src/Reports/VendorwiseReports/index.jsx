@@ -319,7 +319,14 @@ const VendorReports = () => {
 
   // Create a reusable render function
   const renderColumn = (text, record) => {
-    return <span onClick={() => handleClick(record)}>{text ? text : 0}</span>;
+    return (
+      <span
+        onClick={() => handleClick(record)}
+        className="cursor-pointer hover:text-blue-500 hover:underline"
+      >
+        {text ? text : 0}
+      </span>
+    );
   };
 
   const VendorWiseReportcolumn = [
