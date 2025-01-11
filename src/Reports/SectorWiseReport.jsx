@@ -312,57 +312,50 @@ const SectorWiseReport = () => {
       title: "Sector Name",
       dataIndex: "name",
       key: "name",
-      render: renderColumn, // Reuse the render function
+      render: renderColumn,
+      sorter: (a, b) => {
+        const nameA = a?.name ? a?.name?.toString() : "";
+        const nameB = b?.name ? b?.name?.toString() : "";
+        return nameA?.localeCompare(nameB);
+      },
     },
     {
       title: "Total Quantity",
       dataIndex: "total",
       key: "total",
       render: renderColumn,
+      sorter: (a, b) => a?.total - b?.total,
     },
     {
       title: "Total Registered",
       dataIndex: "registered",
       key: "registered",
       render: renderColumn,
+      sorter: (a, b) => a?.registered - b?.registered,
     },
     {
       title: "Monitoring",
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
       render: renderColumn,
+      sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
     {
-      title: "Partially Compliant",
-      dataIndex: "partially_compliant",
-      key: "partially_compliant",
-      width: 50,
-      render: renderColumn, // Reuse the render function
+      title: "Clean",
+      dataIndex: "clean",
+      key: "clean",
+      render: renderColumn,
+      sorter: (a, b) => a?.clean - b?.clean,
     },
     {
-      title: "Compliant",
-      dataIndex: "compliant",
-      key: "compliant",
-      width: 50,
-      render: renderColumn, // Reuse the render function
-    },
-    {
-      title: "Not Compliant",
-      dataIndex: "not_compliant",
-      key: "not_compliant",
-      width: 50,
-      render: renderColumn, // Reuse the render function
-    },
-    {
-      title: "Toilet Unclean",
-      dataIndex: "toiletunclean",
-      key: "toiletunclean",
-      width: 50,
-      render: renderColumn, // Reuse the render function
+      title: "Unclean",
+      dataIndex: "unclean",
+      key: "unclean",
+      render: renderColumn,
+      sorter: (a, b) => a?.unclean - b?.unclean,
     },
   ];
 
-  // pdf header
   const pdfHeader = [
     "Sr No",
     "Sector Name",
@@ -402,6 +395,38 @@ const SectorWiseReport = () => {
       "Toilet Unclean": Number(data?.toiletunclean) || 0,
     }));
   }, [sectorData]);
+
+  const rowClassName = (record, index) => {
+    return index === sectorData?.length
+      ? "bg-green-100 text-black font-bold"
+      : "";
+  };
+
+  const lastTableRow = [
+    {
+      name: sectorData?.length,
+      total: totalQuantity?.totalQnty,
+      registered: totalQuantity?.registered,
+      todaysmonitaring: totalQuantity?.monitoring,
+      partially_compliant: totalQuantity?.partially_compliant,
+      compliant: totalQuantity?.compliant,
+      not_compliant: totalQuantity?.not_compliant,
+      toiletunclean: totalQuantity?.toiletunclean,
+    },
+  ];
+
+  const lastTableModalRow = [
+    {
+      name: vendorsData?.length,
+      total: count?.total,
+      registered: count?.registered,
+      todaysmonitaring: count?.monitoring,
+      partially_compliant: count?.partially_compliant,
+      compliant: count?.compliant,
+      not_compliant: count?.not_compliant,
+      toiletunclean: count?.toiletunclean,
+    },
+  ];
 
   return (
     <div>
@@ -564,24 +589,26 @@ const SectorWiseReport = () => {
       <Table
         loading={SectorReport_Loading || VendorReport_Loading}
         columns={columns}
-        dataSource={sectorData || []}
+        // dataSource={sectorData || []}
+        dataSource={[...sectorData, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 30 }}
         bordered
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Vendors: {sectorData?.length}</strong>
-            <strong>Total: {totalQuantity?.totalQnty || 0}</strong>
-            <strong>Registered: {totalQuantity?.registered || 0}</strong>
-            <strong>Monitoring : {totalQuantity?.monitoring || 0}</strong>
-            <strong>
-              Partialy Compliant : {totalQuantity?.partially_compliant || 0}
-            </strong>
-            <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
-            <strong>Not Compliant: {totalQuantity?.not_compliant || 0}</strong>
-            <strong>Unclean: {totalQuantity?.toiletunclean || 0}</strong>
-          </div>
-        )}
+        rowClassName={rowClassName}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Vendors: {sectorData?.length}</strong>
+        //     <strong>Total: {totalQuantity?.totalQnty || 0}</strong>
+        //     <strong>Registered: {totalQuantity?.registered || 0}</strong>
+        //     <strong>Monitoring : {totalQuantity?.monitoring || 0}</strong>
+        //     <strong>
+        //       Partialy Compliant : {totalQuantity?.partially_compliant || 0}
+        //     </strong>
+        //     <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
+        //     <strong>Not Compliant: {totalQuantity?.not_compliant || 0}</strong>
+        //     <strong>Unclean: {totalQuantity?.toiletunclean || 0}</strong>
+        //   </div>
+        // )}
       />
 
       {/* total quantity */}
@@ -590,7 +617,7 @@ const SectorWiseReport = () => {
         title={`Vendor Wise Report`}
         openModal={showModal && !VendorReport_Loading}
         handleCancel={handleCancel}
-        tableData={vendorsData || []}
+        tableData={[...vendorsData, ...lastTableModalRow] || []}
         tableHeaderData={[
           {
             label: "Sector Name",
@@ -598,20 +625,21 @@ const SectorWiseReport = () => {
           },
         ]}
         column={VendorWiseReportcolumns || []}
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Vendors: {vendorsData?.length}</strong>
-            <strong>Total: {count?.total || 0}</strong>
-            <strong>Monitoring : {count?.monitoring || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>
-              Partialy Compliant : {count?.partially_compliant || 0}
-            </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Unclean: {count?.toiletunclean || 0}</strong>
-          </div>
-        )}
+        IsLastRowBold={true}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Vendors: {vendorsData?.length}</strong>
+        //     <strong>Total: {count?.total || 0}</strong>
+        //     <strong>Monitoring : {count?.monitoring || 0}</strong>
+        //     <strong>Registered: {count?.registered || 0}</strong>
+        //     <strong>
+        //       Partialy Compliant : {count?.partially_compliant || 0}
+        //     </strong>
+        //     <strong>Compliant : {count?.compliant || 0}</strong>
+        //     <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+        //     <strong>Unclean: {count?.toiletunclean || 0}</strong>
+        //   </div>
+        // )}
       />
     </div>
   );

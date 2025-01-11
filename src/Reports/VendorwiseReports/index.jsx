@@ -307,8 +307,8 @@ const VendorReports = () => {
           Total: Number(data?.total) || 0,
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
-          "Partially Compliant": Number(data?.partially_compliant) || 0,
           Compliant: Number(data?.compliant) || 0,
+          "Partially Compliant": Number(data?.partially_compliant) || 0,
           "Not Compliant": Number(data?.not_compliant) || 0,
           "Toilet Unclean": Number(data?.toiletunclean) || 0,
         };
@@ -329,6 +329,11 @@ const VendorReports = () => {
       key: "name",
       width: 350,
       render: renderColumn,
+      sorter: (a, b) => {
+        const nameA = a?.name ? a?.name?.toString() : "";
+        const nameB = b?.name ? b?.name?.toString() : "";
+        return nameA?.localeCompare(nameB);
+      },
     },
     {
       title: "Total Quantity",
@@ -336,6 +341,7 @@ const VendorReports = () => {
       key: "total",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.total - b?.total,
     },
     {
       title: "Registered",
@@ -343,6 +349,7 @@ const VendorReports = () => {
       key: "registered",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.total - b?.total,
     },
     {
       title: "Monitoring",
@@ -350,6 +357,7 @@ const VendorReports = () => {
       key: "todaysmonitaring",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
     {
       title: "Partially Compliant",
@@ -357,6 +365,7 @@ const VendorReports = () => {
       key: "partially_compliant",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
     {
       title: "Compliant",
@@ -364,6 +373,7 @@ const VendorReports = () => {
       key: "compliant",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.compliant - b?.compliant,
     },
     {
       title: "Not Compliant",
@@ -371,6 +381,7 @@ const VendorReports = () => {
       key: "not_compliant",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
     {
       title: "Toilet Unclean",
@@ -378,21 +389,52 @@ const VendorReports = () => {
       key: "toiletunclean",
       width: 50,
       render: renderColumn,
+      sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
   ];
 
   // Modal columns
   const columns = [
-    { title: "Sector Name", dataIndex: "name", key: "name" },
-    { title: "Total Quantity", dataIndex: "total", key: "total" },
-    { title: "Total Registered", dataIndex: "registered", key: "registered" },
+    {
+      title: "Sector Name",
+      dataIndex: "name",
+      key: "name",
+      sorter: (a, b) => {
+        const nameA = a?.name ? a?.name?.toString() : "";
+        const nameB = b?.name ? b?.name?.toString() : "";
+        return nameA?.localeCompare(nameB);
+      },
+    },
+    {
+      title: "Total Quantity",
+      dataIndex: "total",
+      key: "total",
+      sorter: (a, b) => a?.total - b?.total,
+    },
+    {
+      title: "Total Registered",
+      dataIndex: "registered",
+      key: "registered",
+      sorter: (a, b) => a?.registered - b?.registered,
+    },
     {
       title: "Monitoring",
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
+      sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
-    { title: "Clean", dataIndex: "clean", key: "clean" },
-    { title: "Unclean", dataIndex: "unclean", key: "unclean" },
+    {
+      title: "Clean",
+      dataIndex: "clean",
+      key: "clean",
+      sorter: (a, b) => a?.clean - b?.clean,
+    },
+    {
+      title: "Unclean",
+      dataIndex: "unclean",
+      key: "unclean",
+      sorter: (a, b) => a?.unclean - b?.unclean,
+    },
   ];
 
   // pdf header
@@ -402,10 +444,10 @@ const VendorReports = () => {
     "Total",
     "Registered",
     "Monitoring",
-    "Partially Compliant",
     "Compliant",
+    "Partially Compliant",
     "Not Compliant",
-    "Toilet Clean",
+    "Toilet Unclean",
   ];
 
   // pdf data
@@ -417,13 +459,47 @@ const VendorReports = () => {
         opt?.Total,
         opt?.Registered,
         opt?.Monitoring,
-        opt?.["Partially Compliant"],
         opt?.Compliant,
+        opt?.["Partially Compliant"],
         opt?.["Not Compliant"],
         opt?.["Toilet Unclean"],
       ]) || []
     );
   }, [excelData]);
+
+  const rowClassName = (record, index) => {
+    return index === vendorDetails?.list?.length
+      ? "bg-green-100 text-black font-bold"
+      : "";
+  };
+
+  const lastTableRow = [
+    {
+      name: vendorsData?.length,
+      total: count?.total,
+      registered: count?.registered,
+      todaysmonitaring: count?.monitoring,
+      partially_compliant: count?.partially_compliant,
+      compliant: count?.compliant,
+      not_compliant: count?.not_compliant,
+      toiletunclean: count?.toiletunclean,
+    },
+  ];
+
+  const lastTableModalRow = [
+    {
+      name: sectorData?.length,
+      total: modalQuantity?.totalQnty,
+      registered: modalQuantity?.registered,
+      todaysmonitaring: modalQuantity?.monitoring,
+      // partially_compliant: modalQuantity?.partially_compliant,
+      // compliant: modalQuantity?.compliant,
+      // not_compliant: modalQuantity?.not_compliant,
+      // toiletunclean: modalQuantity?.toiletunclean,
+      clean: modalQuantity?.clean,
+      unclean: modalQuantity?.unclean,
+    },
+  ];
 
   return (
     <div>
@@ -444,8 +520,8 @@ const VendorReports = () => {
                 count?.total,
                 count?.registered,
                 count?.monitoring,
-                count?.partially_compliant,
                 count?.compliant,
+                count?.partially_compliant,
                 count?.not_compliant,
                 count?.toiletunclean,
               ],
@@ -473,13 +549,13 @@ const VendorReports = () => {
                 colIndex: 5,
               },
               {
-                name: "Partialy Compliant",
-                value: count?.partially_compliant,
+                name: "Compliant",
+                value: count?.compliant,
                 colIndex: 6,
               },
               {
-                name: "Compliant",
-                value: count?.compliant,
+                name: "Partialy Compliant",
+                value: count?.partially_compliant,
                 colIndex: 7,
               },
               {
@@ -488,7 +564,7 @@ const VendorReports = () => {
                 colIndex: 8,
               },
               {
-                name: "Clean",
+                name: "Unclean",
                 value: count?.toiletunclean,
                 colIndex: 9,
               },
@@ -593,24 +669,25 @@ const VendorReports = () => {
       <Table
         loading={VendorReport_Loading || SectorReport_Loading}
         columns={VendorWiseReportcolumn || []}
-        dataSource={vendorDetails?.list || []}
+        dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
+        rowClassName={rowClassName}
         bordered
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Vendors: {vendorsData?.length}</strong>
-            <strong>Total: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring : {count?.monitoring || 0}</strong>
-            <strong>
-              Partialy Compliant : {count?.partially_compliant || 0}
-            </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Unclean: {count?.toiletunclean || 0}</strong>
-          </div>
-        )}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Vendors: {vendorsData?.length}</strong>
+        //     <strong>Total: {count?.total || 0}</strong>
+        //     <strong>Registered: {count?.registered || 0}</strong>
+        //     <strong>Monitoring : {count?.monitoring || 0}</strong>
+        //     <strong>
+        //       Partialy Compliant : {count?.partially_compliant || 0}
+        //     </strong>
+        //     <strong>Compliant : {count?.compliant || 0}</strong>
+        //     <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+        //     <strong>Unclean: {count?.toiletunclean || 0}</strong>
+        //   </div>
+        // )}
       />
 
       {/* total quantity */}
@@ -619,7 +696,8 @@ const VendorReports = () => {
         title={`Sector Wise Report`}
         openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
-        tableData={sectorData || []}
+        // tableData={sectorData || []}
+        tableData={[...sectorData, ...lastTableModalRow] || []}
         tableHeaderData={[
           {
             label: "Vendor Name",
@@ -627,16 +705,17 @@ const VendorReports = () => {
           },
         ]}
         column={columns || []}
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Total Sectors: {sectorData?.length}</strong>
-            <strong>Total Quantity: {modalQuantity?.totalQnty}</strong>
-            <strong>Total Register: {modalQuantity?.registered}</strong>
-            <strong>Total Monitoring: {modalQuantity?.monitoring}</strong>
-            <strong>Total Clean: {modalQuantity?.clean}</strong>
-            <strong>Total Unclean: {modalQuantity?.unclean}</strong>
-          </div>
-        )}
+        IsLastRowBold={true}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Total Sectors: {sectorData?.length}</strong>
+        //     <strong>Total Quantity: {modalQuantity?.totalQnty}</strong>
+        //     <strong>Total Register: {modalQuantity?.registered}</strong>
+        //     <strong>Total Monitoring: {modalQuantity?.monitoring}</strong>
+        //     <strong>Total Clean: {modalQuantity?.clean}</strong>
+        //     <strong>Total Unclean: {modalQuantity?.unclean}</strong>
+        //   </div>
+        // )}
       />
     </div>
   );

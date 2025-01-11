@@ -230,6 +230,19 @@ const ToiletDetails = () => {
     }
   }, [vendorReports]);
 
+  const lastTableModalRow = [
+    {
+      name: vendorsData?.length,
+      total: count?.total,
+      registered: count?.registered,
+      todaysmonitaring: count?.monitoring,
+      partially_compliant: count?.partially_compliant,
+      compliant: count?.compliant,
+      not_compliant: count?.not_compliant,
+      toiletunclean: count?.toiletunclean,
+    },
+  ];
+
   return (
     <>
       <div className="p-4 bg-white rounded-xl space-y-4">
@@ -390,12 +403,14 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {getPercentage(
-                            Number(item?.partially_compliant) || 0,
-                            (Number(item?.toiletclean) || 0) +
-                              (Number(item?.toiletunclean) || 0)
-                          ) + "%"}
-                          {/* {item?.partially_compliant || 0} */}
+                          {(Number(item?.partially_compliant) || 0) +
+                            " (" +
+                            getPercentage(
+                              Number(item?.partially_compliant) || 0,
+                              (Number(item?.toiletclean) || 0) +
+                                (Number(item?.toiletunclean) || 0)
+                            ) +
+                            "%)"}
                         </span>
                       </div>
                       <div
@@ -404,13 +419,20 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {/* {item?.clean} */}
-                          {/* {item?.not_compliant || 0} */}
-                          {getPercentage(
+                          {/* {getPercentage(
                             Number(item?.not_compliant) || 0,
                             (Number(item?.toiletclean) || 0) +
                               (Number(item?.toiletunclean) || 0)
-                          ) + "%"}
+                          ) + "%"} */}
+
+                          {(Number(item?.not_compliant) || 0) +
+                            " (" +
+                            getPercentage(
+                              Number(item?.not_compliant) || 0,
+                              (Number(item?.toiletclean) || 0) +
+                                (Number(item?.toiletunclean) || 0)
+                            ) +
+                            "%)"}
                         </span>
                       </div>
                       <div
@@ -420,11 +442,20 @@ const ToiletDetails = () => {
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
                           {/* {item?.toiletunclean || 0} */}
-                          {getPercentage(
+                          {/* {getPercentage(
                             Number(item?.toiletunclean) || 0,
                             (Number(item?.toiletclean) || 0) +
                               (Number(item?.toiletunclean) || 0)
-                          ) + "%"}
+                          ) + "%"} */}
+
+                          {(Number(item?.toiletunclean) || 0) +
+                            " (" +
+                            getPercentage(
+                              Number(item?.toiletunclean) || 0,
+                              (Number(item?.toiletclean) || 0) +
+                                (Number(item?.toiletunclean) || 0)
+                            ) +
+                            "%)"}
                         </span>
                       </div>
                     </div>
@@ -474,25 +505,26 @@ const ToiletDetails = () => {
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
         openModal={showData && !loading}
         handleCancel={handleCancel}
-        tableData={vendorDetails?.list || []}
+        tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
         column={VendorWiseReportcolumns || []}
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Vendors: {vendorsData?.length}</strong>
-            <p></p>
-            <p></p>
-            <p></p>
-            <strong>Total: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring : {count?.monitoring || 0}</strong>
-            <strong>
-              Partialy Compliant : {count?.partially_compliant || 0}
-            </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Unclean: {count?.toiletunclean || 0}</strong>
-          </div>
-        )}
+        IsLastRowBold={true}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Vendors: {vendorsData?.length}</strong>
+        //     <p></p>
+        //     <p></p>
+        //     <p></p>
+        //     <strong>Total: {count?.total || 0}</strong>
+        //     <strong>Registered: {count?.registered || 0}</strong>
+        //     <strong>Monitoring : {count?.monitoring || 0}</strong>
+        //     <strong>
+        //       Partialy Compliant : {count?.partially_compliant || 0}
+        //     </strong>
+        //     <strong>Compliant : {count?.compliant || 0}</strong>
+        //     <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+        //     <strong>Unclean: {count?.toiletunclean || 0}</strong>
+        //   </div>
+        // )}
       />
     </>
   );

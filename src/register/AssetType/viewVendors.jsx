@@ -6,12 +6,19 @@ const ViewVendorsSectors = ({
   openModal,
   loading = false,
   handleCancel,
-  tableData,
+  tableData = [],
   footer = 0,
   width = 800,
   column = [],
   tableHeaderData = [],
+  IsLastRowBold = false,
 }) => {
+  const rowClassName = (record, index) => {
+    return index === tableData?.length-1
+      ? "bg-green-100 text-black font-bold"
+      : "";
+  };
+
   return (
     <>
       <Modal
@@ -43,6 +50,7 @@ const ViewVendorsSectors = ({
             pagination={false}
             // scroll={{ x: 800, y: 400 }}
             columns={column || []}
+            rowClassName={IsLastRowBold ? rowClassName : null}
           />
         ) : (
           <p>No vendors found for this type.</p>

@@ -284,9 +284,9 @@ const IncidentReports = () => {
             title: "Vendor Name",
             dataIndex: "vendor_name",
             key: "vendor_name",
+            width: 180,
           },
         ]),
-
     {
       title: "Incidence Date",
       dataIndex: "incidence_at",
