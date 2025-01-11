@@ -136,61 +136,26 @@ export const VendorWiseReportcolumns = [
     title: "Partially Compliant",
     dataIndex: "compliant",
     key: "compliant",
-    render: (text, record) => {
-      return record?.compliant?.[0]?.partially_compliant
-        ? record?.compliant?.[0]?.partially_compliant
-        : 0;
-    },
     width: 50,
   },
   {
     title: "Compliant",
     dataIndex: "compliant",
     key: "compliant",
-    render: (text, record) => {
-      return record?.compliant?.[0]?.compliant
-        ? record?.compliant?.[0]?.compliant
-        : 0;
-    },
     width: 50,
   },
   {
     title: "Not Compliant",
     dataIndex: "compliant",
     key: "compliant",
-    render: (text, record) => {
-      return record?.compliant?.[0]?.not_compliant
-        ? record?.compliant?.[0]?.not_compliant
-        : 0;
-    },
     width: 50,
   },
   {
     title: "Toilet Unclean",
     dataIndex: "compliant",
     key: "compliant",
-    render: (text, record) => {
-      return record?.compliant?.[0]?.toiletunclean
-        ? record?.compliant?.[0]?.toiletunclean
-        : 0;
-    },
     width: 50,
   },
-  // {
-  //   title: "Clean",
-  //   dataIndex: "clean",
-  //   key: "clean",
-  // },
-  // {
-  //   title: "Maintenance",
-  //   dataIndex: "maintenance",
-  //   key: "maintenance",
-  // },
-  // {
-  //   title: "Unclean",
-  //   dataIndex: "unclean",
-  //   key: "unclean",
-  // },
 ];
 
 // asset type list and vehicle dashboard

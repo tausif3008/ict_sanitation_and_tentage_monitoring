@@ -34,6 +34,11 @@ const SectorWiseReport = () => {
     clean: 0,
     unclean: 0,
     monitoring: 0,
+    total: 0,
+    partially_compliant: 0,
+    compliant: 0,
+    not_compliant: 0,
+    toiletclean: 0,
   });
   const [filesName, setFilesName] = useState(null); // files Name
   const [count, setCount] = useState({
@@ -43,7 +48,7 @@ const SectorWiseReport = () => {
     partially_compliant: 0,
     compliant: 0,
     not_compliant: 0,
-    toiletunclean: 0,
+    toiletclean: 0,
   });
   const [showModal, setShowModal] = useState(null);
 
@@ -81,22 +86,19 @@ const SectorWiseReport = () => {
         0
       );
       const partially_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
         0
       );
       const compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
+        (acc, circle) => acc + Number(circle?.compliant) || 0,
         0
       );
       const not_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
         0
       );
-      const toiletunclean = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
         0
       );
 
@@ -107,7 +109,7 @@ const SectorWiseReport = () => {
         partially_compliant: partially_compliant,
         compliant: compliant,
         not_compliant: not_compliant,
-        toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [vendorReports]);
@@ -122,7 +124,7 @@ const SectorWiseReport = () => {
       partially_compliant: 0,
       compliant: 0,
       not_compliant: 0,
-      toiletunclean: 0,
+      toiletclean: 0,
     });
   };
 
@@ -293,26 +295,64 @@ const SectorWiseReport = () => {
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
   }, []);
 
+  // Create a reusable render function
+  const renderColumn = (text, record) => {
+    return <span onClick={() => handleClick(record)}>{text ? text : ""}</span>;
+  };
+
   const columns = [
     {
       title: "Sector Name",
       dataIndex: "name",
       key: "name",
-      render: (text, record) => {
-        return (
-          <span onClick={() => handleClick(record)}>{text ? text : ""}</span>
-        );
-      },
+      render: renderColumn, // Reuse the render function
     },
-    { title: "Total Quantity", dataIndex: "total", key: "total" },
+    {
+      title: "Total Quantity",
+      dataIndex: "total",
+      key: "total",
+      render: renderColumn,
+    },
+    {
+      title: "Total Registered",
+      dataIndex: "registered",
+      key: "registered",
+      render: renderColumn,
+    },
     {
       title: "Monitoring",
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
+      render: renderColumn,
     },
-    { title: "Total Registered", dataIndex: "registered", key: "registered" },
-    { title: "Clean", dataIndex: "clean", key: "clean" },
-    { title: "Unclean", dataIndex: "unclean", key: "unclean" },
+    {
+      title: "Partially Compliant",
+      dataIndex: "partially_compliant",
+      key: "partially_compliant",
+      width: 50,
+      render: renderColumn, // Reuse the render function
+    },
+    {
+      title: "Compliant",
+      dataIndex: "compliant",
+      key: "compliant",
+      width: 50,
+      render: renderColumn, // Reuse the render function
+    },
+    {
+      title: "Not Compliant",
+      dataIndex: "not_compliant",
+      key: "not_compliant",
+      width: 50,
+      render: renderColumn, // Reuse the render function
+    },
+    {
+      title: "Toilet Clean",
+      dataIndex: "toiletclean",
+      key: "toiletclean",
+      width: 50,
+      render: renderColumn, // Reuse the render function
+    },
   ];
 
   // pdf header
@@ -320,10 +360,12 @@ const SectorWiseReport = () => {
     "Sr No",
     "Sector Name",
     "Total",
-    "Monitoring",
     "Registered",
-    "Clean",
-    "Unclean",
+    "Monitoring",
+    "Partially Compliant",
+    "Compliant",
+    "Not Compliant",
+    "Toilet Clean",
   ];
 
   // pdf data
@@ -331,10 +373,12 @@ const SectorWiseReport = () => {
     index + 1,
     sector?.name,
     Number(sector?.total) || 0,
-    Number(sector?.todaysmonitaring) || 0,
     Number(sector?.registered) || 0,
-    Number(sector?.clean) || 0,
-    Number(sector?.unclean) || 0,
+    Number(sector?.todaysmonitaring) || 0,
+    Number(sector?.partially_compliant) || 0,
+    Number(sector?.compliant) || 0,
+    Number(sector?.not_compliant) || 0,
+    Number(sector?.toiletclean) || 0,
   ]);
 
   // excel data
@@ -342,12 +386,13 @@ const SectorWiseReport = () => {
     return sectorData?.map((data, index) => ({
       Sr: index + 1,
       Name: data?.name,
-      // "Name In Hindi": data?.name_hi,
       Quantity: Number(data?.total),
-      Monitoring: Number(data?.todaysmonitaring),
       Registered: Number(data?.registered),
-      Clean: Number(data?.clean),
-      Unclean: Number(data?.unclean),
+      Monitoring: Number(data?.todaysmonitaring) || 0,
+      "Partially Compliant": Number(data?.partially_compliant) || 0,
+      Compliant: Number(data?.compliant) || 0,
+      "Not Compliant": Number(data?.not_compliant) || 0,
+      "Toilet Clean": Number(data?.toiletclean) || 0,
     }));
   }, [sectorData]);
 
@@ -368,10 +413,12 @@ const SectorWiseReport = () => {
                 "",
                 "Total",
                 totalQuantity?.totalQnty,
-                totalQuantity?.monitoring,
                 totalQuantity?.registered,
-                totalQuantity?.clean,
-                totalQuantity?.unclean,
+                totalQuantity?.monitoring,
+                totalQuantity?.partially_compliant,
+                totalQuantity?.compliant,
+                totalQuantity?.not_compliant,
+                totalQuantity?.toiletclean,
               ],
             ]}
           />
@@ -382,29 +429,39 @@ const SectorWiseReport = () => {
             fileName={filesName ? filesName : `Sector-Wise-Report`}
             dynamicArray={[
               {
-                name: "Total Quantity",
-                value: totalQuantity?.totalQnty,
+                name: "Total",
+                value: totalQuantity?.total,
                 colIndex: 3,
               },
               {
-                name: "Total Monitoring",
-                value: totalQuantity?.monitoring,
+                name: "Register Unit",
+                value: totalQuantity?.registered,
                 colIndex: 4,
               },
               {
-                name: "Total Register",
-                value: totalQuantity?.registered,
+                name: "Monitoring",
+                value: totalQuantity?.monitoring,
                 colIndex: 5,
               },
               {
-                name: "Total Clean",
-                value: totalQuantity?.clean,
+                name: "Partialy Compliant",
+                value: totalQuantity?.partially_compliant,
                 colIndex: 6,
               },
               {
-                name: "Total Unclean",
-                value: totalQuantity?.unclean,
+                name: "Compliant",
+                value: totalQuantity?.compliant,
                 colIndex: 7,
+              },
+              {
+                name: "Not Compliant",
+                value: totalQuantity?.not_compliant,
+                colIndex: 8,
+              },
+              {
+                name: "Clean",
+                value: totalQuantity?.toiletclean,
+                colIndex: 9,
               },
             ]}
           />
@@ -506,12 +563,16 @@ const SectorWiseReport = () => {
         bordered
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Sectors: {sectorData?.length}</strong>
-            <strong>Total Quantity: {totalQuantity?.totalQnty}</strong>
-            <strong>Total Monitoring: {totalQuantity?.monitoring}</strong>
-            <strong>Total Register: {totalQuantity?.registered}</strong>
-            <strong>Total Clean: {totalQuantity?.clean}</strong>
-            <strong>Total Unclean: {totalQuantity?.unclean}</strong>
+            <strong>Vendors: {sectorData?.length}</strong>
+            <strong>Total: {totalQuantity?.total || 0}</strong>
+            <strong>Registered: {totalQuantity?.registered || 0}</strong>
+            <strong>Monitoring : {totalQuantity?.monitoring || 0}</strong>
+            <strong>
+              Partialy Compliant : {totalQuantity?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
+            <strong>Not Compliant: {totalQuantity?.not_compliant || 0}</strong>
+            <strong>Clean: {totalQuantity?.toiletclean || 0}</strong>
           </div>
         )}
       />
@@ -541,7 +602,7 @@ const SectorWiseReport = () => {
             </strong>
             <strong>Compliant : {count?.compliant || 0}</strong>
             <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Unclean: {count?.toiletunclean || 0}</strong>
+            <strong>Clean: {count?.toiletclean || 0}</strong>
           </div>
         )}
       />

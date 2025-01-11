@@ -28,7 +28,8 @@ const Footer = ({ lang = "en" }) => {
                 <RightOutlined /> {dict.ambulance[lang]} : 108
               </span>
               <span>
-                <RightOutlined /> {dict.helpline[lang]} : 1920
+                <RightOutlined /> {dict.supportNo[lang]} : 03369028124
+                {/* <RightOutlined /> {dict.helpline[lang]} : 1920 */}
               </span>
               <span>
                 <RightOutlined /> {dict.fire[lang]} : 101
@@ -131,7 +132,8 @@ const Footer = ({ lang = "en" }) => {
                   className="text-black no-underline"
                   href={`tel:${dict.phone_number[lang]}`}
                 >
-                  {dict.phone_number[lang]}
+                  {/* {dict.phone_number[lang]} */}
+                  03369028124
                 </a>
               </div>
             </div>

@@ -190,22 +190,19 @@ const ToiletDetails = () => {
         0
       );
       const partially_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
         0
       );
       const compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
+        (acc, circle) => acc + Number(circle?.compliant) || 0,
         0
       );
       const not_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
         0
       );
       const toiletunclean = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
+        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
         0
       );
 

@@ -306,6 +306,10 @@ export const DICT = {
     en: "Helpline",
     hi: "हेल्पलाइन",
   },
+  supportNo: {
+    en: "Support No",
+    hi: "समर्थन संख्या",
+  },
 
   // ********************************
   role: {

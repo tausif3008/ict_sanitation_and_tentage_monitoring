@@ -92,12 +92,14 @@ import {
   vendor_wise_reports,
   vendorDash_param,
   vehicleDash_param,
+  gsd_wise_monitoring_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
 import PickUpPoint from "./register/route/RoutePoint";
 import AddPickUpPointForm from "./register/route/AddPickUpPointForm";
 import NoInternetModal from "./commonComponents/NoInternetModal";
+import GsdWiseMonitoringReport from "./Reports/GSDWiseMonitoringReport";
 
 function App() {
   const navigate = useNavigate();
@@ -672,6 +674,15 @@ function App() {
               <ProtectedRoute
                 condition={gsd_wise_regi_reports?.includes(userRoleId)}
                 component={GsdRegistrationReport}
+              />
+            }
+          />
+          <Route
+            path="gsd-wise-monitoring-report/:page?/:per_page?"
+            element={
+              <ProtectedRoute
+                condition={gsd_wise_monitoring_reports?.includes(userRoleId)}
+                component={GsdWiseMonitoringReport}
               />
             }
           />

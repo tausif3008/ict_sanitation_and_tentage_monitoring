@@ -34,7 +34,7 @@ const VendorReports = () => {
     partially_compliant: 0,
     compliant: 0,
     not_compliant: 0,
-    toiletunclean: 0,
+    toiletclean: 0,
   });
   const [modalQuantity, setModalQuantity] = useState({
     total: 0,
@@ -230,22 +230,19 @@ const VendorReports = () => {
         0
       );
       const partially_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.partially_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
         0
       );
       const compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.compliant?.[0]?.compliant) || 0,
+        (acc, circle) => acc + Number(circle?.compliant) || 0,
         0
       );
       const not_compliant = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.not_compliant) || 0,
+        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
         0
       );
-      const toiletunclean = vendorsData?.reduce(
-        (acc, circle) =>
-          acc + Number(circle?.compliant?.[0]?.toiletunclean) || 0,
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
         0
       );
 
@@ -256,7 +253,7 @@ const VendorReports = () => {
         partially_compliant: partially_compliant,
         compliant: compliant,
         not_compliant: not_compliant,
-        toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [vendorReports]);
@@ -311,16 +308,20 @@ const VendorReports = () => {
           Total: Number(data?.total) || 0,
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
-          "Partially Compliant":
-            Number(data?.compliant?.[0]?.partially_compliant) || 0,
-          Compliant: Number(data?.compliant?.[0]?.compliant) || 0,
-          "Not Compliant": Number(data?.compliant?.[0]?.not_compliant) || 0,
-          "Toilet Clean": Number(data?.compliant?.[0]?.toiletunclean) || 0,
+          "Partially Compliant": Number(data?.partially_compliant) || 0,
+          Compliant: Number(data?.compliant) || 0,
+          "Not Compliant": Number(data?.not_compliant) || 0,
+          "Toilet Clean": Number(data?.toiletclean) || 0,
         };
       });
       setExcelData(myexcelData);
     }
   }, [vendorReports]);
+
+  // Create a reusable render function
+  const renderColumn = (text, record) => {
+    return <span onClick={() => handleClick(record)}>{text ? text : ""}</span>;
+  };
 
   const VendorWiseReportcolumn = [
     {
@@ -328,89 +329,57 @@ const VendorReports = () => {
       dataIndex: "name",
       key: "name",
       width: 350,
-      render: (text, record) => {
-        return (
-          <span onClick={() => handleClick(record)}>{text ? text : ""}</span>
-        );
-      },
+      render: renderColumn,
     },
     {
       title: "Total Quantity",
       dataIndex: "total",
       key: "total",
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Registered",
       dataIndex: "registered",
       key: "registered",
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Monitoring",
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Partially Compliant",
       dataIndex: "compliant",
       key: "compliant",
-      render: (text, record) => {
-        return record?.compliant?.[0]?.partially_compliant
-          ? record?.compliant?.[0]?.partially_compliant
-          : 0;
-      },
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Compliant",
       dataIndex: "compliant",
       key: "compliant",
-      render: (text, record) => {
-        return record?.compliant?.[0]?.compliant
-          ? record?.compliant?.[0]?.compliant
-          : 0;
-      },
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Not Compliant",
       dataIndex: "compliant",
       key: "compliant",
-      render: (text, record) => {
-        return record?.compliant?.[0]?.not_compliant
-          ? record?.compliant?.[0]?.not_compliant
-          : 0;
-      },
       width: 50,
+      render: renderColumn,
     },
     {
       title: "Toilet Unclean",
       dataIndex: "compliant",
       key: "compliant",
-      render: (text, record) => {
-        return record?.compliant?.[0]?.toiletunclean
-          ? record?.compliant?.[0]?.toiletunclean
-          : 0;
-      },
       width: 50,
+      render: renderColumn,
     },
-    // {
-    //   title: "Clean",
-    //   dataIndex: "clean",
-    //   key: "clean",
-    // },
-    // {
-    //   title: "Maintenance",
-    //   dataIndex: "maintenance",
-    //   key: "maintenance",
-    // },
-    // {
-    //   title: "Unclean",
-    //   dataIndex: "unclean",
-    //   key: "unclean",
-    // },
   ];
 
   // Modal columns
@@ -479,7 +448,7 @@ const VendorReports = () => {
                 count?.partially_compliant,
                 count?.compliant,
                 count?.not_compliant,
-                count?.toiletunclean,
+                count?.toiletclean,
               ],
             ]}
           />
@@ -520,8 +489,8 @@ const VendorReports = () => {
                 colIndex: 8,
               },
               {
-                name: "Unclean",
-                value: count?.toiletunclean,
+                name: "Clean",
+                value: count?.toiletclean,
                 colIndex: 9,
               },
             ]}
@@ -640,7 +609,7 @@ const VendorReports = () => {
             </strong>
             <strong>Compliant : {count?.compliant || 0}</strong>
             <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Unclean: {count?.toiletunclean || 0}</strong>
+            <strong>Clean: {count?.toiletclean || 0}</strong>
           </div>
         )}
       />
