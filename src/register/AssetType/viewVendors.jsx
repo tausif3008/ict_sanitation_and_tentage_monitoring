@@ -14,7 +14,7 @@ const ViewVendorsSectors = ({
   IsLastRowBold = false,
 }) => {
   const rowClassName = (record, index) => {
-    return index === tableData?.length-1
+    return index === tableData?.length - 1
       ? "bg-green-100 text-black font-bold"
       : "";
   };

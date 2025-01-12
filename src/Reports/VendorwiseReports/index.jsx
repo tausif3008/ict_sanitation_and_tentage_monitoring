@@ -11,7 +11,11 @@ import VendorSelectors from "./vendorSelectors";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
-import { getValueLabel } from "../../constant/const";
+import {
+  getPercentage,
+  getValueLabel,
+  renderSorting,
+} from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
 import {
   getAssetMainTypes,
@@ -38,6 +42,7 @@ const VendorReports = () => {
     compliant: 0,
     not_compliant: 0,
     toiletunclean: 0,
+    toiletclean: 0,
   });
   const [modalQuantity, setModalQuantity] = useState({
     total: 0,
@@ -211,6 +216,10 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
         0
       );
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
+        0
+      );
 
       setCount({
         total: total,
@@ -220,6 +229,7 @@ const VendorReports = () => {
         compliant: compliant,
         not_compliant: not_compliant,
         toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [vendorReports]);
@@ -308,9 +318,40 @@ const VendorReports = () => {
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
           Compliant: Number(data?.compliant) || 0,
+          "Compliant (%)":
+            getPercentage(
+              Number(data?.compliant) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
           "Partially Compliant": Number(data?.partially_compliant) || 0,
+          "Partially Compliant (%)":
+            getPercentage(
+              Number(data?.partially_compliant) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
           "Not Compliant": Number(data?.not_compliant) || 0,
+          "Not Compliant (%)":
+            getPercentage(
+              Number(data?.not_compliant) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
           "Toilet Unclean": Number(data?.toiletunclean) || 0,
+          "Toilet Unclean (%)":
+            getPercentage(
+              Number(data?.toiletunclean) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
+          "Toilet Clean": Number(data?.toiletclean) || 0,
+          "Toilet Clean (%)":
+            getPercentage(
+              Number(data?.toiletclean) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
         };
       });
       setExcelData(myexcelData);
@@ -334,7 +375,7 @@ const VendorReports = () => {
       title: "Vendor Name",
       dataIndex: "name",
       key: "name",
-      width: 350,
+      width: 200,
       render: renderColumn,
       sorter: (a, b) => {
         const nameA = a?.name ? a?.name?.toString() : "";
@@ -374,6 +415,11 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
+    renderSorting(
+      "Partially Compliant (%)",
+      "partially_compliant",
+      "partially_compliant%"
+    ),
     {
       title: "Compliant",
       dataIndex: "compliant",
@@ -382,6 +428,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.compliant - b?.compliant,
     },
+    renderSorting("Compliant (%)", "compliant", "compliant%"),
     {
       title: "Not Compliant",
       dataIndex: "not_compliant",
@@ -390,6 +437,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
+    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -398,6 +446,16 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
+    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    {
+      title: "Toilet Clean",
+      dataIndex: "toiletclean",
+      key: "toiletclean",
+      width: 50,
+      render: renderColumn,
+      sorter: (a, b) => a?.toiletclean - b?.toiletclean,
+    },
+    renderSorting("Toilet Clean (%)", "toiletclean", "toiletclean%"),
   ];
 
   // Modal columns
@@ -455,6 +513,7 @@ const VendorReports = () => {
     "Partially Compliant",
     "Not Compliant",
     "Toilet Unclean",
+    "Toilet Clean",
   ];
 
   // pdf data
@@ -470,6 +529,7 @@ const VendorReports = () => {
         opt?.["Partially Compliant"],
         opt?.["Not Compliant"],
         opt?.["Toilet Unclean"],
+        opt?.["Toilet Clean"],
       ]) || []
     );
   }, [excelData]);
@@ -490,6 +550,7 @@ const VendorReports = () => {
       compliant: count?.compliant,
       not_compliant: count?.not_compliant,
       toiletunclean: count?.toiletunclean,
+      toiletclean: count?.toiletclean,
     },
   ];
 
@@ -514,7 +575,13 @@ const VendorReports = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={filesName ? filesName : `Vendor-Wise Report`}
+            titleName={
+              filesName
+                ? `${filesName} (${dayjs(formValue?.date).format(
+                    "DD-MMM-YYYY"
+                  )})`
+                : `Vendor-Wise Report`
+            }
             pdfName={filesName ? filesName : `Vendor-Wise-Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
@@ -531,6 +598,7 @@ const VendorReports = () => {
                 count?.partially_compliant,
                 count?.not_compliant,
                 count?.toiletunclean,
+                count?.toiletclean,
               ],
             ]}
           />
@@ -538,7 +606,13 @@ const VendorReports = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={filesName ? filesName : `Vendor-Wise Report`}
+            fileName={
+              filesName
+                ? `${filesName} (${dayjs(formValue?.date).format(
+                    "DD-MMM-YYYY"
+                  )})`
+                : `Vendor-Wise Report`
+            }
             dynamicArray={[
               {
                 name: "Total",
@@ -574,6 +648,11 @@ const VendorReports = () => {
                 name: "Unclean",
                 value: count?.toiletunclean,
                 colIndex: 9,
+              },
+              {
+                name: "Clean",
+                value: count?.toiletclean,
+                colIndex: 10,
               },
             ]}
           />
@@ -679,6 +758,7 @@ const VendorReports = () => {
         dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
+        scroll={{ x: 2000, y: 400 }}
         rowClassName={rowClassName}
         bordered
         // footer={() => (

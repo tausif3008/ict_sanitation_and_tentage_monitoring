@@ -25,6 +25,37 @@ export const checkLoginAvailability = (loginData, navigate) => {
   }
 };
 
+export const renderSorting = (title, dataIndex, key) => {
+  return {
+    title: title,
+    dataIndex: dataIndex,
+    key: key,
+    sorter: (a, b) => {
+      // Calculate the percentage for sorting dynamically
+      const percentageA = getPercentage(
+        Number(a[dataIndex]) || 0,
+        (Number(a?.toiletclean) || 0) + (Number(a?.toiletunclean) || 0)
+      );
+      const percentageB = getPercentage(
+        Number(b[dataIndex]) || 0,
+        (Number(b?.toiletclean) || 0) + (Number(b?.toiletunclean) || 0)
+      );
+      return percentageA - percentageB; // Compare the percentages
+    },
+    width: 50,
+    render: (text, record) => {
+      // Render the percentage for the given column dynamically
+      return text
+        ? getPercentage(
+            Number(record[dataIndex]) || 0,
+            (Number(record?.toiletclean) || 0) +
+              (Number(record?.toiletunclean) || 0)
+          ) + " %"
+        : "0 %";
+    },
+  };
+};
+
 export const getPercentage = (numerator, denominator) => {
   if (!numerator || !denominator) {
     return 0;
