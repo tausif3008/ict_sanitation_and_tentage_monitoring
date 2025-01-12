@@ -404,7 +404,7 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
-    // renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -413,7 +413,7 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
-    // renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -437,9 +437,9 @@ const SectorWiseReport = () => {
     "Compliant",
     // "Compliant%",
     "Not Compliant",
-    "Not Compliant%",
+    "Not Compliant (%)",
     "Toilet Unclean",
-    "Toilet Unclean%",
+    "Toilet Unclean (%)",
     "Toilet Clean",
     // "Toilet Clean%",
   ];
@@ -589,9 +589,9 @@ const SectorWiseReport = () => {
                 totalQuantity?.compliant,
                 // "",
                 totalQuantity?.not_compliant,
-                // "",
+                "",
                 totalQuantity?.toiletunclean,
-                // "",
+                "",
                 totalQuantity?.toiletclean,
                 // "",
               ],
@@ -601,7 +601,6 @@ const SectorWiseReport = () => {
         <div>
           <ExportToExcel
             excelData={myexcelData || []}
-            // fileName={filesName ? filesName : `Sector-Wise-Report`}
             fileName={
               filesName
                 ? `${filesName} (${dayjs(formValue?.date).format(
@@ -643,12 +642,12 @@ const SectorWiseReport = () => {
               {
                 name: "Unclean",
                 value: totalQuantity?.toiletunclean,
-                colIndex: 10,
+                colIndex: 11,
               },
               {
                 name: "Clean",
                 value: totalQuantity?.toiletclean,
-                colIndex: 11,
+                colIndex: 13,
               },
             ]}
           />
@@ -748,7 +747,7 @@ const SectorWiseReport = () => {
         dataSource={[...sectorData, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 30 }}
-        scroll={{ x: 1200, y: 400 }}
+        scroll={{ x: 1700, y: 400 }}
         bordered
         rowClassName={rowClassName}
       />
@@ -760,7 +759,7 @@ const SectorWiseReport = () => {
         openModal={showModal && !VendorReport_Loading}
         handleCancel={handleCancel}
         tableData={[...vendorsData, ...lastTableModalRow] || []}
-        // scroll={{ x: 1200, y: 400 }}
+        scroll={{ x: 1700, y: 400 }}
         tableHeaderData={[
           {
             label: "Sector Name",

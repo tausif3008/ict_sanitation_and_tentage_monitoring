@@ -56,15 +56,60 @@ const ExportToExcel = ({
     excelData?.forEach((data) => {
       const row = worksheet.addRow(data);
 
-      // For each cell in the row, check if it's a number and align accordingly
+      // For each cell in the row, check if it's a percentage or a number and align accordingly
       row.eachCell((cell) => {
-        if (typeof cell.value === "number") {
+        let value = cell.value;
+        let color = "";
+
+        // Check if the cell contains a percentage
+        if (typeof value === "string" && value.includes("%")) {
+          const percentageValue = parseFloat(value.replace("%", "").trim()); // Remove '%' and convert to number
+
+          // Apply center alignment for percentages
           cell.alignment = { horizontal: "center" };
+
+          // Apply color based on percentage value
+          if (percentageValue === 100) {
+            color = "FF00FF00"; // Green for 100% (ARGB format: FF for alpha, followed by RGB values)
+          } else if (percentageValue === 0) {
+            color = "FFFF0000"; // Red for 0% (ARGB format: FF for alpha, followed by RGB values)
+          } else {
+            // Gradient color in between (can be adjusted)
+            const redIntensity = Math.round((100 - percentageValue) * 2.55); // Red intensity decreases as percentage increases
+            const greenIntensity = Math.round(percentageValue * 2.55); // Green intensity increases as percentage increases
+            // Convert to ARGB format: FF + Red + Green + Blue
+            color = `FF${redIntensity
+              .toString(16)
+              .padStart(2, "0")}${greenIntensity
+              .toString(16)
+              .padStart(2, "0")}00`;
+          }
+
+          // Set the background color using ARGB value
+          cell.fill = {
+            type: "pattern",
+            pattern: "solid",
+            fgColor: { argb: color },
+          };
         } else {
+          // Apply left alignment for other types of data
           cell.alignment = { horizontal: "left" };
         }
       });
     });
+
+    // excelData?.forEach((data) => {
+    //   const row = worksheet.addRow(data);
+
+    //   // For each cell in the row, check if it's a number and align accordingly
+    //   row.eachCell((cell) => {
+    //     if (typeof cell.value === "number") {
+    //       cell.alignment = { horizontal: "center" };
+    //     } else {
+    //       cell.alignment = { horizontal: "left" };
+    //     }
+    //   });
+    // });
 
     // Add a row with the total count (on the same row as dynamic fields)
     const totalCountRow = worksheet.addRow({});

@@ -514,6 +514,7 @@ const ToiletDetails = () => {
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
         openModal={showData && !loading}
         handleCancel={handleCancel}
+        scroll={{ x: 1700, y: 400 }}
         tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
         column={VendorWiseReportcolumns || []}
         IsLastRowBold={true}

@@ -403,7 +403,7 @@ const VendorReports = () => {
       title: "Vendor Name",
       dataIndex: "name",
       key: "name",
-      width: 300,
+      width: 250,
       render: renderColumn,
       sorter: (a, b) => {
         const nameA = a?.name ? a?.name?.toString() : "";
@@ -551,6 +551,7 @@ const VendorReports = () => {
       width: 50,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
+    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -558,6 +559,7 @@ const VendorReports = () => {
       width: 50,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
+    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -841,7 +843,7 @@ const VendorReports = () => {
         dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
-        scroll={{ x: 1300, y: 400 }}
+        scroll={{ x: 1800, y: 400 }}
         rowClassName={rowClassName}
         bordered
       />

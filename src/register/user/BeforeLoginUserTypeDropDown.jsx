@@ -3,20 +3,21 @@ import optionsMaker from "../../urils/OptionMaker";
 import { getData } from "../../Fetch/Axios";
 import URLS from "../../urils/URLS";
 import { Form, Select } from "antd";
+import { staticUserRole } from "../../constant/const";
 
 const BeforeLoginUserTypeDropDown = ({ form, required = true, showLabel }) => {
-  const [userTypesOnLogin, setUserTypes] = useState([]);
+  // const [userTypesOnLogin, setUserTypes] = useState([]);
 
-  useEffect(() => {
-    optionsMaker(
-      "userTypeLogin",
-      "user_type",
-      "user_type",
-      setUserTypes,
-      "",
-      "user_type_id"
-    );
-  }, [form]);
+  // useEffect(() => {
+  //   optionsMaker(
+  //     "userTypeLogin",
+  //     "user_type",
+  //     "user_type",
+  //     setUserTypes,
+  //     "",
+  //     "user_type_id"
+  //   );
+  // }, [form]);
 
   return (
     <Form.Item
@@ -27,7 +28,8 @@ const BeforeLoginUserTypeDropDown = ({ form, required = true, showLabel }) => {
       <Select
         placeholder="Select a User Type"
         className="rounded-none w-full" // Ensure full width
-        options={userTypesOnLogin || []}
+        options={staticUserRole || []}
+        // options={userTypesOnLogin || []}
         allowClear
         showSearch={true}
         filterOption={(input, option) => {
