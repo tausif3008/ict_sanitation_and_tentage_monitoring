@@ -317,6 +317,11 @@ const VendorReports = () => {
           Total: Number(data?.total) || 0,
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
+          "Monitoring (%)":
+            getPercentage(
+              Number(data?.todaysmonitaring) || 0,
+              Number(data?.registered) || 1
+            ) + " %",
           Compliant: Number(data?.compliant) || 0,
           "Compliant (%)":
             getPercentage(
@@ -370,6 +375,7 @@ const VendorReports = () => {
     );
   };
 
+  // table column
   const VendorWiseReportcolumn = [
     {
       title: "Vendor Name",
@@ -406,6 +412,31 @@ const VendorReports = () => {
       width: 50,
       render: renderColumn,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
+    },
+    {
+      title: "Monitoring (%)",
+      dataIndex: "todaysmonitaring",
+      key: "todaysmonitaring%",
+      sorter: (a, b) => {
+        const percentageA = getPercentage(
+          Number(a["todaysmonitaring"]) || 0,
+          Number(a?.registered) || 0
+        );
+        const percentageB = getPercentage(
+          Number(b["todaysmonitaring"]) || 0,
+          Number(b?.registered) || 0
+        );
+        return percentageA - percentageB; // Compare the percentages
+      },
+      width: 50,
+      render: (text, record) => {
+        return text
+          ? getPercentage(
+              Number(record["todaysmonitaring"]) || 0,
+              Number(record?.registered) || 0
+            ) + " %"
+          : "0 %";
+      },
     },
     {
       title: "Partially Compliant",
@@ -509,11 +540,17 @@ const VendorReports = () => {
     "Total",
     "Registered",
     "Monitoring",
+    "Monitoring (%)",
     "Compliant",
+    "Compliant (%)",
     "Partially Compliant",
+    "Partially Compliant (%)",
     "Not Compliant",
+    "Not Compliant (%)",
     "Toilet Unclean",
+    "Toilet Unclean (%)",
     "Toilet Clean",
+    "Toilet Clean (%)",
   ];
 
   // pdf data
@@ -525,11 +562,17 @@ const VendorReports = () => {
         opt?.Total,
         opt?.Registered,
         opt?.Monitoring,
+        opt?.["Monitoring (%)"],
         opt?.Compliant,
+        opt?.["Compliant (%)"],
         opt?.["Partially Compliant"],
+        opt?.["Partially Compliant (%)"],
         opt?.["Not Compliant"],
+        opt?.["Not Compliant (%)"],
         opt?.["Toilet Unclean"],
+        opt?.["Toilet Unclean (%)"],
         opt?.["Toilet Clean"],
+        opt?.["Toilet Clean (%)"],
       ]) || []
     );
   }, [excelData]);
@@ -586,6 +629,7 @@ const VendorReports = () => {
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
+            applyTableStyles={true}
             rows={[
               ...pdfData,
               [
@@ -594,11 +638,17 @@ const VendorReports = () => {
                 count?.total,
                 count?.registered,
                 count?.monitoring,
+                "",
                 count?.compliant,
+                "",
                 count?.partially_compliant,
+                "",
                 count?.not_compliant,
+                "",
                 count?.toiletunclean,
+                "",
                 count?.toiletclean,
+                "",
               ],
             ]}
           />
@@ -632,27 +682,27 @@ const VendorReports = () => {
               {
                 name: "Compliant",
                 value: count?.compliant,
-                colIndex: 6,
+                colIndex: 7,
               },
               {
                 name: "Partialy Compliant",
                 value: count?.partially_compliant,
-                colIndex: 7,
+                colIndex: 9,
               },
               {
                 name: "Not Compliant",
                 value: count?.not_compliant,
-                colIndex: 8,
+                colIndex: 11,
               },
               {
                 name: "Unclean",
                 value: count?.toiletunclean,
-                colIndex: 9,
+                colIndex: 13,
               },
               {
                 name: "Clean",
                 value: count?.toiletclean,
-                colIndex: 10,
+                colIndex: 15,
               },
             ]}
           />

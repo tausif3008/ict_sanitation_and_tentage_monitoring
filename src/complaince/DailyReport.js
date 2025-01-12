@@ -469,9 +469,11 @@ export const MonitoringDailyReportPdf = (
   doc.setFont("helvetica", "normal"); // make font normal
   doc.y += 15;
 
-  const instructionData = `You are hereby being put to notice that upon inspection on ${dailyReport ? startDate || "" : `${startDate} to ${endDate}` || ""
-    } you have been sent “${totalCount}” number of SMS alerts on your registered Mobile Number “${tableObject?.vendor_phone || ""
-    }” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the above mentioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
+  const instructionData = `You are hereby being put to notice that upon inspection on ${
+    dailyReport ? startDate || "" : `${startDate} to ${endDate}` || ""
+  } you have been sent “${totalCount}” number of SMS alerts on your registered Mobile Number “${
+    tableObject?.vendor_phone || ""
+  }” individually for each PTC ID for the infractions/lacunas/defects discovered with respect to the above mentioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):`;
   doc.setFontSize(12);
   doc.setFont("helvetica", "bold"); // make font normal
   doc.setFont("bold");

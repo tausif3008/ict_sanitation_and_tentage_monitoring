@@ -12,7 +12,9 @@ const ExportToPDF = ({
   rows,
   landscape = false,
   IsLastLineBold = false,
-  IsNoBold = false,
+  IsNoBold = false, // Is Number Bold
+  applyTableStyles = false,
+  tableFont = 8,
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -95,10 +97,17 @@ const ExportToPDF = ({
     doc.text(dateString, dateX + 30, doc.y);
     doc.y += 5;
 
+    const tableStyles = {
+      fontSize: tableFont,
+      cellPadding: 2,
+      margin: { left: 10, right: 20 },
+    };
+
     // Table header and content
     doc.autoTable({
       head: [headerData],
       body: rows,
+      styles: applyTableStyles ? tableStyles : null,
       startY: doc.y,
       didDrawPage: function (data) {
         doc.y = data.cursor.y;
@@ -118,7 +127,7 @@ const ExportToPDF = ({
         ) {
           data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
           data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
-          data.cell.styles.fontSize = 10; // Increase font size for emphasis
+          data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
         }
       },
     });
