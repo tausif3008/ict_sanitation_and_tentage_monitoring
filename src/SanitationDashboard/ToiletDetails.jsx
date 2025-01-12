@@ -44,6 +44,8 @@ const ToiletDetails = () => {
     clean: 0,
     maintenance: 0,
     unclean: 0,
+    toiletunclean: 0,
+    toiletclean: 0,
   });
 
   const dateFormat = "YYYY-MM-DD";
@@ -95,6 +97,7 @@ const ToiletDetails = () => {
       clean: 0,
       maintenance: 0,
       unclean: 0,
+      toiletclean: 0,
     });
   };
 
@@ -205,6 +208,10 @@ const ToiletDetails = () => {
         (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
         0
       );
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
+        0
+      );
 
       setCount({
         total: total,
@@ -214,6 +221,7 @@ const ToiletDetails = () => {
         compliant: compliant,
         not_compliant: not_compliant,
         toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [vendorReports]);
@@ -240,6 +248,7 @@ const ToiletDetails = () => {
       compliant: count?.compliant,
       not_compliant: count?.not_compliant,
       toiletunclean: count?.toiletunclean,
+      toiletclean: count?.toiletclean,
     },
   ];
 

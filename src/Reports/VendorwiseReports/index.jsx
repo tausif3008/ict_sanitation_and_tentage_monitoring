@@ -14,6 +14,7 @@ import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
   getPercentage,
   getValueLabel,
+  renderMonitoringSorting,
   renderSorting,
 } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
@@ -37,7 +38,7 @@ const VendorReports = () => {
   const [count, setCount] = useState({
     total: 0,
     registered: 0,
-    monitoring: 0,
+    todaysmonitaring: 0,
     partially_compliant: 0,
     compliant: 0,
     not_compliant: 0,
@@ -46,10 +47,13 @@ const VendorReports = () => {
   });
   const [modalQuantity, setModalQuantity] = useState({
     total: 0,
-    monitoring: 0,
     registered: 0,
-    clean: 0,
-    unclean: 0,
+    todaysmonitaring: 0,
+    partially_compliant: 0,
+    compliant: 0,
+    not_compliant: 0,
+    toiletunclean: 0,
+    toiletclean: 0,
   });
   const [vendorDetails, setVendorDetails] = useState({
     list: [],
@@ -77,9 +81,12 @@ const VendorReports = () => {
     setModalQuantity({
       total: 0,
       registered: 0,
-      clean: 0,
-      maintenance: 0,
-      unclean: 0,
+      todaysmonitaring: 0,
+      partially_compliant: 0,
+      compliant: 0,
+      not_compliant: 0,
+      toiletunclean: 0,
+      toiletclean: 0,
     });
   };
 
@@ -224,7 +231,7 @@ const VendorReports = () => {
       setCount({
         total: total,
         registered: totalReg,
-        monitoring: totalMonitoring,
+        todaysmonitaring: totalMonitoring,
         partially_compliant: partially_compliant,
         compliant: compliant,
         not_compliant: not_compliant,
@@ -241,28 +248,43 @@ const VendorReports = () => {
         (acc, sector) => acc + Number(sector?.total),
         0
       );
-      const totalRegister = sectorData?.reduce(
+      const registered = sectorData?.reduce(
         (acc, sector) => acc + Number(sector?.registered),
         0
       );
-      const totalClean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.clean),
-        0
-      );
-      const totalUnclean = sectorData?.reduce(
-        (acc, sector) => acc + Number(sector?.unclean),
-        0
-      );
-      const monitaring = sectorData?.reduce(
+      const todaysmonitaring = sectorData?.reduce(
         (acc, sector) => acc + Number(sector?.todaysmonitaring),
         0
       );
+      const partially_compliant = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.partially_compliant),
+        0
+      );
+      const compliant = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.compliant),
+        0
+      );
+      const not_compliant = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.not_compliant),
+        0
+      );
+      const toiletunclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.toiletunclean),
+        0
+      );
+      const toiletclean = sectorData?.reduce(
+        (acc, sector) => acc + Number(sector?.toiletclean),
+        0
+      );
       setModalQuantity({
-        totalQnty: totalQty,
-        monitoring: monitaring,
-        registered: totalRegister,
-        clean: totalClean,
-        unclean: totalUnclean,
+        total: totalQty,
+        registered: registered,
+        todaysmonitaring: todaysmonitaring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [sectorData]);
@@ -323,40 +345,40 @@ const VendorReports = () => {
               Number(data?.registered) || 1
             ) + " %",
           Compliant: Number(data?.compliant) || 0,
-          "Compliant (%)":
-            getPercentage(
-              Number(data?.compliant) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+          // "Compliant (%)":
+          //   getPercentage(
+          //     Number(data?.compliant) || 0,
+          //     (Number(data?.toiletunclean) || 0) +
+          //       (Number(data?.toiletclean) || 0)
+          //   ) + " %",
           "Partially Compliant": Number(data?.partially_compliant) || 0,
-          "Partially Compliant (%)":
-            getPercentage(
-              Number(data?.partially_compliant) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+          // "Partially Compliant (%)":
+          //   getPercentage(
+          //     Number(data?.partially_compliant) || 0,
+          //     (Number(data?.toiletunclean) || 0) +
+          //       (Number(data?.toiletclean) || 0)
+          //   ) + " %",
           "Not Compliant": Number(data?.not_compliant) || 0,
-          "Not Compliant (%)":
-            getPercentage(
-              Number(data?.not_compliant) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+          // "Not Compliant (%)":
+          //   getPercentage(
+          //     Number(data?.not_compliant) || 0,
+          //     (Number(data?.toiletunclean) || 0) +
+          //       (Number(data?.toiletclean) || 0)
+          //   ) + " %",
           "Toilet Unclean": Number(data?.toiletunclean) || 0,
-          "Toilet Unclean (%)":
-            getPercentage(
-              Number(data?.toiletunclean) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+          // "Toilet Unclean (%)":
+          //   getPercentage(
+          //     Number(data?.toiletunclean) || 0,
+          //     (Number(data?.toiletunclean) || 0) +
+          //       (Number(data?.toiletclean) || 0)
+          //   ) + " %",
           "Toilet Clean": Number(data?.toiletclean) || 0,
-          "Toilet Clean (%)":
-            getPercentage(
-              Number(data?.toiletclean) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+          // "Toilet Clean (%)":
+          //   getPercentage(
+          //     Number(data?.toiletclean) || 0,
+          //     (Number(data?.toiletunclean) || 0) +
+          //       (Number(data?.toiletclean) || 0)
+          //   ) + " %",
         };
       });
       setExcelData(myexcelData);
@@ -381,7 +403,7 @@ const VendorReports = () => {
       title: "Vendor Name",
       dataIndex: "name",
       key: "name",
-      width: 200,
+      width: 300,
       render: renderColumn,
       sorter: (a, b) => {
         const nameA = a?.name ? a?.name?.toString() : "";
@@ -413,31 +435,11 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
-    {
-      title: "Monitoring (%)",
-      dataIndex: "todaysmonitaring",
-      key: "todaysmonitaring%",
-      sorter: (a, b) => {
-        const percentageA = getPercentage(
-          Number(a["todaysmonitaring"]) || 0,
-          Number(a?.registered) || 0
-        );
-        const percentageB = getPercentage(
-          Number(b["todaysmonitaring"]) || 0,
-          Number(b?.registered) || 0
-        );
-        return percentageA - percentageB; // Compare the percentages
-      },
-      width: 50,
-      render: (text, record) => {
-        return text
-          ? getPercentage(
-              Number(record["todaysmonitaring"]) || 0,
-              Number(record?.registered) || 0
-            ) + " %"
-          : "0 %";
-      },
-    },
+    renderMonitoringSorting(
+      "Monitoring (%)",
+      "todaysmonitaring",
+      "todaysmonitaring%"
+    ),
     {
       title: "Partially Compliant",
       dataIndex: "partially_compliant",
@@ -446,11 +448,11 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
-    renderSorting(
-      "Partially Compliant (%)",
-      "partially_compliant",
-      "partially_compliant%"
-    ),
+    // renderSorting(
+    //   "Partially Compliant (%)",
+    //   "partially_compliant",
+    //   "partially_compliant%"
+    // ),
     {
       title: "Compliant",
       dataIndex: "compliant",
@@ -459,7 +461,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.compliant - b?.compliant,
     },
-    renderSorting("Compliant (%)", "compliant", "compliant%"),
+    // renderSorting("Compliant (%)", "compliant", "compliant%"),
     {
       title: "Not Compliant",
       dataIndex: "not_compliant",
@@ -468,7 +470,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
-    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+    // renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -477,7 +479,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
-    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    // renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -486,7 +488,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
-    renderSorting("Toilet Clean (%)", "toiletclean", "toiletclean%"),
+    // renderSorting("Toilet Clean (%)", "toiletclean", "toiletclean%"),
   ];
 
   // Modal columns
@@ -495,6 +497,7 @@ const VendorReports = () => {
       title: "Sector Name",
       dataIndex: "name",
       key: "name",
+      width: 90,
       sorter: (a, b) => {
         const nameA = a?.name ? a?.name?.toString() : "";
         const nameB = b?.name ? b?.name?.toString() : "";
@@ -506,30 +509,61 @@ const VendorReports = () => {
       dataIndex: "total",
       key: "total",
       sorter: (a, b) => a?.total - b?.total,
+      width: 50,
     },
     {
-      title: "Total Registered",
+      title: "Registered",
       dataIndex: "registered",
       key: "registered",
-      sorter: (a, b) => a?.registered - b?.registered,
+      width: 50,
+      sorter: (a, b) => a?.total - b?.total,
     },
     {
       title: "Monitoring",
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
+      width: 50,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
+    renderMonitoringSorting(
+      "Monitoring (%)",
+      "todaysmonitaring",
+      "todaysmonitaring%"
+    ),
     {
-      title: "Clean",
-      dataIndex: "clean",
-      key: "clean",
-      sorter: (a, b) => a?.clean - b?.clean,
+      title: "Partially Compliant",
+      dataIndex: "partially_compliant",
+      key: "partially_compliant",
+      width: 50,
+      sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
     {
-      title: "Unclean",
-      dataIndex: "unclean",
-      key: "unclean",
-      sorter: (a, b) => a?.unclean - b?.unclean,
+      title: "Compliant",
+      dataIndex: "compliant",
+      key: "compliant",
+      width: 50,
+      sorter: (a, b) => a?.compliant - b?.compliant,
+    },
+    {
+      title: "Not Compliant",
+      dataIndex: "not_compliant",
+      key: "not_compliant",
+      width: 50,
+      sorter: (a, b) => a?.not_compliant - b?.not_compliant,
+    },
+    {
+      title: "Toilet Unclean",
+      dataIndex: "toiletunclean",
+      key: "toiletunclean",
+      width: 50,
+      sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
+    },
+    {
+      title: "Toilet Clean",
+      dataIndex: "toiletclean",
+      key: "toiletclean",
+      width: 50,
+      sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
   ];
 
@@ -542,15 +576,15 @@ const VendorReports = () => {
     "Monitoring",
     "Monitoring (%)",
     "Compliant",
-    "Compliant (%)",
+    // "Compliant (%)",
     "Partially Compliant",
-    "Partially Compliant (%)",
+    // "Partially Compliant (%)",
     "Not Compliant",
-    "Not Compliant (%)",
+    // "Not Compliant (%)",
     "Toilet Unclean",
-    "Toilet Unclean (%)",
+    // "Toilet Unclean (%)",
     "Toilet Clean",
-    "Toilet Clean (%)",
+    // "Toilet Clean (%)",
   ];
 
   // pdf data
@@ -564,15 +598,15 @@ const VendorReports = () => {
         opt?.Monitoring,
         opt?.["Monitoring (%)"],
         opt?.Compliant,
-        opt?.["Compliant (%)"],
+        // opt?.["Compliant (%)"],
         opt?.["Partially Compliant"],
-        opt?.["Partially Compliant (%)"],
+        // opt?.["Partially Compliant (%)"],
         opt?.["Not Compliant"],
-        opt?.["Not Compliant (%)"],
+        // opt?.["Not Compliant (%)"],
         opt?.["Toilet Unclean"],
-        opt?.["Toilet Unclean (%)"],
+        // opt?.["Toilet Unclean (%)"],
         opt?.["Toilet Clean"],
-        opt?.["Toilet Clean (%)"],
+        // opt?.["Toilet Clean (%)"],
       ]) || []
     );
   }, [excelData]);
@@ -588,7 +622,7 @@ const VendorReports = () => {
       name: vendorsData?.length,
       total: count?.total,
       registered: count?.registered,
-      todaysmonitaring: count?.monitoring,
+      todaysmonitaring: count?.todaysmonitaring,
       partially_compliant: count?.partially_compliant,
       compliant: count?.compliant,
       not_compliant: count?.not_compliant,
@@ -600,15 +634,14 @@ const VendorReports = () => {
   const lastTableModalRow = [
     {
       name: sectorData?.length,
-      total: modalQuantity?.totalQnty,
+      total: modalQuantity?.total,
       registered: modalQuantity?.registered,
-      todaysmonitaring: modalQuantity?.monitoring,
-      // partially_compliant: modalQuantity?.partially_compliant,
-      // compliant: modalQuantity?.compliant,
-      // not_compliant: modalQuantity?.not_compliant,
-      // toiletunclean: modalQuantity?.toiletunclean,
-      clean: modalQuantity?.clean,
-      unclean: modalQuantity?.unclean,
+      todaysmonitaring: modalQuantity?.todaysmonitaring,
+      partially_compliant: modalQuantity?.partially_compliant,
+      compliant: modalQuantity?.compliant,
+      not_compliant: modalQuantity?.not_compliant,
+      toiletunclean: modalQuantity?.toiletunclean,
+      toiletclean: modalQuantity?.toiletclean,
     },
   ];
 
@@ -629,7 +662,7 @@ const VendorReports = () => {
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
-            applyTableStyles={true}
+            // applyTableStyles={true}
             rows={[
               ...pdfData,
               [
@@ -637,18 +670,18 @@ const VendorReports = () => {
                 "Total",
                 count?.total,
                 count?.registered,
-                count?.monitoring,
+                count?.todaysmonitaring,
                 "",
                 count?.compliant,
-                "",
+                // "",
                 count?.partially_compliant,
-                "",
+                // "",
                 count?.not_compliant,
-                "",
+                // "",
                 count?.toiletunclean,
-                "",
+                // "",
                 count?.toiletclean,
-                "",
+                // "",
               ],
             ]}
           />
@@ -676,7 +709,7 @@ const VendorReports = () => {
               },
               {
                 name: "Monitoring",
-                value: count?.monitoring,
+                value: count?.todaysmonitaring,
                 colIndex: 5,
               },
               {
@@ -687,22 +720,22 @@ const VendorReports = () => {
               {
                 name: "Partialy Compliant",
                 value: count?.partially_compliant,
-                colIndex: 9,
+                colIndex: 8,
               },
               {
                 name: "Not Compliant",
                 value: count?.not_compliant,
-                colIndex: 11,
+                colIndex: 9,
               },
               {
                 name: "Unclean",
                 value: count?.toiletunclean,
-                colIndex: 13,
+                colIndex: 10,
               },
               {
                 name: "Clean",
                 value: count?.toiletclean,
-                colIndex: 15,
+                colIndex: 11,
               },
             ]}
           />
@@ -808,32 +841,17 @@ const VendorReports = () => {
         dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
-        scroll={{ x: 2000, y: 400 }}
+        // scroll={{ x: 2000, y: 400 }}
         rowClassName={rowClassName}
         bordered
-        // footer={() => (
-        //   <div className="flex justify-between">
-        //     <strong>Vendors: {vendorsData?.length}</strong>
-        //     <strong>Total: {count?.total || 0}</strong>
-        //     <strong>Registered: {count?.registered || 0}</strong>
-        //     <strong>Monitoring : {count?.monitoring || 0}</strong>
-        //     <strong>
-        //       Partialy Compliant : {count?.partially_compliant || 0}
-        //     </strong>
-        //     <strong>Compliant : {count?.compliant || 0}</strong>
-        //     <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-        //     <strong>Unclean: {count?.toiletunclean || 0}</strong>
-        //   </div>
-        // )}
       />
 
       {/* total quantity */}
       <ViewVendorsSectors
-        width={900}
+        width={1200}
         title={`Sector Wise Report`}
         openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
-        // tableData={sectorData || []}
         tableData={[...sectorData, ...lastTableModalRow] || []}
         tableHeaderData={[
           {
@@ -843,16 +861,6 @@ const VendorReports = () => {
         ]}
         column={columns || []}
         IsLastRowBold={true}
-        // footer={() => (
-        //   <div className="flex justify-between">
-        //     <strong>Total Sectors: {sectorData?.length}</strong>
-        //     <strong>Total Quantity: {modalQuantity?.totalQnty}</strong>
-        //     <strong>Total Register: {modalQuantity?.registered}</strong>
-        //     <strong>Total Monitoring: {modalQuantity?.monitoring}</strong>
-        //     <strong>Total Clean: {modalQuantity?.clean}</strong>
-        //     <strong>Total Unclean: {modalQuantity?.unclean}</strong>
-        //   </div>
-        // )}
       />
     </div>
   );

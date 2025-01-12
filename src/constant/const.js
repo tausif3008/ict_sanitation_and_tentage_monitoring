@@ -56,6 +56,35 @@ export const renderSorting = (title, dataIndex, key) => {
   };
 };
 
+export const renderMonitoringSorting = (title, dataIndex, key) => {
+  return {
+    title: title,
+    dataIndex: dataIndex,
+    key: key,
+    sorter: (a, b) => {
+      const percentageA = getPercentage(
+        Number(a[dataIndex]) || 0,
+        Number(a?.registered) || 1
+      );
+      const percentageB = getPercentage(
+        Number(b[dataIndex]) || 0,
+        Number(b?.registered) || 1
+      );
+      return percentageA - percentageB; // Compare the percentages
+    },
+    width: 50,
+    render: (text, record) => {
+      // Render the percentage for the given column dynamically
+      return text
+        ? getPercentage(
+            Number(record[dataIndex]) || 0,
+            Number(record?.registered) || 1
+          ) + " %"
+        : "0 %";
+    },
+  };
+};
+
 export const getPercentage = (numerator, denominator) => {
   if (!numerator || !denominator) {
     return 0;
@@ -171,6 +200,11 @@ export const VendorWiseReportcolumns = [
     width: 50,
     sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
   },
+  renderMonitoringSorting(
+    "Monitoring (%)",
+    "todaysmonitaring",
+    "todaysmonitaring%"
+  ),
   {
     title: "Partially Compliant",
     dataIndex: "partially_compliant",
@@ -198,6 +232,13 @@ export const VendorWiseReportcolumns = [
     key: "toiletunclean",
     width: 50,
     sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
+  },
+  {
+    title: "Toilet Clean",
+    dataIndex: "toiletclean",
+    key: "toiletclean",
+    width: 50,
+    sorter: (a, b) => a?.toiletclean - b?.toiletclean,
   },
 ];
 
