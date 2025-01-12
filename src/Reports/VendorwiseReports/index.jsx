@@ -359,19 +359,19 @@ const VendorReports = () => {
           //       (Number(data?.toiletclean) || 0)
           //   ) + " %",
           "Not Compliant": Number(data?.not_compliant) || 0,
-          // "Not Compliant (%)":
-          //   getPercentage(
-          //     Number(data?.not_compliant) || 0,
-          //     (Number(data?.toiletunclean) || 0) +
-          //       (Number(data?.toiletclean) || 0)
-          //   ) + " %",
+          "Not Compliant (%)":
+            getPercentage(
+              Number(data?.not_compliant) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
           "Toilet Unclean": Number(data?.toiletunclean) || 0,
-          // "Toilet Unclean (%)":
-          //   getPercentage(
-          //     Number(data?.toiletunclean) || 0,
-          //     (Number(data?.toiletunclean) || 0) +
-          //       (Number(data?.toiletclean) || 0)
-          //   ) + " %",
+          "Toilet Unclean (%)":
+            getPercentage(
+              Number(data?.toiletunclean) || 0,
+              (Number(data?.toiletunclean) || 0) +
+                (Number(data?.toiletclean) || 0)
+            ) + " %",
           "Toilet Clean": Number(data?.toiletclean) || 0,
           // "Toilet Clean (%)":
           //   getPercentage(
@@ -470,7 +470,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
-    // renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -479,7 +479,7 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
-    // renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -580,9 +580,9 @@ const VendorReports = () => {
     "Partially Compliant",
     // "Partially Compliant (%)",
     "Not Compliant",
-    // "Not Compliant (%)",
+    "Not Compliant (%)",
     "Toilet Unclean",
-    // "Toilet Unclean (%)",
+    "Toilet Unclean (%)",
     "Toilet Clean",
     // "Toilet Clean (%)",
   ];
@@ -602,9 +602,9 @@ const VendorReports = () => {
         opt?.["Partially Compliant"],
         // opt?.["Partially Compliant (%)"],
         opt?.["Not Compliant"],
-        // opt?.["Not Compliant (%)"],
+        opt?.["Not Compliant (%)"],
         opt?.["Toilet Unclean"],
-        // opt?.["Toilet Unclean (%)"],
+        opt?.["Toilet Unclean (%)"],
         opt?.["Toilet Clean"],
         // opt?.["Toilet Clean (%)"],
       ]) || []
@@ -677,9 +677,9 @@ const VendorReports = () => {
                 count?.partially_compliant,
                 // "",
                 count?.not_compliant,
-                // "",
+                "",
                 count?.toiletunclean,
-                // "",
+                "",
                 count?.toiletclean,
                 // "",
               ],
@@ -730,12 +730,12 @@ const VendorReports = () => {
               {
                 name: "Unclean",
                 value: count?.toiletunclean,
-                colIndex: 10,
+                colIndex: 11,
               },
               {
                 name: "Clean",
                 value: count?.toiletclean,
-                colIndex: 11,
+                colIndex: 13,
               },
             ]}
           />
@@ -841,7 +841,7 @@ const VendorReports = () => {
         dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
-        // scroll={{ x: 2000, y: 400 }}
+        scroll={{ x: 1300, y: 400 }}
         rowClassName={rowClassName}
         bordered
       />

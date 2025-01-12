@@ -437,9 +437,9 @@ const SectorWiseReport = () => {
     "Compliant",
     // "Compliant%",
     "Not Compliant",
-    // "Not Compliant%",
+    "Not Compliant%",
     "Toilet Unclean",
-    // "Toilet Unclean%",
+    "Toilet Unclean%",
     "Toilet Clean",
     // "Toilet Clean%",
   ];
@@ -466,15 +466,15 @@ const SectorWiseReport = () => {
     //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
     // ) + " %",
     Number(sector?.not_compliant) || 0,
-    // getPercentage(
-    //   Number(sector?.not_compliant) || 0,
-    //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    // ) + " %",
+    getPercentage(
+      Number(sector?.not_compliant) || 0,
+      (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
+    ) + " %",
     Number(sector?.toiletunclean) || 0,
-    // getPercentage(
-    //   Number(sector?.toiletunclean) || 0,
-    //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    // ) + " %",
+    getPercentage(
+      Number(sector?.toiletunclean) || 0,
+      (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
+    ) + " %",
     Number(sector?.toiletclean) || 0,
     // getPercentage(
     //   Number(sector?.toiletclean) || 0,
@@ -508,17 +508,17 @@ const SectorWiseReport = () => {
       //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
       //   ) + " %",
       "Not Compliant": Number(data?.not_compliant) || 0,
-      // "Not Compliant (%)":
-      //   getPercentage(
-      //     Number(data?.not_compliant) || 0,
-      //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-      //   ) + " %",
+      "Not Compliant (%)":
+        getPercentage(
+          Number(data?.not_compliant) || 0,
+          (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
+        ) + " %",
       "Toilet Unclean": Number(data?.toiletunclean) || 0,
-      // "Toilet Unclean (%)":
-      //   getPercentage(
-      //     Number(data?.toiletunclean) || 0,
-      //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-      //   ) + " %",
+      "Toilet Unclean (%)":
+        getPercentage(
+          Number(data?.toiletunclean) || 0,
+          (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
+        ) + " %",
       "Toilet Clean": Number(data?.toiletclean) || 0,
       // "Toilet Clean (%)":
       //   getPercentage(
@@ -748,7 +748,7 @@ const SectorWiseReport = () => {
         dataSource={[...sectorData, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 30 }}
-        // scroll={{ x: 2000, y: 400 }}
+        scroll={{ x: 1200, y: 400 }}
         bordered
         rowClassName={rowClassName}
       />
