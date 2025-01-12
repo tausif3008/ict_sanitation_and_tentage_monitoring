@@ -4,33 +4,33 @@ import { Collapse, Form, Button, Row, Col } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import CommonTable from "../../commonComponents/CommonTable";
 import URLS from "../../urils/URLS";
-import { basicUrl } from "../../Axios/commonAxios";
 import search from "../../assets/Dashboard/icon-search.png";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions } from "../../constant/const";
+import { gsdWiseMonitoringcolumns } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-// import { getGSDReportData } from "./Slice/gsdWiseRegistrationReport";
-// import GsdRegistrationSelector from "./Slice/gsdRegistrationSelector";
 import { getFormData } from "../../urils/getFormData";
-import { getGSDReportData } from "../GSDWiseRegistrationReport/Slice/gsdWiseRegistrationReport";
 import GsdRegistrationSelector from "../GSDWiseRegistrationReport/Slice/gsdRegistrationSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
+import VendorSelectors from "../VendorwiseReports/vendorSelectors";
+import GSDMonitoringSelector from "./Slice/GSDMonitoringSelector";
+import { getGSDMonitoringData } from "./Slice/GSDMonitoringReport";
+import CustomTable from "../../commonComponents/CustomTable";
 
 const GsdWiseMonitoringReport = () => {
   const [excelData, setExcelData] = useState([]);
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [startDate, setStartDate] = useState(null);
+  // const [showDateRange, setShowDateRange] = useState(false);
+  // const [startDate, setStartDate] = useState(null);
   const [gsdData, setGsdData] = useState({
     list: [],
     pageLength: 25,
@@ -38,143 +38,161 @@ const GsdWiseMonitoringReport = () => {
   });
 
   const dispatch = useDispatch();
-  const { GSDReport_data, loading } = GsdRegistrationSelector(); // gsd selector
-  // const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
-  // const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
+  const { loading } = GsdRegistrationSelector(); // gsd selector
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
+  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { GSDMonitoring_data, gsd_monitoringLoader } = GSDMonitoringSelector();
 
   // let uri = URLS?.gsdRegistrationReport?.path;
+  const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
-
+  const formValue = form.getFieldsValue();
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
+      date: dayjs(values?.date).format("YYYY-MM-DD"),
       ...(values?.sector_id && {
         sector_id: values?.sector_id,
       }),
-      // ...(values?.date_format && { date_format: values?.date_format }),
-      ...(values?.created_by && { created_by: values?.created_by }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.asset_main_type_id && {
+        asset_main_type_id: values?.asset_main_type_id,
+      }),
+      ...(values?.user_id && { user_id: values?.user_id }),
     };
-
-    if (values?.date_format === "Today") {
-      finalData.form_date = moment().format("YYYY-MM-DD");
-      finalData.to_date = moment().format("YYYY-MM-DD");
-    }
-    //  else if (values?.date_format === "Week") {
-    //   finalData.form_date = moment()
-    //     .subtract(8, "days")
-    //     .format("YYYY-MM-DD");
-    //   finalData.to_date = moment().format("YYYY-MM-DD");
-    // } else
-
-    if (values?.form_date || values?.to_date) {
-      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
-      const dayjsObjectTo = dayjs(values?.to_date?.$d);
-
-      // Format the date as 'YYYY-MM-DD'
-      const start = dayjsObjectFrom.format("YYYY-MM-DD");
-      const end = dayjsObjectTo.format("YYYY-MM-DD");
-      finalData.form_date = values?.form_date ? start : end;
-      finalData.to_date = values?.to_date ? end : start;
-    }
-
-    console.log("finalData", finalData);
-
-    // const formData = getFormData(finalData);
-    // dispatch(getGSDReportData(basicUrl + uri, formData)); // Fetch the data
+    callApi(finalData);
   };
 
   // reset form
   const resetForm = () => {
     form.resetFields();
-    // getData();
-    setShowDateRange(false);
+    getCurrentData();
+    // setShowDateRange(false);
   };
 
   // handle asset main type
-  // const handleSelect = (value) => {
-  //   form.setFieldsValue({
-  //     asset_type_id: null,
-  //     to_user_id: null,
-  //   });
-  //   const url = URLS?.assetType?.path + value;
-  //   dispatch(getAssetTypes(url)); // get assset type
-  // };
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+      vendor_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+
+    const paramData = {
+      asset_main_type_id: value,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+  };
 
   // handle asset type
-  //   const handleTypeSelect = (value) => {
-  //     form.setFieldsValue({
-  //       to_user_id: null,
-  //     });
-  //     value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
-  //   };
-
-  // handle date select
-  const handleDateSelect = (value) => {
-    if (value === "Date Range") {
-      setShowDateRange(true);
-    } else {
-      form.setFieldsValue({
-        form_date: null,
-        to_date: null,
-      });
-      setShowDateRange(false);
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    if (value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
     }
   };
 
-  const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
-    return (
-      current &&
-      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
-    );
-  };
-
-  // get current data
-  // const getData = async () => {
-  //   dispatch(getGSDReportData(basicUrl + uri)); // Fetch the data
+  // handle date select
+  // const handleDateSelect = (value) => {
+  //   if (value === "Date Range") {
+  //     setShowDateRange(true);
+  //   } else {
+  //     form.setFieldsValue({
+  //       form_date: null,
+  //       to_date: null,
+  //     });
+  //     setShowDateRange(false);
+  //   }
   // };
 
-  // useEffect(() => {
-  //   getData();
-  //   const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
-  //   dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-  // }, []);
+  // const disabledDate = (current) => {
+  //   const maxDate = moment(startDate).clone().add(8, "days");
+  //   return (
+  //     current &&
+  //     (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
+  //   );
+  // };
+
+  // current data
+  const getCurrentData = () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, dateFormat),
+      asset_main_type_id: "1",
+      sector_id: "1",
+    });
+    const url = URLS?.assetType?.path + "1";
+    dispatch(getAssetTypes(url)); // get assset type
+    const paramData = {
+      asset_main_type_id: "1",
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    const finalValues = {
+      date: newDate,
+      asset_main_type_id: "1",
+      sector_id: "1",
+    };
+    callApi(finalValues);
+  };
+
+  const callApi = async (data) => {
+    const formData = await getFormData(data);
+    dispatch(getGSDMonitoringData(formData)); // vendor reports
+  };
 
   useEffect(() => {
-    // const urls = URLS?.monitoringAgent?.path;
-    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
+    const urls = URLS?.monitoringAgent?.path;
+    dispatch(getMonitoringAgent(urls)); // monitoring agent list
+    getCurrentData();
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     dispatch(getSectorsList()); // all sectors
   }, []);
 
-  // useEffect(() => {
-  //   if (GSDReport_data) {
-  //     const unitCount = GSDReport_data?.data?.listings?.reduce(
-  //       (total, item) => {
-  //         return total + Number(item?.tagging_units);
-  //       },
-  //       0
-  //     );
+  // const getUsers = async (dataObj = {}) => {
+  //   const newParam = {
+  //     page: dataObj?.page || "1",
+  //     per_page: dataObj?.size || "25",
+  //     ...form.getFieldsValue(),
+  //   };
+  //   dispatch(getVehicleList(newParam));
+  // };
 
-  //     setGsdData((prevDetails) => ({
-  //       ...prevDetails,
-  //       list: GSDReport_data?.data?.listings || [],
-  //       pageLength: GSDReport_data?.data?.paging?.[0]?.length || 0,
-  //       currentPage: GSDReport_data?.data?.paging?.[0]?.currentpage || 1,
-  //       totalRecords: GSDReport_data?.data?.paging?.[0]?.totalrecords || 0,
-  //       totalUnits: unitCount,
-  //     }));
+  useEffect(() => {
+    if (GSDMonitoring_data) {
+      // const unitCount = GSDMonitoring_data?.data?.gsd?.reduce((total, item) => {
+      //   return total + Number(item?.tagging_units);
+      // }, 0);
 
-  //     const myexcelData = GSDReport_data?.data?.listings?.map((data, index) => {
-  //       return {
-  //         Sr: index + 1,
-  //         "GSD name": data?.agent_name,
-  //         Unit: Number(data?.tagging_units),
-  //       };
-  //     });
-  //     setExcelData(myexcelData);
-  //   }
-  // }, [GSDReport_data]);
+      setGsdData((prevDetails) => ({
+        ...prevDetails,
+        list: GSDMonitoring_data?.data?.gsd || [],
+        pageLength: GSDMonitoring_data?.data?.paging?.[0]?.length || 0,
+        currentPage: GSDMonitoring_data?.data?.paging?.[0]?.currentpage || 1,
+        totalRecords: GSDMonitoring_data?.data?.paging?.[0]?.totalrecords || 0,
+        // totalUnits: unitCount,
+      }));
+
+      const myexcelData = GSDMonitoring_data?.data?.gsd?.map((data, index) => {
+        return {
+          Sr: index + 1,
+          "GSD name": data?.agent_name,
+          Unit: Number(data?.tagging_units),
+        };
+      });
+      setExcelData(myexcelData);
+    }
+  }, [GSDMonitoring_data]);
 
   const columns = [
     {
@@ -195,7 +213,7 @@ const GsdWiseMonitoringReport = () => {
   return (
     <div>
       <CommonDivider label={"GSD Wise Monitoring Report"} />
-      <div className="flex justify-end gap-2 font-semibold">
+      {/* <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToExcel
             excelData={excelData || []}
@@ -203,7 +221,7 @@ const GsdWiseMonitoringReport = () => {
             dynamicFields={{ "Total Units": gsdData?.totalUnits }}
           />
         </div>
-      </div>
+      </div> */}
       <div>
         <Collapse
           defaultActiveKey={["1"]}
@@ -225,9 +243,35 @@ const GsdWiseMonitoringReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    {/* <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"created_by"}
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      />
+                    </Col>
+                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_id"}
+                        label={"Select Asset Type"}
+                        placeholder={"Select Asset Type"}
+                        options={AssetTypeDrop || []}
+                        onSelect={handleTypeSelect}
+                      />
+                    </Col>
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorCatTypeDrop || []}
+                      />
+                    </Col>
+                    <Col key="user_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"user_id"}
                         label={"Select GSD"}
                         placeholder={"Select GSD"}
                         options={monitoringAgentDrop || []}
@@ -236,7 +280,7 @@ const GsdWiseMonitoringReport = () => {
                         apiAction={getMonitoringAgent}
                         onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                       />
-                    </Col> */}
+                    </Col>
                     <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"sector_id"}
@@ -263,7 +307,15 @@ const GsdWiseMonitoringReport = () => {
                         // onSelect={handleTypeSelect}
                       />
                     </Col> */}
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
+                    </Col>
+                    {/* <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"date_format"}
                         label={"Select Date Type"}
@@ -331,7 +383,7 @@ const GsdWiseMonitoringReport = () => {
                           />
                         </Col>
                       </>
-                    )}
+                    )} */}
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
@@ -361,15 +413,32 @@ const GsdWiseMonitoringReport = () => {
           ]}
         />
       </div>
-      <CommonTable
-        loading={loading}
+      <CustomTable
+        loading={gsd_monitoringLoader}
+        columns={gsdWiseMonitoringcolumns || []}
+        bordered
+        dataSource={gsdData || []}
+        scroll={{ x: 1500, y: 400 }}
+        tableSubheading={{
+          "Total Records": gsdData?.totalRecords,
+        }}
+        // onPageChange={(page, size) => {
+        //   const obj = {
+        //     page: page,
+        //     size: size,
+        //   };
+        //   getUsers(obj);
+        // }}
+      />
+      {/* <CommonTable
+        loading={gsd_monitoringLoader}
         uri={`gsd-wise-monitoring-report`}
-        columns={columns || []}
+        columns={gsdWiseMonitoringcolumns || []}
         details={gsdData || []}
-        subtotalName={"Total Units"}
-        subtotalCount={gsdData?.totalUnits}
-        scroll={{ x: 300, y: 400 }}
-      ></CommonTable>
+        // subtotalName={"Total Units"}
+        // subtotalCount={gsdData?.totalUnits}
+        scroll={{ x: 1000, y: 400 }}
+      ></CommonTable> */}
     </div>
   );
 };

@@ -1,11 +1,15 @@
-import React from 'react'
+import React from "react";
+import { useSelector } from "react-redux";
 
 const GSDMonitoringSelector = () => {
-  return (
-    <div>
-      
-    </div>
-  )
-}
+  const GSDMonitoring_data = useSelector(
+    (state) => state?.GsdWiseMonitoringReport.name
+  ); // GSD Wise Monitoring data
+  const gsd_monitoringLoader = useSelector(
+    (state) => state?.GsdWiseMonitoringReport.loading
+  );
 
-export default GSDMonitoringSelector
+  return { GSDMonitoring_data, gsd_monitoringLoader };
+};
+
+export default GSDMonitoringSelector;

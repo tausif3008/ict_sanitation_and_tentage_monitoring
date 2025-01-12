@@ -204,6 +204,9 @@ const URLS = {
   // inspection Report
   inspectionReport: { path: "/reporting/report-format-one", version: 5.43 },
 
+  // gsd monitoring Report
+  getGsdMonitoringData: { path: "/reporting/gsd", version: 5.43 },
+
   // tentage dashboard
   tentageDash: { path: "/dashboard/tentage", version: 5.43 },
 

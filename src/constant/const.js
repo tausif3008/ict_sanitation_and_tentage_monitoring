@@ -265,6 +265,83 @@ export const vendorColumn = [
   },
 ];
 
+export const gsdWiseMonitoringcolumns = [
+  {
+    title: "GSD Name",
+    dataIndex: "name",
+    key: "name",
+    width: 100,
+    sorter: (a, b) => {
+      const nameA = a?.name ? a?.name?.toString() : "";
+      const nameB = b?.name ? b?.name?.toString() : "";
+      return nameA?.localeCompare(nameB);
+    },
+  },
+  // {
+  //   title: "Total Quantity",
+  //   dataIndex: "total",
+  //   key: "total",
+  //   width: 50,
+  //   sorter: (a, b) => a?.total - b?.total,
+  // },
+  // {
+  //   title: "Registered",
+  //   dataIndex: "registered",
+  //   key: "registered",
+  //   width: 50,
+  //   sorter: (a, b) => a?.total - b?.total,
+  // },
+  {
+    title: "Monitoring",
+    dataIndex: "todaysmonitaring",
+    key: "todaysmonitaring",
+    width: 50,
+    sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
+  },
+  renderMonitoringSorting(
+    "Monitoring (%)",
+    "todaysmonitaring",
+    "todaysmonitaring%"
+  ),
+  {
+    title: "Partially Compliant",
+    dataIndex: "partially_compliant",
+    key: "partially_compliant",
+    width: 50,
+    sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
+  },
+  {
+    title: "Compliant",
+    dataIndex: "compliant",
+    key: "compliant",
+    width: 50,
+    sorter: (a, b) => a?.compliant - b?.compliant,
+  },
+  {
+    title: "Not Compliant",
+    dataIndex: "not_compliant",
+    key: "not_compliant",
+    width: 50,
+    sorter: (a, b) => a?.not_compliant - b?.not_compliant,
+  },
+  renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+  {
+    title: "Toilet Unclean",
+    dataIndex: "toiletunclean",
+    key: "toiletunclean",
+    width: 50,
+    sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
+  },
+  renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+  {
+    title: "Toilet Clean",
+    dataIndex: "toiletclean",
+    key: "toiletclean",
+    width: 50,
+    sorter: (a, b) => a?.toiletclean - b?.toiletclean,
+  },
+];
+
 const nameColumn = [
   {
     title: "Name",

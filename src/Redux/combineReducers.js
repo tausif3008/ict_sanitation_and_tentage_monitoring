@@ -22,6 +22,7 @@ import SectorReportSlice from "../Reports/SectorSlice/sectorSlice";
 import tentageSlice from "../TentageDashboard/Slice/tentageSlice";
 import wasteDashboardSlice from "../WasteDashboard/Slice/wasteDashboardSlice";
 import GsdWiseRegistrationReport from "../Reports/GSDWiseRegistrationReport/Slice/gsdWiseRegistrationReport";
+import GsdWiseMonitoringReport from "../Reports/GSDWiseMonitoringReport/Slice/GSDMonitoringReport";
 import loginSlice from "../Login/slice/loginSlice";
 import vehicleSlice from "../../src/register/vehicle/Slice/vehicleSlice";
 
@@ -52,6 +53,7 @@ const rootReducer = combineReducers({
   InspectionReportSlice: InspectionReportSlice,
   SectorReportSlice: SectorReportSlice,
   GsdWiseRegistrationReport: GsdWiseRegistrationReport,
+  GsdWiseMonitoringReport: GsdWiseMonitoringReport,
 
   // route
   routeSlice: routeSlice,
