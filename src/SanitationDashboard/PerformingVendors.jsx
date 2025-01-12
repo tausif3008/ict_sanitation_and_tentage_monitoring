@@ -15,7 +15,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
       <div className="">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
-            <div className="text-red-600 font-semibold flex gap-1 mb-2">
+            <div className="text-green-600 font-semibold flex gap-1 mb-2">
               <span>{dict.high_performing_vendors[lang]}</span>
             </div>
             <ul className="mt-2">
@@ -45,7 +45,7 @@ const PerformingVendors = ({ performanceData = [] }) => {
       <div className="mt-2">
         <div className="p-4 border rounded-md shadow-md">
           <div className="text-start">
-            <div className="text-green-600 font-semibold flex gap-1 mb-2">
+            <div className="text-red-600 font-semibold flex gap-1 mb-2">
               <span>{dict.low_performing_vendors[lang]}</span>
             </div>
             <ul className="mt-2">
