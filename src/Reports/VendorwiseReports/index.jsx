@@ -691,6 +691,7 @@ const VendorReports = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
+            columnProperties={[6]}
             fileName={
               filesName
                 ? `${filesName} (${dayjs(formValue?.date).format(

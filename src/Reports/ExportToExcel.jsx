@@ -8,12 +8,20 @@ const ExportToExcel = ({
   fileName = "excel_file",
   dynamicFields = {},
   dynamicArray = [],
+  columnProperties = [],
 }) => {
   const exportToExcel = async () => {
     if (excelData?.length === 0) {
       message.error("No data available");
       return;
     }
+
+    // const columnProperties = [
+    //   { columnIndex: 6, lowerColor: "green", higherColor: "red" },
+    //   { columnIndex: 10, lowerColor: "red", higherColor: "green" },
+    //   { columnIndex: 12, lowerColor: "red", higherColor: "green" },
+    //   // You can add more column-specific properties here
+    // ];
 
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
@@ -57,12 +65,17 @@ const ExportToExcel = ({
       const row = worksheet.addRow(data);
 
       // For each cell in the row, check if it's a percentage or a number and align accordingly
-      row.eachCell((cell) => {
+      row.eachCell((cell, cellIndex) => {
         let value = cell.value;
         let color = "";
 
         // Check if the cell contains a percentage
-        if (typeof value === "string" && value.includes("%")) {
+        if (
+          typeof value === "string" &&
+          value.includes("%") &&
+          columnProperties.includes(cellIndex)
+        ) {
+          console.log("cellIndex", cellIndex);
           const percentageValue = parseFloat(value.replace("%", "").trim()); // Remove '%' and convert to number
 
           // Apply center alignment for percentages
@@ -70,9 +83,9 @@ const ExportToExcel = ({
 
           // Apply color based on percentage value
           if (percentageValue === 100) {
-            color = "FF00FF00"; // Green for 100% (ARGB format: FF for alpha, followed by RGB values)
+            color = "FF00FF00"; // Green for 100%
           } else if (percentageValue === 0) {
-            color = "FFFF0000"; // Red for 0% (ARGB format: FF for alpha, followed by RGB values)
+            color = "FFFF0000"; // Red for 0%
           } else {
             // Gradient color in between (can be adjusted)
             const redIntensity = Math.round((100 - percentageValue) * 2.55); // Red intensity decreases as percentage increases
@@ -91,12 +104,68 @@ const ExportToExcel = ({
             pattern: "solid",
             fgColor: { argb: color },
           };
+        } else if (typeof value === "number" || value.includes("%")) {
+          // Apply left alignment for other types of data
+          cell.alignment = { horizontal: "center" };
         } else {
           // Apply left alignment for other types of data
           cell.alignment = { horizontal: "left" };
         }
       });
     });
+
+    // excelData?.forEach((data) => {
+    //   const row = worksheet.addRow(data);
+
+    //   // For each cell in the row, check if it's a percentage or a number and align accordingly
+    //   row.eachCell((cell, colIndex) => {
+    //     let value = cell.value;
+    //     let color = "";
+
+    //     // Find the column properties based on column index
+    //     const columnProperty = columnProperties.find(
+    //       (prop) => prop.columnIndex === colIndex + 1
+    //     ); // 1-based index
+
+    //     // Check if the column has specific formatting properties
+    //     if (columnProperty) {
+    //       // Check if the cell contains a percentage
+    //       if (typeof value === "string" && value.includes("%")) {
+    //         const percentageValue = parseFloat(value.replace("%", "").trim()); // Remove '%' and convert to number
+
+    //         // Apply center alignment for percentages
+    //         cell.alignment = { horizontal: "center" };
+
+    //         // Apply color based on percentage value
+    //         if (percentageValue === 100) {
+    //           color = columnProperty.lowerColor; // Apply lower color (green)
+    //         } else if (percentageValue === 0) {
+    //           color = columnProperty.higherColor; // Apply higher color (red)
+    //         } else {
+    //           // In between: Gradient color from lowerColor to higherColor (you can customize this logic)
+    //           const redIntensity = Math.round((100 - percentageValue) * 2.55); // Red intensity decreases as percentage increases
+    //           const greenIntensity = Math.round(percentageValue * 2.55); // Green intensity increases as percentage increases
+
+    //           // Combine the color intensities
+    //           color = `rgb(${redIntensity}, ${greenIntensity}, 0)`; // You can modify this logic for gradient coloring
+    //         }
+
+    //         // Set the background color using the calculated color
+    //         cell.fill = {
+    //           type: "pattern",
+    //           pattern: "solid",
+    //           fgColor: { rgb: color }, // Use the calculated color here
+    //         };
+    //       } else {
+    //         // Apply left alignment for non-percentage cells
+    //         cell.alignment = { horizontal: "left" };
+    //       }
+    //     } else {
+    //       // If no column-specific properties exist, apply default alignment
+    //       cell.alignment = { horizontal: "left" };
+    //     }
+    //   });
+    // });
 
     // excelData?.forEach((data) => {
     //   const row = worksheet.addRow(data);

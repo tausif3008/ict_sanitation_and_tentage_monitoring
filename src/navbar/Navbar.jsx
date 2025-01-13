@@ -519,14 +519,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      vehicle_reports?.includes(userRoleId) && {
-        key: "8",
-        label: (
-          <Link className="text-black no-underline" to="/vehicle-report">
-            Vehicle Report
-          </Link>
-        ),
-      },
+      // vehicle_reports?.includes(userRoleId) && {
+      //   key: "8",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/vehicle-report">
+      //       Vehicle Report
+      //     </Link>
+      //   ),
+      // },
     ];
   };
 

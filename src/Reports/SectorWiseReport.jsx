@@ -601,6 +601,7 @@ const SectorWiseReport = () => {
         <div>
           <ExportToExcel
             excelData={myexcelData || []}
+            columnProperties={[6]}
             fileName={
               filesName
                 ? `${filesName} (${dayjs(formValue?.date).format(

@@ -2,8 +2,8 @@
 import axios from "axios";
 
 // export const basicUrl = "https://13.201.196.2/php-api/index.php";
-// export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php"; // testing
-export const basicUrl = "http://metamindsystems.in/api"; // testing
+export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php"; // testing
+// export const basicUrl = "http://metamindsystems.in/api"; // testing
 
 // headers: {
 //   "Content-Type": "multipart/form-data",
