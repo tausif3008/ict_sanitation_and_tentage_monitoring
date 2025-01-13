@@ -3,23 +3,23 @@ import { useDispatch } from "react-redux";
 import { Collapse, Form, Button, Row, Col } from "antd";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
-// import URLS from "../../urils/URLS";
 import search from "../../assets/Dashboard/icon-search.png";
+import { getValueLabel, gsdWiseMonitoringcolumns } from "../../constant/const";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import CustomDatepicker from "../../commonComponents/CustomDatepicker";
+import { getFormData } from "../../urils/getFormData";
+// import URLS from "../../urils/URLS";
 // import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 // import {
 //   getAssetMainTypes,
 //   getAssetTypes,
 // } from "../../register/AssetType/AssetTypeSlice";
-import { gsdWiseMonitoringcolumns } from "../../constant/const";
-import CustomSelect from "../../commonComponents/CustomSelect";
-import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import { getFormData } from "../../urils/getFormData";
 // import MonitoringSelector from "../../complaince/monitoringSelector";
 // import VendorSelectors from "../VendorwiseReports/vendorSelectors";
 // import { getMonitoringAgent } from "../../complaince/monitoringSlice";
+// import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-// import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
 import GSDMonitoringSelector from "./Slice/GSDMonitoringSelector";
 import { getGSDMonitoringData } from "./Slice/GSDMonitoringReport";
 import CustomTable from "../../commonComponents/CustomTable";
@@ -37,11 +37,12 @@ const GsdWiseMonitoringReport = () => {
     total: 0,
     registered: 0,
     todaysmonitaring: 0,
-    partially_compliant: 0,
-    compliant: 0,
-    not_compliant: 0,
-    toiletunclean: 0,
-    toiletclean: 0,
+    // partially_compliant: 0,
+    // compliant: 0,
+    // not_compliant: 0,
+    // toiletunclean: 0,
+    // toiletclean: 0,
+    total_allocation: 0,
   });
 
   const dispatch = useDispatch();
@@ -58,18 +59,18 @@ const GsdWiseMonitoringReport = () => {
   // fiter finish
   const onFinishForm = (values) => {
     const finalData = {
-      page: values?.page || "1",
-      per_page: values?.size || "25",
       date: dayjs(values?.date).format("YYYY-MM-DD"),
       ...(values?.sector_id && {
         sector_id: values?.sector_id,
       }),
-      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
-      ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
-      ...(values?.asset_main_type_id && {
-        asset_main_type_id: values?.asset_main_type_id,
-      }),
-      ...(values?.user_id && { user_id: values?.user_id }),
+      // page: values?.page || "1",
+      // per_page: values?.size || "25",
+      // ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      // ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      // ...(values?.asset_main_type_id && {
+      //   asset_main_type_id: values?.asset_main_type_id,
+      // }),
+      // ...(values?.user_id && { user_id: values?.user_id }),
     };
     callApi(finalData);
   };
@@ -115,8 +116,8 @@ const GsdWiseMonitoringReport = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
-      // asset_main_type_id: "1",
       sector_id: "1",
+      // asset_main_type_id: "1",
     });
     // const url = URLS?.assetType?.path + "1";
     // dispatch(getAssetTypes(url)); // get assset type
@@ -126,8 +127,8 @@ const GsdWiseMonitoringReport = () => {
     // dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
     const finalValues = {
       date: newDate,
-      // asset_main_type_id: "1",
       sector_id: "1",
+      // asset_main_type_id: "1",
       // page: "1",
       // per_page: "25",
     };
@@ -142,9 +143,9 @@ const GsdWiseMonitoringReport = () => {
   useEffect(() => {
     // const urls = URLS?.monitoringAgent?.path;
     // dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    getCurrentData();
     // const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     // dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    getCurrentData();
     dispatch(getSectorsList()); // all sectors
   }, []);
 
@@ -163,6 +164,10 @@ const GsdWiseMonitoringReport = () => {
 
       const totalMonitoring = myData?.reduce(
         (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+        0
+      );
+      const total_allocation = myData?.reduce(
+        (acc, circle) => acc + Number(circle?.total_allocation) || 0,
         0
       );
       // const partially_compliant = myData?.reduce(
@@ -208,6 +213,7 @@ const GsdWiseMonitoringReport = () => {
       setCount({
         total: GSDMonitoring_data?.data?.gsd?.length,
         todaysmonitaring: totalMonitoring,
+        total_allocation: total_allocation,
         // partially_compliant: partially_compliant,
         // compliant: compliant,
         // not_compliant: not_compliant,
@@ -219,6 +225,7 @@ const GsdWiseMonitoringReport = () => {
         return {
           Sr: index + 1,
           Name: data?.name,
+          "Total Allocation": Number(data?.total_allocation) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
           // Compliant: Number(data?.compliant) || 0,
           // "Partially Compliant": Number(data?.partially_compliant) || 0,
@@ -247,6 +254,7 @@ const GsdWiseMonitoringReport = () => {
   const pdfHeader = [
     "Sr No",
     "GSD Name",
+    "Total Allocation",
     "Monitoring",
     // "Compliant",
     // // "Compliant (%)",
@@ -266,6 +274,7 @@ const GsdWiseMonitoringReport = () => {
       excelData?.map((opt) => [
         opt?.Sr,
         opt?.Name,
+        opt?.["Total Allocation"],
         opt?.Monitoring,
         // opt?.Compliant,
         // // opt?.["Compliant (%)"],
@@ -281,9 +290,15 @@ const GsdWiseMonitoringReport = () => {
     );
   }, [excelData]);
 
-  const pdfNames = `GSD Wise Monitoring Report (${dayjs(formValue?.date).format(
-    "DD-MMM-YYYY"
-  )})`;
+  const sectorName = getValueLabel(
+    formValue?.sector_id,
+    SectorListDrop,
+    "Sector Name"
+  );
+
+  const pdfNames = `GSD Wise ${sectorName} Monitoring Report (${dayjs(
+    formValue?.date
+  ).format("DD-MMM-YYYY")})`;
 
   return (
     <div>
@@ -295,13 +310,14 @@ const GsdWiseMonitoringReport = () => {
             pdfName={pdfNames}
             headerData={pdfHeader}
             IsLastLineBold={true}
-            // landscape={true}
+            IsNoBold={true}
             // applyTableStyles={true}
             rows={[
               ...pdfData,
               [
                 "",
                 "Total",
+                count?.total_allocation,
                 count?.todaysmonitaring,
                 // count?.compliant,
                 // count?.partially_compliant,
@@ -326,9 +342,14 @@ const GsdWiseMonitoringReport = () => {
                 colIndex: 2,
               },
               {
+                name: "Total Allocation",
+                value: count?.total_allocation,
+                colIndex: 3,
+              },
+              {
                 name: "Monitoring",
                 value: count?.todaysmonitaring,
-                colIndex: 3,
+                colIndex: 4,
               },
               // {
               //   name: "Compliant",
@@ -555,10 +576,11 @@ const GsdWiseMonitoringReport = () => {
         columns={gsdWiseMonitoringcolumns || []}
         bordered
         dataSource={gsdData || []}
-        // dataSource={[...gsdData?.list, ...lastTableRow] || []}
         scroll={{ x: 800, y: 400 }}
         tableSubheading={{
           "Total Records": gsdData?.totalRecords,
+          "Total Allocation": count?.total_allocation,
+          "Total Monitoring": count?.todaysmonitaring,
         }}
         pagination={true}
         // onPageChange={(page, size) => {
@@ -569,15 +591,6 @@ const GsdWiseMonitoringReport = () => {
         //   getUsers(obj);
         // }}
       />
-      {/* <CommonTable
-        loading={gsd_monitoringLoader}
-        uri={`gsd-wise-monitoring-report`}
-        columns={gsdWiseMonitoringcolumns || []}
-        details={gsdData || []}
-        // subtotalName={"Total Units"}
-        // subtotalCount={gsdData?.totalUnits}
-        scroll={{ x: 1000, y: 400 }}
-      ></CommonTable> */}
     </div>
   );
 };

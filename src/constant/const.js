@@ -292,6 +292,13 @@ export const gsdWiseMonitoringcolumns = [
   //   sorter: (a, b) => a?.total - b?.total,
   // },
   {
+    title: "Total Allocation",
+    dataIndex: "total_allocation",
+    key: "total_allocation",
+    width: 50,
+    sorter: (a, b) => a?.total_allocation - b?.total_allocation,
+  },
+  {
     title: "Monitoring",
     dataIndex: "todaysmonitaring",
     key: "todaysmonitaring",
@@ -388,7 +395,7 @@ export const staticUserRole = [
   { value: "8", label: "Vendor" }, // If you want to include Vendor, uncomment and add label
   { value: "9", label: "Sector Medical Officer (SMO)" },
   { value: "10", label: "Sub Divisional Magistrate (SDM)" },
-  { value: "11", label: "Gram Panchayat/Vikas Adhikari" },
+  { value: "11", label: "Gram Panchayat / Vikas Adhikari" },
   { value: "12", label: "Circle Inspector" },
   { value: "13", label: "Vendor Supervisor" },
   { value: "14", label: "Nayab Tahsildar / Sector Magistrate" },
