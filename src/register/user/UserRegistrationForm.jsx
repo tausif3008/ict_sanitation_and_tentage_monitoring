@@ -27,6 +27,7 @@ const UserRegistrationForm = () => {
     setLoading(true);
     const finalValue = {
       ...values,
+      password: values?.phone,
       status: 1,
     };
 
