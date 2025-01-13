@@ -93,6 +93,7 @@ import {
   vendorDash_param,
   vehicleDash_param,
   gsd_wise_monitoring_reports,
+  vehicle_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -682,6 +683,15 @@ function App() {
             element={
               <ProtectedRoute
                 condition={gsd_wise_monitoring_reports?.includes(userRoleId)}
+                component={GsdWiseMonitoringReport}
+              />
+            }
+          />
+          <Route
+            path="/vehicle-report"
+            element={
+              <ProtectedRoute
+                condition={vehicle_reports?.includes(userRoleId)}
                 component={GsdWiseMonitoringReport}
               />
             }

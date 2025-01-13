@@ -25,6 +25,7 @@ import {
   vendorDash_param,
   vehicleDash_param,
   gsd_wise_monitoring_reports,
+  vehicle_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -515,6 +516,14 @@ const Navbar = ({ lang, setLang }) => {
             to="/gsd-wise-monitoring-report"
           >
             GSD Wise Monitoring Report
+          </Link>
+        ),
+      },
+      vehicle_reports?.includes(userRoleId) && {
+        key: "8",
+        label: (
+          <Link className="text-black no-underline" to="/vehicle-report">
+            Vehicle Report
           </Link>
         ),
       },

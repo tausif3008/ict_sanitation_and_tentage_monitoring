@@ -78,7 +78,7 @@ const ExportToPDF = ({
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
-    const dateString = moment().format("DD-MMM-YYYY HH:MM A");
+    const dateString = moment().format("DD-MMM-YYYY hh:mm A");
 
     const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right

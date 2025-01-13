@@ -25,6 +25,7 @@ import GsdWiseRegistrationReport from "../Reports/GSDWiseRegistrationReport/Slic
 import GsdWiseMonitoringReport from "../Reports/GSDWiseMonitoringReport/Slice/GSDMonitoringReport";
 import loginSlice from "../Login/slice/loginSlice";
 import vehicleSlice from "../../src/register/vehicle/Slice/vehicleSlice";
+import  VehicleReport  from "../Reports/VehicleReport/Slice/vehicleReport";
 
 const rootReducer = combineReducers({
   assetTypeUpdateEl: assetTypeSlice,
@@ -54,6 +55,7 @@ const rootReducer = combineReducers({
   SectorReportSlice: SectorReportSlice,
   GsdWiseRegistrationReport: GsdWiseRegistrationReport,
   GsdWiseMonitoringReport: GsdWiseMonitoringReport,
+  VehicleReport: VehicleReport,
 
   // route
   routeSlice: routeSlice,

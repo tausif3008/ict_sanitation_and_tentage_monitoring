@@ -298,11 +298,11 @@ export const gsdWiseMonitoringcolumns = [
     width: 50,
     sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
   },
-  renderMonitoringSorting(
-    "Monitoring (%)",
-    "todaysmonitaring",
-    "todaysmonitaring%"
-  ),
+  // renderMonitoringSorting(
+  //   "Monitoring (%)",
+  //   "todaysmonitaring",
+  //   "todaysmonitaring%"
+  // ),
   {
     title: "Partially Compliant",
     dataIndex: "partially_compliant",
