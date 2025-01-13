@@ -112,7 +112,7 @@ const UserRegistrationForm = () => {
                 },
               ]}
             />
-            {key === "AddKey" && (
+            {/* {key === "AddKey" && (
               <CustomInput
                 label={<div className="font-semibold">Password</div>}
                 name="password"
@@ -131,7 +131,7 @@ const UserRegistrationForm = () => {
                   },
                 ]}
               />
-            )}
+            )} */}
             <CustomInput
               label={<div className="font-semibold">Name (Display Name) </div>}
               name="name"
@@ -141,10 +141,10 @@ const UserRegistrationForm = () => {
             <CustomInput
               label={<div className="font-semibold">Email ID </div>}
               name="email"
-              rules={[
-                { required: true, message: "Please enter the email" },
-                { type: "email", message: "Please enter a valid email" },
-              ]}
+              // rules={[
+              //   { required: true, message: "Please enter the email" },
+              //   { type: "email", message: "Please enter a valid email" },
+              // ]}
               placeholder={"Email ID"}
             />
             {/* <CustomInput
