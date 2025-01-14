@@ -60,6 +60,7 @@ const VendorReports = () => {
     pageLength: 25,
     currentPage: 1,
   });
+  const vendorRemoveArray = ["132", "141", "148"];
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
@@ -67,7 +68,6 @@ const VendorReports = () => {
   const dispatch = useDispatch();
   const { VendorReport_Loading, vendorReports, VendorCatTypeDrop } =
     VendorSelectors(); // vendor dropdown & Reports
-  const vendorsData = vendorReports?.data?.vendors || [];
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
@@ -119,7 +119,6 @@ const VendorReports = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
-
     const paramData = {
       asset_main_type_id: value,
     };
@@ -194,36 +193,36 @@ const VendorReports = () => {
 
   // table quantity
   useEffect(() => {
-    if (vendorReports) {
-      const total = vendorsData?.reduce(
+    if (vendorDetails?.list) {
+      const total = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.total),
         0
       );
-      const totalReg = vendorsData?.reduce(
+      const totalReg = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.registered),
         0
       );
-      const totalMonitoring = vendorsData?.reduce(
+      const totalMonitoring = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
         0
       );
-      const partially_compliant = vendorsData?.reduce(
+      const partially_compliant = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
         0
       );
-      const compliant = vendorsData?.reduce(
+      const compliant = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.compliant) || 0,
         0
       );
-      const not_compliant = vendorsData?.reduce(
+      const not_compliant = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.not_compliant) || 0,
         0
       );
-      const toiletunclean = vendorsData?.reduce(
+      const toiletunclean = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
         0
       );
-      const toiletclean = vendorsData?.reduce(
+      const toiletclean = vendorDetails?.list?.reduce(
         (acc, circle) => acc + Number(circle?.toiletclean) || 0,
         0
       );
@@ -239,7 +238,7 @@ const VendorReports = () => {
         toiletclean: toiletclean,
       });
     }
-  }, [vendorReports]);
+  }, [vendorDetails?.list]);
 
   // modal quantity
   useEffect(() => {
@@ -324,15 +323,19 @@ const VendorReports = () => {
 
   useEffect(() => {
     if (vendorReports) {
+      const myFilterArray =
+        vendorReports?.data?.vendors?.filter(
+          (item) => !vendorRemoveArray.includes(item?.user_id)
+        ) || [];
       setVendorDetails((prevDetails) => ({
         ...prevDetails,
-        list: vendorReports?.data?.vendors || [],
+        list: myFilterArray || [],
         pageLength: vendorReports?.data?.paging?.[0]?.length || 0,
         currentPage: vendorReports?.data?.paging?.[0]?.currentpage || 1,
         totalRecords: vendorReports?.data?.paging?.[0]?.totalrecords || 0,
       }));
 
-      const myexcelData = vendorReports?.data?.vendors?.map((data, index) => {
+      const myexcelData = myFilterArray?.map((data, index) => {
         return {
           Sr: index + 1,
           Name: data?.name,
@@ -621,7 +624,7 @@ const VendorReports = () => {
 
   const lastTableRow = [
     {
-      name: vendorsData?.length,
+      name: vendorDetails?.list?.length,
       total: count?.total,
       registered: count?.registered,
       todaysmonitaring: count?.todaysmonitaring,

@@ -199,17 +199,12 @@ const Monitoring = () => {
 
     if (res) {
       const data = res.data;
-      const list = data.listings.map((el, index) => {
-        return {
-          ...el,
-        };
-      });
       const totalUnit = data?.listings?.reduce((total, start) => {
         return total + Number(start?.unit_no);
       }, 0);
       setDetails(() => {
         return {
-          list,
+          list: data.listings,
           pageLength: data.paging[0].length,
           currentPage: data.paging[0].currentpage,
           totalUnit,

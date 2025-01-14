@@ -16,16 +16,8 @@ const ExportToExcel = ({
       return;
     }
 
-    // const columnProperties = [
-    //   { columnIndex: 6, lowerColor: "green", higherColor: "red" },
-    //   { columnIndex: 10, lowerColor: "red", higherColor: "green" },
-    //   { columnIndex: 12, lowerColor: "red", higherColor: "green" },
-    //   // You can add more column-specific properties here
-    // ];
-
     const workbook = new ExcelJS.Workbook();
     const worksheet = workbook.addWorksheet("Sheet1");
-
     worksheet.addRow([]);
 
     // Calculate the last column dynamically
@@ -75,7 +67,6 @@ const ExportToExcel = ({
           value.includes("%") &&
           columnProperties.includes(cellIndex)
         ) {
-          console.log("cellIndex", cellIndex);
           const percentageValue = parseFloat(value.replace("%", "").trim()); // Remove '%' and convert to number
 
           // Apply center alignment for percentages
