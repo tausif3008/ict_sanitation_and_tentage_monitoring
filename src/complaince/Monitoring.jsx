@@ -8,7 +8,6 @@ import moment from "moment/moment";
 import { getMonitoringAgent } from "./monitoringSlice";
 import search from "../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../urils/getSearchQuery";
-import optionsMaker from "../urils/OptionMaker";
 import {
   cleanStatus,
   CompliantStatus,
@@ -19,8 +18,6 @@ import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
 import CommonDivider from "../commonComponents/CommonDivider";
 import CommonTable from "../commonComponents/CommonTable";
-import { getAssetTypeWiseVendorList } from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
-import VendorSupervisorSelector from "../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import MonitoringSelector from "./monitoringSelector";
 import CustomSelect from "../commonComponents/CustomSelect";
 import CustomInput from "../commonComponents/CustomInput";
@@ -28,40 +25,42 @@ import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../Reports/ExportExcelFuntion";
 import { getPdfExcelData } from "../register/asset/AssetsSlice";
 import { MonitoringPdfNew } from "./MonitoringPdf";
+import { getVendorCategoryTypeDrop } from "../Reports/VendorwiseReports/vendorslice";
+import VendorSelectors from "../Reports/VendorwiseReports/vendorSelectors";
+import {
+  getAssetMainTypes,
+  getAssetTypes,
+} from "../register/AssetType/AssetTypeSlice";
+import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 
 const Monitoring = () => {
   const [loading, setLoading] = useState(false);
+  const [startDate, setStartDate] = useState(null);
+  const [searchQuery, setSearchQuery] = useState();
+  const [showDateRange, setShowDateRange] = useState(false);
+  const [filesName, setFilesName] = useState(null); // files Name
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
     totalUnit: 0,
   });
-  const checkQuestions = "Is the toilet clean?";
-  const [startDate, setStartDate] = useState(null);
-  const [assetMainType, setAssetMainType] = useState([]); // asset main type
-  const [assetTypes, setAssetTypes] = useState([]); // asset type
-  const [searchQuery, setSearchQuery] = useState();
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [filesName, setFilesName] = useState(null); // files Name
   const [pdfTitleData, setPdfTitleData] = useState({
     category: "Combined",
     type: "Combined",
     date: "Combined",
   }); // pdf title data
+  const checkQuestions = "Is the toilet clean?";
 
-  const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
-
-  // const ImageUrl = localStorage.getItem("ImageUrl") || "";
-  const userRoleId = localStorage.getItem("role_id");
-  const sessionDataString = localStorage.getItem("sessionData");
-  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
 
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -71,35 +70,44 @@ const Monitoring = () => {
     });
   };
 
+  // const ImageUrl = localStorage.getItem("ImageUrl") || "";
+  const userRoleId = localStorage.getItem("role_id");
+  const UserId = localStorage.getItem("userId");
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
   const GSD_name = form.getFieldValue("created_by");
+  const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
+  const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
+  const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
 
-  const catTypeName = getValueLabel(categoryType, assetMainType, "");
-  const assetTypeName = getValueLabel(asset_type_id_name, assetTypes, "");
-  const vendorName = getValueLabel(vendor_id_name, AssetTypeVendorDrop, "");
-
+  // handle category
   const handleSelect = (value) => {
-    setAssetTypes([]); // get assset type
     form.setFieldsValue({
       asset_type_id: null,
+      vendor_id: null,
     });
-    optionsMaker(
-      "vendorAsset",
-      "assettypes",
-      "name",
-      setAssetTypes,
-      "?asset_main_type_id=" + value,
-      "asset_type_id"
-    );
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+    if (userRoleId !== "8" && value) {
+      const paramData = {
+        asset_main_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
   };
 
   const handleTypeSelect = (value) => {
     form.setFieldsValue({
       vendor_id: null,
     });
-    value && userRoleId !== "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
+    if (userRoleId !== "8" && value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
   };
 
   // fiter finish
@@ -116,14 +124,12 @@ const Monitoring = () => {
       const endDate = dayjs(values?.to_date).format("DD-MMM-YYYY");
       pdfDateOpt = `${startDate} to ${endDate}`;
     }
-
     setPdfTitleData((pre) => ({
       ...pre,
       category: values?.asset_main_type_id ? catTypeName : "Combined",
       type: values?.asset_type_id ? assetTypeName : "Combined",
       date: pdfDateOpt || "Combined",
     }));
-
     const finalData = {
       ...values,
     };
@@ -176,7 +182,7 @@ const Monitoring = () => {
     setLoading(true);
     let uri = URLS.monitoring.path + "?";
     if (userRoleId === "8") {
-      uri = uri + `&vendor_id=${sessionData?.id}`;
+      uri = uri + `&vendor_id=${UserId}`;
     }
     if (params.page) {
       uri = uri + params.page;
@@ -263,18 +269,11 @@ const Monitoring = () => {
   useEffect(() => {
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
-  }, []);
-
-  useEffect(() => {
-    // get assset main type
-    optionsMaker(
-      "assetMainTypePerPage",
-      "assetmaintypes",
-      "name",
-      setAssetMainType,
-      "",
-      "asset_main_type_id"
-    );
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    if (userRoleId !== "8") {
+      dispatch(getVendorCategoryTypeDrop()); // vendor list
+    }
   }, []);
 
   const columns = [
@@ -451,7 +450,7 @@ const Monitoring = () => {
       let url = URLS.monitoring.path + "?page=1&per_page=5000";
 
       if (userRoleId === "8") {
-        url = url + `&vendor_id=${sessionData?.id}`;
+        url = url + `&vendor_id=${UserId}`;
       }
       const res = await dispatch(
         getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
@@ -644,7 +643,7 @@ const Monitoring = () => {
                         label={"Select Category"}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
-                        options={assetMainType?.slice(0, 2) || []}
+                        options={AssetMainTypeDrop?.slice(0, 2) || []}
                       />
                     </Col>
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
@@ -652,7 +651,7 @@ const Monitoring = () => {
                         name={"asset_type_id"}
                         label={"Select Type"}
                         placeholder={"Select Type"}
-                        options={assetTypes || []}
+                        options={AssetTypeDrop || []}
                         onSelect={handleTypeSelect}
                       />
                     </Col>
@@ -663,7 +662,7 @@ const Monitoring = () => {
                             name={"vendor_id"}
                             label={"Select Vendor"}
                             placeholder={"Select Vendor"}
-                            options={AssetTypeVendorDrop || []}
+                            options={VendorCatTypeDrop || []}
                           />
                         </Col>
                         <Col key="created_by" xs={24} sm={12} md={6} lg={5}>

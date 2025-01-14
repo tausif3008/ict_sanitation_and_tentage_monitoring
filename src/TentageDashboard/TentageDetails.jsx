@@ -31,6 +31,8 @@ const TentageDetails = () => {
     clean: 0,
     maintenance: 0,
     unclean: 0,
+    toiletunclean: 0,
+    toiletclean: 0,
   });
   const [showData, setShowData] = useState(null);
   const [vendorDetails, setVendorDetails] = useState({
@@ -124,31 +126,47 @@ const TentageDetails = () => {
   useEffect(() => {
     if (vendorReports) {
       const total = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.total) || 0,
+        (acc, circle) => acc + Number(circle?.total),
         0
       );
       const totalReg = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.registered) || 0,
+        (acc, circle) => acc + Number(circle?.registered),
         0
       );
-      // const totalClean = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.clean) || 0,
-      //   0
-      // );
-      // const totalUnclean = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.unclean) || 0,
-      //   0
-      // );
-      // const totalMaintenance = vendorsData?.reduce(
-      //   (acc, circle) => acc + Number(circle?.maintenance) || 0,
-      //   0
-      // );
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+        0
+      );
+      const partially_compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
+        0
+      );
+      const compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.compliant) || 0,
+        0
+      );
+      const not_compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
+        0
+      );
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
+        0
+      );
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
+        0
+      );
+
       setCount({
         total: total,
         registered: totalReg,
-        // clean: totalClean,
-        // maintenance: totalMaintenance,
-        // unclean: totalUnclean,
+        monitoring: totalMonitoring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
       });
     }
   }, [vendorReports]);
@@ -175,6 +193,20 @@ const TentageDetails = () => {
     dispatch(getSectorsList()); // all sectors
     todayData();
   }, []);
+
+  const lastTableModalRow = [
+    {
+      name: vendorsData?.length,
+      total: count?.total,
+      registered: count?.registered,
+      todaysmonitaring: count?.monitoring,
+      partially_compliant: count?.partially_compliant,
+      compliant: count?.compliant,
+      not_compliant: count?.not_compliant,
+      toiletunclean: count?.toiletunclean,
+      toiletclean: count?.toiletclean,
+    },
+  ];
 
   return (
     <>
@@ -312,20 +344,24 @@ const TentageDetails = () => {
       {/* total quantity */}
       <ViewVendorsSectors
         title={`${lang === "en" ? showData?.name : showData?.name_hi}`}
+        width={1200}
         openModal={showData && !loading}
         handleCancel={handleCancel}
-        tableData={vendorDetails?.list || []}
+        // tableData={vendorDetails?.list || []}
+        tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
         column={VendorWiseReportcolumns || []}
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Total Vendors: {vendorsData?.length}</strong>
-            <strong>Total : {count?.total || 0}</strong>
-            <strong>Total Registered: {count?.registered || 0}</strong>
-            {/* <strong>Total Clean : {count?.clean || 0}</strong>
-            <strong>Total Maintenance : {count?.maintenance || 0}</strong>
-            <strong>Total Unclean: {count?.unclean || 0}</strong> */}
-          </div>
-        )}
+        scroll={{ x: 1700, y: 400 }}
+        IsLastRowBold={true}
+        // footer={() => (
+        //   <div className="flex justify-between">
+        //     <strong>Total Vendors: {vendorsData?.length}</strong>
+        //     <strong>Total : {count?.total || 0}</strong>
+        //     <strong>Total Registered: {count?.registered || 0}</strong>
+        //     {/* <strong>Total Clean : {count?.clean || 0}</strong>
+        //     <strong>Total Maintenance : {count?.maintenance || 0}</strong>
+        //     <strong>Total Unclean: {count?.unclean || 0}</strong> */}
+        //   </div>
+        // )}
       />
     </>
   );

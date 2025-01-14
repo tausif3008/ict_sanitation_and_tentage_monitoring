@@ -62,6 +62,7 @@ export const DMS_param = ["1", "2", "3", "4"];
 // Reports
 export const reports_param = ["1", "2", "3", "4", "5", "8", "9"];
 export const monitoring_reports = ["1", "2", "3", "4", "5", "8"];
+export const monitoring_dailyWeekly_reports = ["1", "2", "3", "4", "5"];
 export const sector_wise_reports = ["1", "2", "3", "4", "5", "8"];
 export const circle_wise_reports = ["1", "2", "3", "4", "5"];
 export const vendor_wise_reports = ["1", "2", "3", "4", "5"];

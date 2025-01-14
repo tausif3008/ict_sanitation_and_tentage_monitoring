@@ -64,6 +64,10 @@ const loginFetch = async (data, setCanProceed) => {
       );
       localStorage.setItem("userId", sessionData.id);
       localStorage.setItem("ImageUrl", sessionData?.s3path);
+      localStorage.setItem(
+        "category_mainType_id",
+        sessionData?.allocatedmaintype?.[0]?.asset_main_type_id
+      );
       setCanProceed(true);
 
       return response.data;

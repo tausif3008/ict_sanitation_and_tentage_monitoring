@@ -69,6 +69,8 @@ const SectorWiseReport = () => {
   const vendorsData = vendorReports?.data?.vendors || [];
 
   const userRoleId = localStorage.getItem("role_id");
+  const UserId = localStorage.getItem("userId");
+  const Category_mainType_id = localStorage.getItem("category_mainType_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
   const categoryType = form.getFieldValue("asset_main_type_id");
@@ -151,6 +153,10 @@ const SectorWiseReport = () => {
       ...(formValue?.date && {
         date: dayjs(formValue?.date).format("YYYY-MM-DD"),
       }),
+      ...(userRoleId === "8" && { vendor_id: UserId }),
+      ...(userRoleId === "8" && {
+        asset_main_type_id: Category_mainType_id,
+      }),
     };
     setShowModal(record);
     const url = URLS?.vendorReporting?.path;
@@ -165,10 +171,12 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
-    const paramData = {
-      asset_main_type_id: value,
-    };
-    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    if (userRoleId !== "8" && value) {
+      const paramData = {
+        asset_main_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
   };
 
   // handle asset type
@@ -198,6 +206,9 @@ const SectorWiseReport = () => {
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
       ...(userRoleId === "8" && {
         vendor_id: sessionData?.id,
+      }),
+      ...(userRoleId === "8" && {
+        asset_main_type_id: Category_mainType_id,
       }),
     };
     callApi(finalValues);
@@ -292,21 +303,25 @@ const SectorWiseReport = () => {
   // current data
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
+    let mainTypeIdLocal = "1";
+    if (userRoleId === "8") {
+      mainTypeIdLocal = Category_mainType_id || "1";
+    }
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
-      asset_main_type_id: "1",
+      asset_main_type_id: mainTypeIdLocal,
     });
-    const url = URLS?.assetType?.path + "1";
+    const url = URLS?.assetType?.path + mainTypeIdLocal;
     dispatch(getAssetTypes(url)); // get assset type
-
-    const paramData = {
-      asset_main_type_id: "1",
-    };
-    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
-
+    if (userRoleId !== "8") {
+      const paramData = {
+        asset_main_type_id: mainTypeIdLocal,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
     const finalValues = {
       date: newDate,
-      asset_main_type_id: "1",
+      asset_main_type_id: mainTypeIdLocal,
       ...(userRoleId === "8" && {
         vendor_id: sessionData?.id,
       }),
@@ -676,15 +691,23 @@ const SectorWiseReport = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 16]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop?.slice(0, 2) || []}
-                      />
-                    </Col>
+                    {userRoleId !== "8" && (
+                      <Col
+                        key="asset_main_type_id"
+                        xs={24}
+                        sm={12}
+                        md={6}
+                        lg={5}
+                      >
+                        <CustomSelect
+                          name={"asset_main_type_id"}
+                          label={"Select Category"}
+                          placeholder={"Select Category"}
+                          onSelect={handleSelect}
+                          options={AssetMainTypeDrop?.slice(0, 2) || []}
+                        />
+                      </Col>
+                    )}
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_id"}

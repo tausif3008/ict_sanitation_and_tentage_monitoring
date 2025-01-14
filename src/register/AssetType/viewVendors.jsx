@@ -7,7 +7,7 @@ const ViewVendorsSectors = ({
   loading = false,
   handleCancel,
   tableData = [],
-  footer = 0,
+  footer = false,
   width = 800,
   scroll,
   column = [],

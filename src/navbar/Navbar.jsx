@@ -26,6 +26,7 @@ import {
   vehicleDash_param,
   gsd_wise_monitoring_reports,
   vehicle_reports,
+  monitoring_dailyWeekly_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -424,7 +425,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      monitoring_reports?.includes(userRoleId) && {
+      monitoring_dailyWeekly_reports?.includes(userRoleId) && {
         key: "10",
         label: (
           <Link
@@ -435,7 +436,7 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      monitoring_reports?.includes(userRoleId) && {
+      monitoring_dailyWeekly_reports?.includes(userRoleId) && {
         key: "11",
         label: (
           <Link

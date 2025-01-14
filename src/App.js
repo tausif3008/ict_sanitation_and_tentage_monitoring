@@ -94,6 +94,7 @@ import {
   vehicleDash_param,
   gsd_wise_monitoring_reports,
   vehicle_reports,
+  monitoring_dailyWeekly_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -619,7 +620,7 @@ function App() {
             path="monitoring-daily-report"
             element={
               <ProtectedRoute
-                condition={monitoring_reports?.includes(userRoleId)}
+                condition={monitoring_dailyWeekly_reports?.includes(userRoleId)}
                 component={MonitoringDailyReport}
               />
             }
@@ -628,7 +629,7 @@ function App() {
             path="weekly-monitoring-report"
             element={
               <ProtectedRoute
-                condition={monitoring_reports?.includes(userRoleId)}
+                condition={monitoring_dailyWeekly_reports?.includes(userRoleId)}
                 component={WeeklyMonitoringReport}
               />
             }
