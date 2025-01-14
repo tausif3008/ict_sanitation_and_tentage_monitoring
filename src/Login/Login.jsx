@@ -12,7 +12,6 @@ import { checkLoginAvailability } from "../constant/const";
 import CustomInput from "../commonComponents/CustomInput";
 import { useDispatch } from "react-redux";
 import { storeToken } from "./slice/loginSlice";
-// import NumericCaptcha from "./NumericCaptcha";
 import CustomNumericCaptcha from "../commonComponents/CustomNumericCaptcha";
 
 const headers = {
@@ -32,12 +31,6 @@ const Login = () => {
   const [phone, setPhone] = useState("");
   const [otpStep, setOtpStep] = useState(false);
 
-  // handle captchat
-  // const [isInvalidCaptcha, setisInvalidCaptcha] = useState(false);
-  // const [captcha, setCaptcha] = useState("");
-  // const [userInput, setUserInput] = useState("");
-  // const [errorMessage, setErrorMessage] = useState("");
-
   const [form] = Form.useForm();
   const [forgotForm] = Form.useForm(); // forgot
   const [resetForm] = Form.useForm(); // set new password
@@ -53,27 +46,11 @@ const Login = () => {
     }
   }, [sessionData]);
 
-  // const handleValidate = () => {
-  //   if (userInput !== captcha) {
-  //     setErrorMessage("Invalid Captcha!");
-  //     setisInvalidCaptcha(true);
-
-  //     return false;
-  //   } else {
-  //     return true;
-  //   }
-  // };
-
   const onFinish = async (values) => {
     if (Number(values?.captcha) !== Number(values?.enter_captcha)) {
       message.error("Please Add Correct Captcha!");
       return "";
     }
-    // const isCorrect = handleValidate();
-    // if (isCorrect) {
-    //   setUserInput("");
-    // }
-
     const formData = new FormData();
     formData.append("user_type_id", values.user_type_id);
     formData.append("username", values.username);
@@ -91,27 +68,6 @@ const Login = () => {
         checkLoginAvailability(resData, navigate);
       }, 1000);
     }
-
-    // if (isCorrect) {
-    //   setLoading(true);
-    //   const res = await loginFetch(formData, setCanProceed);
-    //   const resData = res?.data?.sessionData?.[0];
-    //   dispatch(storeToken(res?.sessionToken));
-    //   setLoading(false);
-    //   if (res) {
-    //     setisInvalidCaptcha(true);
-    //     setErrorMessage("");
-    //     if (resData) {
-    //       setTimeout(() => {
-    //         checkLoginAvailability(resData, navigate);
-    //       }, 1000);
-    //     }
-    //   } else {
-    //     setUserInput("");
-    //     setErrorMessage("");
-    //     setisInvalidCaptcha(true);
-    //   }
-    // }
   };
 
   // forgot password
@@ -264,19 +220,7 @@ const Login = () => {
                       ]}
                       className={"mt-2"}
                     />
-                    {/* <NumericCaptcha
-                      setisInvalidCaptcha={setisInvalidCaptcha}
-                      isInvalidCaptcha={isInvalidCaptcha}
-                      captcha={captcha}
-                      setCaptcha={setCaptcha}
-                      userInput={userInput}
-                      setUserInput={setUserInput}
-                      errorMessage={errorMessage}
-                      setErrorMessage={setErrorMessage}
-                    ></NumericCaptcha> */}
-
                     <CustomNumericCaptcha form={form} />
-
                     <Form.Item noStyle>
                       <div className="flex justify-between">
                         <Button

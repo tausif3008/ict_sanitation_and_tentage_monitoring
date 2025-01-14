@@ -1,9 +1,8 @@
 // api.js
 import axios from "axios";
 
-// export const basicUrl = "https://13.201.196.2/php-api/index.php";
-export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php"; // testing
-// export const basicUrl = "http://metamindsystems.in/api"; // testing
+// export const basicUrl = "http://13.233.221.142/php-api/index.php"; //ip address production
+export const basicUrl = "https://kumbhtsmonitoring.in/php-api/index.php"; // domain production
 
 // headers: {
 //   "Content-Type": "multipart/form-data",
