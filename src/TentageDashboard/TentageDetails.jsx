@@ -47,7 +47,8 @@ const TentageDetails = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { TentageDash_data, loading } = TentageSelector(); // tentage dashboard
   const toiletData = TentageDash_data?.data?.asset_types || [];
-  const { vendorReports, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { vendorReports, VendorReport_Loading, VendorCatTypeDrop } =
+    VendorSelectors(); // vendor dropdown & Reports
   const vendorsData = vendorReports?.data?.vendors || [];
 
   const userRoleId = localStorage.getItem("role_id");
@@ -351,6 +352,7 @@ const TentageDetails = () => {
         tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
         column={VendorWiseReportcolumns || []}
         scroll={{ x: 1700, y: 400 }}
+        loading={VendorReport_Loading}
         IsLastRowBold={true}
         // footer={() => (
         //   <div className="flex justify-between">

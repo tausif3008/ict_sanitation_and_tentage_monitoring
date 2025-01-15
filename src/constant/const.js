@@ -97,6 +97,8 @@ export const getPercentage = (numerator, denominator) => {
   return Math.round(percentage); // Round the percentage to the nearest integer
 };
 
+export const globalDateFormat = "YYYY-MM-DD";
+
 export const statusOptions = [
   { value: 1, label: "Active" },
   { value: 2, label: "Deactive" },
@@ -277,20 +279,6 @@ export const gsdWiseMonitoringcolumns = [
       return nameA?.localeCompare(nameB);
     },
   },
-  // {
-  //   title: "Total Quantity",
-  //   dataIndex: "total",
-  //   key: "total",
-  //   width: 50,
-  //   sorter: (a, b) => a?.total - b?.total,
-  // },
-  // {
-  //   title: "Registered",
-  //   dataIndex: "registered",
-  //   key: "registered",
-  //   width: 50,
-  //   sorter: (a, b) => a?.total - b?.total,
-  // },
   {
     title: "Total Allocation",
     dataIndex: "total_allocation",
@@ -305,48 +293,25 @@ export const gsdWiseMonitoringcolumns = [
     width: 50,
     sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
   },
-  // renderMonitoringSorting(
-  //   "Monitoring (%)",
-  //   "todaysmonitaring",
-  //   "todaysmonitaring%"
-  // ),
-  // {
-  //   title: "Partially Compliant",
-  //   dataIndex: "partially_compliant",
-  //   key: "partially_compliant",
-  //   width: 50,
-  //   sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
-  // },
-  // {
-  //   title: "Compliant",
-  //   dataIndex: "compliant",
-  //   key: "compliant",
-  //   width: 50,
-  //   sorter: (a, b) => a?.compliant - b?.compliant,
-  // },
-  // {
-  //   title: "Not Compliant",
-  //   dataIndex: "not_compliant",
-  //   key: "not_compliant",
-  //   width: 50,
-  //   sorter: (a, b) => a?.not_compliant - b?.not_compliant,
-  // },
-  // renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
-  // {
-  //   title: "Toilet Unclean",
-  //   dataIndex: "toiletunclean",
-  //   key: "toiletunclean",
-  //   width: 50,
-  //   sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
-  // },
-  // renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
-  // {
-  //   title: "Toilet Clean",
-  //   dataIndex: "toiletclean",
-  //   key: "toiletclean",
-  //   width: 50,
-  //   sorter: (a, b) => a?.toiletclean - b?.toiletclean,
-  // },
+  {
+    title: "Pending Monitoring",
+    dataIndex: "todaysmonitarings",
+    key: "todaysmonitarings",
+    width: 50,
+    sorter: (a, b) => {
+      const aPendingMonitoring =
+        (Number(a?.total_allocation) || 0) - (Number(a?.todaysmonitaring) || 0);
+      const bPendingMonitoring =
+        (Number(b?.total_allocation) || 0) - (Number(b?.todaysmonitaring) || 0);
+      return aPendingMonitoring - bPendingMonitoring;
+    },
+    render: (text, record) => {
+      return (
+        (Number(record?.total_allocation) || 0) -
+        (Number(record?.todaysmonitaring) || 0)
+      );
+    },
+  },
 ];
 
 const nameColumn = [
