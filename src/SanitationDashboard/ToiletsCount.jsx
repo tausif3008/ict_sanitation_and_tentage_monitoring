@@ -12,6 +12,7 @@ import TotalRegister from "../commonComponents/DashboardCard/TotalRegister";
 import UnderMonitoring from "../commonComponents/DashboardCard/UnderMonitoring";
 import OffMonitoring from "../commonComponents/DashboardCard/OffMonitoring";
 import { registerColumn, tableColumn } from "../constant/const";
+import TotalAllocation from "../commonComponents/DashboardCard/TotalAllocation";
 
 const ToiletsCount = () => {
   const [dict, lang] = useOutletContext();
@@ -36,7 +37,7 @@ const ToiletsCount = () => {
     registered = 0,
     todays_registered = 0,
     todays_monitaring = 0,
-    todays_allocated = 0,
+    allocated = 0,
   } = SanitationDash_data?.data?.asset_counts || {};
 
   const url = URLS?.assetType?.path + 1;
@@ -83,6 +84,7 @@ const ToiletsCount = () => {
           />
           <UnderMonitoring total={under_monitoring} today={todays_monitaring} />
           <OffMonitoring total={off_monitoring} />
+          <TotalAllocation total={allocated} />
         </div>
 
         {/* total quantity */}

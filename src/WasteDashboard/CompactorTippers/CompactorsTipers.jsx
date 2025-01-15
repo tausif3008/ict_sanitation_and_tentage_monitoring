@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import ReactApexChart from "react-apexcharts";
+import { Icon } from "@iconify/react/dist/iconify.js";
+// import ReactApexChart from "react-apexcharts";
 
 import URLS from "../../urils/URLS";
 import {
@@ -10,6 +11,7 @@ import {
 import ViewVendorsSectors from "../../register/AssetType/viewVendors";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import { vendorColumn } from "../../constant/const";
+// import { icon } from "leaflet";
 
 const CompactorsTippers = () => {
   const [showVendors, setshowVendors] = useState(false);
@@ -19,103 +21,104 @@ const CompactorsTippers = () => {
 
   const dispatch = useDispatch();
   const { VendorListAssetType, AssetType } = AssetTypeSelectors(); // asset type wise vendor list
+  const { assettypes } = AssetType?.data || [];
 
-  const CompactorsOptions = {
-    chart: {
-      type: "radialBar",
-      offsetY: -20,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -90,
-        endAngle: 90,
-        track: {
-          background: "#F0F0F0", // Color of the non-remaining 22%
-          strokeWidth: "97%",
-          margin: 5, // margin is in pixels
-          dropShadow: {
-            enabled: true,
-            top: 2,
-            left: 0,
-            color: "#F0F0F0	",
-            opacity: 1,
-            blur: 4,
-          },
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            offsetY: -2,
-            fontSize: "22px",
-          },
-        },
-      },
-    },
-    grid: {
-      padding: {
-        top: -10,
-      },
-    },
-    fill: {
-      colors: ["#ff9900"], // Set the color of the radial bar to orange
-    },
-    labels: ["Average Results"],
-  };
+  // const CompactorsOptions = {
+  //   chart: {
+  //     type: "radialBar",
+  //     offsetY: -20,
+  //     sparkline: {
+  //       enabled: true,
+  //     },
+  //   },
+  //   plotOptions: {
+  //     radialBar: {
+  //       startAngle: -90,
+  //       endAngle: 90,
+  //       track: {
+  //         background: "#F0F0F0", // Color of the non-remaining 22%
+  //         strokeWidth: "97%",
+  //         margin: 5, // margin is in pixels
+  //         dropShadow: {
+  //           enabled: true,
+  //           top: 2,
+  //           left: 0,
+  //           color: "#F0F0F0	",
+  //           opacity: 1,
+  //           blur: 4,
+  //         },
+  //       },
+  //       dataLabels: {
+  //         name: {
+  //           show: false,
+  //         },
+  //         value: {
+  //           offsetY: -2,
+  //           fontSize: "22px",
+  //         },
+  //       },
+  //     },
+  //   },
+  //   grid: {
+  //     padding: {
+  //       top: -10,
+  //     },
+  //   },
+  //   fill: {
+  //     colors: ["#ff9900"], // Set the color of the radial bar to orange
+  //   },
+  //   labels: ["Average Results"],
+  // };
 
-  const CompactorsSeries = [90]; // Percentage value for the radial bar
+  // const CompactorsSeries = [90]; // Percentage value for the radial bar
 
-  const tippersOptions = {
-    chart: {
-      type: "radialBar",
-      offsetY: -20,
-      sparkline: {
-        enabled: true,
-      },
-    },
-    plotOptions: {
-      radialBar: {
-        startAngle: -90,
-        endAngle: 90,
-        track: {
-          background: "#F0F0F0", // Color of the non-remaining 22%
-          strokeWidth: "97%",
-          margin: 5, // margin is in pixels
-          dropShadow: {
-            enabled: true,
-            top: 2,
-            left: 0,
-            color: "#F0F0F0	",
-            opacity: 1,
-            blur: 4,
-          },
-        },
-        dataLabels: {
-          name: {
-            show: false,
-          },
-          value: {
-            offsetY: -2,
-            fontSize: "22px",
-          },
-        },
-      },
-    },
-    grid: {
-      padding: {
-        top: -10,
-      },
-    },
-    fill: {
-      colors: ["#ff9900"], // Set the color of the radial bar to orange
-    },
-    labels: ["Average Results"],
-  };
-  const tippersSeries = [78];
+  // const tippersOptions = {
+  //   chart: {
+  //     type: "radialBar",
+  //     offsetY: -20,
+  //     sparkline: {
+  //       enabled: true,
+  //     },
+  //   },
+  //   plotOptions: {
+  //     radialBar: {
+  //       startAngle: -90,
+  //       endAngle: 90,
+  //       track: {
+  //         background: "#F0F0F0", // Color of the non-remaining 22%
+  //         strokeWidth: "97%",
+  //         margin: 5, // margin is in pixels
+  //         dropShadow: {
+  //           enabled: true,
+  //           top: 2,
+  //           left: 0,
+  //           color: "#F0F0F0	",
+  //           opacity: 1,
+  //           blur: 4,
+  //         },
+  //       },
+  //       dataLabels: {
+  //         name: {
+  //           show: false,
+  //         },
+  //         value: {
+  //           offsetY: -2,
+  //           fontSize: "22px",
+  //         },
+  //       },
+  //     },
+  //   },
+  //   grid: {
+  //     padding: {
+  //       top: -10,
+  //     },
+  //   },
+  //   fill: {
+  //     colors: ["#ff9900"], // Set the color of the radial bar to orange
+  //   },
+  //   labels: ["Average Results"],
+  // };
+  // const tippersSeries = [78];
 
   // get vendors data
   const handleShowVendors = (value) => {
@@ -158,10 +161,84 @@ const CompactorsTippers = () => {
     dispatch(getAssetTypes(url)); // get assset type
   }, []);
 
+  const vehicleArray = [
+    {
+      id: 1,
+      name: "Compactor",
+      count: 100,
+      bgColor: "bg-blue-50",
+      textColor: "text-blue-600",
+      icon: (
+        <Icon
+          // icon="material-symbols-light:list-alt-outline-sharp"
+          icon="uil:compress-arrows"
+          width="30"
+          height="30"
+          className="text-green absolute right-[5px]"
+        />
+      ),
+    },
+    {
+      id: 2,
+      name: "Tipper",
+      count: 200,
+      bgColor: "bg-orange-50",
+      textColor: "text-orange-600",
+      icon: (
+        <Icon
+          icon="mdi:tipper-lorry"
+          width="30"
+          height="30"
+          className="text-green absolute right-[5px]"
+        />
+      ),
+    },
+    {
+      id: 3,
+      name: "Dustbin",
+      count: 400,
+      bgColor: "bg-red-50",
+      textColor: "text-red-600",
+      icon: (
+        <Icon
+          icon="icomoon-free:bin2"
+          width="30"
+          height="30"
+          className="text-green absolute right-[5px]"
+        />
+      ),
+    },
+    {
+      id: 4,
+      name: "Leaner Bag",
+      count: 400,
+      bgColor: "bg-purple-50",
+      textColor: "text-purple-600",
+      icon: (
+        <Icon
+          icon="bxs:shopping-bags"
+          width="30"
+          height="30"
+          className="text-green absolute right-[5px]"
+        />
+      ),
+    },
+  ];
+
+  // const mergedArray = vehicleArray.map((item, index) => {
+  //   const match = assettypes?.find((obj, objIndex) => index === objIndex);
+  //   return { ...item, ...match }; // Merge item from array1 with the matching object from array2
+  // });
+
+  const mergedArray = vehicleArray?.map((item, index) => {
+    const match = assettypes?.[index];
+    return { ...item, ...match };
+  });
+
   return (
     <>
-      <div className="flex  flex-col gap-3 p-2 w-full">
-        <div className="flex justify-between gap-3 w-full">
+      <div className="flex  flex-col p-4 w-full  h-full">
+        {/* <div className="flex justify-between gap-3 w-full">
           <div
             className="border flex justify-center text-start p-2 flex-col w-full"
             onClick={() => {
@@ -182,8 +259,6 @@ const CompactorsTippers = () => {
               40 Compactors are fully functional
             </div>
           </div>
-          {/* <Compactors></Compactors> */}
-          {/* <Tippers></Tippers> */}
           <div
             className="w-full border flex justify-center text-start p-2 flex-col"
             onClick={() => {
@@ -204,6 +279,36 @@ const CompactorsTippers = () => {
               108 Tippers are fully functional
             </div>
           </div>
+        </div> */}
+        <div className="grid lg:grid-cols-2 h-full gap-4">
+          {mergedArray?.map((data) => {
+            return (
+              <div
+                className={`relative p-3 border rounded-md shadow-md bg-blue-50  h-full ${data?.bgColor}`}
+                // className="relative p-3 border rounded-md shadow-md bg-blue-50  h-full"
+                onClick={() => {
+                  handleShowVendors(data);
+                }}
+              >
+                <div className="text-start">
+                  <div
+                    className={`${data?.textColor} font-semibold flex flex-col gap-2 items-start relative`}
+                  >
+                    <div className="flex items-center gap-2">
+                      {data?.icon}
+                      <span className={`${data?.textColor}`}>
+                        {" "}
+                        {data?.name}
+                      </span>
+                    </div>
+                    <h2 className="text-2xl text-blue-500 font-bold">
+                      {data?.total_quantity || 0}
+                    </h2>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 

@@ -24,18 +24,20 @@ const assetsSlice = createSlice({
 });
 
 // get pdf and excel data
-export const getPdfExcelData = (url) => async (dispatch) => {
-  try {
-    dispatch(setLoading(true));
-    const res = await axiosInstance.get(`${url}`);
-    dispatch(postSuccess(res?.data));
-    return res?.data;
-  } catch (error) {
-    console.error("In get pdf and excel data error", error);
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
+export const getPdfExcelData =
+  (url, params = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.get(`${url}`, { params: params });
+      dispatch(postSuccess(res?.data));
+      return res?.data;
+    } catch (error) {
+      console.error("In get pdf and excel data error", error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 export const { setLoading, postSuccess } = assetsSlice.actions;
 export default assetsSlice.reducer;

@@ -12,6 +12,7 @@ import TotalToilte from "../commonComponents/DashboardCard/TotalToilte";
 import UnderMonitoring from "../commonComponents/DashboardCard/UnderMonitoring";
 import OffMonitoring from "../commonComponents/DashboardCard/OffMonitoring";
 import { registerColumn, tableColumn } from "../constant/const";
+import TotalAllocation from "../commonComponents/DashboardCard/TotalAllocation";
 
 const TentageCount = () => {
   const [dict, lang] = useOutletContext();
@@ -30,7 +31,7 @@ const TentageCount = () => {
     off_monitoring = 0,
     todays_registered = 0,
     todays_monitaring = 0,
-    todays_allocated = 0,
+    allocated = 0,
   } = TentageDash_data?.data?.asset_counts || {};
 
   const userId = localStorage.getItem("userId");
@@ -82,6 +83,8 @@ const TentageCount = () => {
           />
           <UnderMonitoring total={under_monitoring} today={todays_monitaring} />
           <OffMonitoring total={off_monitoring} />
+          <TotalAllocation total={allocated} />
+
         </div>
         {/* total quantity */}
         <ViewVendorsSectors

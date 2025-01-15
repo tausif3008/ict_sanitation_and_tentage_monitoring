@@ -377,6 +377,10 @@ export const DICT = {
     en: "Off Monitoring",
     hi: "निगरानी बंद",
   },
+  total_allocation: {
+    en: "Total Allocation",
+    hi: "कुल आवंटन",
+  },
   number_of_toilets_cesspool: {
     en: "Number Of Toilets Cesspool Not Done In 24 Hrs",
     hi: "24 घंटे में नहीं बने शौचालयों की संख्या",
