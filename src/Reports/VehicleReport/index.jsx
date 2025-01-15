@@ -173,6 +173,11 @@ const VehicleReports = () => {
       key: "chassis_no",
     },
     {
+      title: "Routes",
+      dataIndex: "routes",
+      key: "routes",
+    },
+    {
       title: "Runnable (Kilometer)",
       dataIndex: "",
       key: "",
@@ -202,6 +207,8 @@ const VehicleReports = () => {
     "Vehicle Number",
     "IMEI Number",
     "Chassis Number",
+    "Routes",
+    "Kilometer",
   ];
 
   // const columnPercentages = [
@@ -257,6 +264,8 @@ const VehicleReports = () => {
             "Vehicle Number": data?.number || "",
             "IMEI Number": data?.imei || "",
             "Chassis Number": data?.chassis_no || "",
+            "Routes": data?.routes || "",
+            "Kilometers": data?.rc || "",
           };
         });
 
@@ -269,6 +278,8 @@ const VehicleReports = () => {
           data?.number || "",
           data?.imei || "",
           data?.chassis_no || "",
+          data?.routes || "",
+          data?.rc || "",
         ]);
 
       // Call the export function
