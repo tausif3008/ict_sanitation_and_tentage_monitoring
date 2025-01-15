@@ -131,6 +131,7 @@ const GsdWiseMonitoringReport = () => {
         return {
           Sr: index + 1,
           Name: data?.name,
+          "Mobile Number": data?.phone,
           "Total Allocation": Number(data?.total_allocation) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
           "Pending Monitoring":
@@ -146,6 +147,7 @@ const GsdWiseMonitoringReport = () => {
   const pdfHeader = [
     "Sr No",
     "GSD Name",
+    "Mobile Number",
     "Total Allocation",
     "Monitoring",
     "Pending Monitoring",
@@ -157,6 +159,7 @@ const GsdWiseMonitoringReport = () => {
       excelData?.map((opt) => [
         opt?.Sr,
         opt?.Name,
+        opt?.["Mobile Number"],
         opt?.["Total Allocation"],
         opt?.Monitoring,
         opt?.["Pending Monitoring"],

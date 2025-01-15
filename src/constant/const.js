@@ -280,6 +280,12 @@ export const gsdWiseMonitoringcolumns = [
     },
   },
   {
+    title: "Mobile Number",
+    dataIndex: "phone",
+    key: "phone",
+    width: 100,
+  },
+  {
     title: "Total Allocation",
     dataIndex: "total_allocation",
     key: "total_allocation",
