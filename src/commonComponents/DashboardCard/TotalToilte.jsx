@@ -3,7 +3,7 @@ import { useOutletContext } from "react-router";
 import { Icon } from "@iconify/react/dist/iconify.js";
 import card_green from "../../assets/Dashboard/card_green.png";
 
-const TotalToilte = ({ handleTotal, total = 0 }) => {
+const TotalToilte = ({ handleTotal, total = 0, type = null }) => {
   const [dict, lang] = useOutletContext();
 
   const formatNumber = (number) => {
@@ -26,7 +26,9 @@ const TotalToilte = ({ handleTotal, total = 0 }) => {
                 height="30"
                 className="text-green absolute right-[5px]"
               />
-              <span className="text-green-600">{dict.total_toilets[lang]}</span>
+              <span className="text-green-600">
+                {type ? dict.tentage_count[lang] : dict.total_toilets[lang]}
+              </span>
             </div>
             <h2 className="text-2xl font-bold">{formatNumber(total)}</h2>
           </div>

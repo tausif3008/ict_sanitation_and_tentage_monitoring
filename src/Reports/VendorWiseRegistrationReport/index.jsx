@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { useDispatch } from "react-redux";
 import { Collapse, Form, Button, Row, Col } from "antd";
 import moment from "moment";
@@ -20,6 +20,7 @@ import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getVendorReportData } from "../GSDWiseRegistrationReport/Slice/gsdWiseRegistrationReport";
 import GsdRegistrationSelector from "../GSDWiseRegistrationReport/Slice/gsdRegistrationSelector";
 import { getFormData } from "../../urils/getFormData";
+import ExportToPDF from "../reportFile";
 
 const VendorRegistrationReport = () => {
   const [excelData, setExcelData] = useState([]);
@@ -37,6 +38,7 @@ const VendorRegistrationReport = () => {
 
   let uri = URLS?.vendorRegistrationReport?.path;
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -138,7 +140,6 @@ const VendorRegistrationReport = () => {
         },
         0
       );
-
       setVendorData((prevDetails) => ({
         ...prevDetails,
         list: VendorReport_data?.data?.listings || [],
@@ -147,13 +148,12 @@ const VendorRegistrationReport = () => {
         totalRecords: VendorReport_data?.data?.paging?.[0]?.totalrecords || 0,
         totalUnits: unitCount,
       }));
-
       const myexcelData = VendorReport_data?.data?.listings?.map(
         (data, index) => {
           return {
             Sr: index + 1,
             "Vendor name": data?.vendor_name,
-            Unit: Number(data?.tagging_units),
+            Unit: Number(data?.tagging_units) || 0,
           };
         }
       );
@@ -174,18 +174,64 @@ const VendorRegistrationReport = () => {
       title: "Units",
       dataIndex: "tagging_units",
       key: "tagging_units",
+      sorter: (a, b) => a?.tagging_units - b?.tagging_units,
     },
   ];
+
+  const pdfHeader = ["Sr No", "Vendor Name", "Unit"];
+  const pdfData = useMemo(() => {
+    return excelData?.map((sector, index) => [
+      index + 1,
+      sector["Vendor name"],
+      Number(sector?.Unit) || 0,
+    ]);
+  }, [excelData]);
+
+  const fileName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : null;
 
   return (
     <div>
       <CommonDivider label={"Vendor Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <div>
+          <ExportToPDF
+            titleName={
+              fileName
+                ? `Vendor Wise Registration Report (${fileName})`
+                : "Vendor Wise Registration Report"
+            }
+            pdfName={
+              fileName
+                ? `Vendor Wise Registration Report (${fileName})`
+                : "Vendor Wise Registration Report"
+            }
+            headerData={pdfHeader}
+            IsLastLineBold={true}
+            rows={[...pdfData, ["", "Total", vendorData?.totalUnits]]}
+          />
+        </div>
+        <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={"Vendor Wise Registration Report"}
-            dynamicFields={{ "Total Units": vendorData?.totalUnits }}
+            fileName={
+              fileName
+                ? `Vendor Wise Registration Report ${fileName}`
+                : "Vendor Wise Registration Report"
+            }
+            dynamicArray={[
+              {
+                name: "Total",
+                value: vendorData?.totalUnits,
+                colIndex: 3,
+              },
+            ]}
           />
         </div>
       </div>

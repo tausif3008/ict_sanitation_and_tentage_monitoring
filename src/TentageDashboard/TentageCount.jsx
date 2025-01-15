@@ -74,7 +74,7 @@ const TentageCount = () => {
       <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
         <div className="text-xl font-bold mb-4">{dict.tentage_count[lang]}</div>
         <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
-          <TotalToilte handleTotal={handleTotal} total={total} />
+          <TotalToilte handleTotal={handleTotal} total={total} type="tentage" />
           <TotalRegister
             handleRegister={handleRegister}
             registered={registered}

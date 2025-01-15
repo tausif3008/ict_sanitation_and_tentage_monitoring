@@ -102,6 +102,7 @@ import PickUpPoint from "./register/route/RoutePoint";
 import AddPickUpPointForm from "./register/route/AddPickUpPointForm";
 import NoInternetModal from "./commonComponents/NoInternetModal";
 import GsdWiseMonitoringReport from "./Reports/GSDWiseMonitoringReport";
+import VehicleReports from "./Reports/VehicleReport";
 
 function App() {
   const navigate = useNavigate();
@@ -607,6 +608,10 @@ function App() {
           path="/inspection-report/:page?/:per_page?"
           element={<InspectionReports></InspectionReports>}
         ></Route> */}
+          {/* <Route
+            path="vendor-wise-registration-report"
+            element={<VendorRegistrationReport></VendorRegistrationReport>}
+          ></Route> */}
           <Route
             path="monitoring/:page?/:per_page?"
             element={
@@ -693,7 +698,7 @@ function App() {
             element={
               <ProtectedRoute
                 condition={vehicle_reports?.includes(userRoleId)}
-                component={GsdWiseMonitoringReport}
+                component={VehicleReports}
               />
             }
           />
@@ -706,11 +711,6 @@ function App() {
               />
             }
           />
-          <Route
-            path="vendor-wise-registration-report"
-            element={<VendorRegistrationReport></VendorRegistrationReport>}
-          ></Route>
-
           <Route
             path="/incident-report/:page?/:per_page?"
             element={
