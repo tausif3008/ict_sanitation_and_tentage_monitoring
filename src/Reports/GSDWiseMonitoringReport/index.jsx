@@ -194,6 +194,7 @@ const GsdWiseMonitoringReport = () => {
               [
                 "",
                 "Total",
+                "",
                 count?.total_allocation,
                 count?.todaysmonitaring,
                 count?.totalPendingMonitoring,
@@ -210,17 +211,17 @@ const GsdWiseMonitoringReport = () => {
               {
                 name: "Total Allocation",
                 value: count?.total_allocation,
-                colIndex: 3,
+                colIndex: 4,
               },
               {
                 name: "Monitoring",
                 value: count?.todaysmonitaring,
-                colIndex: 4,
+                colIndex: 5,
               },
               {
                 name: "Pending Monitoring",
                 value: count?.totalPendingMonitoring,
-                colIndex: 5,
+                colIndex: 6,
               },
             ]}
           />
