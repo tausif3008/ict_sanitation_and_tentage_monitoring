@@ -169,6 +169,25 @@ export const dateDayOptions = [
   },
 ];
 
+export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
+
+export const staticUserRole = [
+  { value: "1", label: "Super Admin" },
+  { value: "2", label: "Admin" },
+  { value: "3", label: "Mela Adhikari" },
+  { value: "4", label: "Additional Mela Adhikari" },
+  { value: "5", label: "Incharge Sanitation" },
+  { value: "6", label: "Monitoring Agent (Swachhagrahis)" },
+  { value: "7", label: "Supervisor Monitoring Agent (Swachhagrahis)" },
+  { value: "8", label: "Vendor" }, // If you want to include Vendor, uncomment and add label
+  { value: "9", label: "Sector Medical Officer (SMO)" },
+  { value: "10", label: "Sub Divisional Magistrate (SDM)" },
+  { value: "11", label: "Gram Panchayat / Vikas Adhikari" },
+  { value: "12", label: "Circle Inspector" },
+  { value: "13", label: "Vendor Supervisor" },
+  { value: "14", label: "Nayab Tahsildar / Sector Magistrate" },
+];
+
 export const VendorWiseReportcolumns = [
   {
     title: "Vendor Name",
@@ -353,21 +372,47 @@ export const registerColumn = [
   },
 ];
 
-export const priorityToiletTypes_Id = ["1", "2", "3", "4", "5"];
-
-export const staticUserRole = [
-  { value: "1", label: "Super Admin" },
-  { value: "2", label: "Admin" },
-  { value: "3", label: "Mela Adhikari" },
-  { value: "4", label: "Additional Mela Adhikari" },
-  { value: "5", label: "Incharge Sanitation" },
-  { value: "6", label: "Monitoring Agent (Swachhagrahis)" },
-  { value: "7", label: "Supervisor Monitoring Agent (Swachhagrahis)" },
-  { value: "8", label: "Vendor" }, // If you want to include Vendor, uncomment and add label
-  { value: "9", label: "Sector Medical Officer (SMO)" },
-  { value: "10", label: "Sub Divisional Magistrate (SDM)" },
-  { value: "11", label: "Gram Panchayat / Vikas Adhikari" },
-  { value: "12", label: "Circle Inspector" },
-  { value: "13", label: "Vendor Supervisor" },
-  { value: "14", label: "Nayab Tahsildar / Sector Magistrate" },
+// vehicles reports
+export const vehicleReportsColumns = [
+  {
+    title: "Vendor Name",
+    dataIndex: "user_name",
+    key: "user_name",
+  },
+  {
+    title: "Vehicle Type",
+    dataIndex: "type",
+    key: "type",
+  },
+  {
+    title: "Vehicle Number",
+    dataIndex: "number",
+    key: "number",
+  },
+  {
+    title: "IMEI Number",
+    dataIndex: "imei",
+    key: "imei",
+  },
+  {
+    title: "Chassis Number",
+    dataIndex: "chassis_no",
+    key: "chassis_no",
+  },
+  {
+    title: "Routes",
+    dataIndex: "route_name",
+    key: "route_name",
+    render: (text, record) => {
+      return record?.route_name ? record : "-";
+    },
+  },
+  {
+    title: "Runnable (Kilometer)",
+    dataIndex: "distance_run",
+    key: "distance_run",
+    render: (text, record) => {
+      return record?.distance_run ? text : "0 Km";
+    },
+  },
 ];

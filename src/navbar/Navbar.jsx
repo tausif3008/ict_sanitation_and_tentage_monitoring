@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { MenuOutlined } from "@ant-design/icons";
-import { Drawer, Button } from "antd";
+import { Drawer, Button, message } from "antd";
 import "./navbar.css";
 import { Link, useNavigate } from "react-router-dom";
 import DropDown from "./DropDown";
@@ -53,6 +53,7 @@ const Navbar = ({ lang, setLang }) => {
   const handleLogOut = async () => {
     const result = await dispatch(logOutUser());
     if (result?.data?.success) {
+      message.success("User logged out");
       dispatch(revertAll());
       localStorage.clear();
       sessionStorage.clear();

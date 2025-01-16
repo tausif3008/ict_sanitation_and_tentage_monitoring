@@ -1,6 +1,7 @@
 import React from "react";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { message } from "antd";
 // import { Badge, Select } from "antd";
 // import notificationIcon from "../assets/Dashboard/notification.png";
 // import loginIcon from "../assets/Dashboard/logInIcon.png";
@@ -43,6 +44,7 @@ const NavHead = ({ lang, setLang }) => {
   const handleLogOut = async () => {
     const result = await dispatch(logOutUser());
     if (result?.data?.success) {
+      message.success("User logged out");
       dispatch(revertAll());
       localStorage.clear();
       sessionStorage.clear();

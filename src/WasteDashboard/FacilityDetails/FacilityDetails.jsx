@@ -10,7 +10,11 @@ import DashboardTitle from "../DashboardTitle";
 import VehicleSelectors from "../../register/vehicle/Slice/vehicleSelector";
 import { getVehicleList } from "../../register/vehicle/Slice/vehicleSlice";
 import CustomInput from "../../commonComponents/CustomInput";
-import { dateWeekOptions, vehicleType } from "../../constant/const";
+import {
+  dateWeekOptions,
+  vehicleReportsColumns,
+  vehicleType,
+} from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CustomTable from "../../commonComponents/CustomTable";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -140,39 +144,6 @@ const FacilityDetails = ({ title }) => {
     };
     dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
   }, []);
-
-  const columns = [
-    {
-      title: "Vendor Name",
-      dataIndex: "user_name",
-      key: "user_name",
-    },
-    {
-      title: "Vehicle Type",
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: "Vehicle Number",
-      dataIndex: "number",
-      key: "number",
-    },
-    {
-      title: "IMEI Number",
-      dataIndex: "imei",
-      key: "imei",
-    },
-    {
-      title: "Chassis Number",
-      dataIndex: "chassis_no",
-      key: "chassis_no",
-    },
-    {
-      title: "Runnable (Kilometer)",
-      dataIndex: "",
-      key: "",
-    },
-  ];
 
   return (
     <div className="rounded-md w-full">
@@ -330,7 +301,7 @@ const FacilityDetails = ({ title }) => {
 
         <CustomTable
           loading={loading}
-          columns={columns || []}
+          columns={vehicleReportsColumns || []}
           bordered
           dataSource={details || []}
           scroll={{ x: 100, y: 400 }}

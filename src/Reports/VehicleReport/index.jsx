@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
@@ -13,13 +13,20 @@ import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomTable from "../../commonComponents/CustomTable";
-import { dateWeekOptions, vehicleType } from "../../constant/const";
+import {
+  dateWeekOptions,
+  getValueLabel,
+  vehicleReportsColumns,
+  vehicleType,
+} from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
 import URLS from "../../urils/URLS";
 import { exportToExcel } from "../ExportExcelFuntion";
 import { ExportPdfFunction } from "../ExportPdfFunction";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 
 const VehicleReports = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -38,6 +45,7 @@ const VehicleReports = () => {
   const { VehicleData, loading } = VehicleSelectors(); // vehicle
   const { paging, vehicles } = VehicleData?.data || {};
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -54,6 +62,7 @@ const VehicleReports = () => {
       ...(values?.number && { number: `${values?.number}` }),
       ...(values?.chassis_no && { chassis_no: `${values?.chassis_no}` }),
       ...(values?.imei && { imei: `${values?.imei}` }),
+      ...(values?.sector_id && { sector_id: values?.sector_id }),
       page: "1",
       per_page: "25",
     };
@@ -144,47 +153,16 @@ const VehicleReports = () => {
       asset_main_type_id: 5,
     };
     dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
+    dispatch(getSectorsList()); // all sectors
   }, []);
 
-  const columns = [
-    {
-      title: "Vendor Name",
-      dataIndex: "user_name",
-      key: "user_name",
-    },
-    {
-      title: "Vehicle Type",
-      dataIndex: "type",
-      key: "type",
-    },
-    {
-      title: "Vehicle Number",
-      dataIndex: "number",
-      key: "number",
-    },
-    {
-      title: "IMEI Number",
-      dataIndex: "imei",
-      key: "imei",
-    },
-    {
-      title: "Chassis Number",
-      dataIndex: "chassis_no",
-      key: "chassis_no",
-    },
-    {
-      title: "Routes",
-      dataIndex: "routes",
-      key: "routes",
-    },
-    {
-      title: "Runnable (Kilometer)",
-      dataIndex: "",
-      key: "",
-    },
-  ];
-
   const fileName = "Vehicle Report";
+  const vehicleTypefileName = formValue?.type;
+  const vendorfileName = getValueLabel(
+    formValue?.user_id,
+    VendorCatTypeDrop,
+    "Vendor Name"
+  );
 
   const fileDateName =
     formValue?.date_format === "Today"
@@ -195,21 +173,33 @@ const VehicleReports = () => {
         ).format("DD-MMM-YYYY")}`
       : null;
 
-  const finalFileName = fileDateName
-    ? `${fileName} - ${fileDateName}`
-    : fileName;
+  // Dynamically build the file name
+  let finalFileName = fileName;
+
+  if (vehicleTypefileName || vendorfileName || fileDateName) {
+    const parts = [];
+    if (vendorfileName) parts.push(vendorfileName);
+    if (vehicleTypefileName) parts.push(vehicleTypefileName);
+    if (fileDateName) parts.push(fileDateName);
+
+    finalFileName += `-${parts.join(" - ")}`;
+  }
 
   // pdf header
-  const pdfHeader = [
-    "Sr No",
-    "Vendor Name",
-    "Vehicle Type",
-    "Vehicle Number",
-    "IMEI Number",
-    "Chassis Number",
-    "Routes",
-    "Kilometer",
-  ];
+  const pdfHeader = useMemo(() => {
+    return [
+      "Sr No",
+      // Conditionally add "Vendor Name" if user_id is not present in formValue
+      ...(formValue?.user_id ? [] : ["Vendor Name"]),
+      // Conditionally add "Vehicle Type" if type is not present in formValue
+      ...(formValue?.type ? [] : ["Vehicle Type"]),
+      "Vehicle Number",
+      "IMEI Number",
+      "Chassis Number",
+      "Routes",
+      "Kilometer",
+    ];
+  }, [formValue]);
 
   // const columnPercentages = [
   //   4, // Sr No (10%)
@@ -246,9 +236,7 @@ const VehicleReports = () => {
     };
     try {
       const url = URLS?.vehicles?.path;
-
       const res = await dispatch(getPdfExcelData(`${url}`, param));
-
       if (!res?.data?.vehicles) {
         throw new Error("No vehicles found in the response data.");
       }
@@ -259,13 +247,17 @@ const VehicleReports = () => {
         res?.data?.vehicles?.map((data, index) => {
           return {
             Sr: index + 1,
-            "Vendor Name": data?.user_name || "",
-            "Vehicle Type": data?.type || "",
+            ...(!formValue?.user_id && {
+              "Vendor Name": data?.user_name || "",
+            }),
+            ...(!formValue?.type && {
+              "Vehicle Type": data?.type || "",
+            }),
             "Vehicle Number": data?.number || "",
-            "IMEI Number": data?.imei || "",
+            "IMEI Number": Number(data?.imei) || "",
             "Chassis Number": data?.chassis_no || "",
-            "Routes": data?.routes || "",
-            "Kilometers": data?.rc || "",
+            Routes: data?.route_name || "-",
+            Kilometers: data?.distance_run || "0 Km",
           };
         });
 
@@ -273,13 +265,13 @@ const VehicleReports = () => {
         !isExcel &&
         res?.data?.vehicles?.map((data, index) => [
           index + 1,
-          data?.user_name || "",
-          data?.type || "",
+          ...(formValue?.user_id ? [] : [data?.user_name || ""]),
+          ...(formValue?.type ? [] : [data?.type || ""]),
           data?.number || "",
-          data?.imei || "",
+          Number(data?.imei) || "",
           data?.chassis_no || "",
-          data?.routes || "",
-          data?.rc || "",
+          data?.route_name || "-",
+          data?.distance_run || "0 Km",
         ]);
 
       // Call the export function
@@ -377,6 +369,18 @@ const VehicleReports = () => {
                           placeholder="Enter Chassis Number"
                         />
                         <CustomSelect
+                          name={"sector_id"}
+                          label={"Select Sector"}
+                          placeholder={"Select Sector"}
+                          options={SectorListDrop || []}
+                        />
+                        <CustomDatepicker
+                          name={"date"}
+                          label={"Date"}
+                          className="w-full"
+                          placeholder={"Date"}
+                        />
+                        {/* <CustomSelect
                           name={"date_format"}
                           label={"Select Date Type"}
                           placeholder={"Select Date Type"}
@@ -438,7 +442,7 @@ const VehicleReports = () => {
                               disabledDate={disabledDate}
                             />
                           </>
-                        )}
+                        )} */}
                         <div className="flex justify-start my-4 space-x-2 ml-3">
                           <div>
                             <Button
@@ -471,7 +475,7 @@ const VehicleReports = () => {
 
           <CustomTable
             loading={loading}
-            columns={columns || []}
+            columns={vehicleReportsColumns || []}
             bordered
             dataSource={details || []}
             scroll={{ x: 100, y: 400 }}

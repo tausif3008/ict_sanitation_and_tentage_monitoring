@@ -4,6 +4,7 @@ import CompactorsTippers from "./CompactorTippers/CompactorsTipers";
 import AverageCollectionTimeChart from "./AverageCollectionTime";
 import VehicleTrackingMapData from "./VehicleTrackingMapData";
 import HelplineNo from "../SanitationDashboard/helplineNo";
+import VehicleReports from "../Reports/VehicleReport";
 // import MapData from "./MapData";
 // import CleanlinessScoreGauge from "./CleanlinessScoreGauge";
 // import ResponseTimeChart from "./ResponseTimeChart";
@@ -32,6 +33,7 @@ const WastesDashboard = () => {
       </div>
       <div className="col-span-4 shadow-md bg-white h-auto rounded-md">
         <FacilityDetails></FacilityDetails>
+        {/* <VehicleReports /> */}
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <VehicleTrackingMapData></VehicleTrackingMapData>

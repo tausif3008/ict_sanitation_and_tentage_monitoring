@@ -49,7 +49,7 @@ const ViewVendorsSectors = ({
             dataSource={tableData}
             rowKey="question_id"
             pagination={false}
-            scroll={scroll || { x: 800, y: 400 }}
+            scroll={scroll || { x: 500, y: 400 }}
             columns={column || []}
             rowClassName={IsLastRowBold ? rowClassName : null}
           />

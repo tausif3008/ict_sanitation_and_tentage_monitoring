@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Icon } from "@iconify/react/dist/iconify.js";
 // import ReactApexChart from "react-apexcharts";
@@ -125,7 +125,8 @@ const CompactorsTippers = () => {
     setRowRecord(value);
     setVendorsList([]);
     setAllQuantity(0);
-    dispatch(getVendorListAssetType(value?.asset_type_id));
+    value?.asset_type_id &&
+      dispatch(getVendorListAssetType(value?.asset_type_id));
     setshowVendors(true);
   };
 
@@ -163,14 +164,11 @@ const CompactorsTippers = () => {
 
   const vehicleArray = [
     {
-      id: 1,
       name: "Compactor",
-      count: 100,
       bgColor: "bg-blue-50",
       textColor: "text-blue-600",
       icon: (
         <Icon
-          // icon="material-symbols-light:list-alt-outline-sharp"
           icon="uil:compress-arrows"
           width="30"
           height="30"
@@ -179,9 +177,7 @@ const CompactorsTippers = () => {
       ),
     },
     {
-      id: 2,
       name: "Tipper",
-      count: 200,
       bgColor: "bg-orange-50",
       textColor: "text-orange-600",
       icon: (
@@ -194,9 +190,7 @@ const CompactorsTippers = () => {
       ),
     },
     {
-      id: 3,
       name: "Dustbin",
-      count: 400,
       bgColor: "bg-red-50",
       textColor: "text-red-600",
       icon: (
@@ -209,9 +203,7 @@ const CompactorsTippers = () => {
       ),
     },
     {
-      id: 4,
       name: "Leaner Bag",
-      count: 400,
       bgColor: "bg-purple-50",
       textColor: "text-purple-600",
       icon: (
@@ -225,15 +217,12 @@ const CompactorsTippers = () => {
     },
   ];
 
-  // const mergedArray = vehicleArray.map((item, index) => {
-  //   const match = assettypes?.find((obj, objIndex) => index === objIndex);
-  //   return { ...item, ...match }; // Merge item from array1 with the matching object from array2
-  // });
-
-  const mergedArray = vehicleArray?.map((item, index) => {
-    const match = assettypes?.[index];
-    return { ...item, ...match };
-  });
+  const mergedArray = useMemo(() => {
+    return vehicleArray?.map((item, index) => {
+      const match = assettypes?.[index];
+      return { ...item, ...match };
+    });
+  }, [vehicleArray, assettypes]);
 
   return (
     <>
@@ -285,7 +274,6 @@ const CompactorsTippers = () => {
             return (
               <div
                 className={`relative p-3 border rounded-md shadow-md bg-blue-50  h-full ${data?.bgColor}`}
-                // className="relative p-3 border rounded-md shadow-md bg-blue-50  h-full"
                 onClick={() => {
                   handleShowVendors(data);
                 }}

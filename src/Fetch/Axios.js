@@ -53,6 +53,7 @@ const loginFetch = async (data, setCanProceed) => {
       },
     });
     if (response.data.success) {
+      message.success("User successfully logged in");
       const sessionData = response.data.data.sessionData[0];
       localStorage.setItem("sessionToken", response.data.sessionToken);
       localStorage.setItem("role", sessionData?.user_type); // Role

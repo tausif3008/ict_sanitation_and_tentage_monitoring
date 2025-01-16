@@ -92,8 +92,9 @@ const AddVehicleForm = () => {
             />
             <CustomInput
               label="Vehicle Number"
-              name="number"
-              placeholder="enter vehicle number"
+              // name="number"
+              placeholder="eg. AA00AA0000"
+              maxLength={10}
             />
             <CustomInput
               label="IMEI Number"
