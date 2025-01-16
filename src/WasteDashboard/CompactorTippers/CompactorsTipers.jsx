@@ -20,7 +20,7 @@ const CompactorsTippers = () => {
   const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
 
   const dispatch = useDispatch();
-  const { VendorListAssetType, AssetType } = AssetTypeSelectors(); // asset type wise vendor list
+  const { VendorListAssetType, AssetType, loading } = AssetTypeSelectors(); // asset type wise vendor list
   const { assettypes } = AssetType?.data || [];
 
   // const CompactorsOptions = {
@@ -305,6 +305,7 @@ const CompactorsTippers = () => {
         openModal={showVendors}
         handleCancel={handleCancel}
         tableData={showVendorsList || []}
+        loading={loading}
         tableHeaderData={
           [
             {
