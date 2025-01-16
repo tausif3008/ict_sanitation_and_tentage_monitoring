@@ -178,7 +178,7 @@ const FacilityDetails = ({ title }) => {
                     onFinish={onFinishForm}
                     key="form1"
                   >
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
                       <CustomSelect
                         name={"user_id"}
                         label={"Select Vendor"}

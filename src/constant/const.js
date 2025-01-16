@@ -3,9 +3,8 @@ export const getValueLabel = (dataId, List, defaultName) => {
   if (dataId) {
     const status = List && List?.find((data) => data?.value === dataId);
     return status ? status?.label : defaultName;
-    // return status ? status?.label : dataId;
   } else {
-    return `${defaultName}`;
+    return defaultName;
   }
 };
 
@@ -398,6 +397,14 @@ export const vehicleReportsColumns = [
     title: "Chassis Number",
     dataIndex: "chassis_no",
     key: "chassis_no",
+  },
+  {
+    title: "Sector",
+    dataIndex: "sector_id",
+    key: "sector_id",
+    render: (text, record) => {
+      return text ? text : "-";
+    },
   },
   {
     title: "Routes",

@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
@@ -13,12 +12,7 @@ import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomTable from "../../commonComponents/CustomTable";
-import {
-  dateWeekOptions,
-  getValueLabel,
-  vehicleReportsColumns,
-  vehicleType,
-} from "../../constant/const";
+import { getValueLabel, vehicleType } from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
@@ -28,9 +22,7 @@ import { ExportPdfFunction } from "../ExportPdfFunction";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 
-const VehicleReports = () => {
-  const [showDateRange, setShowDateRange] = useState(false);
-  const [startDate, setStartDate] = useState(null);
+const VehicleReports = ({ modalName = "Vehicle Report", showPdf = true }) => {
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -38,7 +30,6 @@ const VehicleReports = () => {
   });
 
   const dispatch = useDispatch();
-  const params = useParams();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
 
@@ -56,6 +47,8 @@ const VehicleReports = () => {
       message.error("Please Select any search field");
       return;
     }
+    const dayjsDate = new Date(values?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
     const finalValues = {
       ...(values?.user_id && { user_id: `${values?.user_id}` }),
       ...(values?.type && { type: `${values?.type}` }),
@@ -63,63 +56,38 @@ const VehicleReports = () => {
       ...(values?.chassis_no && { chassis_no: `${values?.chassis_no}` }),
       ...(values?.imei && { imei: `${values?.imei}` }),
       ...(values?.sector_id && { sector_id: values?.sector_id }),
+      date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
       page: "1",
       per_page: "25",
     };
-    if (values?.date_format === "Today") {
-      finalValues.form_date = moment().format("YYYY-MM-DD");
-      finalValues.to_date = moment().format("YYYY-MM-DD");
-    } else if (values?.form_date || values?.to_date) {
-      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
-      const dayjsObjectTo = dayjs(values?.to_date?.$d);
-
-      // Format the date as 'YYYY-MM-DD'
-      const start = dayjsObjectFrom.format("YYYY-MM-DD");
-      const end = dayjsObjectTo.format("YYYY-MM-DD");
-      finalValues.form_date = values?.form_date ? start : end;
-      finalValues.to_date = values?.to_date ? end : start;
-    }
     dispatch(getVehicleList(finalValues)); // get vehicle list
   };
 
   // reset form
   const resetForm = () => {
+    let newDate = dayjs().format("YYYY-MM-DD");
     form.resetFields();
+    form.setFieldsValue({
+      date: dayjs(newDate, "YYYY-MM-DD"),
+    });
     const myParam = {
       page: "1",
       per_page: "25",
+      date: moment().format("YYYY-MM-DD"),
     };
     dispatch(getVehicleList(myParam));
-    setShowDateRange(false);
-  };
-
-  const handleDateSelect = (value) => {
-    if (value === "Date Range") {
-      setShowDateRange(true);
-    } else {
-      form.setFieldsValue({
-        form_date: null,
-        to_date: null,
-      });
-      setShowDateRange(false);
-    }
   };
 
   const getUsers = async (dataObj = {}) => {
+    const dayjsDate = new Date(formValue?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
     const newParam = {
       page: dataObj?.page || "1",
       per_page: dataObj?.size || "25",
       ...form.getFieldsValue(),
+      date: formValue?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     dispatch(getVehicleList(newParam));
-  };
-
-  const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
-    return (
-      current &&
-      (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
-    );
   };
 
   useEffect(() => {
@@ -145,10 +113,11 @@ const VehicleReports = () => {
   }, [VehicleData]);
 
   useEffect(() => {
+    let newDate = dayjs().format("YYYY-MM-DD");
+    form.setFieldsValue({
+      date: dayjs(newDate, "YYYY-MM-DD"),
+    });
     getUsers();
-  }, [params]);
-
-  useEffect(() => {
     const paramData = {
       asset_main_type_id: 5,
     };
@@ -161,41 +130,87 @@ const VehicleReports = () => {
   const vendorfileName = getValueLabel(
     formValue?.user_id,
     VendorCatTypeDrop,
-    "Vendor Name"
+    undefined
   );
-
-  const fileDateName =
-    formValue?.date_format === "Today"
-      ? moment().format("DD-MMM-YYYY")
-      : formValue?.date_format === "Date Range"
-      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-          formValue?.to_date
-        ).format("DD-MMM-YYYY")}`
-      : null;
-
-  // Dynamically build the file name
+  const sector_idfileName = getValueLabel(
+    formValue?.sector_id,
+    SectorListDrop,
+    undefined
+  );
+  const fileDateName = dayjs(formValue?.date).format("DD-MMM-YYYY");
   let finalFileName = fileName;
-
   if (vehicleTypefileName || vendorfileName || fileDateName) {
     const parts = [];
     if (vendorfileName) parts.push(vendorfileName);
+    if (sector_idfileName) parts.push(sector_idfileName);
     if (vehicleTypefileName) parts.push(vehicleTypefileName);
     if (fileDateName) parts.push(fileDateName);
-
     finalFileName += `-${parts.join(" - ")}`;
   }
+
+  // vehicles reports
+  const vehicleColumns = [
+    {
+      title: "Vendor Name",
+      dataIndex: "user_name",
+      key: "user_name",
+    },
+    {
+      title: "Vehicle Type",
+      dataIndex: "type",
+      key: "type",
+    },
+    {
+      title: "Vehicle Number",
+      dataIndex: "number",
+      key: "number",
+    },
+    {
+      title: "IMEI Number",
+      dataIndex: "imei",
+      key: "imei",
+    },
+    {
+      title: "Chassis Number",
+      dataIndex: "chassis_no",
+      key: "chassis_no",
+    },
+    {
+      title: "Sector",
+      dataIndex: "sector_id",
+      key: "sector_id",
+      render: (text, record) => {
+        return text ? getValueLabel(text, SectorListDrop, "Sector") : "-";
+      },
+    },
+    {
+      title: "Routes",
+      dataIndex: "route_name",
+      key: "route_name",
+      render: (text, record) => {
+        return record?.route_name ? record : "-";
+      },
+    },
+    {
+      title: "Runnable (Kilometer)",
+      dataIndex: "distance_run",
+      key: "distance_run",
+      render: (text, record) => {
+        return record?.distance_run ? text : "0 Km";
+      },
+    },
+  ];
 
   // pdf header
   const pdfHeader = useMemo(() => {
     return [
       "Sr No",
-      // Conditionally add "Vendor Name" if user_id is not present in formValue
       ...(formValue?.user_id ? [] : ["Vendor Name"]),
-      // Conditionally add "Vehicle Type" if type is not present in formValue
       ...(formValue?.type ? [] : ["Vehicle Type"]),
       "Vehicle Number",
       "IMEI Number",
       "Chassis Number",
+      ...(formValue?.sector_id ? [] : ["Sector Name"]),
       "Routes",
       "Kilometer",
     ];
@@ -216,7 +231,8 @@ const VehicleReports = () => {
   // excel && pdf file
 
   const exportToFile = async (isExcel) => {
-    const todayDate = moment().format("YYYY-MM-DD");
+    const dayjsDate = new Date(formValue?.date);
+    const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
     const param = {
       page: "1",
       per_page: "5000",
@@ -224,15 +240,9 @@ const VehicleReports = () => {
       ...(formValue?.type && { type: formValue?.type }),
       ...(formValue?.number && { number: formValue?.number }),
       ...(formValue?.imei && { imei: formValue?.imei }),
+      ...(formValue?.sector_id && { sector_id: formValue?.sector_id }),
       ...(formValue?.chassis_no && { chassis_no: formValue?.chassis_no }),
-      ...(formValue?.date_format === "Today" && {
-        to_date: todayDate,
-        form_date: todayDate,
-      }),
-      ...(formValue?.date_format === "Date Range" && {
-        form_date: dayjs(formValue?.form_date).format("YYYY-MM-DD"),
-        to_date: dayjs(formValue?.to_date).format("YYYY-MM-DD"),
-      }),
+      date: formValue?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     try {
       const url = URLS?.vehicles?.path;
@@ -256,6 +266,10 @@ const VehicleReports = () => {
             "Vehicle Number": data?.number || "",
             "IMEI Number": Number(data?.imei) || "",
             "Chassis Number": data?.chassis_no || "",
+            ...(!formValue?.sector_id && {
+              "Sector Name":
+                getValueLabel(data?.sector_id, SectorListDrop, "Sector") || "",
+            }),
             Routes: data?.route_name || "-",
             Kilometers: data?.distance_run || "0 Km",
           };
@@ -270,6 +284,9 @@ const VehicleReports = () => {
           data?.number || "",
           Number(data?.imei) || "",
           data?.chassis_no || "",
+          ...(formValue?.sector_id
+            ? []
+            : [getValueLabel(data?.sector_id, SectorListDrop, "Sector") || ""]),
           data?.route_name || "-",
           data?.distance_run || "0 Km",
         ]);
@@ -295,28 +312,32 @@ const VehicleReports = () => {
 
   return (
     <>
-      <CommonDivider label={"Vehicle Report"} />
+      <CommonDivider className="ml-10-" label={`${modalName}`} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(false);
-            }}
-          >
-            Download Pdf
-          </Button>
-        </div>
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(true);
-            }}
-          >
-            Download Excel
-          </Button>
-        </div>
+        {showPdf && (
+          <>
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(false);
+                }}
+              >
+                Download Pdf
+              </Button>
+            </div>
+            <div>
+              <Button
+                type="primary"
+                onClick={() => {
+                  exportToFile(true);
+                }}
+              >
+                Download Excel
+              </Button>
+            </div>
+          </>
+        )}
       </div>
       <div className="rounded-md w-full">
         <div className="mx-4 mb-6">
@@ -340,7 +361,7 @@ const VehicleReports = () => {
                       onFinish={onFinishForm}
                       key="form1"
                     >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
                         <CustomSelect
                           name={"user_id"}
                           label={"Select Vendor"}
@@ -356,7 +377,8 @@ const VehicleReports = () => {
                         <CustomInput
                           label="Vehicle Number"
                           name="number"
-                          placeholder="Enter Vehicle Number"
+                          placeholder="eg. AA00AA0000"
+                          maxLength={10}
                         />
                         <CustomInput
                           label="IMEI Number"
@@ -380,69 +402,6 @@ const VehicleReports = () => {
                           className="w-full"
                           placeholder={"Date"}
                         />
-                        {/* <CustomSelect
-                          name={"date_format"}
-                          label={"Select Date Type"}
-                          placeholder={"Select Date Type"}
-                          onSelect={handleDateSelect}
-                          options={dateWeekOptions || []}
-                        />
-                        {showDateRange && (
-                          <>
-                            <CustomDatepicker
-                              name={"form_date"}
-                              label={"From Date"}
-                              className="w-full"
-                              placeholder={"From Date"}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select a start date!",
-                                },
-                              ]}
-                              onChange={(date) => {
-                                const dayjsObjectFrom = dayjs(date?.$d);
-                                const startDate = dayjsObjectFrom;
-
-                                const dayjsObjectTo = dayjs(
-                                  form.getFieldValue("to_date")?.$d
-                                );
-                                const endDate = dayjsObjectTo;
-
-                                // Condition 1: If startDate is after endDate, set end_time to null
-                                if (startDate.isAfter(endDate)) {
-                                  form.setFieldValue("to_date", null);
-                                }
-
-                                // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                                const daysDifference = endDate.diff(
-                                  startDate,
-                                  "days"
-                                );
-                                if (daysDifference > 7) {
-                                  form.setFieldValue("to_date", null);
-                                } else {
-                                  // If the difference is within the allowed range, you can keep the value or process further if needed.
-                                }
-
-                                setStartDate(startDate.format("YYYY-MM-DD"));
-                              }}
-                            />
-                            <CustomDatepicker
-                              name={"to_date"}
-                              label={"To Date"}
-                              className="w-full"
-                              placeholder={"To Date"}
-                              rules={[
-                                {
-                                  required: true,
-                                  message: "Please select a end date!",
-                                },
-                              ]}
-                              disabledDate={disabledDate}
-                            />
-                          </>
-                        )} */}
                         <div className="flex justify-start my-4 space-x-2 ml-3">
                           <div>
                             <Button
@@ -472,10 +431,9 @@ const VehicleReports = () => {
               ]}
             />
           </div>
-
           <CustomTable
             loading={loading}
-            columns={vehicleReportsColumns || []}
+            columns={vehicleColumns || []}
             bordered
             dataSource={details || []}
             scroll={{ x: 100, y: 400 }}

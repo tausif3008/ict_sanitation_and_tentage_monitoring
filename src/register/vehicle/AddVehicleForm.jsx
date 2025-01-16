@@ -92,7 +92,7 @@ const AddVehicleForm = () => {
             />
             <CustomInput
               label="Vehicle Number"
-              // name="number"
+              name="number"
               placeholder="eg. AA00AA0000"
               maxLength={10}
             />

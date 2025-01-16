@@ -207,7 +207,7 @@ const VehicleList = () => {
                   onFinish={onFinishForm}
                   key="form1"
                 >
-                  <Row gutter={[16, 16]} align="middle">
+                  <Row gutter={[16, 0]} align="middle">
                     <Col key="user_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"user_id"}

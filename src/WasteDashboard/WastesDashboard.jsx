@@ -32,8 +32,8 @@ const WastesDashboard = () => {
         </div>
       </div>
       <div className="col-span-4 shadow-md bg-white h-auto rounded-md">
-        <FacilityDetails></FacilityDetails>
-        {/* <VehicleReports /> */}
+        {/* <FacilityDetails></FacilityDetails> */}
+        <VehicleReports modalName={"Vehicle Details"} showPdf={false} />
       </div>
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <VehicleTrackingMapData></VehicleTrackingMapData>
