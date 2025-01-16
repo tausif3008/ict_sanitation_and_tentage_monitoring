@@ -203,7 +203,7 @@ const CompactorsTippers = () => {
       ),
     },
     {
-      name: "Leaner Bag",
+      name: "Liner Bag",
       bgColor: "bg-purple-50",
       textColor: "text-purple-600",
       icon: (
