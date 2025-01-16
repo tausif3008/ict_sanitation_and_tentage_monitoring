@@ -316,12 +316,12 @@ const ToiletDetails = () => {
               placeholder={`${DICT?.select_toilet[lang]}`}
               options={typeDropdown || []}
             />
-            <CustomSelect
+            {/* <CustomSelect
               name="question_id" // This is the field name
               label={dict.select_question[lang]}
               placeholder={dict.select_question[lang]}
               options={QuestionDrop || []}
-            />
+            /> */}
             <div className="flex justify-start my-4 space-x-2">
               <div>
                 <Button
