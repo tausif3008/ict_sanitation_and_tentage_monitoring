@@ -13,6 +13,7 @@ const ViewVendorsSectors = ({
   column = [],
   tableHeaderData = [],
   IsLastRowBold = false,
+  ...rest
 }) => {
   const rowClassName = (record, index) => {
     return index === tableData?.length - 1
@@ -33,6 +34,7 @@ const ViewVendorsSectors = ({
         onCancel={handleCancel}
         footer={footer}
         width={width}
+        {...rest}
       >
         {tableHeaderData?.length > 0 && (
           <div className="mb-4">

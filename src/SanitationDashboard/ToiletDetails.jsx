@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
-import { Select, Tooltip, Button, Form } from "antd";
+import { Tooltip, Button, Form } from "antd";
 import dayjs from "dayjs";
 import moment from "moment";
 import { useOutletContext } from "react-router";
@@ -266,15 +266,19 @@ const ToiletDetails = () => {
             </div>
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-yellow-400 rounded-full mr-2"></div>
-              {/* <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div> */}
-              {/* <span className="text-sm">{dict.clean[lang]}</span> */}
               <span className="text-sm">{dict.Partial_Complaint[lang]}</span>
             </div>
             <div className="flex items-center mr-6">
+              <div className="h-3 w-3 bg-purple-500 rounded-full mr-2"></div>
+              <span className="text-sm">{dict.complaint[lang]}</span>
+            </div>
+            <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
-              {/* <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div> */}
-              {/* <span className="text-sm">{"Not Compliant"}</span> */}
               <span className="text-sm">{dict.not_Complaint[lang]}</span>
+            </div>
+            <div className="flex items-center mr-6">
+              <div className="h-3 w-3 bg-lime-300 rounded-full mr-2"></div>
+              <span className="text-sm">{dict.clean[lang]}</span>
             </div>
             <div className="flex items-center mr-6">
               <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
@@ -400,12 +404,8 @@ const ToiletDetails = () => {
                         </span>
                       </div>
                     </div>
-                    {/* <div className="text-start flex-1">
-                      <div className="text-sm text-gray-500 font-bold">
-                        {lang === "en" ? item?.name : item?.name_hi}
-                      </div>
-                    </div> */}
-                    <div className="absolute bottom-4 left-3 right-3 flex justify-between">
+                    {/* <div className="absolute bottom-4 left-3 right-3 flex justify-between"> */}
+                    <div className=" grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-6">
                       <div
                         className="flex items-center"
                         onClick={(e) => e.stopPropagation()}
@@ -428,12 +428,6 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {/* {getPercentage(
-                            Number(item?.not_compliant) || 0,
-                            (Number(item?.toiletclean) || 0) +
-                              (Number(item?.toiletunclean) || 0)
-                          ) + "%"} */}
-
                           {(Number(item?.not_compliant) || 0) +
                             " (" +
                             getPercentage(
@@ -450,13 +444,6 @@ const ToiletDetails = () => {
                       >
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {/* {item?.toiletunclean || 0} */}
-                          {/* {getPercentage(
-                            Number(item?.toiletunclean) || 0,
-                            (Number(item?.toiletclean) || 0) +
-                              (Number(item?.toiletunclean) || 0)
-                          ) + "%"} */}
-
                           {(Number(item?.toiletunclean) || 0) +
                             " (" +
                             getPercentage(
@@ -467,6 +454,38 @@ const ToiletDetails = () => {
                             "%)"}
                         </span>
                       </div>
+                      {/* <div
+                        className="flex items-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
+                        <span className="text-sm font-semibold">
+                          {(Number(item?.toiletunclean) || 0) +
+                            " (" +
+                            getPercentage(
+                              Number(item?.toiletunclean) || 0,
+                              (Number(item?.toiletclean) || 0) +
+                                (Number(item?.toiletunclean) || 0)
+                            ) +
+                            "%)"}
+                        </span>
+                      </div>
+                      <div
+                        className="flex items-center"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
+                        <span className="text-sm font-semibold">
+                          {(Number(item?.toiletunclean) || 0) +
+                            " (" +
+                            getPercentage(
+                              Number(item?.toiletunclean) || 0,
+                              (Number(item?.toiletclean) || 0) +
+                                (Number(item?.toiletunclean) || 0)
+                            ) +
+                            "%)"}
+                        </span>
+                      </div> */}
                     </div>
 
                     <img
@@ -515,26 +534,25 @@ const ToiletDetails = () => {
         openModal={showData && !loading}
         handleCancel={handleCancel}
         scroll={{ x: 1700, y: 400 }}
-        tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
+        tableData={vendorDetails?.list || []}
+        // tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
+        // IsLastRowBold={true}
         column={VendorWiseReportcolumns || []}
-        IsLastRowBold={true}
-        // footer={() => (
-        //   <div className="flex justify-between">
-        //     <strong>Vendors: {vendorsData?.length}</strong>
-        //     <p></p>
-        //     <p></p>
-        //     <p></p>
-        //     <strong>Total: {count?.total || 0}</strong>
-        //     <strong>Registered: {count?.registered || 0}</strong>
-        //     <strong>Monitoring : {count?.monitoring || 0}</strong>
-        //     <strong>
-        //       Partialy Compliant : {count?.partially_compliant || 0}
-        //     </strong>
-        //     <strong>Compliant : {count?.compliant || 0}</strong>
-        //     <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-        //     <strong>Unclean: {count?.toiletunclean || 0}</strong>
-        //   </div>
-        // )}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Vendors: {vendorsData?.length}</strong>
+            <strong>Total: {count?.total || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>Monitoring : {count?.monitoring || 0}</strong>
+            <strong>
+              Partialy Compliant : {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
+            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
+            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>{" "}
+          </div>
+        )}
       />
     </>
   );
