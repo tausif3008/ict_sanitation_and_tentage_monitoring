@@ -577,17 +577,22 @@ const SectorWiseReport = () => {
     },
   ];
 
+  const fileNames = `${filesName} (${dayjs(formValue?.date).format(
+    "DD-MMM-YYYY"
+  )})`;
+
   return (
     <div>
       <CommonDivider label={"Sector-Wise Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={filesName ? filesName : `Sector-Wise Report`}
-            pdfName={filesName ? filesName : `Sector-Wise-Report`}
+            titleName={filesName ? fileNames : `Vendor-Wise Report`}
+            pdfName={filesName ? fileNames : `Vendor-Wise Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
+            columnProperties={[5]} // 6 columns
             // applyTableStyles={true}
             // IsNoBold={true}
             rows={[
@@ -617,13 +622,7 @@ const SectorWiseReport = () => {
           <ExportToExcel
             excelData={myexcelData || []}
             columnProperties={[6]}
-            fileName={
-              filesName
-                ? `${filesName} (${dayjs(formValue?.date).format(
-                    "DD-MMM-YYYY"
-                  )})`
-                : `Vendor-Wise Report`
-            }
+            fileName={filesName ? fileNames : `Vendor-Wise Report`}
             dynamicArray={[
               {
                 name: "Total",

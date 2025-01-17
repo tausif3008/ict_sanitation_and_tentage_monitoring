@@ -15,6 +15,7 @@ const ExportToPDF = ({
   IsNoBold = false, // Is Number Bold
   applyTableStyles = false,
   tableFont = 8,
+  columnProperties = [],
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -112,11 +113,32 @@ const ExportToPDF = ({
       didDrawPage: function (data) {
         doc.y = data.cursor.y;
       },
+      // didParseCell: function (data) {
+      //   const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
+      //   const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
+      //   const isFirstColumn = data.column.index === 0;
+      //   data.cell.styles.halign = "center";
+
+      //   if (
+      //     (isLastRow && IsLastLineBold) ||
+      //     (IsNoBold &&
+      //       isNumber &&
+      //       !isFirstColumn &&
+      //       Number(data.cell.text) !== 0)
+      //   ) {
+      //     data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
+      //     data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
+      //     data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
+      //   }
+      // },
       didParseCell: function (data) {
         const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
         const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
         const isFirstColumn = data.column.index === 0;
         data.cell.styles.halign = "center";
+        const containsPercentage = data.cell.text?.[0].includes("%");
+        const numberPart = data.cell.text?.[0].match(/\d+/); // Matches one or more digits
+        const numberParts = numberPart?.[0];
 
         if (
           (isLastRow && IsLastLineBold) ||
@@ -128,6 +150,24 @@ const ExportToPDF = ({
           data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
           data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
           data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
+        }
+        if (
+          containsPercentage &&
+          columnProperties?.includes(data.column.index) &&
+          numberParts
+        ) {
+          const percentage = Math.min(Math.max(numberParts, 0), 100);
+          const red = Math.floor((100 - percentage) * 2.55); // More red for lower percentage
+          const green = Math.floor(percentage * 2.55); // More green for higher percentage
+          const blue = 0; // You can adjust blue if desired
+
+          // Validate and set background color
+          if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
+            data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`;
+            data.cell.styles.textColor = [255, 255, 255]; // Set text color to white
+          } else {
+            data.cell.styles.fillColor = `rgb(255, 255, 255)`;
+          }
         }
       },
     });
