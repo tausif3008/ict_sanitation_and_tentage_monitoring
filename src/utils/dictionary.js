@@ -341,6 +341,10 @@ export const DICT = {
     en: "Partial Complaint",
     hi: "आंशिक शिकायत",
   },
+  complaint: {
+    en: "Complaint",
+    hi: "शिकायत",
+  },
   not_Complaint: {
     en: "Not Complaint",
     hi: "सम्मत नहीं है",

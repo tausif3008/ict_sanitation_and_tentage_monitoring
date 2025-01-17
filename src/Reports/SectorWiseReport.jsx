@@ -767,13 +767,29 @@ const SectorWiseReport = () => {
       <Table
         loading={SectorReport_Loading || VendorReport_Loading}
         columns={columns}
-        // dataSource={sectorData || []}
-        dataSource={[...sectorData, ...lastTableRow] || []}
+        dataSource={sectorData || []}
+        // dataSource={[...sectorData, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 30 }}
         scroll={{ x: 1700, y: 400 }}
         bordered
-        rowClassName={rowClassName}
+        // rowClassName={rowClassName}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Total Quantity: {totalQuantity?.total || 0}</strong>
+            <strong>Registered: {totalQuantity?.registered || 0}</strong>
+            <strong>Monitoring: {totalQuantity?.todaysmonitaring || 0}</strong>
+            <strong>
+              Partially Compliant: {totalQuantity?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
+            <strong>Not Compliant : {totalQuantity?.not_compliant || 0}</strong>
+            <strong>
+              Toilet Unclean : {totalQuantity?.toiletunclean || 0}
+            </strong>
+            <strong>Toilet Clean : {totalQuantity?.toiletclean || 0}</strong>
+          </div>
+        )}
       />
 
       {/* total quantity */}
@@ -782,7 +798,9 @@ const SectorWiseReport = () => {
         title={`Vendor Wise Report`}
         openModal={showModal && !VendorReport_Loading}
         handleCancel={handleCancel}
-        tableData={[...vendorsData, ...lastTableModalRow] || []}
+        tableData={vendorsData || []}
+        // tableData={[...vendorsData, ...lastTableModalRow] || []}
+        // IsLastRowBold={true}
         scroll={{ x: 1700, y: 400 }}
         tableHeaderData={[
           {
@@ -791,7 +809,21 @@ const SectorWiseReport = () => {
           },
         ]}
         column={VendorWiseReportcolumns || []}
-        IsLastRowBold={true}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Total: {vendorsData?.length || 0}</strong>
+            <strong>Quantity: {count?.total || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>Monitoring: {count?.monitoring || 0}</strong>
+            <strong>
+              Partially Compliant: {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant : {count?.not_compliant || 0}</strong>
+            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
+            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
+          </div>
+        )}
       />
     </div>
   );

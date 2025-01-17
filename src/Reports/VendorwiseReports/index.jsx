@@ -844,12 +844,26 @@ const VendorReports = () => {
       <Table
         loading={VendorReport_Loading || SectorReport_Loading}
         columns={VendorWiseReportcolumn || []}
-        dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
+        dataSource={vendorDetails?.list || []}
+        // dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
         scroll={{ x: 1800, y: 400 }}
-        rowClassName={rowClassName}
         bordered
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Total Quantity: {count?.total || 0}</strong>
+            <strong>Registered: {count?.registered || 0}</strong>
+            <strong>Monitoring: {count?.todaysmonitaring || 0}</strong>
+            <strong>
+              Partially Compliant: {count?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {count?.compliant || 0}</strong>
+            <strong>Not Compliant : {count?.not_compliant || 0}</strong>
+            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
+            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
+          </div>
+        )}
       />
 
       {/* total quantity */}
@@ -858,7 +872,9 @@ const VendorReports = () => {
         title={`Sector Wise Report`}
         openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
-        tableData={[...sectorData, ...lastTableModalRow] || []}
+        tableData={sectorData || []}
+        // tableData={[...sectorData, ...lastTableModalRow] || []}
+        // IsLastRowBold={true}
         tableHeaderData={[
           {
             label: "Vendor Name",
@@ -866,7 +882,23 @@ const VendorReports = () => {
           },
         ]}
         column={columns || []}
-        IsLastRowBold={true}
+        footer={() => (
+          <div className="flex justify-between">
+            <strong>Total: {sectorData?.length || 0}</strong>
+            <strong>Quantity: {modalQuantity?.total || 0}</strong>
+            <strong>Registered: {modalQuantity?.registered || 0}</strong>
+            <strong>Monitoring: {modalQuantity?.todaysmonitaring || 0}</strong>
+            <strong>
+              Partially Compliant: {modalQuantity?.partially_compliant || 0}
+            </strong>
+            <strong>Compliant : {modalQuantity?.compliant || 0}</strong>
+            <strong>Not Compliant : {modalQuantity?.not_compliant || 0}</strong>
+            <strong>
+              Toilet Unclean : {modalQuantity?.toiletunclean || 0}
+            </strong>
+            <strong>Toilet Clean : {modalQuantity?.toiletclean || 0}</strong>
+          </div>
+        )}
       />
     </div>
   );
