@@ -82,9 +82,9 @@ const ToiletsCount = () => {
             registered={registered}
             today={todays_registered}
           />
+          <TotalAllocation total={allocated} />
           <UnderMonitoring total={under_monitoring} today={todays_monitaring} />
           <OffMonitoring total={off_monitoring} />
-          <TotalAllocation total={allocated} />
         </div>
 
         {/* total quantity */}
