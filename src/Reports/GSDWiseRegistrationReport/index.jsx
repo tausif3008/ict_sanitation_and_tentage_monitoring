@@ -153,7 +153,12 @@ const GsdRegistrationReport = () => {
         return {
           Sr: index + 1,
           "GSD name": data?.agent_name,
+          "GSD Phone": data?.agent_phone,
           Unit: Number(data?.tagging_units),
+          Sector:
+            data?.sector_id !== 0
+              ? `Sector ${data?.sector_id}`
+              : "-",
         };
       });
       setExcelData(myexcelData);
@@ -170,9 +175,20 @@ const GsdRegistrationReport = () => {
       },
     },
     {
+      title: "Phone",
+      dataIndex: "agent_phone",
+      key: "agent_phone",
+    },
+    {
       title: "Units",
       dataIndex: "tagging_units",
       key: "tagging_units",
+    },
+    {
+      title: "Sector",
+      dataIndex: "sector_id",
+      render: (sector_id) =>
+        sector_id != 0 ? `Sector ${sector_id}` : "-",
     },
   ];
 

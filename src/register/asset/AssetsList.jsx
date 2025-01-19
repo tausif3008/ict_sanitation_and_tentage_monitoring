@@ -71,7 +71,14 @@ const AssetsList = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+
   let categoryId = form.getFieldValue("asset_main_type_id");
+  // let selectedType = form.getFieldValue("asset_type_id");
+  // let selectedVendor = form.getFieldValue("vendor_id");
+
+  let selectedType = "Type-9 Vehicle Mounted Mobile Toilets";
+  let selectedVendor = "M/s Sahyogi Enterprises	";
+
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -518,8 +525,9 @@ const AssetsList = () => {
       // Call the export function
       !isExcel &&
         ExportPdfFunction(
-          "Toilets & Tentage List",
-          "Toilets & Tentage List",
+          `Toilets & Tentage List Type`,
+          // `${selectedType} | Vendor: ${selectedVendor}`,
+          "Registered Toilets & Tentage List",
           pdfHeader,
           // pdfData,
           // true

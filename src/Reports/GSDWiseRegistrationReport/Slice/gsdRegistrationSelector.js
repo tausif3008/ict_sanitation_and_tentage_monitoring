@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 
 const GsdRegistrationSelector = () => {
   const GSDReport_data = useSelector(
-    (state) => state?.GsdWiseRegistrationReport.name
+    (state) => state?.GsdWiseRegistrationReport.name,
+    // (state) => state?.GsdWiseRegistrationReport.phone
   ); // GSD Wise Report data
   const VendorReport_data = useSelector(
     (state) => state?.GsdWiseRegistrationReport.vendor_data
