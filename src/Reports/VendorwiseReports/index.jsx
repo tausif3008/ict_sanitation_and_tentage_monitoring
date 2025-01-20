@@ -12,8 +12,10 @@ import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
+  fiveTypes,
   getPercentage,
   getValueLabel,
+  OrderBy,
   renderMonitoringSorting,
   renderSorting,
 } from "../../constant/const";
@@ -150,6 +152,8 @@ const VendorReports = () => {
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.sector_id && { sector_id: values?.sector_id }),
+      ...(values?.order_by && { order_by: values?.order_by }),
+      ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
     };
     callApi(finalValues);
@@ -167,11 +171,13 @@ const VendorReports = () => {
     const finalValues = {
       date: newDate,
       asset_main_type_id: "1",
+      order_by: "monitaring_per",
     };
     callApi(finalValues);
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
       asset_main_type_id: "1",
+      order_by: "monitaring_per",
     });
     const url = URLS?.assetType?.path + "1";
     const paramData = {
@@ -343,45 +349,22 @@ const VendorReports = () => {
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
           "Monitoring (%)":
-            getPercentage(
-              Number(data?.todaysmonitaring) || 0,
-              Number(data?.registered) || 1
-            ) + " %",
+            data?.monitaring_per != null
+              ? `${Math.round(Number(data?.monitaring_per) || 0)}%`
+              : "00%",
           Compliant: Number(data?.compliant) || 0,
-          // "Compliant (%)":
-          //   getPercentage(
-          //     Number(data?.compliant) || 0,
-          //     (Number(data?.toiletunclean) || 0) +
-          //       (Number(data?.toiletclean) || 0)
-          //   ) + " %",
           "Partially Compliant": Number(data?.partially_compliant) || 0,
-          // "Partially Compliant (%)":
-          //   getPercentage(
-          //     Number(data?.partially_compliant) || 0,
-          //     (Number(data?.toiletunclean) || 0) +
-          //       (Number(data?.toiletclean) || 0)
-          //   ) + " %",
           "Not Compliant": Number(data?.not_compliant) || 0,
           "Not Compliant (%)":
-            getPercentage(
-              Number(data?.not_compliant) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+            data?.not_compliant_per != null
+              ? `${Math.round(Number(data?.not_compliant_per) || 0)}%`
+              : "00%",
           "Toilet Unclean": Number(data?.toiletunclean) || 0,
           "Toilet Unclean (%)":
-            getPercentage(
-              Number(data?.toiletunclean) || 0,
-              (Number(data?.toiletunclean) || 0) +
-                (Number(data?.toiletclean) || 0)
-            ) + " %",
+            data?.toiletunclean_per != null
+              ? `${Math.round(Number(data?.toiletunclean_per) || 0)}%`
+              : "00%",
           "Toilet Clean": Number(data?.toiletclean) || 0,
-          // "Toilet Clean (%)":
-          //   getPercentage(
-          //     Number(data?.toiletclean) || 0,
-          //     (Number(data?.toiletunclean) || 0) +
-          //       (Number(data?.toiletclean) || 0)
-          //   ) + " %",
         };
       });
       setExcelData(myexcelData);
@@ -438,11 +421,18 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
-    renderMonitoringSorting(
-      "Monitoring (%)",
-      "todaysmonitaring",
-      "todaysmonitaring%"
-    ),
+    {
+      title: "Monitoring (%)",
+      dataIndex: "monitaring_per",
+      key: "monitaring_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.monitaring_per - b?.monitaring_per,
+    },
+    ,
     {
       title: "Partially Compliant",
       dataIndex: "partially_compliant",
@@ -451,11 +441,6 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
-    // renderSorting(
-    //   "Partially Compliant (%)",
-    //   "partially_compliant",
-    //   "partially_compliant%"
-    // ),
     {
       title: "Compliant",
       dataIndex: "compliant",
@@ -464,7 +449,6 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.compliant - b?.compliant,
     },
-    // renderSorting("Compliant (%)", "compliant", "compliant%"),
     {
       title: "Not Compliant",
       dataIndex: "not_compliant",
@@ -473,7 +457,17 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
-    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+    {
+      title: "Not Compliant (%)",
+      dataIndex: "not_compliant_per",
+      key: "not_compliant_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.not_compliant_per - b?.not_compliant_per,
+    },
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -482,7 +476,17 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
-    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    {
+      title: "Toilet Unclean (%)",
+      dataIndex: "toiletunclean_per",
+      key: "toiletunclean_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.toiletunclean_per - b?.toiletunclean_per,
+    },
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -491,7 +495,6 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
-    // renderSorting("Toilet Clean (%)", "toiletclean", "toiletclean%"),
   ];
 
   // Modal columns
@@ -616,40 +619,6 @@ const VendorReports = () => {
     );
   }, [excelData]);
 
-  const rowClassName = (record, index) => {
-    return index === vendorDetails?.list?.length
-      ? "bg-green-100 text-black font-bold"
-      : "";
-  };
-
-  const lastTableRow = [
-    {
-      name: vendorDetails?.list?.length,
-      total: count?.total,
-      registered: count?.registered,
-      todaysmonitaring: count?.todaysmonitaring,
-      partially_compliant: count?.partially_compliant,
-      compliant: count?.compliant,
-      not_compliant: count?.not_compliant,
-      toiletunclean: count?.toiletunclean,
-      toiletclean: count?.toiletclean,
-    },
-  ];
-
-  const lastTableModalRow = [
-    {
-      name: sectorData?.length,
-      total: modalQuantity?.total,
-      registered: modalQuantity?.registered,
-      todaysmonitaring: modalQuantity?.todaysmonitaring,
-      partially_compliant: modalQuantity?.partially_compliant,
-      compliant: modalQuantity?.compliant,
-      not_compliant: modalQuantity?.not_compliant,
-      toiletunclean: modalQuantity?.toiletunclean,
-      toiletclean: modalQuantity?.toiletclean,
-    },
-  ];
-
   const fileNames = `${filesName} (${dayjs(formValue?.date).format(
     "DD-MMM-YYYY"
   )})`;
@@ -665,7 +634,17 @@ const VendorReports = () => {
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
-            columnProperties={[5]} // 6 columns
+            columnProperties={
+              formValue?.order_by === "monitaring_per" ? [5] : []
+            } // 6 columns
+            redToGreenProperties={
+              formValue?.order_by === "not_compliant_per"
+                ? [9]
+                : formValue?.order_by === "toiletunclean_per"
+                ? [11]
+                : []
+            } // 10, 12 columns
+            // redToGreenProperties={[9, 11]} // 6 columns
             // applyTableStyles={true}
             rows={[
               ...pdfData,
@@ -796,7 +775,7 @@ const VendorReports = () => {
                         options={SectorListDrop || []}
                       />
                     </Col>
-                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
                       <CustomDatepicker
                         name={"date"}
                         label={"Date"}
@@ -804,6 +783,24 @@ const VendorReports = () => {
                         placeholder={"Date"}
                       />
                     </Col>
+                    <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"order_by"}
+                        label={"Order By"}
+                        placeholder={"Select Order By"}
+                        options={OrderBy || []}
+                      />
+                    </Col>
+                    {formValue?.asset_main_type_id === "1" && (
+                      <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                        <CustomSelect
+                          name={"asset_type_ids"}
+                          label={"Select Type"}
+                          placeholder={"Select Type"}
+                          options={fiveTypes || []}
+                        />
+                      </Col>
+                    )}
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
@@ -838,7 +835,6 @@ const VendorReports = () => {
         loading={VendorReport_Loading || SectorReport_Loading}
         columns={VendorWiseReportcolumn || []}
         dataSource={vendorDetails?.list || []}
-        // dataSource={[...vendorDetails?.list, ...lastTableRow] || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
         scroll={{ x: 1800, y: 400 }}
@@ -866,8 +862,6 @@ const VendorReports = () => {
         openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
         tableData={sectorData || []}
-        // tableData={[...sectorData, ...lastTableModalRow] || []}
-        // IsLastRowBold={true}
         tableHeaderData={[
           {
             label: "Vendor Name",

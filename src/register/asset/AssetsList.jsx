@@ -536,7 +536,7 @@ const AssetsList = () => {
       // Call the export function
       !isExcel &&
         ExportPdfFunction(
-          `Toilets & Tentage List Type`,
+          ``,
           "Registered Toilets & Tentage List",
           pdfHeader,
           // pdfData,

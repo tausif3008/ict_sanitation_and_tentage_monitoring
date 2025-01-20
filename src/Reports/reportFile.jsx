@@ -16,6 +16,7 @@ const ExportToPDF = ({
   applyTableStyles = false,
   tableFont = 8,
   columnProperties = [],
+  redToGreenProperties = [],
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -167,6 +168,27 @@ const ExportToPDF = ({
             data.cell.styles.textColor = [255, 255, 255]; // Set text color to white
           } else {
             data.cell.styles.fillColor = `rgb(255, 255, 255)`;
+          }
+        }
+        if (
+          containsPercentage &&
+          redToGreenProperties?.includes(data.column.index) &&
+          numberParts
+        ) {
+          // Ensure percentage is between 0 and 100
+          const percentage = Math.min(Math.max(numberParts, 0), 100);
+
+          // Adjust the RGB values to go from red to green
+          const green = Math.floor((100 - percentage) * 2.55); // 100% red at 0%, 0% red at 100%
+          const red = Math.floor(percentage * 2.55); // 0% green at 0%, 100% green at 100%
+          const blue = 0; // Blue remains 0
+
+          // Validate and set background color
+          if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
+            data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`; // Set background color
+            data.cell.styles.textColor = [10, 10, 10]; // Set text color to white for contrast
+          } else {
+            data.cell.styles.fillColor = `rgb(255, 255, 255)`; // Set to white if values are invalid
           }
         }
       },

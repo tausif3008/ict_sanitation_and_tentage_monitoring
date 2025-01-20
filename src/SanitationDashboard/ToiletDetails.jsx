@@ -11,7 +11,7 @@ import SanitationDashSelector from "./Slice/sanitationDashboardSelector";
 import { getSanitationDashData } from "./Slice/sanitationDashboard";
 import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
-import QuestionSelector from "../register/questions/questionSelector";
+// import QuestionSelector from "../register/questions/questionSelector";
 import {
   getPercentage,
   priorityToiletTypes_Id,
@@ -19,7 +19,7 @@ import {
 } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
 import CustomSelect from "../commonComponents/CustomSelect";
-import { getQuestionList } from "../register/questions/questionSlice";
+// import { getQuestionList } from "../register/questions/questionSlice";
 import ViewVendorsSectors from "../register/AssetType/viewVendors";
 import URLS from "../urils/URLS";
 import {
@@ -52,7 +52,7 @@ const ToiletDetails = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { QuestionDrop } = QuestionSelector(); // questions
+  // const { QuestionDrop } = QuestionSelector(); // questions
   const { SanitationDash_data, loading } = SanitationDashSelector(); // sanitation dashboard
   const { vendorReports, VendorReport_Loading, VendorCatTypeDrop } =
     VendorSelectors(); // vendor dropdown & Reports
@@ -167,7 +167,7 @@ const ToiletDetails = () => {
     };
     dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
     dispatch(getSectorsList()); // all sectors
-    dispatch(getQuestionList()); // get question
+    // dispatch(getQuestionList()); // get question
   }, []);
 
   const sortedArray =

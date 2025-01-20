@@ -98,6 +98,14 @@ export const getPercentage = (numerator, denominator) => {
 
 export const globalDateFormat = "YYYY-MM-DD";
 
+export const OrderBy = [
+  { value: "monitaring_per", label: "Monitoring %" },
+  { value: "not_compliant_per", label: "Not Compliant %" },
+  { value: "toiletunclean_per", label: "Toilet Unclean %" },
+];
+
+export const fiveTypes = [{ value: "1,2,3,4,5", label: "Asset type 1-5" }];
+
 export const statusOptions = [
   { value: 1, label: "Active" },
   { value: 2, label: "Deactive" },
@@ -220,11 +228,17 @@ export const VendorWiseReportcolumns = [
     width: 50,
     sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
   },
-  renderMonitoringSorting(
-    "Monitoring (%)",
-    "todaysmonitaring",
-    "todaysmonitaring%"
-  ),
+  {
+    title: "Monitoring (%)",
+    dataIndex: "monitaring_per",
+    key: "monitaring_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.monitaring_per - b?.monitaring_per,
+  },
+  ,
   {
     title: "Partially Compliant",
     dataIndex: "partially_compliant",
@@ -246,7 +260,16 @@ export const VendorWiseReportcolumns = [
     width: 50,
     sorter: (a, b) => a?.not_compliant - b?.not_compliant,
   },
-  renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+  {
+    title: "Not Compliant (%)",
+    dataIndex: "not_compliant_per",
+    key: "not_compliant_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.not_compliant_per - b?.not_compliant_per,
+  },
   {
     title: "Toilet Unclean",
     dataIndex: "toiletunclean",
@@ -254,7 +277,16 @@ export const VendorWiseReportcolumns = [
     width: 50,
     sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
   },
-  renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+  {
+    title: "Toilet Unclean (%)",
+    dataIndex: "toiletunclean_per",
+    key: "toiletunclean_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.toiletunclean_per - b?.toiletunclean_per,
+  },
   {
     title: "Toilet Clean",
     dataIndex: "toiletclean",
