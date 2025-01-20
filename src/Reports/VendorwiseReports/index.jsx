@@ -643,7 +643,7 @@ const VendorReports = () => {
                 : formValue?.order_by === "toiletunclean_per"
                 ? [11]
                 : []
-            } // 10, 12 columns
+            } // 10, 12 columns  100 to 0
             // redToGreenProperties={[9, 11]} // 6 columns
             // applyTableStyles={true}
             rows={[

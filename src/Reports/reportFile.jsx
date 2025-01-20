@@ -16,7 +16,7 @@ const ExportToPDF = ({
   applyTableStyles = false,
   tableFont = 8,
   columnProperties = [],
-  redToGreenProperties = [],
+  redToGreenProperties = [], // 100 to 0
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -175,22 +175,56 @@ const ExportToPDF = ({
           redToGreenProperties?.includes(data.column.index) &&
           numberParts
         ) {
-          // Ensure percentage is between 0 and 100
-          const percentage = Math.min(Math.max(numberParts, 0), 100);
+          // Ensure percentage is between 0 and 50
+          const percentage = Math.min(Math.max(numberParts, 0), 50);
 
-          // Adjust the RGB values to go from red to green
-          const green = Math.floor((100 - percentage) * 2.55); // 100% red at 0%, 0% red at 100%
-          const red = Math.floor(percentage * 2.55); // 0% green at 0%, 100% green at 100%
-          const blue = 0; // Blue remains 0
+          let red, green;
 
-          // Validate and set background color
-          if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
-            data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`; // Set background color
-            data.cell.styles.textColor = [10, 10, 10]; // Set text color to white for contrast
+          if (percentage <= 25) {
+            // Transition from green to yellow (0% to 25%)
+            red = Math.floor(percentage * 10.2); // Red increases from 0 to 255
+            green = Math.floor(255 - percentage * 10.2); // Green decreases from 255 to 0
           } else {
-            data.cell.styles.fillColor = `rgb(255, 255, 255)`; // Set to white if values are invalid
+            // Transition from yellow to red (26% to 50%)
+            red = Math.floor((percentage - 25) * 10.2); // Red increases from 0 to 255
+            green = Math.floor(255 - (percentage - 25) * 10.2); // Green decreases from 255 to 0
+          }
+
+          const blue = 0; // Keep blue at 0 for simplicity
+
+          // Validate and set the background color
+          if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
+            // Set background color to the calculated color
+            data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`;
+            // Set text color to white for contrast
+            data.cell.styles.textColor = [255, 255, 255];
+          } else {
+            // Set background to white if values are invalid
+            data.cell.styles.fillColor = `rgb(255, 255, 255)`;
           }
         }
+
+        // if (
+        //   containsPercentage &&
+        //   redToGreenProperties?.includes(data.column.index) &&
+        //   numberParts
+        // ) {
+        //   // Ensure percentage is between 0 and 100
+        //   const percentage = Math.min(Math.max(numberParts, 0), 100);
+
+        //   // Adjust the RGB values to go from red to green
+        //   const green = Math.floor((100 - percentage) * 2.55); // 100% red at 0%, 0% red at 100%
+        //   const red = Math.floor(percentage * 2.55); // 0% green at 0%, 100% green at 100%
+        //   const blue = 0; // Blue remains 0
+
+        //   // Validate and set background color
+        //   if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
+        //     data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`; // Set background color
+        //     data.cell.styles.textColor = [10, 10, 10]; // Set text color to white for contrast
+        //   } else {
+        //     data.cell.styles.fillColor = `rgb(255, 255, 255)`; // Set to white if values are invalid
+        //   }
+        // }
       },
     });
 

@@ -269,7 +269,7 @@ const CompactorsTippers = () => {
             </div>
           </div>
         </div> */}
-        <div className="grid lg:grid-cols-2 h-full gap-4">
+        <div className="grid md:grid-cols-2 h-full gap-4">
           {mergedArray?.map((data) => {
             return (
               <div
@@ -282,12 +282,9 @@ const CompactorsTippers = () => {
                   <div
                     className={`${data?.textColor} font-semibold flex flex-col gap-2 items-start relative`}
                   >
-                    <div className="flex items-center gap-2">
+                    <div className="grid md:grid-cols-2 items-center gap-2 ">
                       {data?.icon}
-                      <span className={`${data?.textColor}`}>
-                        {" "}
-                        {data?.name}
-                      </span>
+                      <span className={`${data?.textColor}`}>{data?.name}</span>
                     </div>
                     <h2 className="text-2xl text-blue-500 font-bold">
                       {data?.total_quantity || 0}
