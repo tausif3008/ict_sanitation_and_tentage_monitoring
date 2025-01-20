@@ -155,10 +155,7 @@ const GsdRegistrationReport = () => {
           "GSD name": data?.agent_name,
           "GSD Phone": data?.agent_phone,
           Unit: Number(data?.tagging_units),
-          Sector:
-            data?.sector_id !== 0
-              ? `Sector ${data?.sector_id}`
-              : "-",
+          Sector: data?.sector_id !== 0 ? `Sector ${data?.sector_id}` : "-",
         };
       });
       setExcelData(myexcelData);
@@ -187,8 +184,7 @@ const GsdRegistrationReport = () => {
     {
       title: "Sector",
       dataIndex: "sector_id",
-      render: (sector_id) =>
-        sector_id != 0 ? `Sector ${sector_id}` : "-",
+      render: (sector_id) => (sector_id != 0 ? `Sector ${sector_id}` : "-"),
     },
   ];
 
@@ -200,7 +196,13 @@ const GsdRegistrationReport = () => {
           <ExportToExcel
             excelData={excelData || []}
             fileName={"GSD Wise Registration Report"}
-            dynamicFields={{ "Total Units": gsdData?.totalUnits }}
+            dynamicArray={[
+              {
+                name: "Total Unit",
+                value: gsdData?.totalUnits,
+                colIndex: 4,
+              },
+            ]}
           />
         </div>
       </div>

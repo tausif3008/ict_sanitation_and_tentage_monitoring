@@ -177,11 +177,23 @@ const CircleWiseReport = () => {
           <ExportToExcel
             excelData={myexcelData || []}
             fileName={"Circle-Wise-Report"}
-            dynamicFields={{
-              "Register Unit": totalRegistered,
-              Clean: totalClean,
-              Unclean: totalUnclean,
-            }}
+            dynamicArray={[
+              {
+                name: "Register Unit",
+                value: totalRegistered,
+                colIndex: 3,
+              },
+              {
+                name: "Clean",
+                value: totalClean,
+                colIndex: 4,
+              },
+              {
+                name: "Unclean",
+                value: totalUnclean,
+                colIndex: 5,
+              },
+            ]}
           />
         </div>
       </div>

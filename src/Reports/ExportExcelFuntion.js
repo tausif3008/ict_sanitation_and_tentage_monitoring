@@ -6,7 +6,6 @@ import { saveAs } from "file-saver";
 export const exportToExcel = async (
   excelData = [],
   fileName = "excel_file",
-  dynamicFields = {},
   dynamicArray = []
 ) => {
   if (excelData?.length === 0) {
@@ -69,18 +68,6 @@ export const exportToExcel = async (
   totalCountRow.getCell(1).value = `Total Rows: ${excelData?.length}`;
   totalCountRow.getCell(1).font = { bold: true };
   totalCountRow.getCell(1).alignment = { horizontal: "center" };
-
-  let colIndex = 2;
-  Object.keys(dynamicFields).forEach((key) => {
-    const value = dynamicFields[key];
-    totalCountRow.getCell(colIndex).value = `${
-      key.charAt(0).toUpperCase() + key.slice(1)
-    }: ${value}`;
-    const cell = totalCountRow.getCell(colIndex);
-    cell.font = { bold: true };
-    cell.alignment = { horizontal: "center" };
-    colIndex++;
-  });
 
   // for array
   dynamicArray?.forEach((item) => {

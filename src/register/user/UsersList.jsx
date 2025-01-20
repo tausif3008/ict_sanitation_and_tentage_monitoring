@@ -41,7 +41,6 @@ const UserList = () => {
     });
   };
   const { UserListDrop } = UserTypeSelector(); // user type list
-
   const values = form.getFieldValue("user_type_id"); // Get all form values
   const fileName = getValueLabel(values, UserListDrop, "All User List");
 

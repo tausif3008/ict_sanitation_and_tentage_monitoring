@@ -6,7 +6,6 @@ import { saveAs } from "file-saver";
 export const VendorDetailsToExcel = async (
   excelData = [],
   fileName = "excel_file",
-  dynamicFields = {},
   Total = 0,
   registerCount
 ) => {
@@ -119,19 +118,6 @@ export const VendorDetailsToExcel = async (
   totalCountRow.getCell(7).value = `Total Registered: ${registerCount}`;
   totalCountRow.getCell(7).font = { bold: true };
   totalCountRow.getCell(7).alignment = { horizontal: "center" };
-
-  // Add dynamic fields to the summary row
-  let colIndex = 2;
-  Object.keys(dynamicFields).forEach((key) => {
-    const value = dynamicFields[key];
-    totalCountRow.getCell(colIndex).value = `${
-      key.charAt(0).toUpperCase() + key.slice(1)
-    }: ${value}`;
-    const cell = totalCountRow.getCell(colIndex);
-    cell.font = { bold: true };
-    cell.alignment = { horizontal: "center" };
-    colIndex++;
-  });
 
   // Apply filter to the header row
   worksheet.autoFilter = {

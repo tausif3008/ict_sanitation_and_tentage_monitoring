@@ -672,7 +672,16 @@ const VendorReports = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            columnProperties={[6]}
+            columnProperties={
+              formValue?.order_by === "monitaring_per" ? [6] : []
+            } // 6 columns
+            redToGreenProperties={
+              formValue?.order_by === "not_compliant_per"
+                ? [10]
+                : formValue?.order_by === "toiletunclean_per"
+                ? [12]
+                : []
+            }
             fileName={filesName ? fileNames : `Vendor-Wise Report`}
             dynamicArray={[
               {

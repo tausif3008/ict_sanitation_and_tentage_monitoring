@@ -206,21 +206,21 @@ const VendorList = () => {
     "Name",
     "Email",
     "Mobile No",
-    "Vendor Code",
-    "Address",
-    "City",
-    "State",
+    // "Vendor Code",
+    // "Address",
+    // "City",
+    // "State",
   ];
 
   const columnPercentages = [
-    4,
-    15,
-    15,
-    10,
-    13,
-    25,
-    9,
-    9, // 0   // Country (0%) – if unused, no space is allocated for this column
+    // 4,
+    // 15,
+    // 15,
+    // 10,
+    // 13,
+    // 25,
+    // 9,
+    // 9, // 0   // Country (0%) – if unused, no space is allocated for this column
   ];
 
   // excel && pdf file
@@ -245,10 +245,10 @@ const VendorList = () => {
             Name: data?.name,
             Email: data?.email,
             Phone: Number(data?.phone),
-            "Vendor Code": Number(data?.code),
-            Address: data?.address,
-            City: data?.city_name,
-            State: data?.state_name,
+            // "Vendor Code": Number(data?.code),
+            // Address: data?.address,
+            // City: data?.city_name,
+            // State: data?.state_name,
           };
         });
 
@@ -259,10 +259,10 @@ const VendorList = () => {
           data?.name,
           data?.email,
           data?.phone,
-          data?.code,
-          data?.address,
-          data?.city_name,
-          data?.state_name,
+          // data?.code,
+          // data?.address,
+          // data?.city_name,
+          // data?.state_name,
         ]);
 
       // Call the export function
@@ -275,7 +275,7 @@ const VendorList = () => {
           `${fileName}`,
           pdfHeader,
           pdfData,
-          true,
+          false,
           false,
           columnPercentages
         );
