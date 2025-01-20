@@ -13,7 +13,8 @@ export const ExportPdfFunction = (
   rows, // rows
   landscape = false,
   IsLastLineBold = false,
-  columnPercentages = [] // column percentage
+  columnPercentages = [], // column percentage
+  tableTitles = []
 ) => {
   if (rows && rows?.length === 0) {
     message?.error("Data is not available");
@@ -86,7 +87,7 @@ export const ExportPdfFunction = (
   // Add title and date below the subheading
   doc.setFontSize(12);
   doc.setFont("bold");
-  doc.text(title, titleX - 35, doc.y); // Title position (Y position adjusted to be below the subheading)
+  doc.text(title, subHeadingX + 40, doc.y); // Title position (Y position adjusted to be below the subheading)
   doc.setFont("normal");
   doc.setFontSize(10); // Smaller font size for date
   doc.text(dateString, dateX + 30, doc.y); // Date position (Y position adjusted to be below the title)
@@ -96,6 +97,16 @@ export const ExportPdfFunction = (
   const columnWidths = columnPercentages?.map(
     (percentage) => (availableWidth * percentage) / 100
   );
+
+  doc.setFontSize(11);
+  doc.setFont("bold");
+  tableTitles?.forEach((field, index) => {
+    doc.text(field?.label, 20, (index + 1) * 5 + doc.y);
+    doc.y += 3;
+  });
+  doc.setFont("normal");
+  doc.setFontSize(10);
+  doc.y += tableTitles?.length * 5;
 
   // Table header and content
   doc.autoTable({

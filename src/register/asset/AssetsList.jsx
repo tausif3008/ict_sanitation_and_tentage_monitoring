@@ -27,11 +27,9 @@ import {
   deleteSupervisorSectorAllocation,
   getSectorsList,
 } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-// import { getAllCircleList } from "../../Reports/CircleSlice/circleSlices";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
-// import CircleSelector from "../../Reports/CircleSlice/circleSelector";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import { getAssetMainTypes, getAssetTypes } from "../AssetType/AssetTypeSlice";
@@ -42,7 +40,7 @@ import ShowCode from "./showCode";
 import { exportToExcel } from "../../Reports/ExportExcelFuntion";
 import { ExportPdfFunction } from "../../Reports/ExportPdfFunction";
 import CustomInput from "../../commonComponents/CustomInput";
-import { dateWeekOptions } from "../../constant/const";
+import { dateWeekOptions, getValueLabel } from "../../constant/const";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { asset_delete_permisssion } from "../../constant/permission";
@@ -53,7 +51,6 @@ const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
   const [searchQuery, setSearchQuery] = useState("&asset_main_type_id=1");
   const [loading, setLoading] = useState(false);
-  const [totalUnit, setTotalUnit] = useState(0); // unit count
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -71,13 +68,8 @@ const AssetsList = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
-
+  const formValue = form.getFieldsValue();
   let categoryId = form.getFieldValue("asset_main_type_id");
-  // let selectedType = form.getFieldValue("asset_type_id");
-  // let selectedVendor = form.getFieldValue("vendor_id");
-
-  let selectedType = "Type-9 Vehicle Mounted Mobile Toilets";
-  let selectedVendor = "M/s Sahyogi Enterprises	";
 
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
@@ -90,7 +82,6 @@ const AssetsList = () => {
 
   const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
-  // const { CircleListDrop } = CircleSelector(); // circle
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { parkingDrop } = ParkingSelector(); // parking
@@ -440,13 +431,16 @@ const AssetsList = () => {
   // pdf header
   const pdfHeader = [
     "Sr No",
-    "Category",
-    ...(categoryId === "2" ? ["Tentage Type"] : ["Toilets Type"]),
-    "Vendor Name",
+    ...(formValue?.asset_type_id
+      ? []
+      : categoryId === "2"
+      ? ["Tentage Type"]
+      : ["Toilets Type"]),
+    ...(formValue?.vendor_id ? [] : ["Vendor Name"]),
     "GSD Name",
-    "Sector",
-    "Sanstha",
-    "Parking",
+    ...(formValue?.sector_id ? [] : ["Sector"]),
+    ...(formValue?.asset_main_type_id !== "1" ? ["Sanstha"] : []),
+    ...(formValue?.asset_main_type_id !== "2" ? ["Parking"] : []),
     "Code",
     "Unit",
     "Register Date",
@@ -480,10 +474,13 @@ const AssetsList = () => {
             "Vendor Name": data?.vendor_name,
             "GSD Name": data?.agent_name,
             Sector: data?.sector_name,
-            Parking: data?.parking_name,
-            Sanstha: data?.sanstha_name_hi,
-            // Circle: data?.circle_name,
-            // "Vendor Item Code": data?.vendor_asset_code,
+
+            ...(formValue?.asset_main_type_id !== "1" && {
+              Sanstha: data?.sanstha_name_hi,
+            }),
+            ...(formValue?.asset_main_type_id !== "2" && {
+              Parking: data?.parking_name,
+            }),
             Code: Number(data?.code),
             Unit: Number(data?.unit),
             "Register Date": data?.tagged_at
@@ -508,13 +505,16 @@ const AssetsList = () => {
         !isExcel &&
         res?.data?.listings?.map((data, index) => [
           index + 1,
-          data?.asset_main_type_name,
-          data?.asset_type_name,
-          data?.vendor_name,
+          ...(formValue?.asset_type_id ? [] : [data?.asset_type_name]),
+          ...(formValue?.vendor_id ? [] : [data?.vendor_name]),
           data?.agent_name,
-          data?.sector_name,
-          data?.sanstha_name,
-          data?.parking_name,
+          ...(formValue?.sector_id ? [] : [data?.sector_name]),
+          ...(formValue?.asset_main_type_id !== "1"
+            ? [data?.sanstha_name]
+            : []),
+          ...(formValue?.asset_main_type_id !== "2"
+            ? [data?.parking_name]
+            : []),
           Number(data?.code),
           Number(data?.unit),
           data?.tagged_at
@@ -522,11 +522,21 @@ const AssetsList = () => {
             : "",
         ]);
 
+      const pdfTitleData = {
+        category: getValueLabel(
+          formValue?.asset_main_type_id,
+          AssetMainTypeDrop,
+          null
+        ),
+        type: getValueLabel(formValue?.asset_type_id, AssetTypeDrop, null),
+        vendor: getValueLabel(formValue?.vendor_id, VendorListDrop, null),
+        sector: getValueLabel(formValue?.sector_id, SectorListDrop, null),
+      };
+
       // Call the export function
       !isExcel &&
         ExportPdfFunction(
           `Toilets & Tentage List Type`,
-          // `${selectedType} | Vendor: ${selectedVendor}`,
           "Registered Toilets & Tentage List",
           pdfHeader,
           // pdfData,
@@ -536,7 +546,22 @@ const AssetsList = () => {
             ["", "", "", "", "", "", "", "Total Unit", "", unitCount, ""],
           ],
           true,
-          true
+          true,
+          [],
+          [
+            {
+              label: `Category : ${pdfTitleData?.category || "Combined"}`,
+            },
+            {
+              label: `Type : ${pdfTitleData?.type || "Combined"}`,
+            },
+            {
+              label: `Vendor Name : ${pdfTitleData?.vendor || "Combined"}`,
+            },
+            {
+              label: `Sector : ${pdfTitleData?.sector || "Combined"}`,
+            },
+          ]
         );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
@@ -558,11 +583,6 @@ const AssetsList = () => {
           </Button>
         </div>
         <div>
-          {/* <ExportToExcel
-            excelData={excelData || []}
-            fileName={"Toilets & Tentage List"}
-            dynamicFields={{ "Register Unit": totalUnit }}
-          /> */}
           <Button
             type="primary"
             onClick={() => {
@@ -649,21 +669,6 @@ const AssetsList = () => {
                         options={parkingDrop || []}
                       />
                     </Col>
-                    {/* <Col key="circle_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"circle_id"}
-                        label={"Select Circle"}
-                        placeholder={"Select Circle"}
-                        options={CircleListDrop || []}
-                      />
-                    </Col> */}
-                    {/* <Col key="vendor_asset_code" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name={"vendor_asset_code"}
-                        label={"Vendor Item Code"}
-                        placeholder={"Vendor Item Code"}
-                      />
-                    </Col> */}
                     <Col key="code" xs={24} sm={12} md={6} lg={5}>
                       <CustomInput
                         name={"code"}
@@ -777,9 +782,6 @@ const AssetsList = () => {
         details={details}
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
-        totalName="Total"
-        // subtotalName={"Register Unit"}
-        // subtotalCount={totalUnit || 0}
       ></CommonTable>
 
       <Modal
@@ -827,7 +829,6 @@ const AssetsList = () => {
               Please note: The data in this field cannot be recovered.
             </strong>
           </p>
-
           <Form.Item>
             <div className="flex justify-end space-x-2">
               <Button type="primary" danger htmlType="submit">
