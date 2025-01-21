@@ -296,6 +296,107 @@ export const VendorWiseReportcolumns = [
   },
 ];
 
+export const SectorWiseReportcolumns = [
+  {
+    title: "Sector Name",
+    dataIndex: "name",
+    key: "name",
+    width: 90,
+    sorter: (a, b) => {
+      const nameA = a?.name ? a?.name?.toString() : "";
+      const nameB = b?.name ? b?.name?.toString() : "";
+      return nameA?.localeCompare(nameB);
+    },
+  },
+  {
+    title: "Total Quantity",
+    dataIndex: "total",
+    key: "total",
+    width: 50,
+    sorter: (a, b) => a?.total - b?.total,
+  },
+  {
+    title: "Registered",
+    dataIndex: "registered",
+    key: "registered",
+    width: 50,
+    sorter: (a, b) => a?.total - b?.total,
+  },
+  {
+    title: "Monitoring",
+    dataIndex: "todaysmonitaring",
+    key: "todaysmonitaring",
+    width: 50,
+    sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
+  },
+  {
+    title: "Monitoring (%)",
+    dataIndex: "monitaring_per",
+    key: "monitaring_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.monitaring_per - b?.monitaring_per,
+  },
+  ,
+  {
+    title: "Partially Compliant",
+    dataIndex: "partially_compliant",
+    key: "partially_compliant",
+    width: 50,
+    sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
+  },
+  {
+    title: "Compliant",
+    dataIndex: "compliant",
+    key: "compliant",
+    width: 50,
+    sorter: (a, b) => a?.compliant - b?.compliant,
+  },
+  {
+    title: "Not Compliant",
+    dataIndex: "not_compliant",
+    key: "not_compliant",
+    width: 50,
+    sorter: (a, b) => a?.not_compliant - b?.not_compliant,
+  },
+  {
+    title: "Not Compliant (%)",
+    dataIndex: "not_compliant_per",
+    key: "not_compliant_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.not_compliant_per - b?.not_compliant_per,
+  },
+  {
+    title: "Toilet Unclean",
+    dataIndex: "toiletunclean",
+    key: "toiletunclean",
+    width: 50,
+    sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
+  },
+  {
+    title: "Toilet Unclean (%)",
+    dataIndex: "toiletunclean_per",
+    key: "toiletunclean_per",
+    width: 50,
+    render: (text, record) => {
+      return text ? `${Math.round(text)}%` : "00";
+    },
+    sorter: (a, b) => a?.toiletunclean_per - b?.toiletunclean_per,
+  },
+  {
+    title: "Toilet Clean",
+    dataIndex: "toiletclean",
+    key: "toiletclean",
+    width: 50,
+    sorter: (a, b) => a?.toiletclean - b?.toiletclean,
+  },
+];
+
 // asset type list and vehicle dashboard
 export const vendorColumn = [
   {

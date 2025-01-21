@@ -19,10 +19,9 @@ import {
 import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import { getFormData } from "../urils/getFormData";
 import {
-  getPercentage,
+  fiveTypes,
   getValueLabel,
-  renderMonitoringSorting,
-  renderSorting,
+  OrderBy,
   VendorWiseReportcolumns,
 } from "../constant/const";
 import CustomDatepicker from "../commonComponents/CustomDatepicker";
@@ -36,6 +35,7 @@ import ViewVendorsSectors from "../register/AssetType/viewVendors";
 const SectorWiseReport = () => {
   const [filesName, setFilesName] = useState(null); // files Name
   const [showModal, setShowModal] = useState(null);
+  const [showTypeOption, setShowTypeOption] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState({
     totalQnty: 0,
     registered: 0,
@@ -73,57 +73,51 @@ const SectorWiseReport = () => {
   const Category_mainType_id = localStorage.getItem("category_mainType_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
-  const categoryType = form.getFieldValue("asset_main_type_id");
-  const asset_type_id_name = form.getFieldValue("asset_type_id");
-  const vendor_id_name = form.getFieldValue("vendor_id");
 
-  useEffect(() => {
-    if (vendorReports) {
-      const total = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.total),
-        0
-      );
-      const totalReg = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.registered),
-        0
-      );
-      const totalMonitoring = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
-        0
-      );
-      const partially_compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
-        0
-      );
-      const compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.compliant) || 0,
-        0
-      );
-      const not_compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
-        0
-      );
-      const toiletunclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
-        0
-      );
-      const toiletclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
-        0
-      );
+  const catTypeName = getValueLabel(
+    formValue?.asset_main_type_id,
+    AssetMainTypeDrop,
+    null
+  );
+  const assetTypeName = getValueLabel(
+    formValue?.asset_type_id,
+    AssetTypeDrop,
+    null
+  );
+  const vendorName = getValueLabel(
+    formValue?.vendor_id,
+    VendorCatTypeDrop,
+    null
+  );
+  const orderByName = getValueLabel(formValue?.order_by, OrderBy, null);
+  const fiveTypeIdName = getValueLabel(
+    formValue?.asset_type_ids,
+    fiveTypes,
+    null
+  );
 
-      setCount({
-        total: total,
-        registered: totalReg,
-        monitoring: totalMonitoring,
-        partially_compliant: partially_compliant,
-        compliant: compliant,
-        not_compliant: not_compliant,
-        toiletunclean: toiletunclean,
-        toiletclean: toiletclean,
-      });
-    }
-  }, [vendorReports]);
+  const pdfTitleData = {
+    type: formValue?.asset_type_ids ? "Type 1 to Type 5" : "All Asset Types",
+  };
+
+  const pdfTitleParam = [
+    ...(formValue?.vendor_id
+      ? [
+          {
+            label: `Vendor Name : ${vendorName || "Combined"}`,
+          },
+        ]
+      : []),
+    {
+      label: `Category : ${catTypeName || "Combined"}`,
+    },
+    {
+      label: `Type : ${assetTypeName || pdfTitleData?.type || "Combined"}`,
+    },
+    {
+      label: `Sort By : ${orderByName || "Combined"}`,
+    },
+  ];
 
   // close module
   const handleCancel = () => {
@@ -203,6 +197,8 @@ const SectorWiseReport = () => {
       }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.order_by && { order_by: values?.order_by }),
+      ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
       ...(userRoleId === "8" && {
         vendor_id: sessionData?.id,
@@ -229,28 +225,29 @@ const SectorWiseReport = () => {
 
   // file name
   const getReportName = () => {
-    const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
-    const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-    const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
-
-    if (vendor_id_name && asset_type_id_name) {
-      return `${vendorName} - ( ${assetTypeName} ) -Sector Report`;
+    let name = "Sector Wise";
+    if (vendorName) {
+      name += `- ${vendorName}`;
     }
-    if (vendor_id_name) {
-      return `${vendorName} - ${catTypeName} -Sector Report`;
+    if (catTypeName) {
+      name += `- ${catTypeName}`;
     }
-    if (asset_type_id_name) {
-      return `Sector Wise ${catTypeName} (${assetTypeName}) Report`;
+    if (assetTypeName) {
+      name += `- ${assetTypeName}`;
     }
-    if (categoryType) {
-      return `Sector Wise ${catTypeName} Report`;
+    if (fiveTypeIdName) {
+      name += `- ${fiveTypeIdName}`;
     }
-    return "Sector Wise Report";
+    if (orderByName) {
+      name += `- ${orderByName}`;
+    }
+    name += ` (${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+    return name;
   };
 
   useEffect(() => {
     setFilesName(getReportName()); // file name
-  }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
+  }, [formValue]);
 
   useEffect(() => {
     if (sectorData) {
@@ -300,6 +297,54 @@ const SectorWiseReport = () => {
     }
   }, [sectorData]);
 
+  useEffect(() => {
+    if (vendorReports) {
+      const total = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.total),
+        0
+      );
+      const totalReg = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.registered),
+        0
+      );
+      const totalMonitoring = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
+        0
+      );
+      const partially_compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
+        0
+      );
+      const compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.compliant) || 0,
+        0
+      );
+      const not_compliant = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
+        0
+      );
+      const toiletunclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
+        0
+      );
+      const toiletclean = vendorsData?.reduce(
+        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
+        0
+      );
+
+      setCount({
+        total: total,
+        registered: totalReg,
+        monitoring: totalMonitoring,
+        partially_compliant: partially_compliant,
+        compliant: compliant,
+        not_compliant: not_compliant,
+        toiletunclean: toiletunclean,
+        toiletclean: toiletclean,
+      });
+    }
+  }, [vendorReports]);
+
   // current data
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
@@ -310,6 +355,7 @@ const SectorWiseReport = () => {
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
       asset_main_type_id: mainTypeIdLocal,
+      order_by: "monitaring_per",
     });
     const url = URLS?.assetType?.path + mainTypeIdLocal;
     dispatch(getAssetTypes(url)); // get assset type
@@ -321,6 +367,7 @@ const SectorWiseReport = () => {
     }
     const finalValues = {
       date: newDate,
+      order_by: "monitaring_per",
       asset_main_type_id: mainTypeIdLocal,
       ...(userRoleId === "8" && {
         vendor_id: sessionData?.id,
@@ -347,6 +394,7 @@ const SectorWiseReport = () => {
     );
   };
 
+  // table column
   const columns = [
     {
       title: "Sector Name",
@@ -364,9 +412,9 @@ const SectorWiseReport = () => {
       title: "Total Quantity",
       dataIndex: "total",
       key: "total",
+      width: 50,
       render: renderColumn,
       sorter: (a, b) => a?.total - b?.total,
-      width: 50,
     },
     {
       title: "Registered",
@@ -384,11 +432,18 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
-    renderMonitoringSorting(
-      "Monitoring (%)",
-      "todaysmonitaring",
-      "todaysmonitaring%"
-    ),
+    {
+      title: "Monitoring (%)",
+      dataIndex: "monitaring_per",
+      key: "monitaring_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.monitaring_per - b?.monitaring_per,
+    },
+    ,
     {
       title: "Partially Compliant",
       dataIndex: "partially_compliant",
@@ -397,11 +452,6 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
-    // renderSorting(
-    //   "Partially Compliant (%)",
-    //   "partially_compliant",
-    //   "partially_compliant%"
-    // ),
     {
       title: "Compliant",
       dataIndex: "compliant",
@@ -410,7 +460,6 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.compliant - b?.compliant,
     },
-    // renderSorting("Compliant (%)", "compliant", "compliant%"),
     {
       title: "Not Compliant",
       dataIndex: "not_compliant",
@@ -419,7 +468,17 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
-    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
+    {
+      title: "Not Compliant (%)",
+      dataIndex: "not_compliant_per",
+      key: "not_compliant_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.not_compliant_per - b?.not_compliant_per,
+    },
     {
       title: "Toilet Unclean",
       dataIndex: "toiletunclean",
@@ -428,7 +487,17 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
-    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
+    {
+      title: "Toilet Unclean (%)",
+      dataIndex: "toiletunclean_per",
+      key: "toiletunclean_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.toiletunclean_per - b?.toiletunclean_per,
+    },
     {
       title: "Toilet Clean",
       dataIndex: "toiletclean",
@@ -437,7 +506,6 @@ const SectorWiseReport = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
-    // renderSorting("Toilet Clean (%)", "toiletclean", "toiletclean%"),
   ];
 
   const pdfHeader = [
@@ -466,35 +534,20 @@ const SectorWiseReport = () => {
     Number(sector?.total) || 0,
     Number(sector?.registered) || 0,
     Number(sector?.todaysmonitaring) || 0,
-    getPercentage(
-      Number(sector?.todaysmonitaring) || 0,
-      Number(sector?.registered) || 1
-    ) + " %",
+    sector?.monitaring_per != null
+      ? `${Math.round(Number(sector?.monitaring_per) || 0)}%`
+      : "00%",
     Number(sector?.partially_compliant) || 0,
-    // getPercentage(
-    //   Number(sector?.partially_compliant) || 0,
-    //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    // ) + " %",
     Number(sector?.compliant) || 0,
-    // getPercentage(
-    //   Number(sector?.compliant) || 0,
-    //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    // ) + " %",
     Number(sector?.not_compliant) || 0,
-    getPercentage(
-      Number(sector?.not_compliant) || 0,
-      (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    ) + " %",
+    sector?.not_compliant_per != null
+      ? `${Math.round(Number(sector?.not_compliant_per) || 0)}%`
+      : "00%",
     Number(sector?.toiletunclean) || 0,
-    getPercentage(
-      Number(sector?.toiletunclean) || 0,
-      (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    ) + " %",
+    sector?.toiletunclean_per != null
+      ? `${Math.round(Number(sector?.toiletunclean_per) || 0)}%`
+      : "00%",
     Number(sector?.toiletclean) || 0,
-    // getPercentage(
-    //   Number(sector?.toiletclean) || 0,
-    //   (Number(sector?.toiletunclean) || 0) + (Number(sector?.toiletclean) || 0)
-    // ) + " %",
   ]);
 
   // excel data
@@ -506,80 +559,24 @@ const SectorWiseReport = () => {
       Registered: Number(data?.registered),
       Monitoring: Number(data?.todaysmonitaring) || 0,
       "Monitoring (%)":
-        getPercentage(
-          Number(data?.todaysmonitaring) || 0,
-          Number(data?.registered) || 1
-        ) + " %",
-      "Partially Compliant": Number(data?.partially_compliant) || 0,
-      // "Partially Compliant (%)":
-      //   getPercentage(
-      //     Number(data?.partially_compliant) || 0,
-      //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-      //   ) + " %",
+        data?.monitaring_per != null
+          ? `${Math.round(Number(data?.monitaring_per) || 0)}%`
+          : "00%",
       Compliant: Number(data?.compliant) || 0,
-      // "Compliant (%)":
-      //   getPercentage(
-      //     Number(data?.compliant) || 0,
-      //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-      //   ) + " %",
+      "Partially Compliant": Number(data?.partially_compliant) || 0,
       "Not Compliant": Number(data?.not_compliant) || 0,
       "Not Compliant (%)":
-        getPercentage(
-          Number(data?.not_compliant) || 0,
-          (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-        ) + " %",
+        data?.not_compliant_per != null
+          ? `${Math.round(Number(data?.not_compliant_per) || 0)}%`
+          : "00%",
       "Toilet Unclean": Number(data?.toiletunclean) || 0,
       "Toilet Unclean (%)":
-        getPercentage(
-          Number(data?.toiletunclean) || 0,
-          (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-        ) + " %",
+        data?.toiletunclean_per != null
+          ? `${Math.round(Number(data?.toiletunclean_per) || 0)}%`
+          : "00%",
       "Toilet Clean": Number(data?.toiletclean) || 0,
-      // "Toilet Clean (%)":
-      //   getPercentage(
-      //     Number(data?.toiletclean) || 0,
-      //     (Number(data?.toiletunclean) || 0) + (Number(data?.toiletclean) || 0)
-      //   ) + " %",
     }));
   }, [sectorData]);
-
-  const rowClassName = (record, index) => {
-    return index === sectorData?.length
-      ? "bg-green-100 text-black font-bold"
-      : "";
-  };
-
-  const lastTableRow = [
-    {
-      name: sectorData?.length,
-      total: totalQuantity?.totalQnty,
-      registered: totalQuantity?.registered,
-      todaysmonitaring: totalQuantity?.monitoring,
-      partially_compliant: totalQuantity?.partially_compliant,
-      compliant: totalQuantity?.compliant,
-      not_compliant: totalQuantity?.not_compliant,
-      toiletunclean: totalQuantity?.toiletunclean,
-      toiletclean: totalQuantity?.toiletclean,
-    },
-  ];
-
-  const lastTableModalRow = [
-    {
-      name: vendorsData?.length,
-      total: count?.total,
-      registered: count?.registered,
-      todaysmonitaring: count?.monitoring,
-      partially_compliant: count?.partially_compliant,
-      compliant: count?.compliant,
-      not_compliant: count?.not_compliant,
-      toiletunclean: count?.toiletunclean,
-      toiletclean: count?.toiletclean,
-    },
-  ];
-
-  const fileNames = `${filesName} (${dayjs(formValue?.date).format(
-    "DD-MMM-YYYY"
-  )})`;
 
   return (
     <div>
@@ -587,14 +584,25 @@ const SectorWiseReport = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={filesName ? fileNames : `Vendor-Wise Report`}
-            pdfName={filesName ? fileNames : `Vendor-Wise Report`}
+            // titleName={filesName ? filesName : `Sector-Wise Report`}
+            titleName={`Sector-Wise Report (${dayjs(formValue?.date).format(
+              "DD-MMM-YYYY"
+            )})`}
+            pdfName={filesName ? filesName : `Sector-Wise Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
-            columnProperties={[5]} // 6 columns
-            // applyTableStyles={true}
-            // IsNoBold={true}
+            tableTitles={pdfTitleParam || []}
+            columnProperties={
+              formValue?.order_by === "monitaring_per" ? [5] : []
+            } // 6 columns
+            redToGreenProperties={
+              formValue?.order_by === "not_compliant_per"
+                ? [9]
+                : formValue?.order_by === "toiletunclean_per"
+                ? [11]
+                : []
+            } // 10, 12 columns  100 to 0
             rows={[
               ...pdfData,
               [
@@ -621,8 +629,17 @@ const SectorWiseReport = () => {
         <div>
           <ExportToExcel
             excelData={myexcelData || []}
-            columnProperties={[6]}
-            fileName={filesName ? fileNames : `Vendor-Wise Report`}
+            columnProperties={
+              formValue?.order_by === "monitaring_per" ? [6] : []
+            } // 6 columns
+            redToGreenProperties={
+              formValue?.order_by === "not_compliant_per"
+                ? [10]
+                : formValue?.order_by === "toiletunclean_per"
+                ? [12]
+                : []
+            }
+            fileName={filesName ? filesName : `Vendor-Wise Report`}
             dynamicArray={[
               {
                 name: "Total",
@@ -704,6 +721,7 @@ const SectorWiseReport = () => {
                           placeholder={"Select Category"}
                           onSelect={handleSelect}
                           options={AssetMainTypeDrop?.slice(0, 2) || []}
+                          allowClear={false}
                         />
                       </Col>
                     )}
@@ -714,6 +732,9 @@ const SectorWiseReport = () => {
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
                         onSelect={handleTypeSelect}
+                        onChange={(value) => {
+                          setShowTypeOption(value);
+                        }}
                       />
                     </Col>
                     {userRoleId != "8" && (
@@ -734,6 +755,26 @@ const SectorWiseReport = () => {
                         placeholder={"Date"}
                       />
                     </Col>
+                    <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"order_by"}
+                        label={"Order By"}
+                        allowClear={false}
+                        placeholder={"Select Order By"}
+                        options={OrderBy || []}
+                      />
+                    </Col>
+                    {formValue?.asset_main_type_id === "1" &&
+                      !showTypeOption && (
+                        <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"asset_type_ids"}
+                            label={"Select Type"}
+                            placeholder={"Select Type"}
+                            options={fiveTypes || []}
+                          />
+                        </Col>
+                      )}
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
@@ -777,7 +818,7 @@ const SectorWiseReport = () => {
           <div className="flex justify-between">
             <strong>Total Quantity: {totalQuantity?.total || 0}</strong>
             <strong>Registered: {totalQuantity?.registered || 0}</strong>
-            <strong>Monitoring: {totalQuantity?.todaysmonitaring || 0}</strong>
+            <strong>Monitoring: {totalQuantity?.monitoring || 0}</strong>
             <strong>
               Partially Compliant: {totalQuantity?.partially_compliant || 0}
             </strong>

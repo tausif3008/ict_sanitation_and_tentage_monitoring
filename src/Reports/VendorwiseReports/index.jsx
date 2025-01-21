@@ -17,6 +17,7 @@ import {
   OrderBy,
   renderMonitoringSorting,
   renderSorting,
+  SectorWiseReportcolumns,
 } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";
 import {
@@ -552,84 +553,6 @@ const VendorReports = () => {
     },
   ];
 
-  // Modal columns
-  const columns = [
-    {
-      title: "Sector Name",
-      dataIndex: "name",
-      key: "name",
-      width: 90,
-      sorter: (a, b) => {
-        const nameA = a?.name ? a?.name?.toString() : "";
-        const nameB = b?.name ? b?.name?.toString() : "";
-        return nameA?.localeCompare(nameB);
-      },
-    },
-    {
-      title: "Total Quantity",
-      dataIndex: "total",
-      key: "total",
-      sorter: (a, b) => a?.total - b?.total,
-      width: 50,
-    },
-    {
-      title: "Registered",
-      dataIndex: "registered",
-      key: "registered",
-      width: 50,
-      sorter: (a, b) => a?.total - b?.total,
-    },
-    {
-      title: "Monitoring",
-      dataIndex: "todaysmonitaring",
-      key: "todaysmonitaring",
-      width: 50,
-      sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
-    },
-    renderMonitoringSorting(
-      "Monitoring (%)",
-      "todaysmonitaring",
-      "todaysmonitaring%"
-    ),
-    {
-      title: "Partially Compliant",
-      dataIndex: "partially_compliant",
-      key: "partially_compliant",
-      width: 50,
-      sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
-    },
-    {
-      title: "Compliant",
-      dataIndex: "compliant",
-      key: "compliant",
-      width: 50,
-      sorter: (a, b) => a?.compliant - b?.compliant,
-    },
-    {
-      title: "Not Compliant",
-      dataIndex: "not_compliant",
-      key: "not_compliant",
-      width: 50,
-      sorter: (a, b) => a?.not_compliant - b?.not_compliant,
-    },
-    renderSorting("Not Compliant (%)", "not_compliant", "not_compliant%"),
-    {
-      title: "Toilet Unclean",
-      dataIndex: "toiletunclean",
-      key: "toiletunclean",
-      width: 50,
-      sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
-    },
-    renderSorting("Toilet Unclean (%)", "toiletunclean", "toiletunclean%"),
-    {
-      title: "Toilet Clean",
-      dataIndex: "toiletclean",
-      key: "toiletclean",
-      width: 50,
-      sorter: (a, b) => a?.toiletclean - b?.toiletclean,
-    },
-  ];
-
   // pdf header
   const pdfHeader = [
     "Sr No",
@@ -680,7 +603,9 @@ const VendorReports = () => {
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={`Vendor-Wise Report`}
+            titleName={`Vendor-Wise Report (${dayjs(formValue?.date).format(
+              "DD-MMM-YYYY"
+            )})`}
             // titleName={filesName ? filesName : `Vendor-Wise Report`}
             pdfName={filesName ? filesName : `Vendor-Wise Report`}
             headerData={pdfHeader}
@@ -934,7 +859,7 @@ const VendorReports = () => {
             value: `${showModal?.name}`,
           },
         ]}
-        column={columns || []}
+        column={SectorWiseReportcolumns || []}
         footer={() => (
           <div className="flex justify-between">
             <strong>Total: {sectorData?.length || 0}</strong>
