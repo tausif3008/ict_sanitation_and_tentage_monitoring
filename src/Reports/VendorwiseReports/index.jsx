@@ -13,7 +13,6 @@ import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
   fiveTypes,
-  getPercentage,
   getValueLabel,
   OrderBy,
   renderMonitoringSorting,
@@ -37,6 +36,7 @@ const VendorReports = () => {
   const [excelData, setExcelData] = useState([]);
   const [showModal, setShowModal] = useState(null);
   const [filesName, setFilesName] = useState(null); // files Name
+  const [showTypeOption, setShowTypeOption] = useState(null);
   const [count, setCount] = useState({
     total: 0,
     registered: 0,
@@ -73,9 +73,59 @@ const VendorReports = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { sectorData, SectorReport_Loading } = SectorReportSelectors(); // sector reports
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const categoryType = form.getFieldValue("asset_main_type_id");
-  const asset_type_id_name = form.getFieldValue("asset_type_id");
-  const vendor_id_name = form.getFieldValue("vendor_id");
+
+  const catTypeName = getValueLabel(
+    formValue?.asset_main_type_id,
+    AssetMainTypeDrop,
+    null
+  );
+  const assetTypeName = getValueLabel(
+    formValue?.asset_type_id,
+    AssetTypeDrop,
+    null
+  );
+  const vendorName = getValueLabel(
+    formValue?.vendor_id,
+    VendorCatTypeDrop,
+    null
+  );
+  const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
+  const orderByName = getValueLabel(formValue?.order_by, OrderBy, null);
+  const fiveTypeIdName = getValueLabel(
+    formValue?.asset_type_ids,
+    fiveTypes,
+    null
+  );
+
+  const pdfTitleData = {
+    type: formValue?.asset_type_ids ? "Type 1 to Type 5" : "All Asset Types",
+  };
+
+  const pdfTitleParam = [
+    ...(formValue?.vendor_id
+      ? [
+          {
+            label: `Vendor Name : ${vendorName || "Combined"}`,
+          },
+        ]
+      : []),
+    {
+      label: `Category : ${catTypeName || "Combined"}`,
+    },
+    {
+      label: `Type : ${assetTypeName || pdfTitleData?.type || "Combined"}`,
+    },
+    ...(formValue?.sector_id
+      ? [
+          {
+            label: `Sector Name : ${sectorName || "Combined"}`,
+          },
+        ]
+      : []),
+    {
+      label: `Sort By : ${orderByName || "Combined"}`,
+    },
+  ];
 
   // close module
   const handleCancel = () => {
@@ -131,6 +181,7 @@ const VendorReports = () => {
   const handleTypeSelect = (value) => {
     form.setFieldsValue({
       vendor_id: null,
+      asset_type_ids: null,
     });
     if (value) {
       const paramData = {
@@ -296,28 +347,32 @@ const VendorReports = () => {
 
   // file name
   const getReportName = () => {
-    const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
-    const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-    const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
-
-    if (vendor_id_name && asset_type_id_name) {
-      return `${vendorName} - ${assetTypeName} Report`;
+    let name = "Vendor Wise";
+    if (vendorName) {
+      name = `${vendorName}`;
     }
-    if (vendor_id_name) {
-      return `${vendorName} - ${catTypeName} Report`;
+    if (catTypeName) {
+      name += `- ${catTypeName}`;
     }
-    if (asset_type_id_name) {
-      return `Vendor Wise ${catTypeName} (${assetTypeName}) Report`;
+    if (assetTypeName) {
+      name += `- ${assetTypeName}`;
     }
-    if (categoryType) {
-      return `Vendor Wise ${catTypeName} Report`;
+    if (fiveTypeIdName) {
+      name += `- ${fiveTypeIdName}`;
     }
-    return "Vendor Wise Report";
+    if (sectorName) {
+      name += `- ${sectorName}`;
+    }
+    if (orderByName) {
+      name += `- ${orderByName}`;
+    }
+    name += ` (${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+    return name;
   };
 
   useEffect(() => {
     setFilesName(getReportName()); // file name
-  }, [categoryType, asset_type_id_name, vendor_id_name, AssetMainTypeDrop]);
+  }, [formValue]);
 
   useEffect(() => {
     getCurrentData(); // current data
@@ -619,21 +674,19 @@ const VendorReports = () => {
     );
   }, [excelData]);
 
-  const fileNames = `${filesName} (${dayjs(formValue?.date).format(
-    "DD-MMM-YYYY"
-  )})`;
-
   return (
     <div>
       <CommonDivider label={"Vendor-Wise Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={filesName ? fileNames : `Vendor-Wise Report`}
-            pdfName={filesName ? fileNames : `Vendor-Wise Report`}
+            titleName={`Vendor-Wise Report`}
+            // titleName={filesName ? filesName : `Vendor-Wise Report`}
+            pdfName={filesName ? filesName : `Vendor-Wise Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
+            tableTitles={pdfTitleParam || []}
             columnProperties={
               formValue?.order_by === "monitaring_per" ? [5] : []
             } // 6 columns
@@ -644,8 +697,6 @@ const VendorReports = () => {
                 ? [11]
                 : []
             } // 10, 12 columns  100 to 0
-            // redToGreenProperties={[9, 11]} // 6 columns
-            // applyTableStyles={true}
             rows={[
               ...pdfData,
               [
@@ -682,7 +733,7 @@ const VendorReports = () => {
                 ? [12]
                 : []
             }
-            fileName={filesName ? fileNames : `Vendor-Wise Report`}
+            fileName={filesName ? filesName : `Vendor-Wise Report`}
             dynamicArray={[
               {
                 name: "Total",
@@ -753,6 +804,7 @@ const VendorReports = () => {
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
+                        allowClear={false}
                         label={"Select Category"}
                         placeholder={"Select Category"}
                         onSelect={handleSelect}
@@ -766,6 +818,9 @@ const VendorReports = () => {
                         placeholder={"Select Asset Type"}
                         options={AssetTypeDrop || []}
                         onSelect={handleTypeSelect}
+                        onChange={(value) => {
+                          setShowTypeOption(value);
+                        }}
                       />
                     </Col>
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
@@ -796,20 +851,22 @@ const VendorReports = () => {
                       <CustomSelect
                         name={"order_by"}
                         label={"Order By"}
+                        allowClear={false}
                         placeholder={"Select Order By"}
                         options={OrderBy || []}
                       />
                     </Col>
-                    {formValue?.asset_main_type_id === "1" && (
-                      <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
-                        <CustomSelect
-                          name={"asset_type_ids"}
-                          label={"Select Type"}
-                          placeholder={"Select Type"}
-                          options={fiveTypes || []}
-                        />
-                      </Col>
-                    )}
+                    {formValue?.asset_main_type_id === "1" &&
+                      !showTypeOption && (
+                        <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                          <CustomSelect
+                            name={"asset_type_ids"}
+                            label={"Select Type"}
+                            placeholder={"Select Type"}
+                            options={fiveTypes || []}
+                          />
+                        </Col>
+                      )}
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button

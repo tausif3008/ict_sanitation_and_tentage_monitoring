@@ -17,6 +17,7 @@ const ExportToPDF = ({
   tableFont = 8,
   columnProperties = [],
   redToGreenProperties = [], // 100 to 0
+  tableTitles = [],
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -80,9 +81,8 @@ const ExportToPDF = ({
 
     // Add report title and date on the same line, below the subheading
     const title = `${titleName}`;
+    const subTitleX = (pageWidth - doc.getTextWidth(title)) / 2;
     const dateString = moment().format("DD-MMM-YYYY hh:mm A");
-
-    const titleX = 54; // Left align title
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
     doc.y += 13;
@@ -90,7 +90,7 @@ const ExportToPDF = ({
     // Add title and date below the subheading
     doc.setFontSize(12);
     doc.setFont("bold");
-    doc.text(title, titleX - 35, doc.y);
+    doc.text(title, subTitleX, doc.y);
 
     // Add date on the next line, maintaining the same X position for horizontal alignment
     doc.setFont("normal");
@@ -98,6 +98,18 @@ const ExportToPDF = ({
     doc.y += 10;
     doc.text(dateString, dateX + 30, doc.y);
     doc.y += 5;
+
+    doc.setFontSize(11);
+    doc.setFont("bold");
+    tableTitles?.forEach((field, index) => {
+      doc.text(field?.label, 20, (index + 1) * 5 + doc.y);
+      doc.y += 3;
+    });
+    doc.setFont("normal");
+    doc.setFontSize(10);
+    doc.y += tableTitles?.length * 5;
+
+    // doc.y += 5;
 
     const tableStyles = {
       fontSize: tableFont,
