@@ -174,6 +174,21 @@ const URLS = {
     version: 5.43,
   },
 
+  // allocation asset
+  getAllocate_Asset: { path: "/allocation", version: 5.43 },
+  // addAllocate_Asset: {
+  //   path: "/allocation-asset/entry",
+  //   version: 5.43,
+  // },
+  reAllocate_Asset: {
+    path: "/allocation/re",
+    version: 5.43,
+  },
+  deleteAllocate_Asset: {
+    path: "/allocation/delete",
+    version: 5.43,
+  },
+
   // sla types
   slaTypes: { path: "/sla-types", version: 5.43 },
 

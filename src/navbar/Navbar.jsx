@@ -35,6 +35,11 @@ import { checkLoginAvailability } from "../constant/const";
 
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
+  const [open, setOpen] = useState(false);
+  const [title, setTitle] = useState("");
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const loggedIn = localStorage.getItem("sessionToken");
   // const sessionData = localStorage.getItem("sessionData");
@@ -42,12 +47,24 @@ const Navbar = ({ lang, setLang }) => {
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
   const tentageIdUser = sessionData?.allocatedmaintype?.[0]?.asset_main_type_id;
-
-  const [open, setOpen] = useState(false);
-
   const userRoleId = localStorage.getItem("role_id");
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+  };
+
+  // click on name
+  const handleButtonClick = () => {
+    if (localStorage.getItem("sessionToken")) {
+      checkLoginAvailability(sessionData, navigate);
+    } else {
+      navigate("/login"); // Navigate to login if session token doesn't exist
+    }
+  };
 
   // logout
   const handleLogOut = async () => {
@@ -304,7 +321,21 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-    ];
+      {
+        key: "14",
+        label: (
+          <Link className="text-black no-underline" to="/asset-allocation">
+            Allocate Assets
+          </Link>
+        ),
+      },
+    ].sort((a, b) => {
+      const labelA = a.label.props.children.toLowerCase();
+      const labelB = b.label.props.children.toLowerCase();
+      if (labelA < labelB) return -1;
+      if (labelA > labelB) return 1;
+      return 0;
+    });
   };
 
   const dms_items = (lang, dict) => {
@@ -589,23 +620,6 @@ const Navbar = ({ lang, setLang }) => {
     return list;
   };
 
-  const showDrawer = () => {
-    setOpen(true);
-  };
-
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  // click on name
-  const handleButtonClick = () => {
-    if (localStorage.getItem("sessionToken")) {
-      checkLoginAvailability(sessionData, navigate);
-    } else {
-      navigate("/login"); // Navigate to login if session token doesn't exist
-    }
-  };
-
   // const [logName, setLogName] = useState(false);
 
   // useEffect(() => {
@@ -621,8 +635,6 @@ const Navbar = ({ lang, setLang }) => {
   //     setLang("hi");
   //   }
   // };
-
-  const [title, setTitle] = useState("");
 
   // useEffect(() => {
   //   const titleName = location.pathname.split("/").join("").split("-")[0];

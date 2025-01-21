@@ -103,6 +103,8 @@ import AddPickUpPointForm from "./register/route/AddPickUpPointForm";
 import NoInternetModal from "./commonComponents/NoInternetModal";
 import GsdWiseMonitoringReport from "./Reports/GSDWiseMonitoringReport";
 import VehicleReports from "./Reports/VehicleReport";
+import AssetAllocation from "./Allocation/AssetAllocation";
+import AssetAllocationForm from "./Allocation/AssetAllocation/assetAllocationForm";
 
 function App() {
   const navigate = useNavigate();
@@ -546,6 +548,14 @@ function App() {
             element={<UpdateUserTypePermisssion></UpdateUserTypePermisssion>}
           ></Route>
 
+          <Route
+            path="/asset-allocation"
+            element={<AssetAllocation></AssetAllocation>}
+          ></Route>
+          <Route
+            path="/asset-allocation-form"
+            element={<AssetAllocationForm></AssetAllocationForm>}
+          ></Route>
           <Route
             path="/sector-allocation/:page?/:per_page?"
             element={<VendorSectorAllocation></VendorSectorAllocation>}
