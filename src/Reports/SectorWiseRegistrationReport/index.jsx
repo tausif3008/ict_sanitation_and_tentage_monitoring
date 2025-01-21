@@ -16,13 +16,13 @@ import { dateWeekOptions } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import { getVendorReportData } from "../GSDWiseRegistrationReport/Slice/gsdWiseRegistrationReport";
-import GsdRegistrationSelector from "../GSDWiseRegistrationReport/Slice/gsdRegistrationSelector";
 import { getFormData } from "../../urils/getFormData";
 import ExportToPDF from "../reportFile";
+import SectorReportSelectors from "../SectorSlice/sectorSelector";
+import { getSectorWiseRegData } from "../SectorSlice/sectorSlice";
 import CustomTable from "../../commonComponents/CustomTable";
 
-const VendorRegistrationReport = () => {
+const SectorWiseRegistrationReport = () => {
   const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
@@ -33,10 +33,11 @@ const VendorRegistrationReport = () => {
   });
 
   const dispatch = useDispatch();
-  const { VendorReport_data, loading } = GsdRegistrationSelector(); // vendor Report selector ( GSD )
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
+  const { SectorReport_Loading, SectorRegReport_data } =
+    SectorReportSelectors(); // Sector Wise Report data
 
-  let uri = URLS?.vendorRegistrationReport?.path;
+  let uri = URLS?.sector_wise_reg_report?.path;
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
 
@@ -73,7 +74,7 @@ const VendorRegistrationReport = () => {
     }
 
     const formData = getFormData(finalData);
-    dispatch(getVendorReportData(basicUrl + uri, formData)); // Fetch the data
+    dispatch(getSectorWiseRegData(basicUrl + uri, formData)); // Fetch the data
   };
 
   // reset form
@@ -92,14 +93,6 @@ const VendorRegistrationReport = () => {
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
   };
-
-  //   // handle asset type
-  //   const handleTypeSelect = (value) => {
-  //     form.setFieldsValue({
-  //       to_user_id: null,
-  //     });
-  //     value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
-  //   };
 
   // handle date select
   const handleDateSelect = (value) => {
@@ -123,7 +116,7 @@ const VendorRegistrationReport = () => {
   };
 
   const getData = async () => {
-    dispatch(getVendorReportData(basicUrl + uri)); // Fetch the data
+    dispatch(getSectorWiseRegData(basicUrl + uri)); // Fetch the data
   };
 
   useEffect(() => {
@@ -133,8 +126,8 @@ const VendorRegistrationReport = () => {
   }, []);
 
   useEffect(() => {
-    if (VendorReport_data) {
-      const unitCount = VendorReport_data?.data?.listings?.reduce(
+    if (SectorRegReport_data) {
+      const unitCount = SectorRegReport_data?.data?.listings?.reduce(
         (total, item) => {
           return total + Number(item?.tagging_units);
         },
@@ -142,30 +135,31 @@ const VendorRegistrationReport = () => {
       );
       setVendorData((prevDetails) => ({
         ...prevDetails,
-        list: VendorReport_data?.data?.listings || [],
-        pageLength: VendorReport_data?.data?.paging?.[0]?.length || 0,
-        currentPage: VendorReport_data?.data?.paging?.[0]?.currentpage || 1,
-        totalRecords: VendorReport_data?.data?.paging?.[0]?.totalrecords || 0,
+        list: SectorRegReport_data?.data?.listings || [],
+        pageLength: SectorRegReport_data?.data?.paging?.[0]?.length || 0,
+        currentPage: SectorRegReport_data?.data?.paging?.[0]?.currentpage || 1,
+        totalRecords:
+          SectorRegReport_data?.data?.paging?.[0]?.totalrecords || 0,
         totalUnits: unitCount,
       }));
-      const myexcelData = VendorReport_data?.data?.listings?.map(
+      const myexcelData = SectorRegReport_data?.data?.listings?.map(
         (data, index) => {
           return {
             Sr: index + 1,
-            "Vendor name": data?.vendor_name,
+            "Sector name": data?.sectors_name,
             Unit: Number(data?.tagging_units) || 0,
           };
         }
       );
       setExcelData(myexcelData);
     }
-  }, [VendorReport_data]);
+  }, [SectorRegReport_data]);
 
   const columns = [
     {
-      title: "Vendor Name",
-      dataIndex: "vendor_name",
-      key: "vendor_name",
+      title: "Sector Name",
+      dataIndex: "sectors_name",
+      key: "sectors_name",
       render: (text, record) => {
         return text ? text : "GSD";
       },
@@ -178,11 +172,11 @@ const VendorRegistrationReport = () => {
     },
   ];
 
-  const pdfHeader = ["Sr No", "Vendor Name", "Unit"];
+  const pdfHeader = ["Sr No", "Sector Name", "Unit"];
   const pdfData = useMemo(() => {
     return excelData?.map((sector, index) => [
       index + 1,
-      sector["Vendor name"],
+      sector["Sector name"],
       Number(sector?.Unit) || 0,
     ]);
   }, [excelData]);
@@ -198,19 +192,19 @@ const VendorRegistrationReport = () => {
 
   return (
     <div>
-      <CommonDivider label={"Vendor Wise Registration Report"} />
+      <CommonDivider label={"Sector Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToPDF
             titleName={
               fileName
-                ? `Vendor Wise Registration Report (${fileName})`
-                : "Vendor Wise Registration Report"
+                ? `Sector Wise Registration Report (${fileName})`
+                : "Sector Wise Registration Report"
             }
             pdfName={
               fileName
-                ? `Vendor Wise Registration Report (${fileName})`
-                : "Vendor Wise Registration Report"
+                ? `Sector Wise Registration Report (${fileName})`
+                : "Sector Wise Registration Report"
             }
             headerData={pdfHeader}
             IsLastLineBold={true}
@@ -222,8 +216,8 @@ const VendorRegistrationReport = () => {
             excelData={excelData || []}
             fileName={
               fileName
-                ? `Vendor Wise Registration Report ${fileName}`
-                : "Vendor Wise Registration Report"
+                ? `Sector Wise Registration Report ${fileName}`
+                : "Sector Wise Registration Report"
             }
             dynamicArray={[
               {
@@ -346,7 +340,7 @@ const VendorRegistrationReport = () => {
                     <div className="flex justify-start my-4 space-x-2 ml-3">
                       <div>
                         <Button
-                          loading={loading}
+                          loading={SectorReport_Loading}
                           type="button"
                           htmlType="submit"
                           className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
@@ -356,7 +350,7 @@ const VendorRegistrationReport = () => {
                       </div>
                       <div>
                         <Button
-                          loading={loading}
+                          loading={SectorReport_Loading}
                           type="button"
                           className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
                           onClick={resetForm}
@@ -374,7 +368,7 @@ const VendorRegistrationReport = () => {
       </div>
 
       <CustomTable
-        loading={loading}
+        loading={SectorReport_Loading}
         columns={columns || []}
         bordered
         dataSource={vendorData || []}
@@ -388,4 +382,4 @@ const VendorRegistrationReport = () => {
   );
 };
 
-export default VendorRegistrationReport;
+export default SectorWiseRegistrationReport;

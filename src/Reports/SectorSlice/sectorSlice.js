@@ -5,6 +5,7 @@ import axiosInstance from "../../Axios/commonAxios";
 const initialState = {
   loading: false,
   name: null,
+  sector_data: null,
 };
 
 export const SectorReportSlice = createSlice({
@@ -16,6 +17,9 @@ export const SectorReportSlice = createSlice({
     },
     postSuccess: (state, action) => {
       state.name = action.payload;
+    },
+    postSector: (state, action) => {
+      state.sector_data = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -40,5 +44,23 @@ export const getSectorReports = (url, data) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess } = SectorReportSlice.actions;
+// get sector wise registration report data
+export const getSectorWiseRegData = (url, data) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.post(`${url}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    dispatch(postSector(res?.data));
+  } catch (error) {
+    console.error("In get sector wise registration report data error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postSector } =
+  SectorReportSlice.actions;
 export default SectorReportSlice.reducer;

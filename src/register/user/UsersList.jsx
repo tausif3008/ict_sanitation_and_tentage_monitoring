@@ -27,7 +27,7 @@ const UserList = () => {
     pageLength: 25,
     currentPage: 1,
   });
-
+  const hidePasswordField = ["1", "2"];
   const dispatch = useDispatch();
   const params = useParams();
   const navigate = useNavigate();
@@ -135,6 +135,19 @@ const UserList = () => {
       dataIndex: "email",
       key: "email",
       width: 250,
+    },
+    {
+      title: "Password",
+      dataIndex: "password",
+      key: "password",
+      width: 110,
+      render: (text, record) => {
+        if (hidePasswordField.includes(record?.user_type_id)) {
+          return "**********";
+        } else {
+          return text;
+        }
+      },
     },
     {
       title: "Country",
@@ -434,6 +447,7 @@ const UserList = () => {
         uri={"users"}
         columns={columns}
         details={userDetails}
+        scroll={{ x: 1800, y: 400 }}
         setUserDetails={setUserDetails}
       ></CommonTable>
     </div>

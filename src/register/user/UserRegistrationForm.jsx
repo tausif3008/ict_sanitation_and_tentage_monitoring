@@ -27,7 +27,6 @@ const UserRegistrationForm = () => {
     setLoading(true);
     const finalValue = {
       ...values,
-      password: values?.phone,
       status: 1,
     };
 
@@ -113,26 +112,26 @@ const UserRegistrationForm = () => {
                 },
               ]}
             />
-            {/* {key === "AddKey" && (
-              <CustomInput
-                label={<div className="font-semibold">Password</div>}
-                name="password"
-                placeholder="Password"
-                maxLength={15}
-                autoComplete="off"
-                isPassword={true}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please enter your password!",
-                  },
-                  {
-                    min: 6,
-                    message: "Password must be at least 6 characters.",
-                  },
-                ]}
-              />
-            )} */}
+            {/* {key === "AddKey" && ( */}
+            <CustomInput
+              label={<div className="font-semibold">Password</div>}
+              name="password"
+              placeholder="Password"
+              maxLength={15}
+              autoComplete="off"
+              isPassword={true}
+              rules={[
+                {
+                  required: true,
+                  message: "Please enter your password!",
+                },
+                {
+                  min: 6,
+                  message: "Password must be at least 6 characters.",
+                },
+              ]}
+            />
+            {/* )} */}
             <CustomInput
               label={<div className="font-semibold">Name (Display Name) </div>}
               name="name"

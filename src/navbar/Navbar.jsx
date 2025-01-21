@@ -27,6 +27,7 @@ import {
   gsd_wise_monitoring_reports,
   vehicle_reports,
   monitoring_dailyWeekly_reports,
+  sector_wise_regi_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -541,8 +542,19 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      sector_wise_regi_reports?.includes(userRoleId) && {
+        key: "10",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/sector-wise-registration-report"
+          >
+            Sector Wise Registration Report
+          </Link>
+        ),
+      },
       gsd_wise_monitoring_reports?.includes(userRoleId) && {
-        key: "8",
+        key: "11",
         label: (
           <Link
             className="text-black no-underline"
@@ -553,7 +565,7 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       vehicle_reports?.includes(userRoleId) && {
-        key: "8",
+        key: "12",
         label: (
           <Link className="text-black no-underline" to="/vehicle-report">
             Vehicle Report

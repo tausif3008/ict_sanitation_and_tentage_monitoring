@@ -19,7 +19,16 @@ const SectorReportSelectors = () => {
     );
   }, [SectorReports]);
 
-  return { SectorReports, SectorReport_Loading, sectorData };
+  const SectorRegReport_data = useSelector(
+    (state) => state?.SectorReportSlice.sector_data
+  ); // Sector Wise Report data
+
+  return {
+    SectorReports,
+    SectorReport_Loading,
+    sectorData,
+    SectorRegReport_data,
+  };
 };
 
 export default SectorReportSelectors;

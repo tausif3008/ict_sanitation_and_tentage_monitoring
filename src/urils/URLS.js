@@ -110,6 +110,9 @@ const URLS = {
   // sector wise report
   sector_wise_report: { path: "/reporting/sector", version: 5.43 },
 
+  // sector wise registration report
+  sector_wise_reg_report: { path: "/reporting/sector-tagging", version: 5.43 },
+
   // parking
   parking: { path: "/parking", version: 5.43 },
   addParking: { path: "/parking/entry", version: 5.43 },
