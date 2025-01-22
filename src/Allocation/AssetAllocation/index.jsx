@@ -58,44 +58,23 @@ const AssetAllocation = () => {
 
   // fiter finish
   const onFinishForm = (values) => {
-    fiterForm.resetFields();
-
-    // const allUndefined = Object.values(values).every(
-    //   (value) => value === undefined
-    // );
-    // if (allUndefined) {
-    //   message.error("Please Select any search field");
-    //   return;
-    // }
-    // const dayjsDate = new Date(values?.date);
-    // const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
-    // const finalValues = {
-    //   ...(values?.user_id && { user_id: `${values?.user_id}` }),
-    //   ...(values?.type && { type: `${values?.type}` }),
-    //   ...(values?.number && { number: `${values?.number}` }),
-    //   ...(values?.chassis_no && { chassis_no: `${values?.chassis_no}` }),
-    //   ...(values?.imei && { imei: `${values?.imei}` }),
-    //   ...(values?.sector_id && { sector_id: values?.sector_id }),
-    //   date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
-    //   page: "1",
-    //   per_page: "25",
-    // };
-    // dispatch(getVehicleList(finalValues)); // get vehicle list
+    if (values?.allocated_phone == null && values?.asset_code == null) {
+      message.success("Please Select Any Field");
+      return;
+    }
+    const finalValues = {
+      ...(values?.allocated_phone && {
+        phone: values?.allocated_phone,
+      }),
+      ...(values?.asset_code && { assets_code: values?.asset_code }),
+    };
+    dispatch(getAssetAllocationData(finalValues)); //  assets allocation
   };
 
   // reset form
   const resetForm = () => {
-    // let newDate = dayjs().format("YYYY-MM-DD");
     fiterForm.resetFields();
-    // form.setFieldsValue({
-    //   date: dayjs(newDate, "YYYY-MM-DD"),
-    // });
-    // const myParam = {
-    //   page: "1",
-    //   per_page: "25",
-    //   date: moment().format("YYYY-MM-DD"),
-    // };
-    // dispatch(getVehicleList(myParam));
+    dispatch(getAssetAllocationData()); //  assets allocation
   };
 
   useEffect(() => {
@@ -206,13 +185,13 @@ const AssetAllocation = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
                   <CustomInput
                     label="Allocated Phone"
-                    name="number"
+                    name="allocated_phone"
                     placeholder="Allocated Phone"
                     maxLength={10}
                   />
                   <CustomInput
                     label="Asset Code"
-                    name="imei"
+                    name="asset_code"
                     placeholder="Enter Asset Code"
                   />
                   <div className="flex justify-start my-4 space-x-2 ml-3">

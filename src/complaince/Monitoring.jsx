@@ -275,8 +275,9 @@ const Monitoring = () => {
     {
       title: "Name",
       dataIndex: "asset_type_name",
-      key: "assetsName",
+      key: "asset_type_name",
       width: 210,
+      sorter: (a, b) => a?.asset_type_name?.localeCompare(b?.asset_type_name),
     },
     {
       title: "PTC / TAF Code ",
@@ -286,6 +287,7 @@ const Monitoring = () => {
       render: (text, record) => {
         return text ? `${text}-${record?.unit_no}` : "";
       },
+      sorter: (a, b) => a?.asset_code - b?.asset_code,
     },
     // {
     //   title: "QR",
@@ -306,11 +308,21 @@ const Monitoring = () => {
       dataIndex: "sector_name",
       key: "sector_name",
       width: 110,
+      sorter: (a, b) => {
+        const extractNumber = (str) => {
+          const match = str?.match(/\d+/); // Matches digits in the string
+          return match ? parseInt(match[0], 10) : 0; // Return the numeric part or 0 if not found
+        };
+        const numA = extractNumber(a?.sector_name); // Use sector_name here
+        const numB = extractNumber(b?.sector_name); // Use sector_name here
+        return numA - numB; // Numeric sorting
+      },
     },
     {
       title: "Vendor Name",
       dataIndex: "vendor_name",
       key: "vendor_name",
+      sorter: (a, b) => a?.vendor_name?.localeCompare(b?.vendor_name),
       width: 210,
     },
     // {
@@ -344,41 +356,22 @@ const Monitoring = () => {
             : "Partial Compliant"
           : "";
       },
+      sorter: (a, b) => {
+        return (Number(a?.zero_count) || 0) - (Number(b?.zero_count) || 0);
+      },
       width: 110,
     },
-    // {
-    //   title: "Clean",
-    //   dataIndex: "one_count",
-    //   key: "one_count",
-    //   render: (text) => {
-    //     return text ? text : "";
-    //   },
-    //   width: 70,
-    // },
-    // {
-    //   title: "Maintenance",
-    //   dataIndex: "maintenance",
-    //   key: "maintenance",
-    //   render: (text) => {
-    //     return text ? text : 0;
-    //   },
-    //   width: 130,
-    // },
-    // {
-    //   title: "Unclean",
-    //   dataIndex: "zero_count",
-    //   key: "zero_count",
-    //   render: (text) => {
-    //     return text ? text : "";
-    //   },
-    //   width: 90,
-    // },
     {
       title: "Date",
       dataIndex: "created_at",
       key: "created_at",
       render: (text) => {
         return text ? moment(text).format("DD-MMM-YYYY") : "";
+      },
+      sorter: (a, b) => {
+        const dateA = moment(a?.created_at).toDate();
+        const dateB = moment(b?.created_at).toDate();
+        return dateA - dateB; // Sort by timestamp (ascending order)
       },
       width: 120,
     },
@@ -391,6 +384,7 @@ const Monitoring = () => {
             render: (text) => {
               return text ? text : "GSD";
             },
+            sorter: (a, b) => a?.agent_name?.localeCompare(b?.agent_name),
           },
         ]
       : []),

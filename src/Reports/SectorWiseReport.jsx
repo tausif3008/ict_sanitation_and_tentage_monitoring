@@ -403,9 +403,13 @@ const SectorWiseReport = () => {
       width: 90,
       render: renderColumn,
       sorter: (a, b) => {
-        const nameA = a?.name ? a?.name?.toString() : "";
-        const nameB = b?.name ? b?.name?.toString() : "";
-        return nameA?.localeCompare(nameB);
+        const extractNumber = (str) => {
+          const match = str?.match(/\d+/); // Matches digits in the string
+          return match ? parseInt(match[0], 10) : 0; // Return the numeric part or 0 if not found
+        };
+        const numA = extractNumber(a?.name);
+        const numB = extractNumber(b?.name);
+        return numA - numB; // Numeric sorting
       },
     },
     {
@@ -816,7 +820,7 @@ const SectorWiseReport = () => {
         // rowClassName={rowClassName}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Quantity: {totalQuantity?.total || 0}</strong>
+            <strong>Total Quantity: {totalQuantity?.totalQnty || 0}</strong>
             <strong>Registered: {totalQuantity?.registered || 0}</strong>
             <strong>Monitoring: {totalQuantity?.monitoring || 0}</strong>
             <strong>
