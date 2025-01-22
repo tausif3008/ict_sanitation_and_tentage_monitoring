@@ -319,7 +319,7 @@ const CompactorsTippers = () => {
               value: rowRecord?.asset_main_type_name,
             },
             {
-              label: "Toilets & Tentage Type",
+              label: "Type",
               value: rowRecord?.name,
             },
           ] || []
@@ -327,8 +327,8 @@ const CompactorsTippers = () => {
         column={vendorColumn || []}
         footer={`Total Allotted Quantity : ${allQuantity}`}
         showPdfbutton={true}
-        pdfTitleName={`${rowRecord?.name}-${rowRecord?.asset_main_type_name} pdf`}
-        pdfName={`${rowRecord?.name}-${rowRecord?.asset_main_type_name} pdf`}
+        pdfTitleName={`${rowRecord?.name} Vendor Report`}
+        pdfName={`${rowRecord?.name} Vendor Report`}
         pdfHeader={pdfHeader || []}
         tablePdfData={[...pdfData, ["", "Total", allQuantity]] || []}
       />

@@ -12,7 +12,7 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions, getValueLabel } from "../../constant/const";
+import { dateWeekOptions } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -22,7 +22,7 @@ import SectorReportSelectors from "../SectorSlice/sectorSelector";
 import { getSectorWiseRegData } from "../SectorSlice/sectorSlice";
 import CustomTable from "../../commonComponents/CustomTable";
 
-const SectorWiseRegistrationReport = () => {
+const SectorTypeReport = () => {
   const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
@@ -40,66 +40,6 @@ const SectorWiseRegistrationReport = () => {
   let uri = URLS?.sector_wise_reg_report?.path;
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
-
-  const catTypeName = getValueLabel(
-    formValue?.asset_main_type_id,
-    AssetMainTypeDrop,
-    null
-  );
-  const assetTypeName = getValueLabel(
-    formValue?.asset_type_id,
-    AssetTypeDrop,
-    null
-  );
-
-  const fileDateName =
-    formValue?.date_format === "Today"
-      ? moment().format("DD-MMM-YYYY")
-      : formValue?.date_format === "Date Range"
-      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-          formValue?.to_date
-        ).format("DD-MMM-YYYY")}`
-      : "All Dates";
-
-  // file name
-  const getReportName = () => {
-    let name = "Sector Wise";
-    if (catTypeName) {
-      name += `- ${catTypeName}`;
-    }
-    if (assetTypeName) {
-      name += `- ${assetTypeName}`;
-    }
-    name += ` - ${
-      formValue?.date_format === "Today"
-        ? moment().format("DD-MMM-YYYY")
-        : formValue?.date_format === "Date Range"
-        ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-            formValue?.to_date
-          ).format("DD-MMM-YYYY")}`
-        : ""
-    } `;
-    name += `Report`;
-    return name;
-  };
-
-  const pdfTitleParam = [
-    ...(formValue?.asset_main_type_id
-      ? [
-          {
-            label: `Category : ${catTypeName || "Combined"}`,
-          },
-        ]
-      : []),
-    ...(formValue?.asset_type_id
-      ? [
-          {
-            label: `Type : ${assetTypeName || "Combined"}`,
-          },
-        ]
-      : []),
-  ];
-  const fileName = getReportName();
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -241,28 +181,31 @@ const SectorWiseRegistrationReport = () => {
     ]);
   }, [excelData]);
 
-  // const fileName =
-  //   formValue?.date_format === "Today"
-  //     ? moment().format("DD-MMM-YYYY")
-  //     : formValue?.date_format === "Date Range"
-  //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-  //         formValue?.to_date
-  //       ).format("DD-MMM-YYYY")}`
-  //     : null;
+  const fileName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : null;
 
   return (
     <div>
-      <CommonDivider label={"Sector Wise Registration Report"} />
+      <CommonDivider label={"Sector-Type Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToPDF
             titleName={
               fileName
-                ? `Sector Wise Registration Report (${fileDateName})`
-                : "Sector Wise Registration Report"
+                ? `Sector-Type Registration Report (${fileName})`
+                : "Sector-Type Registration Report"
             }
-            pdfName={fileName ? fileName : "Sector Wise Registration Report"}
-            tableTitles={pdfTitleParam || []}
+            pdfName={
+              fileName
+                ? `Sector-Type Registration Report (${fileName})`
+                : "Sector-Type Registration Report"
+            }
             headerData={pdfHeader}
             IsLastLineBold={true}
             rows={[...pdfData, ["", "Total", vendorData?.totalUnits]]}
@@ -271,7 +214,11 @@ const SectorWiseRegistrationReport = () => {
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={fileName ? fileName : "Sector Wise Registration Report"}
+            fileName={
+              fileName
+                ? `Sector-Type Registration Report ${fileName}`
+                : "Sector-Type Registration Report"
+            }
             dynamicArray={[
               {
                 name: "Total",
@@ -435,4 +382,4 @@ const SectorWiseRegistrationReport = () => {
   );
 };
 
-export default SectorWiseRegistrationReport;
+export default SectorTypeReport;

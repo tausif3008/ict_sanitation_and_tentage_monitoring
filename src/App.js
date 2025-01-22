@@ -96,6 +96,7 @@ import {
   vehicle_reports,
   monitoring_dailyWeekly_reports,
   sector_wise_regi_reports,
+  sector_type_wise_regi_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -107,6 +108,7 @@ import VehicleReports from "./Reports/VehicleReport";
 import AssetAllocation from "./Allocation/AssetAllocation";
 import AssetAllocationForm from "./Allocation/AssetAllocation/assetAllocationForm";
 import SectorWiseRegistrationReport from "./Reports/SectorWiseRegistrationReport";
+import SectorTypeReport from "./Reports/SectorTypeReport";
 
 function App() {
   const navigate = useNavigate();
@@ -729,6 +731,15 @@ function App() {
               <ProtectedRoute
                 condition={sector_wise_regi_reports?.includes(userRoleId)}
                 component={SectorWiseRegistrationReport}
+              />
+            }
+          />
+          <Route
+            path="sector-type-wise-registration-report"
+            element={
+              <ProtectedRoute
+                condition={sector_type_wise_regi_reports?.includes(userRoleId)}
+                component={SectorTypeReport}
               />
             }
           />

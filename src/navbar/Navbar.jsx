@@ -28,6 +28,7 @@ import {
   vehicle_reports,
   monitoring_dailyWeekly_reports,
   sector_wise_regi_reports,
+  sector_type_wise_regi_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -550,6 +551,17 @@ const Navbar = ({ lang, setLang }) => {
             to="/sector-wise-registration-report"
           >
             Sector Wise Registration Report
+          </Link>
+        ),
+      },
+      sector_type_wise_regi_reports?.includes(userRoleId) && {
+        key: "10",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/sector-type-wise-registration-report"
+          >
+            Sector-Type Wise Registration Report
           </Link>
         ),
       },

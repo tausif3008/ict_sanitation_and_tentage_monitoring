@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { useDispatch } from "react-redux";
-import { Button, Form, Input, message, Modal, Tooltip } from "antd";
+import { Button, Form, Input, message, Modal, Tooltip, Collapse } from "antd";
 import { DeleteOutlined, SyncOutlined } from "@ant-design/icons";
 
 import { deleteSupervisorSectorAllocation } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -10,8 +10,10 @@ import URLS from "../../urils/URLS";
 import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import { getAssetAllocationData } from "../../register/asset/AssetsSlice";
 import CustomTable from "../../commonComponents/CustomTable";
+import CustomInput from "../../commonComponents/CustomInput";
+import search from "../../assets/Dashboard/icon-search.png";
 
-// sector allocation
+// asset allocation
 const AssetAllocation = () => {
   const [viewDeleteModal, setViewDeleteModal] = useState(false); // view delete model
   const [details, setDetails] = useState({
@@ -21,22 +23,10 @@ const AssetAllocation = () => {
   });
 
   const [form] = Form.useForm();
+  const [fiterForm] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { loading, AssetAllocateData } = ToiletAndTentageSelector(); // asset allocation
-
-  useEffect(() => {
-    if (AssetAllocateData) {
-      setDetails(() => {
-        return {
-          list: AssetAllocateData?.data?.listings,
-          pageLength: AssetAllocateData?.data?.paging[0].length,
-          currentPage: AssetAllocateData?.data?.paging[0].currentPage,
-          totalRecords: AssetAllocateData?.data?.paging[0].totalrecords,
-        };
-      });
-    }
-  }, [AssetAllocateData]);
 
   const handleCancel = () => {
     setViewDeleteModal(false);
@@ -52,7 +42,7 @@ const AssetAllocation = () => {
   };
 
   // handle delete API
-  const onFinish = async (value) => {
+  const onDeleteFinish = async (value) => {
     const url = URLS?.deleteAllocate_Asset?.path + `/${value?.allocation_id}`;
     const res = await dispatch(deleteSupervisorSectorAllocation(url));
     if (res) {
@@ -65,6 +55,61 @@ const AssetAllocation = () => {
     }
     setViewDeleteModal(false);
   };
+
+  // fiter finish
+  const onFinishForm = (values) => {
+    fiterForm.resetFields();
+
+    // const allUndefined = Object.values(values).every(
+    //   (value) => value === undefined
+    // );
+    // if (allUndefined) {
+    //   message.error("Please Select any search field");
+    //   return;
+    // }
+    // const dayjsDate = new Date(values?.date);
+    // const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
+    // const finalValues = {
+    //   ...(values?.user_id && { user_id: `${values?.user_id}` }),
+    //   ...(values?.type && { type: `${values?.type}` }),
+    //   ...(values?.number && { number: `${values?.number}` }),
+    //   ...(values?.chassis_no && { chassis_no: `${values?.chassis_no}` }),
+    //   ...(values?.imei && { imei: `${values?.imei}` }),
+    //   ...(values?.sector_id && { sector_id: values?.sector_id }),
+    //   date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
+    //   page: "1",
+    //   per_page: "25",
+    // };
+    // dispatch(getVehicleList(finalValues)); // get vehicle list
+  };
+
+  // reset form
+  const resetForm = () => {
+    // let newDate = dayjs().format("YYYY-MM-DD");
+    fiterForm.resetFields();
+    // form.setFieldsValue({
+    //   date: dayjs(newDate, "YYYY-MM-DD"),
+    // });
+    // const myParam = {
+    //   page: "1",
+    //   per_page: "25",
+    //   date: moment().format("YYYY-MM-DD"),
+    // };
+    // dispatch(getVehicleList(myParam));
+  };
+
+  useEffect(() => {
+    if (AssetAllocateData) {
+      setDetails(() => {
+        return {
+          list: AssetAllocateData?.data?.listings,
+          pageLength: AssetAllocateData?.data?.paging[0].length,
+          currentPage: AssetAllocateData?.data?.paging[0].currentPage,
+          totalRecords: AssetAllocateData?.data?.paging[0].totalrecords,
+        };
+      });
+    }
+  }, [AssetAllocateData]);
 
   useEffect(() => {
     dispatch(getAssetAllocationData()); //  assets allocation
@@ -139,6 +184,65 @@ const AssetAllocation = () => {
   return (
     <>
       <CommonDivider label={"Allocate Assets"}></CommonDivider>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={fiterForm}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
+                  <CustomInput
+                    label="Allocated Phone"
+                    name="number"
+                    placeholder="Allocated Phone"
+                    maxLength={10}
+                  />
+                  <CustomInput
+                    label="Asset Code"
+                    name="imei"
+                    placeholder="Enter Asset Code"
+                  />
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </Form>
+            ),
+          },
+        ]}
+      />
       <CustomTable
         loading={loading}
         columns={columns || []}
@@ -160,7 +264,7 @@ const AssetAllocation = () => {
         footer={null}
         width={400}
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form form={form} layout="vertical" onFinish={onDeleteFinish}>
           <p>Are you sure you want to delete this Asset Allocation Record?</p>
           <Form.Item name="allocated_user">
             <Input disabled className="w-full" placeholder="GSD Name" />

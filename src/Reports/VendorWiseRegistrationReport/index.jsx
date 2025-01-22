@@ -12,7 +12,7 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions } from "../../constant/const";
+import { dateWeekOptions, getValueLabel } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -39,6 +39,64 @@ const VendorRegistrationReport = () => {
   let uri = URLS?.vendorRegistrationReport?.path;
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
+  const catTypeName = getValueLabel(
+    formValue?.asset_main_type_id,
+    AssetMainTypeDrop,
+    null
+  );
+  const assetTypeName = getValueLabel(
+    formValue?.asset_type_id,
+    AssetTypeDrop,
+    null
+  );
+
+  const fileDateName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : "All Dates";
+
+  // file name
+  const getReportName = () => {
+    let name = "Vendor Wise";
+    if (catTypeName) {
+      name += `- ${catTypeName}`;
+    }
+    if (assetTypeName) {
+      name += `- ${assetTypeName}`;
+    }
+    name += ` - ${
+      formValue?.date_format === "Today"
+        ? moment().format("DD-MMM-YYYY")
+        : formValue?.date_format === "Date Range"
+        ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+            formValue?.to_date
+          ).format("DD-MMM-YYYY")}`
+        : ""
+    } `;
+    name += `Report`;
+    return name;
+  };
+
+  const pdfTitleParam = [
+    ...(formValue?.asset_main_type_id
+      ? [
+          {
+            label: `Category : ${catTypeName || "Combined"}`,
+          },
+        ]
+      : []),
+    ...(formValue?.asset_type_id
+      ? [
+          {
+            label: `Type : ${assetTypeName || "Combined"}`,
+          },
+        ]
+      : []),
+  ];
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -54,12 +112,6 @@ const VendorRegistrationReport = () => {
       finalData.form_date = moment().format("YYYY-MM-DD");
       finalData.to_date = moment().format("YYYY-MM-DD");
     }
-    //  else if (values?.date_format === "Week") {
-    //   finalData.form_date = moment()
-    //     .subtract(8, "days")
-    //     .format("YYYY-MM-DD");
-    //   finalData.to_date = moment().format("YYYY-MM-DD");
-    // } else
 
     if (values?.form_date || values?.to_date) {
       const dayjsObjectFrom = dayjs(values?.form_date?.$d);
@@ -186,15 +238,7 @@ const VendorRegistrationReport = () => {
       Number(sector?.Unit) || 0,
     ]);
   }, [excelData]);
-
-  const fileName =
-    formValue?.date_format === "Today"
-      ? moment().format("DD-MMM-YYYY")
-      : formValue?.date_format === "Date Range"
-      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-          formValue?.to_date
-        ).format("DD-MMM-YYYY")}`
-      : null;
+  const fileName = getReportName();
 
   return (
     <div>
@@ -204,27 +248,20 @@ const VendorRegistrationReport = () => {
           <ExportToPDF
             titleName={
               fileName
-                ? `Vendor Wise Registration Report (${fileName})`
+                ? `Vendor Wise Registration Report (${fileDateName})`
                 : "Vendor Wise Registration Report"
             }
-            pdfName={
-              fileName
-                ? `Vendor Wise Registration Report (${fileName})`
-                : "Vendor Wise Registration Report"
-            }
+            pdfName={fileName ? fileName : "Vendor Wise Registration Report"}
             headerData={pdfHeader}
             IsLastLineBold={true}
             rows={[...pdfData, ["", "Total", vendorData?.totalUnits]]}
+            tableTitles={pdfTitleParam || []}
           />
         </div>
         <div>
           <ExportToExcel
             excelData={excelData || []}
-            fileName={
-              fileName
-                ? `Vendor Wise Registration Report ${fileName}`
-                : "Vendor Wise Registration Report"
-            }
+            fileName={fileName ? fileName : "Vendor Wise Registration Report"}
             dynamicArray={[
               {
                 name: "Total",

@@ -73,6 +73,7 @@ export const gsd_wise_monitoring_reports = ["1", "2", "3", "4", "5"];
 export const vehicle_reports = ["1", "2", "3", "4", "5"];
 export const vendor_wise_regi_reports = ["1", "2", "3", "4", "5"];
 export const sector_wise_regi_reports = ["1", "2", "3", "4", "5"];
+export const sector_type_wise_regi_reports = ["1", "2", "3", "4", "5"];
 
 // asset type delete and update permission
 export const asset_delete_permisssion = ["1", "2"];
