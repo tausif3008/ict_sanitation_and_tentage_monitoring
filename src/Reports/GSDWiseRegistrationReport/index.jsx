@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import { Collapse, Form, Button, Row, Col } from "antd";
 import moment from "moment";
@@ -20,6 +20,7 @@ import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getGSDReportData } from "./Slice/gsdWiseRegistrationReport";
 import GsdRegistrationSelector from "./Slice/gsdRegistrationSelector";
 import { getFormData } from "../../urils/getFormData";
+import ExportToPDF from "../reportFile";
 
 const GsdRegistrationReport = () => {
   const [excelData, setExcelData] = useState([]);
@@ -188,23 +189,42 @@ const GsdRegistrationReport = () => {
     },
   ];
 
+  // pdf header
+  const pdfHeader = ["Sr no", "GSD Name", "GSD Phone", "Unit"];
+  // pdf data
+  const pdfData = useMemo(() => {
+    return (
+      excelData?.map((data, index) => [
+        index + 1,
+        data?.["GSD name"],
+        data?.["GSD Phone"],
+        Number(data?.Unit) || 0,
+      ]) || []
+    );
+  }, [excelData]);
+
   return (
     <div>
       <CommonDivider label={"GSD Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <ExportToExcel
-            excelData={excelData || []}
-            fileName={"GSD Wise Registration Report"}
-            dynamicArray={[
-              {
-                name: "Total Unit",
-                value: gsdData?.totalUnits,
-                colIndex: 4,
-              },
-            ]}
-          />
-        </div>
+        <ExportToPDF
+          titleName={"GSD Wise Registration Report"}
+          pdfName={"GSD Wise Registration Report"}
+          headerData={pdfHeader}
+          rows={[...pdfData, ["", "Total", "", gsdData?.totalUnits]]}
+          IsLastLineBold={true}
+        />
+        <ExportToExcel
+          excelData={excelData || []}
+          fileName={"GSD Wise Registration Report"}
+          dynamicArray={[
+            {
+              name: "Total Unit",
+              value: gsdData?.totalUnits,
+              colIndex: 4,
+            },
+          ]}
+        />
       </div>
       <div>
         <Collapse
