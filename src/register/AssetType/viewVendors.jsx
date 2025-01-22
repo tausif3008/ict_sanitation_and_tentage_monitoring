@@ -1,5 +1,7 @@
 import React from "react";
 import { Modal, Table } from "antd";
+import ExportToPDF from "../../Reports/reportFile";
+import ExportToExcel from "../../Reports/ExportToExcel";
 
 const ViewVendorsSectors = ({
   title,
@@ -13,6 +15,13 @@ const ViewVendorsSectors = ({
   column = [],
   tableHeaderData = [],
   IsLastRowBold = false,
+
+  showPdfbutton = false,
+  showExcelbutton = false,
+  pdfTitleName = "pdf title",
+  pdfName = "pdf name",
+  pdfHeader = [],
+  tablePdfData = [],
   ...rest
 }) => {
   const rowClassName = (record, index) => {
@@ -36,15 +45,47 @@ const ViewVendorsSectors = ({
         width={width}
         {...rest}
       >
-        {tableHeaderData?.length > 0 && (
-          <div className="mb-4">
-            {tableHeaderData?.map((data, index) => (
-              <p key={index}>
-                <strong>{data?.label}:</strong> {data?.value}
-              </p>
-            ))}
-          </div>
-        )}
+        <div className="grid grid-cols-2">
+          {tableHeaderData?.length > 0 && (
+            <div className="mb-4">
+              {tableHeaderData?.map((data, index) => (
+                <p key={index}>
+                  <strong>{data?.label}:</strong> {data?.value}
+                </p>
+              ))}
+            </div>
+          )}
+          {(showExcelbutton || showPdfbutton) && (
+            <div className="flex justify-end gap-2 font-semibold">
+              {showPdfbutton && (
+                <ExportToPDF
+                  titleName={pdfTitleName}
+                  pdfName={pdfName}
+                  headerData={pdfHeader}
+                  IsLastLineBold={true}
+                  rows={tablePdfData}
+                />
+              )}
+              {/* <div>
+              <ExportToExcel
+              // excelData={excelData || []}
+              // fileName={
+              //   fileName
+              //     ? `Sector Wise Registration Report ${fileName}`
+              //     : "Sector Wise Registration Report"
+              // }
+              // dynamicArray={[
+              //   {
+              //     name: "Total",
+              //     value: vendorData?.totalUnits,
+              //     colIndex: 3,
+              //   },
+              // ]}
+              />
+            </div> */}
+            </div>
+          )}
+        </div>
         {tableData?.length > 0 ? (
           <Table
             bordered

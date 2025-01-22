@@ -224,6 +224,15 @@ const CompactorsTippers = () => {
     });
   }, [vehicleArray, assettypes]);
 
+  const pdfHeader = ["Sr No", "Vendor Name", "Allotted Quantity"];
+  const pdfData = useMemo(() => {
+    return showVendorsList?.map((vendor, index) => [
+      index + 1,
+      vendor?.user_name || "-",
+      vendor?.total_allotted_quantity || 0,
+    ]);
+  }, [showVendorsList]);
+
   return (
     <>
       <div className="flex  flex-col p-4 w-full  h-full">
@@ -317,6 +326,11 @@ const CompactorsTippers = () => {
         }
         column={vendorColumn || []}
         footer={`Total Allotted Quantity : ${allQuantity}`}
+        showPdfbutton={true}
+        pdfTitleName={`${rowRecord?.name}-${rowRecord?.asset_main_type_name} pdf`}
+        pdfName={`${rowRecord?.name}-${rowRecord?.asset_main_type_name} pdf`}
+        pdfHeader={pdfHeader || []}
+        tablePdfData={[...pdfData, ["", "Total", allQuantity]] || []}
       />
     </>
   );
