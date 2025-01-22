@@ -22,12 +22,16 @@ const SectorReportSelectors = () => {
   const SectorRegReport_data = useSelector(
     (state) => state?.SectorReportSlice.sector_data
   ); // Sector Wise Report data
+  const SectorTypeRegReport_data = useSelector(
+    (state) => state?.SectorReportSlice.sector_type
+  ); // Sector-type Wise Report data
 
   return {
     SectorReports,
     SectorReport_Loading,
     sectorData,
     SectorRegReport_data,
+    SectorTypeRegReport_data,
   };
 };
 

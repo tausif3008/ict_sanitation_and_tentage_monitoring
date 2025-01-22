@@ -112,6 +112,10 @@ const URLS = {
 
   // sector wise registration report
   sector_wise_reg_report: { path: "/reporting/sector-tagging", version: 5.43 },
+  sector_type_wise_reg_report: {
+    path: "/reporting/sector-asset-type-tagging",
+    version: 5.43,
+  },
 
   // parking
   parking: { path: "/parking", version: 5.43 },

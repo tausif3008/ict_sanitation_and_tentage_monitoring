@@ -103,6 +103,8 @@ const AssetRegistrationForm = () => {
     }
   }, [record, key]);
 
+  console.log("record", record);
+
   return (
     <div className="mt-3">
       <div className="mx-auto p-3 bg-white shadow-md rounded-lg mt-3 w-full">
@@ -178,14 +180,14 @@ const AssetRegistrationForm = () => {
               name={"sector_id"}
               label={"Select Sector"}
               placeholder={"Select Sector"}
-              rules={[{ required: true, message: "Please select Sector" }]}
+              // rules={[{ required: true, message: "Please select Sector" }]}
               options={SectorListDrop || []}
             />
             <CustomSelect
               name={"parking_id"}
               label={"Select Parking"}
               placeholder={"Select Parking"}
-              rules={[{ required: true, message: "Please select Parking" }]}
+              // rules={[{ required: true, message: "Please select Parking" }]}
               options={parkingDrop || []}
             />
           </div>
