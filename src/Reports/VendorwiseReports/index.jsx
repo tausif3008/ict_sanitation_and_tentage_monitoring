@@ -445,7 +445,7 @@ const VendorReports = () => {
       title: "Vendor Name",
       dataIndex: "name",
       key: "name",
-      width: 250,
+      width: 100,
       render: renderColumn,
       sorter: (a, b) => {
         const nameA = a?.name ? a?.name?.toString() : "";
@@ -853,6 +853,7 @@ const VendorReports = () => {
         openModal={showModal && !SectorReport_Loading}
         handleCancel={handleCancel}
         tableData={sectorData || []}
+        scroll={{ x: 1500, y: 400 }}
         tableHeaderData={[
           {
             label: "Vendor Name",

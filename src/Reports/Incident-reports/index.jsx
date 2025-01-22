@@ -369,7 +369,7 @@ const IncidentReports = () => {
 
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, filesName, {}, [
+        exportToExcel(myexcelData, filesName, [
           {
             name: "Total Unit",
             value: unitCount,

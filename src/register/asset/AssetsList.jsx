@@ -493,7 +493,7 @@ const AssetsList = () => {
 
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, heading, {}, [
+        exportToExcel(myexcelData, heading, [
           {
             name: "Total Unit",
             value: unitCount,

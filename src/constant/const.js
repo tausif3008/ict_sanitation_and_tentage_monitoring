@@ -200,7 +200,7 @@ export const VendorWiseReportcolumns = [
     title: "Vendor Name",
     dataIndex: "name",
     key: "name",
-    width: 200,
+    width: 100,
     sorter: (a, b) => {
       const nameA = a?.name ? a?.name?.toString() : "";
       const nameB = b?.name ? b?.name?.toString() : "";

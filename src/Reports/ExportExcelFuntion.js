@@ -70,14 +70,27 @@ export const exportToExcel = async (
   totalCountRow.getCell(1).alignment = { horizontal: "center" };
 
   // for array
-  dynamicArray?.forEach((item) => {
-    totalCountRow.getCell(item?.colIndex).value = `${
-      item?.name.charAt(0).toUpperCase() + item?.name.slice(1)
-    }: ${item?.value}`;
-    const cell = totalCountRow.getCell(item?.colIndex);
-    cell.font = { bold: true };
-    cell.alignment = { horizontal: "center" };
-  });
+  // dynamicArray?.forEach((item) => {
+  //   totalCountRow.getCell(item?.colIndex).value = `${
+  //     item?.name.charAt(0).toUpperCase() + item?.name.slice(1)
+  //   }: ${item?.value}`;
+  //   const cell = totalCountRow.getCell(item?.colIndex);
+  //   cell.font = { bold: true };
+  //   cell.alignment = { horizontal: "center" };
+  // });
+
+  if (Array.isArray(dynamicArray)) {
+    dynamicArray?.forEach((item) => {
+      totalCountRow.getCell(item?.colIndex).value = `${
+        item?.name.charAt(0).toUpperCase() + item?.name.slice(1)
+      }: ${item?.value}`;
+      const cell = totalCountRow.getCell(item?.colIndex);
+      cell.font = { bold: true };
+      cell.alignment = { horizontal: "center" };
+    });
+  } else {
+    console.error("dynamicArray is not an array:", dynamicArray);
+  }
 
   // Apply a filter to the second row (header row)
   worksheet.autoFilter = {
