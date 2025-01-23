@@ -78,15 +78,15 @@ const SectorTypeReport = () => {
     if (assetTypeName) {
       name += `- ${assetTypeName}`;
     }
-    name += ` - ${
-      formValue?.date_format === "Today"
-        ? moment().format("DD-MMM-YYYY")
-        : formValue?.date_format === "Date Range"
-        ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-            formValue?.to_date
-          ).format("DD-MMM-YYYY")}`
-        : ""
-    } `;
+    name += ` - ${fileDateName} `;
+    //   formValue?.date_format === "Today"
+    //     ? moment().format("DD-MMM-YYYY")
+    //     : formValue?.date_format === "Date Range"
+    //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+    //         formValue?.to_date
+    //       ).format("DD-MMM-YYYY")}`
+    //     : ""
+    // } `;
     name += `Report`;
     return name;
   };
@@ -227,7 +227,7 @@ const SectorTypeReport = () => {
             title: `${item?.asset_type_name}`,
             dataIndex: `dataIndex${index}`,
             key: `${item?.asset_type_id}`,
-            width: 250,
+            width: 70,
             sorter: (a, b) => a[`dataIndex${index}`] - b[`dataIndex${index}`], // Sorting by the dynamic column
           };
         }
@@ -238,7 +238,7 @@ const SectorTypeReport = () => {
         title: "Sector Name",
         dataIndex: "sector_name",
         key: "sector_name",
-        width: 100,
+        width: 60,
       },
       ...columnNames,
     ];
@@ -316,12 +316,8 @@ const SectorTypeReport = () => {
       <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToPDF
-            titleName={fileName ? fileName : "Sector-Type Registration Report"}
-            pdfName={
-              fileName
-                ? `Sector-Type Registration Report (${fileName})`
-                : "Sector-Type Registration Report"
-            }
+            titleName={`Sector-Type Registration Report (${fileDateName})`}
+            pdfName={fileName ? fileName : "Sector-Type Registration Report"}
             tableTitles={pdfTitleParam || []}
             headerData={["Sr no", ...pdfHeader] || []}
             landscape={true}
@@ -497,7 +493,7 @@ const SectorTypeReport = () => {
         columns={memoizedColumns || []}
         bordered
         dataSource={vendorData || []}
-        scroll={{ x: 2000, y: 400 }}
+        scroll={{ x: 1800, y: 400 }}
         tableSubheading={{
           "Total Records": vendorData?.list?.length,
         }}
