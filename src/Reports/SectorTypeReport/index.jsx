@@ -11,12 +11,12 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions } from "../../constant/const";
+import { dateWeekOptions, getValueLabel } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getFormData } from "../../urils/getFormData";
-// import ExportToExcel from "../ExportToExcel";
-// import ExportToPDF from "../reportFile";
+import ExportToExcel from "../ExportToExcel";
+import ExportToPDF from "../reportFile";
 import SectorReportSelectors from "../SectorSlice/sectorSelector";
 import { getSectorTypeRegData } from "../SectorSlice/sectorSlice";
 import CustomTable from "../../commonComponents/CustomTable";
@@ -40,6 +40,77 @@ const SectorTypeReport = () => {
   const { SectorReport_Loading, SectorTypeRegReport_data } =
     SectorReportSelectors(); // Sector-type Wise Report data
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+
+  const catTypeName = getValueLabel(
+    formValue?.asset_main_type_id,
+    AssetMainTypeDrop,
+    null
+  );
+  const assetTypeName = getValueLabel(
+    formValue?.asset_type_id,
+    AssetTypeDrop,
+    null
+  );
+  const vendorName = getValueLabel(
+    formValue?.vendor_id,
+    VendorCatTypeDrop,
+    null
+  );
+
+  const fileDateName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : "All Dates";
+
+  // file name
+  const getReportName = () => {
+    let name = "Sector-Type";
+    if (vendorName) {
+      name = `${vendorName} Sector-Type`;
+    }
+    if (catTypeName) {
+      name += `- ${catTypeName}`;
+    }
+    if (assetTypeName) {
+      name += `- ${assetTypeName}`;
+    }
+    name += ` - ${
+      formValue?.date_format === "Today"
+        ? moment().format("DD-MMM-YYYY")
+        : formValue?.date_format === "Date Range"
+        ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+            formValue?.to_date
+          ).format("DD-MMM-YYYY")}`
+        : ""
+    } `;
+    name += `Report`;
+    return name;
+  };
+
+  const pdfTitleParam = [
+    ...(formValue?.vendor_id
+      ? [
+          {
+            label: `Vendor Name : ${vendorName || "Combined"}`,
+          },
+        ]
+      : []),
+    {
+      label: `Category : ${catTypeName || "Combined"}`,
+    },
+    ...(formValue?.asset_type_id
+      ? [
+          {
+            label: `Type : ${assetTypeName || "Combined"}`,
+          },
+        ]
+      : []),
+  ];
+  const fileName = getReportName();
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -75,8 +146,8 @@ const SectorTypeReport = () => {
   // reset form
   const resetForm = () => {
     form.resetFields();
-    getData();
     setShowDateRange(false);
+    getData();
   };
 
   // handle category
@@ -130,12 +201,18 @@ const SectorTypeReport = () => {
   };
 
   const getData = async () => {
-    dispatch(getSectorTypeRegData()); // Fetch the data
+    const finalData = {
+      asset_main_type_id: "1",
+    };
+    dispatch(getSectorTypeRegData(finalData)); // Fetch the data
+    handleSelect("1");
+    form.setFieldsValue({
+      asset_main_type_id: "1",
+    });
   };
 
   useEffect(() => {
     getData();
-    dispatch(getVendorCategoryTypeDrop()); // vendor list
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
   }, []);
@@ -204,14 +281,21 @@ const SectorTypeReport = () => {
     }
   }, [SectorTypeRegReport_data]);
 
-  // const pdfHeader = ["Sr No", "Sector Name", "Unit"];
-  // const pdfData = useMemo(() => {
-  //   return excelData?.map((sector, index) => [
-  //     index + 1,
-  //     sector["Sector name"],
-  //     Number(sector?.Unit) || 0,
-  //   ]);
-  // }, [excelData]);
+  const pdfHeader = useMemo(() => {
+    return memoizedColumns?.map((data, index) => data?.title);
+  }, [memoizedColumns]);
+  const pdfData = useMemo(() => {
+    return vendorData?.list?.map((item, index) => {
+      const row = [index + 1, item?.sector_name]; // Start with the row number (index + 1)
+      Object.keys(item).forEach((key) => {
+        if (key.startsWith("dataIndex")) {
+          row.push(item[key]); // Add the value to the row
+        }
+      });
+
+      return row;
+    });
+  }, [vendorData]);
 
   // const fileName =
   //   formValue?.date_format === "Today"
@@ -222,29 +306,31 @@ const SectorTypeReport = () => {
   //       ).format("DD-MMM-YYYY")}`
   //     : null;
 
+  // console.log("vendorData", ["Sr no", ...pdfHeader]);
+  // console.log("vendorData", vendorData?.list);
+  // console.log("memoizedColumns", memoizedColumns);
+
   return (
     <div>
       <CommonDivider label={"Sector-Type Registration Report"} />
-      {/* <div className="flex justify-end gap-2 font-semibold">
+      <div className="flex justify-end gap-2 font-semibold">
         <div>
           <ExportToPDF
-            titleName={
-              fileName
-                ? `Sector-Type Registration Report (${fileName})`
-                : "Sector-Type Registration Report"
-            }
+            titleName={fileName ? fileName : "Sector-Type Registration Report"}
             pdfName={
               fileName
                 ? `Sector-Type Registration Report (${fileName})`
                 : "Sector-Type Registration Report"
             }
-            headerData={pdfHeader}
+            tableTitles={pdfTitleParam || []}
+            headerData={["Sr no", ...pdfHeader] || []}
+            landscape={true}
             IsLastLineBold={true}
-            rows={[...pdfData, ["", "Total", vendorData?.totalUnits]]}
+            rows={[...pdfData, ["Total", vendorData?.list?.length]]}
           />
         </div>
         <div>
-          <ExportToExcel
+          {/* <ExportToExcel
             excelData={excelData || []}
             fileName={
               fileName
@@ -258,9 +344,9 @@ const SectorTypeReport = () => {
                 colIndex: 3,
               },
             ]}
-          />
+          /> */}
         </div>
-      </div> */}
+      </div>
       <Collapse
         defaultActiveKey={["1"]}
         size="small"
@@ -288,6 +374,7 @@ const SectorTypeReport = () => {
                       placeholder={"Select Category"}
                       options={AssetMainTypeDrop || []}
                       onSelect={handleSelect}
+                      allowClear={false}
                     />
                   </Col>
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
