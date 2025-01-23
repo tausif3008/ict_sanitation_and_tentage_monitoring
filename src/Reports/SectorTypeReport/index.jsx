@@ -27,6 +27,7 @@ const SectorTypeReport = () => {
   // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
+  const [totalCount, setTotalCount] = useState({});
   const [vendorData, setVendorData] = useState({
     list: [],
     pageLength: 25,
@@ -40,6 +41,7 @@ const SectorTypeReport = () => {
   const { SectorReport_Loading, SectorTypeRegReport_data } =
     SectorReportSelectors(); // Sector-type Wise Report data
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const valuesArray = Object.values(totalCount);
 
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
@@ -79,14 +81,6 @@ const SectorTypeReport = () => {
       name += `- ${assetTypeName}`;
     }
     name += ` - ${fileDateName} `;
-    //   formValue?.date_format === "Today"
-    //     ? moment().format("DD-MMM-YYYY")
-    //     : formValue?.date_format === "Date Range"
-    //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-    //         formValue?.to_date
-    //       ).format("DD-MMM-YYYY")}`
-    //     : ""
-    // } `;
     name += `Report`;
     return name;
   };
@@ -259,6 +253,21 @@ const SectorTypeReport = () => {
         }
       );
 
+      let myCount = {};
+      SectorTypeRegReport_data?.data?.listings?.forEach((item) => {
+        item?.asset_types.forEach((data) => {
+          const assetType = data?.asset_type_name;
+          const taggingUnits = Number(data?.tagging_units) || 0;
+
+          if (myCount[assetType]) {
+            myCount[assetType] += taggingUnits;
+          } else {
+            myCount[assetType] = taggingUnits;
+          }
+        });
+      });
+      setTotalCount(myCount);
+
       setVendorData((prevDetails) => ({
         ...prevDetails,
         list: tableData || [],
@@ -297,19 +306,6 @@ const SectorTypeReport = () => {
     });
   }, [vendorData]);
 
-  // const fileName =
-  //   formValue?.date_format === "Today"
-  //     ? moment().format("DD-MMM-YYYY")
-  //     : formValue?.date_format === "Date Range"
-  //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-  //         formValue?.to_date
-  //       ).format("DD-MMM-YYYY")}`
-  //     : null;
-
-  // console.log("vendorData", ["Sr no", ...pdfHeader]);
-  // console.log("vendorData", vendorData?.list);
-  // console.log("memoizedColumns", memoizedColumns);
-
   return (
     <div>
       <CommonDivider label={"Sector-Type Registration Report"} />
@@ -322,7 +318,10 @@ const SectorTypeReport = () => {
             headerData={["Sr no", ...pdfHeader] || []}
             landscape={true}
             IsLastLineBold={true}
-            rows={[...pdfData, ["Total", vendorData?.list?.length]]}
+            rows={[
+              ...pdfData,
+              ["Total", vendorData?.list?.length, ...valuesArray],
+            ]}
           />
         </div>
         <div>
