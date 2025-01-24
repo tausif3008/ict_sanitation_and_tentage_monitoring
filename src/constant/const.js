@@ -135,6 +135,13 @@ export const vehicleType = [
   { value: "Tipper", label: "Tipper" },
 ];
 
+export const percentageOptions = [
+  { value: "100", label: "100%" },
+  { value: "90", label: "90% and above" },
+  { value: "80", label: "80% and above" },
+  { value: "0", label: "0%" },
+];
+
 export const dateOptions = [
   {
     label: "Today",

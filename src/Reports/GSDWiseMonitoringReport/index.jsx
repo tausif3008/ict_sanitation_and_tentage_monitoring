@@ -4,7 +4,11 @@ import { Collapse, Form, Button, Row, Col } from "antd";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import { getValueLabel, globalDateFormat } from "../../constant/const";
+import {
+  getValueLabel,
+  globalDateFormat,
+  percentageOptions,
+} from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getFormData } from "../../urils/getFormData";
@@ -36,6 +40,45 @@ const GsdWiseMonitoringReport = () => {
   const formValue = form.getFieldsValue();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { GSDMonitoring_data, gsd_monitoringLoader } = GSDMonitoringSelector();
+
+  const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
+  const percentageName = getValueLabel(
+    formValue?.percentage,
+    percentageOptions,
+    null
+  );
+  const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+
+  // file name
+  const getReportName = () => {
+    let name = "GSD Wise";
+    if (sectorName) {
+      name += `- ${sectorName}`;
+    }
+    if (percentageName) {
+      name += `- ${percentageName}`;
+    }
+    name += `- Monitoring Report ${fileDateName}`;
+    return name;
+  };
+  const fileName = getReportName();
+
+  const pdfTitleParam = [
+    ...(formValue?.sector_id
+      ? [
+          {
+            label: `Sector Name : ${sectorName || "Combined"}`,
+          },
+        ]
+      : []),
+    ...(formValue?.percentage
+      ? [
+          {
+            label: `Percentage :  ${percentageName || "Combined"}`,
+          },
+        ]
+      : []),
+  ];
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -76,58 +119,63 @@ const GsdWiseMonitoringReport = () => {
     dispatch(getSectorsList()); // all sectors
   }, []);
 
-  // const getUsers = async (dataObj = {}) => {
-  //   const newParam = {
-  //     page: dataObj?.page || "1",
-  //     per_page: dataObj?.size || "25",
-  //     ...form.getFieldsValue(),
-  //   };
-  //   onFinishForm(newParam);
-  // };
-
   useEffect(() => {
     if (GSDMonitoring_data) {
-      const myData = GSDMonitoring_data?.data?.gsd;
+      let myData = GSDMonitoring_data?.data;
+      const selectedPercentage = formValue?.percentage;
+      if (selectedPercentage) {
+        const filteredData = myData?.gsd?.filter((circle) => {
+          if (Number(selectedPercentage) === 0) {
+            return Number(circle?.performance) === Number(selectedPercentage);
+          } else {
+            return Number(circle?.performance) >= Number(selectedPercentage);
+          }
+        });
+        myData = {
+          gsd: filteredData,
+        };
+      }
 
-      const totalMonitoring = myData?.reduce(
+      const totalMonitoring = myData?.gsd?.reduce(
         (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
         0
       );
-      const total_allocation = myData?.reduce(
+      const total_allocation = myData?.gsd?.reduce(
         (acc, circle) => acc + Number(circle?.total_allocation) || 0,
         0
       );
-      const lastTableRow = [
-        {
-          name: `Total : ${gsdData?.list?.length - 1}`,
-          total_allocation: total_allocation,
-          todaysmonitaring: totalMonitoring,
-          todaysmonitarings: total_allocation - totalMonitoring,
-        },
-      ];
 
       setGsdData((prevDetails) => ({
         ...prevDetails,
-        list: [...GSDMonitoring_data?.data?.gsd, ...lastTableRow] || [],
-        pageLength: GSDMonitoring_data?.data?.paging?.[0]?.length || 0,
-        currentPage: GSDMonitoring_data?.data?.paging?.[0]?.currentpage || 1,
-        totalRecords: GSDMonitoring_data?.data?.paging?.[0]?.totalrecords || 0,
+        list: myData?.gsd || [],
+        pageLength: myData?.paging?.[0]?.length || 0,
+        currentPage: myData?.paging?.[0]?.currentpage || 1,
+        totalRecords: myData?.paging?.[0]?.totalrecords || 0,
       }));
 
       setCount({
-        total: GSDMonitoring_data?.data?.gsd?.length,
+        total: myData?.gsd?.length,
         todaysmonitaring: totalMonitoring,
         total_allocation: total_allocation,
         totalPendingMonitoring: total_allocation - totalMonitoring,
       });
 
-      const myexcelData = GSDMonitoring_data?.data?.gsd?.map((data, index) => {
+      const myexcelData = myData?.gsd?.map((data, index) => {
         return {
           Sr: index + 1,
           Name: data?.name,
-          "Mobile Number": data?.phone,
+          "Mobile Number": Number(data?.phone),
+          "Sector Name":
+            Array.isArray(data?.workedsectors) && data?.workedsectors.length > 0
+              ? data?.workedsectors
+                  .map((value) => {
+                    return getValueLabel(`${value}`, SectorListDrop, "-");
+                  })
+                  .join(", ")
+              : "-",
           "Total Allocation": Number(data?.total_allocation) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
+          "Monitoring%": `${Math.round(data?.performance)}%` || 0,
           "Pending Monitoring":
             (Number(data?.total_allocation) || 0) -
             (Number(data?.todaysmonitaring) || 0),
@@ -226,8 +274,10 @@ const GsdWiseMonitoringReport = () => {
     "Sr No",
     "GSD Name",
     "Mobile Number",
+    "Sector Name",
     "Total Allocation",
     "Monitoring",
+    "Monitoring%",
     "Pending Monitoring",
   ];
 
@@ -238,65 +288,58 @@ const GsdWiseMonitoringReport = () => {
         opt?.Sr,
         opt?.Name,
         opt?.["Mobile Number"],
+        opt?.["Sector Name"],
         opt?.["Total Allocation"],
         opt?.Monitoring,
+        opt?.["Monitoring%"],
         opt?.["Pending Monitoring"],
       ]) || []
     );
   }, [excelData]);
-
-  const sectorName = getValueLabel(
-    formValue?.sector_id,
-    SectorListDrop,
-    "Sector Name"
-  );
-
-  const pdfNames = `GSD Wise ${sectorName} Monitoring Report (${dayjs(
-    formValue?.date
-  ).format("DD-MMM-YYYY")})`;
 
   return (
     <div>
       <CommonDivider label={"GSD Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
-          titleName={pdfNames}
-          pdfName={pdfNames}
+          titleName={`GSD Wise Monitoring Report ${fileDateName}`}
+          pdfName={fileName}
           headerData={pdfHeader}
           IsLastLineBold={true}
-          IsNoBold={true}
-          // applyTableStyles={true}
+          tableTitles={pdfTitleParam || []}
           rows={[
             ...pdfData,
             [
               "",
               "Total",
               "",
+              "",
               count?.total_allocation,
               count?.todaysmonitaring,
+              "",
               count?.totalPendingMonitoring,
             ],
           ]}
         />
         <ExportToExcel
           excelData={excelData || []}
-          titleName={pdfNames}
-          fileName={pdfNames}
+          titleName={fileName}
+          fileName={fileName}
           dynamicArray={[
             {
               name: "Total Allocation",
               value: count?.total_allocation,
-              colIndex: 4,
+              colIndex: 5,
             },
             {
               name: "Monitoring",
               value: count?.todaysmonitaring,
-              colIndex: 5,
+              colIndex: 6,
             },
             {
               name: "Pending Monitoring",
               value: count?.totalPendingMonitoring,
-              colIndex: 6,
+              colIndex: 8,
             },
           ]}
         />
@@ -327,6 +370,14 @@ const GsdWiseMonitoringReport = () => {
                       label={"Select Sector"}
                       placeholder={"Select Sector"}
                       options={SectorListDrop || []}
+                    />
+                  </Col>
+                  <Col key="percentage" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"percentage"}
+                      label={"Select Percentage"}
+                      placeholder={"Select Percentage"}
+                      options={percentageOptions || []}
                     />
                   </Col>
                   <Col key="date" xs={24} sm={12} md={6} lg={5}>
@@ -372,19 +423,12 @@ const GsdWiseMonitoringReport = () => {
         dataSource={gsdData || []}
         scroll={{ x: 800, y: 400 }}
         tableSubheading={{
-          "Total Records": gsdData?.totalRecords,
+          "Total Records": gsdData?.list?.length,
           "Total Allocation": count?.total_allocation,
           "Total Monitoring": count?.todaysmonitaring,
           "Total Pending Monitoring": count?.totalPendingMonitoring,
         }}
         pagination={true}
-        // onPageChange={(page, size) => {
-        //   const obj = {
-        //     page: page,
-        //     size: size,
-        //   };
-        //   getUsers(obj);
-        // }}
       />
     </div>
   );

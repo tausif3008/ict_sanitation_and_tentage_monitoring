@@ -43,8 +43,6 @@ const SectorTypeReport = () => {
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const valuesArray = Object.values(totalCount);
 
-  console.log("formValue", formValue);
-
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
     AssetMainTypeDrop,
