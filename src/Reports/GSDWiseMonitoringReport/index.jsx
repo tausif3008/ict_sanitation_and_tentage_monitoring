@@ -4,11 +4,7 @@ import { Collapse, Form, Button, Row, Col } from "antd";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import {
-  getValueLabel,
-  globalDateFormat,
-  gsdWiseMonitoringcolumns,
-} from "../../constant/const";
+import { getValueLabel, globalDateFormat } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getFormData } from "../../urils/getFormData";
@@ -141,6 +137,90 @@ const GsdWiseMonitoringReport = () => {
     }
   }, [GSDMonitoring_data]);
 
+  const columns = useMemo(
+    () => [
+      {
+        title: "GSD Name",
+        dataIndex: "name",
+        key: "name",
+        width: 100,
+        sorter: (a, b) => {
+          const nameA = a?.name ? a?.name?.toString() : "";
+          const nameB = b?.name ? b?.name?.toString() : "";
+          return nameA?.localeCompare(nameB);
+        },
+      },
+      {
+        title: "Mobile Number",
+        dataIndex: "phone",
+        key: "phone",
+        width: 100,
+      },
+      {
+        title: "Sector Name",
+        dataIndex: "workedsectors",
+        key: "workedsectors",
+        width: 100,
+        render: (text, record) => {
+          if (Array.isArray(text) && text?.length > 0) {
+            return text
+              ?.map((value) => {
+                return getValueLabel(`${value}`, SectorListDrop, "-");
+              })
+              .join(", ");
+          } else {
+            return "-";
+          }
+        },
+      },
+      {
+        title: "Total Allocation",
+        dataIndex: "total_allocation",
+        key: "total_allocation",
+        width: 50,
+        sorter: (a, b) => a?.total_allocation - b?.total_allocation,
+      },
+      {
+        title: "Monitoring",
+        dataIndex: "todaysmonitaring",
+        key: "todaysmonitaring",
+        width: 50,
+        sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
+      },
+      {
+        title: "Monitoring %",
+        dataIndex: "performance",
+        key: "performance",
+        width: 50,
+        sorter: (a, b) => a?.performance - b?.performance,
+        render: (text, record) => {
+          return text ? `${Math.round(text)} %` : "0%";
+        },
+      },
+      {
+        title: "Pending Monitoring",
+        dataIndex: "todaysmonitarings",
+        key: "todaysmonitarings",
+        width: 50,
+        sorter: (a, b) => {
+          const aPendingMonitoring =
+            (Number(a?.total_allocation) || 0) -
+            (Number(a?.todaysmonitaring) || 0);
+          const bPendingMonitoring =
+            (Number(b?.total_allocation) || 0) -
+            (Number(b?.todaysmonitaring) || 0);
+          return aPendingMonitoring - bPendingMonitoring;
+        },
+        render: (text, record) => {
+          return (
+            (Number(record?.total_allocation) || 0) -
+            (Number(record?.todaysmonitaring) || 0)
+          );
+        },
+      },
+    ],
+    [SectorListDrop]
+  );
   // pdf header
   const pdfHeader = [
     "Sr No",
@@ -179,121 +259,115 @@ const GsdWiseMonitoringReport = () => {
     <div>
       <CommonDivider label={"GSD Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <ExportToPDF
-            titleName={pdfNames}
-            pdfName={pdfNames}
-            headerData={pdfHeader}
-            IsLastLineBold={true}
-            IsNoBold={true}
-            // applyTableStyles={true}
-            rows={[
-              ...pdfData,
-              [
-                "",
-                "Total",
-                "",
-                count?.total_allocation,
-                count?.todaysmonitaring,
-                count?.totalPendingMonitoring,
-              ],
-            ]}
-          />
-        </div>
-        <div>
-          <ExportToExcel
-            excelData={excelData || []}
-            titleName={pdfNames}
-            fileName={pdfNames}
-            dynamicArray={[
-              {
-                name: "Total Allocation",
-                value: count?.total_allocation,
-                colIndex: 4,
-              },
-              {
-                name: "Monitoring",
-                value: count?.todaysmonitaring,
-                colIndex: 5,
-              },
-              {
-                name: "Pending Monitoring",
-                value: count?.totalPendingMonitoring,
-                colIndex: 6,
-              },
-            ]}
-          />
-        </div>
-      </div>
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
+        <ExportToPDF
+          titleName={pdfNames}
+          pdfName={pdfNames}
+          headerData={pdfHeader}
+          IsLastLineBold={true}
+          IsNoBold={true}
+          // applyTableStyles={true}
+          rows={[
+            ...pdfData,
+            [
+              "",
+              "Total",
+              "",
+              count?.total_allocation,
+              count?.todaysmonitaring,
+              count?.totalPendingMonitoring,
+            ],
+          ]}
+        />
+        <ExportToExcel
+          excelData={excelData || []}
+          titleName={pdfNames}
+          fileName={pdfNames}
+          dynamicArray={[
             {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 16]} align="middle">
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"sector_id"}
-                        label={"Select Sector"}
-                        placeholder={"Select Sector"}
-                        options={SectorListDrop || []}
-                      />
-                    </Col>
-                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={gsd_monitoringLoader}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={gsd_monitoringLoader}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
-                    </div>
-                  </Row>
-                </Form>
-              ),
+              name: "Total Allocation",
+              value: count?.total_allocation,
+              colIndex: 4,
+            },
+            {
+              name: "Monitoring",
+              value: count?.todaysmonitaring,
+              colIndex: 5,
+            },
+            {
+              name: "Pending Monitoring",
+              value: count?.totalPendingMonitoring,
+              colIndex: 6,
             },
           ]}
         />
       </div>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"sector_id"}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={SectorListDrop || []}
+                    />
+                  </Col>
+                  <Col key="date" xs={24} sm={12} md={6} lg={5}>
+                    <CustomDatepicker
+                      name={"date"}
+                      label={"Date"}
+                      className="w-full"
+                      placeholder={"Date"}
+                    />
+                  </Col>
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={gsd_monitoringLoader}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        loading={gsd_monitoringLoader}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
       <CustomTable
         loading={gsd_monitoringLoader}
-        columns={gsdWiseMonitoringcolumns || []}
+        columns={columns || []}
         bordered
         dataSource={gsdData || []}
         scroll={{ x: 800, y: 400 }}

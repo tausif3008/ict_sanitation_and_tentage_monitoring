@@ -418,59 +418,6 @@ export const vendorColumn = [
   },
 ];
 
-export const gsdWiseMonitoringcolumns = [
-  {
-    title: "GSD Name",
-    dataIndex: "name",
-    key: "name",
-    width: 100,
-    sorter: (a, b) => {
-      const nameA = a?.name ? a?.name?.toString() : "";
-      const nameB = b?.name ? b?.name?.toString() : "";
-      return nameA?.localeCompare(nameB);
-    },
-  },
-  {
-    title: "Mobile Number",
-    dataIndex: "phone",
-    key: "phone",
-    width: 100,
-  },
-  {
-    title: "Total Allocation",
-    dataIndex: "total_allocation",
-    key: "total_allocation",
-    width: 50,
-    sorter: (a, b) => a?.total_allocation - b?.total_allocation,
-  },
-  {
-    title: "Monitoring",
-    dataIndex: "todaysmonitaring",
-    key: "todaysmonitaring",
-    width: 50,
-    sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
-  },
-  {
-    title: "Pending Monitoring",
-    dataIndex: "todaysmonitarings",
-    key: "todaysmonitarings",
-    width: 50,
-    sorter: (a, b) => {
-      const aPendingMonitoring =
-        (Number(a?.total_allocation) || 0) - (Number(a?.todaysmonitaring) || 0);
-      const bPendingMonitoring =
-        (Number(b?.total_allocation) || 0) - (Number(b?.todaysmonitaring) || 0);
-      return aPendingMonitoring - bPendingMonitoring;
-    },
-    render: (text, record) => {
-      return (
-        (Number(record?.total_allocation) || 0) -
-        (Number(record?.todaysmonitaring) || 0)
-      );
-    },
-  },
-];
-
 const nameColumn = [
   {
     title: "Name",
