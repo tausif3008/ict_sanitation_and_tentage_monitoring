@@ -127,6 +127,11 @@ const GsdWiseMonitoringReport = () => {
         const filteredData = myData?.gsd?.filter((circle) => {
           if (Number(selectedPercentage) === 0) {
             return Number(circle?.performance) === Number(selectedPercentage);
+          } else if (
+            Number(selectedPercentage) === 89 ||
+            Number(selectedPercentage) === 79
+          ) {
+            return Number(circle?.performance) <= Number(selectedPercentage);
           } else {
             return Number(circle?.performance) >= Number(selectedPercentage);
           }

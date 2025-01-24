@@ -138,7 +138,9 @@ export const vehicleType = [
 export const percentageOptions = [
   { value: "100", label: "100%" },
   { value: "90", label: "90% and above" },
+  { value: "89", label: "below 90%" },
   { value: "80", label: "80% and above" },
+  { value: "79", label: "below 80%" },
   { value: "0", label: "0%" },
 ];
 
