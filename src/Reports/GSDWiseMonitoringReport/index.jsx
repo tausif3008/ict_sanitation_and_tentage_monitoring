@@ -43,7 +43,7 @@ const GsdWiseMonitoringReport = () => {
 
   const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   const percentageName = getValueLabel(
-    formValue?.percentage,
+    `${formValue?.percentage}`,
     percentageOptions,
     null
   );
@@ -74,7 +74,7 @@ const GsdWiseMonitoringReport = () => {
     ...(formValue?.percentage
       ? [
           {
-            label: `Percentage :  ${percentageName || "Combined"}`,
+            label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
           },
         ]
       : []),
