@@ -599,15 +599,15 @@ const VendorReports = () => {
 
   return (
     <div>
-      <CommonDivider label={"Vendor-Wise Report"} />
+      <CommonDivider label={"Vendor-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <div>
           <ExportToPDF
-            titleName={`Vendor-Wise Report (${dayjs(formValue?.date).format(
-              "DD-MMM-YYYY"
-            )})`}
-            // titleName={filesName ? filesName : `Vendor-Wise Report`}
-            pdfName={filesName ? filesName : `Vendor-Wise Report`}
+            titleName={`Vendor-Wise Monitoring Report (${dayjs(
+              formValue?.date
+            ).format("DD-MMM-YYYY")})`}
+            // titleName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
+            pdfName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
             headerData={pdfHeader}
             IsLastLineBold={true}
             landscape={true}
@@ -658,7 +658,7 @@ const VendorReports = () => {
                 ? [12]
                 : []
             }
-            fileName={filesName ? filesName : `Vendor-Wise Report`}
+            fileName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
             dynamicArray={[
               {
                 name: "Total",

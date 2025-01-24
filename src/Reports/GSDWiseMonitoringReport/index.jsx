@@ -63,11 +63,9 @@ const GsdWiseMonitoringReport = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, globalDateFormat),
-      sector_id: "1",
     });
     const finalValues = {
       date: newDate,
-      sector_id: "1",
     };
     callApi(finalValues);
   };

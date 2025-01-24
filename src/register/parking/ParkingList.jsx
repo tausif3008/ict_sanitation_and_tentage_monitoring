@@ -1,19 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import { Table, Input, Button } from "antd";
+import { Input, Button } from "antd";
 import CommonDivider from "../../commonComponents/CommonDivider"; // Adjust path as necessary
 import { getParkingData } from "./parkingSlice";
 import URLS from "../../urils/URLS";
 import ParkingSelector from "./parkingSelector";
+import CustomTable from "../../commonComponents/CustomTable";
 
 const { Search } = Input; // Import Search component from antd
 
 const ParkingList = () => {
   const [searchText, setSearchText] = useState(""); // State for search input
+  const [details, setDetails] = useState({
+    list: [],
+    pageLength: 25,
+    currentPage: 1,
+  });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { parkingData } = ParkingSelector(); // parking data
+  const { parkingData, loading } = ParkingSelector(); // parking data
 
   useEffect(() => {
     const url = URLS?.parking?.path;
@@ -34,12 +41,21 @@ const ParkingList = () => {
   const filteredParkings = parkingData?.data?.parkings?.filter((parking) =>
     parking?.name?.toLowerCase().includes(searchText.toLowerCase())
   );
-
-  const footer = () => (
-    <div className="flex justify-between p-2 px-4">
-      <strong>Total Parking Count: {filteredParkings?.length}</strong>
-    </div>
-  );
+  useEffect(() => {
+    if (filteredParkings) {
+      setDetails(() => {
+        return {
+          list: filteredParkings,
+        };
+      });
+    } else {
+      setDetails({
+        list: [],
+        pageLength: 25,
+        currentPage: 1,
+      });
+    }
+  }, [filteredParkings]);
 
   return (
     <div>
@@ -66,13 +82,16 @@ const ParkingList = () => {
         enterButton
         className="mb-4"
       />
-      <Table
-        columns={columns}
-        dataSource={filteredParkings} // Use filtered parkings for display
-        rowKey="parking_id"
-        pagination={{ pageSize: 10 }}
+      <CustomTable
+        loading={loading}
+        columns={columns || []}
         bordered
-        footer={footer}
+        dataSource={details || []}
+        scroll={{ x: 1000, y: 400 }}
+        pagination={true}
+        tableSubheading={{
+          "Total Records": details?.list?.length,
+        }}
       />
     </div>
   );

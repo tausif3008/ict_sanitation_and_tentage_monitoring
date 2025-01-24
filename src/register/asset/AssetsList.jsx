@@ -252,12 +252,6 @@ const AssetsList = () => {
   };
 
   const columns = [
-    // {
-    //   title: "Sr.No",
-    //   dataIndex: "sr",
-    //   key: "sr",
-    //   width: 55,
-    // },
     {
       title: "Category",
       dataIndex: "asset_main_type_name",
@@ -268,13 +262,13 @@ const AssetsList = () => {
       title: "Type",
       dataIndex: "asset_type_name",
       key: "asset_type_name",
-      width: 200,
+      width: 150,
     },
     {
       title: "Vendor Name",
       dataIndex: "vendor_name",
       key: "vendor_name",
-      width: 200,
+      width: 140,
     },
     {
       title: "GSD Name",
@@ -283,7 +277,7 @@ const AssetsList = () => {
       render: (text) => {
         return text ? text : "GSD";
       },
-      width: 140,
+      width: 120,
     },
     ...(categoryId === "2"
       ? [
@@ -301,22 +295,16 @@ const AssetsList = () => {
             dataIndex: "sector_name",
             key: "sector_name",
             render: (text) => text || "",
-            width: 140,
+            width: 80,
           },
           {
             title: "Parking Name",
             dataIndex: "parking_name",
             key: "parking_name",
             render: (text) => text || "",
-            width: 140,
+            width: 120,
           },
         ]),
-    // {
-    //   title: "Circle",
-    //   dataIndex: "circle",
-    //   key: "circle",
-    //   width: 100,
-    // },
     {
       title: "Photo",
       width: 100,
@@ -333,11 +321,6 @@ const AssetsList = () => {
         ),
       key: "photo",
     },
-    // {
-    //   title: "Vendor Item Code",
-    //   dataIndex: "vendor_asset_code",
-    //   key: "vendor_asset_code",
-    // },
     {
       title: "Code",
       dataIndex: "code",
@@ -350,7 +333,7 @@ const AssetsList = () => {
           />
         );
       },
-      width: 100,
+      width: 80,
     },
     {
       title: "Location",
@@ -366,19 +349,6 @@ const AssetsList = () => {
       },
       width: 100,
     },
-    // {
-    //   title: "QR Code",
-    //   width: 100,
-    //   render: (text, record) => (
-    //     <Image
-    //       src={ImageUrl + record.qr_code}
-    //       width={60}
-    //       height={60}
-    //       alt={record.qr_code}
-    //     ></Image>
-    //   ),
-    //   key: "qrCode",
-    // },
     {
       title: "Register At",
       dataIndex: "tagged_at",
@@ -386,7 +356,7 @@ const AssetsList = () => {
       render: (text, record) => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
-      width: 140,
+      width: 100,
     },
     ...(asset_delete_permisssion?.includes(userRoleId)
       ? [
@@ -395,7 +365,7 @@ const AssetsList = () => {
             dataIndex: "action",
             key: "action",
             fixed: "right",
-            width: 130,
+            width: 105,
             render: (text, record) => (
               <>
                 <div className="flex justify-between">
@@ -572,209 +542,203 @@ const AssetsList = () => {
     <div className="">
       <CommonDivider label={"Toilets & Tentage List"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(false);
-            }}
-          >
-            Download Pdf
-          </Button>
-        </div>
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(true);
-            }}
-          >
-            Download Excel
-          </Button>
-        </div>
+        <Button
+          type="primary"
+          onClick={() => {
+            exportToFile(false);
+          }}
+        >
+          Download Pdf
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            exportToFile(true);
+          }}
+        >
+          Download Excel
+        </Button>
       </div>
 
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
-            {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 0]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        allowClear={false}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop.slice(0, 2) || []}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={AssetTypeDrop || []}
-                      />
-                    </Col>
-                    <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"created_by"}
-                        label={"Select GSD"}
-                        placeholder={"Select GSD"}
-                        options={monitoringAgentDrop || []}
-                        // search dropdown
-                        isOnSearchFind={true}
-                        apiAction={getMonitoringAgent}
-                        onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                      />
-                    </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorListDrop || []}
-                      />
-                    </Col>
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"sector_id"}
-                        label={"Select Sector"}
-                        placeholder={"Select Sector"}
-                        options={SectorListDrop || []}
-                      />
-                    </Col>
-                    <Col key="parking_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"parking_id"}
-                        label={"Select Parking"}
-                        placeholder={"Select Parking"}
-                        options={parkingDrop || []}
-                      />
-                    </Col>
-                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name={"code"}
-                        label={"Code"}
-                        placeholder={"Code"}
-                      />
-                    </Col>
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"date_format"}
-                        label={"Select Date Type"}
-                        placeholder={"Select Date Type"}
-                        onSelect={handleDateSelect}
-                        options={dateWeekOptions || []}
-                      />
-                    </Col>
-                    {showDateRange && (
-                      <>
-                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"form_date"}
-                            label={"From Date"}
-                            className="w-full"
-                            placeholder={"From Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a start date!",
-                              },
-                            ]}
-                            onChange={(date) => {
-                              const dayjsObjectFrom = dayjs(date?.$d);
-                              const startDate = dayjsObjectFrom;
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 0]} align="middle">
+                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_main_type_id"}
+                      label={"Select Category"}
+                      allowClear={false}
+                      placeholder={"Select Category"}
+                      onSelect={handleSelect}
+                      options={AssetMainTypeDrop.slice(0, 2) || []}
+                    />
+                  </Col>
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Type"}
+                      placeholder={"Select Type"}
+                      options={AssetTypeDrop || []}
+                    />
+                  </Col>
+                  <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"created_by"}
+                      label={"Select GSD"}
+                      placeholder={"Select GSD"}
+                      options={monitoringAgentDrop || []}
+                      // search dropdown
+                      isOnSearchFind={true}
+                      apiAction={getMonitoringAgent}
+                      onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
+                    />
+                  </Col>
+                  <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"vendor_id"}
+                      label={"Select Vendor"}
+                      placeholder={"Select Vendor"}
+                      options={VendorListDrop || []}
+                    />
+                  </Col>
+                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"sector_id"}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={SectorListDrop || []}
+                    />
+                  </Col>
+                  <Col key="parking_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"parking_id"}
+                      label={"Select Parking"}
+                      placeholder={"Select Parking"}
+                      options={parkingDrop || []}
+                    />
+                  </Col>
+                  <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                    <CustomInput
+                      name={"code"}
+                      label={"Code"}
+                      placeholder={"Code"}
+                    />
+                  </Col>
+                  <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"date_format"}
+                      label={"Select Date Type"}
+                      placeholder={"Select Date Type"}
+                      onSelect={handleDateSelect}
+                      options={dateWeekOptions || []}
+                    />
+                  </Col>
+                  {showDateRange && (
+                    <>
+                      <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"form_date"}
+                          label={"From Date"}
+                          className="w-full"
+                          placeholder={"From Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a start date!",
+                            },
+                          ]}
+                          onChange={(date) => {
+                            const dayjsObjectFrom = dayjs(date?.$d);
+                            const startDate = dayjsObjectFrom;
 
-                              const dayjsObjectTo = dayjs(
-                                form.getFieldValue("to_date")?.$d
-                              );
-                              const endDate = dayjsObjectTo;
+                            const dayjsObjectTo = dayjs(
+                              form.getFieldValue("to_date")?.$d
+                            );
+                            const endDate = dayjsObjectTo;
 
-                              // Condition 1: If startDate is after endDate, set end_time to null
-                              if (startDate.isAfter(endDate)) {
-                                form.setFieldValue("to_date", null);
-                              }
+                            // Condition 1: If startDate is after endDate, set end_time to null
+                            if (startDate.isAfter(endDate)) {
+                              form.setFieldValue("to_date", null);
+                            }
 
-                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                              const daysDifference = endDate.diff(
-                                startDate,
-                                "days"
-                              );
-                              if (daysDifference > 7) {
-                                form.setFieldValue("to_date", null);
-                              } else {
-                                // If the difference is within the allowed range, you can keep the value or process further if needed.
-                              }
+                            // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                            const daysDifference = endDate.diff(
+                              startDate,
+                              "days"
+                            );
+                            if (daysDifference > 7) {
+                              form.setFieldValue("to_date", null);
+                            } else {
+                              // If the difference is within the allowed range, you can keep the value or process further if needed.
+                            }
 
-                              setStartDate(startDate.format("YYYY-MM-DD"));
-                            }}
-                          />
-                        </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"to_date"}
-                            label={"To Date"}
-                            className="w-full"
-                            placeholder={"To Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a end date!",
-                              },
-                            ]}
-                            disabledDate={disabledDate}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
+                            setStartDate(startDate.format("YYYY-MM-DD"));
+                          }}
+                        />
+                      </Col>
+                      <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"to_date"}
+                          label={"To Date"}
+                          className="w-full"
+                          placeholder={"To Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a end date!",
+                            },
+                          ]}
+                          disabledDate={disabledDate}
+                        />
+                      </Col>
+                    </>
+                  )}
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
                     </div>
-                  </Row>
-                </Form>
-              ),
-            },
-          ]}
-        />
-        {contextHolder}
-      </div>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
+      {contextHolder}
 
       <CommonTable
         columns={columns}

@@ -18,6 +18,7 @@ const ExportToPDF = ({
   columnProperties = [],
   redToGreenProperties = [], // 100 to 0
   tableTitles = [],
+  columnPercentages = [], // column percentage
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
@@ -116,6 +117,10 @@ const ExportToPDF = ({
       cellPadding: 2,
       margin: { left: 10, right: 20 },
     };
+    const availableWidth = pageWidth - 20; // Reserve 20 units for padding (adjust as needed)
+    const columnWidths = columnPercentages?.map(
+      (percentage) => (availableWidth * percentage) / 100
+    );
 
     // Table header and content
     doc.autoTable({
@@ -123,6 +128,10 @@ const ExportToPDF = ({
       body: rows,
       styles: applyTableStyles ? tableStyles : null,
       startY: doc.y,
+      columnStyles: headerData?.reduce((styles, header, index) => {
+        styles[index] = { cellWidth: columnWidths[index] }; // Assign width based on calculated value
+        return styles;
+      }, {}),
       didDrawPage: function (data) {
         doc.y = data.cursor.y;
       },

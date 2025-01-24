@@ -485,7 +485,7 @@ const Navbar = ({ lang, setLang }) => {
         key: "3",
         label: (
           <Link className="text-black no-underline" to="/sector-wise-report">
-            Sector Wise Report
+            Sector Wise Monitoring Report
           </Link>
         ),
       },
@@ -501,7 +501,7 @@ const Navbar = ({ lang, setLang }) => {
         key: "5",
         label: (
           <Link className="text-black no-underline" to="/vendor-wise-report">
-            Vendor Wise Report
+            Vendor Wise Monitoring Report
           </Link>
         ),
       },
@@ -561,7 +561,7 @@ const Navbar = ({ lang, setLang }) => {
             className="text-black no-underline"
             to="/sector-type-wise-registration-report"
           >
-            Sector-Type Wise Registration Report
+            Sector & Type Wise Registration Report
           </Link>
         ),
       },

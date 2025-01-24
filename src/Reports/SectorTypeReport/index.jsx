@@ -7,15 +7,15 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import search from "../../assets/Dashboard/icon-search.png";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import { getAssetMainTypes } from "../../register/AssetType/AssetTypeSlice";
 import {
-  getAssetMainTypes,
-  getAssetTypes,
-} from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions, getValueLabel } from "../../constant/const";
+  dateWeekOptions,
+  fiveTypes,
+  getValueLabel,
+} from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getFormData } from "../../urils/getFormData";
-import ExportToExcel from "../ExportToExcel";
 import ExportToPDF from "../reportFile";
 import SectorReportSelectors from "../SectorSlice/sectorSelector";
 import { getSectorTypeRegData } from "../SectorSlice/sectorSlice";
@@ -37,20 +37,17 @@ const SectorTypeReport = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
+  const { AssetMainTypeDrop } = AssetTypeSelectors(); // asset main type
   const { SectorReport_Loading, SectorTypeRegReport_data } =
     SectorReportSelectors(); // Sector-type Wise Report data
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const valuesArray = Object.values(totalCount);
 
+  console.log("formValue", formValue);
+
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
     AssetMainTypeDrop,
-    null
-  );
-  const assetTypeName = getValueLabel(
-    formValue?.asset_type_id,
-    AssetTypeDrop,
     null
   );
   const vendorName = getValueLabel(
@@ -70,15 +67,15 @@ const SectorTypeReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "Sector-Type";
+    let name = "Sector & Type";
     if (vendorName) {
-      name = `${vendorName} Sector-Type`;
+      name = `${vendorName} Sector & Type`;
     }
     if (catTypeName) {
       name += `- ${catTypeName}`;
     }
-    if (assetTypeName) {
-      name += `- ${assetTypeName}`;
+    if (formValue?.asset_type_ids) {
+      name += `- Asset Type 1 to 5`;
     }
     name += ` - ${fileDateName} `;
     name += `Report`;
@@ -96,10 +93,10 @@ const SectorTypeReport = () => {
     {
       label: `Category : ${catTypeName || "Combined"}`,
     },
-    ...(formValue?.asset_type_id
+    ...(formValue?.asset_type_ids
       ? [
           {
-            label: `Type : ${assetTypeName || "Combined"}`,
+            label: `Asset Type :  Asset Type 1 to 5`,
           },
         ]
       : []),
@@ -115,6 +112,7 @@ const SectorTypeReport = () => {
       ...(values?.date_format && { date_format: values?.date_format }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
     };
 
     if (values?.date_format === "Today") {
@@ -150,8 +148,8 @@ const SectorTypeReport = () => {
       asset_type_id: null,
       vendor_id: null,
     });
-    const url = URLS?.assetType?.path + value;
-    dispatch(getAssetTypes(url)); // get assset type
+    // const url = URLS?.assetType?.path + value;
+    // dispatch(getAssetTypes(url)); // get assset type
     if (value) {
       const paramData = {
         asset_main_type_id: value,
@@ -160,18 +158,18 @@ const SectorTypeReport = () => {
     }
   };
 
-  const handleTypeSelect = (value) => {
-    form.setFieldsValue({
-      vendor_id: null,
-    });
-    if (value) {
-      const paramData = {
-        asset_main_type_id: formValue?.asset_main_type_id,
-        asset_type_id: value,
-      };
-      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
-    }
-  };
+  // const handleTypeSelect = (value) => {
+  //   form.setFieldsValue({
+  //     vendor_id: null,
+  //   });
+  //   if (value) {
+  //     const paramData = {
+  //       asset_main_type_id: formValue?.asset_main_type_id,
+  //       asset_type_id: value,
+  //     };
+  //     dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+  //   }
+  // };
 
   // handle date select
   const handleDateSelect = (value) => {
@@ -293,6 +291,7 @@ const SectorTypeReport = () => {
   const pdfHeader = useMemo(() => {
     return memoizedColumns?.map((data, index) => data?.title);
   }, [memoizedColumns]);
+
   const pdfData = useMemo(() => {
     return vendorData?.list?.map((item, index) => {
       const row = [index + 1, item?.sector_name]; // Start with the row number (index + 1)
@@ -305,18 +304,22 @@ const SectorTypeReport = () => {
       return row;
     });
   }, [vendorData]);
+  const columnPercentages = [5, 10];
 
   return (
     <div>
-      <CommonDivider label={"Sector-Type Registration Report"} />
+      <CommonDivider label={"Sector & Type Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
-          titleName={`Sector-Type Registration Report (${fileDateName})`}
-          pdfName={fileName ? fileName : "Sector-Type Registration Report"}
+          titleName={`Sector & Type Wise Registration Report (${fileDateName})`}
+          pdfName={
+            fileName ? fileName : "Sector & Type Wise Registration Report"
+          }
           tableTitles={pdfTitleParam || []}
           headerData={["Sr no", ...pdfHeader] || []}
           landscape={true}
           IsLastLineBold={true}
+          columnPercentages={columnPercentages}
           rows={[
             ...pdfData,
             ["Total", vendorData?.list?.length, ...valuesArray],
@@ -324,7 +327,7 @@ const SectorTypeReport = () => {
         />
         {/* <ExportToExcel
           excelData={excelData || []}
-          fileName={fileName ? fileName : "Sector-Type Registration Report"}
+          fileName={fileName ? fileName : "Sector & Type Wise Registration Report"}
           dynamicArray={[
             {
               name: "Total",
@@ -364,7 +367,7 @@ const SectorTypeReport = () => {
                       allowClear={false}
                     />
                   </Col>
-                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                  {/* <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"asset_type_id"}
                       label={"Select Type"}
@@ -372,7 +375,7 @@ const SectorTypeReport = () => {
                       options={AssetTypeDrop || []}
                       onSelect={handleTypeSelect}
                     />
-                  </Col>
+                  </Col> */}
                   <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"vendor_id"}
@@ -381,6 +384,16 @@ const SectorTypeReport = () => {
                       options={VendorCatTypeDrop || []}
                     />
                   </Col>
+                  {formValue?.asset_main_type_id === "1" && (
+                    <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_ids"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={fiveTypes || []}
+                      />
+                    </Col>
+                  )}
                   <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"date_format"}

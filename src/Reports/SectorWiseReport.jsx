@@ -584,110 +584,102 @@ const SectorWiseReport = () => {
 
   return (
     <div>
-      <CommonDivider label={"Sector-Wise Report"} />
+      <CommonDivider label={"Sector-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
-        <div>
-          <ExportToPDF
-            // titleName={filesName ? filesName : `Sector-Wise Report`}
-            titleName={`Sector-Wise Report (${dayjs(formValue?.date).format(
-              "DD-MMM-YYYY"
-            )})`}
-            pdfName={filesName ? filesName : `Sector-Wise Report`}
-            headerData={pdfHeader}
-            IsLastLineBold={true}
-            landscape={true}
-            tableTitles={pdfTitleParam || []}
-            columnProperties={
-              formValue?.order_by === "monitaring_per" ? [5] : []
-            } // 6 columns
-            redToGreenProperties={
-              formValue?.order_by === "not_compliant_per"
-                ? [9]
-                : formValue?.order_by === "toiletunclean_per"
-                ? [11]
-                : []
-            } // 10, 12 columns  100 to 0
-            rows={[
-              ...pdfData,
-              [
-                "",
-                "Total",
-                totalQuantity?.totalQnty,
-                totalQuantity?.registered,
-                totalQuantity?.monitoring,
-                "",
-                totalQuantity?.partially_compliant,
-                // "",
-                totalQuantity?.compliant,
-                // "",
-                totalQuantity?.not_compliant,
-                "",
-                totalQuantity?.toiletunclean,
-                "",
-                totalQuantity?.toiletclean,
-                // "",
-              ],
-            ]}
-          />
-        </div>
-        <div>
-          <ExportToExcel
-            excelData={myexcelData || []}
-            columnProperties={
-              formValue?.order_by === "monitaring_per" ? [6] : []
-            } // 6 columns
-            redToGreenProperties={
-              formValue?.order_by === "not_compliant_per"
-                ? [10]
-                : formValue?.order_by === "toiletunclean_per"
-                ? [12]
-                : []
-            }
-            fileName={filesName ? filesName : `Vendor-Wise Report`}
-            dynamicArray={[
-              {
-                name: "Total",
-                value: totalQuantity?.totalQnty,
-                colIndex: 3,
-              },
-              {
-                name: "Register Unit",
-                value: totalQuantity?.registered,
-                colIndex: 4,
-              },
-              {
-                name: "Monitoring",
-                value: totalQuantity?.monitoring,
-                colIndex: 5,
-              },
-              {
-                name: "Partialy Compliant",
-                value: totalQuantity?.partially_compliant,
-                colIndex: 7,
-              },
-              {
-                name: "Compliant",
-                value: totalQuantity?.compliant,
-                colIndex: 8,
-              },
-              {
-                name: "Not Compliant",
-                value: totalQuantity?.not_compliant,
-                colIndex: 9,
-              },
-              {
-                name: "Unclean",
-                value: totalQuantity?.toiletunclean,
-                colIndex: 11,
-              },
-              {
-                name: "Clean",
-                value: totalQuantity?.toiletclean,
-                colIndex: 13,
-              },
-            ]}
-          />
-        </div>
+        <ExportToPDF
+          // titleName={filesName ? filesName : `Sector-Wise Monitoring Report`}
+          titleName={`Sector-Wise Monitoring Report (${dayjs(
+            formValue?.date
+          ).format("DD-MMM-YYYY")})`}
+          pdfName={filesName ? filesName : `Sector-Wise Monitoring Report`}
+          headerData={pdfHeader}
+          IsLastLineBold={true}
+          landscape={true}
+          tableTitles={pdfTitleParam || []}
+          columnProperties={formValue?.order_by === "monitaring_per" ? [5] : []} // 6 columns
+          redToGreenProperties={
+            formValue?.order_by === "not_compliant_per"
+              ? [9]
+              : formValue?.order_by === "toiletunclean_per"
+              ? [11]
+              : []
+          } // 10, 12 columns  100 to 0
+          rows={[
+            ...pdfData,
+            [
+              "",
+              "Total",
+              totalQuantity?.totalQnty,
+              totalQuantity?.registered,
+              totalQuantity?.monitoring,
+              "",
+              totalQuantity?.partially_compliant,
+              // "",
+              totalQuantity?.compliant,
+              // "",
+              totalQuantity?.not_compliant,
+              "",
+              totalQuantity?.toiletunclean,
+              "",
+              totalQuantity?.toiletclean,
+              // "",
+            ],
+          ]}
+        />
+        <ExportToExcel
+          excelData={myexcelData || []}
+          columnProperties={formValue?.order_by === "monitaring_per" ? [6] : []} // 6 columns
+          redToGreenProperties={
+            formValue?.order_by === "not_compliant_per"
+              ? [10]
+              : formValue?.order_by === "toiletunclean_per"
+              ? [12]
+              : []
+          }
+          fileName={filesName ? filesName : `Vendor-Wise Report`}
+          dynamicArray={[
+            {
+              name: "Total",
+              value: totalQuantity?.totalQnty,
+              colIndex: 3,
+            },
+            {
+              name: "Register Unit",
+              value: totalQuantity?.registered,
+              colIndex: 4,
+            },
+            {
+              name: "Monitoring",
+              value: totalQuantity?.monitoring,
+              colIndex: 5,
+            },
+            {
+              name: "Partialy Compliant",
+              value: totalQuantity?.partially_compliant,
+              colIndex: 7,
+            },
+            {
+              name: "Compliant",
+              value: totalQuantity?.compliant,
+              colIndex: 8,
+            },
+            {
+              name: "Not Compliant",
+              value: totalQuantity?.not_compliant,
+              colIndex: 9,
+            },
+            {
+              name: "Unclean",
+              value: totalQuantity?.toiletunclean,
+              colIndex: 11,
+            },
+            {
+              name: "Clean",
+              value: totalQuantity?.toiletclean,
+              colIndex: 13,
+            },
+          ]}
+        />
       </div>
 
       <div>
