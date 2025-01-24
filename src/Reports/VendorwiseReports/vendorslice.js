@@ -22,6 +22,9 @@ export const vendorWiseSlice = createSlice({
     postDrop: (state, action) => {
       state.vendor_data = action.payload;
     },
+    postAllocateSector: (state, action) => {
+      state.allocateSector = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
@@ -61,5 +64,21 @@ export const getVendorCategoryTypeDrop = (param) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postDrop } = vendorWiseSlice.actions;
+// get allocate sectors
+export const getAllocateSectorsData = (param) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.get(`${URLS.getAllocate_Sector.path}`, {
+      params: param,
+    });
+    dispatch(postAllocateSector(res?.data));
+  } catch (error) {
+    console.error("In get allocate sectors error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess, postDrop, postAllocateSector } =
+  vendorWiseSlice.actions;
 export default vendorWiseSlice.reducer;

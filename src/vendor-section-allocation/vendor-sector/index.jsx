@@ -1,24 +1,29 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router";
-import { Button, Form, Input, message, Modal } from "antd";
+import React, { useEffect, useMemo, useState } from "react";
+import { Button, Collapse, Form, Input, message, Modal } from "antd";
+import { useNavigate } from "react-router";
+import { useDispatch } from "react-redux";
 import { DeleteOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import CommonTable from "../../commonComponents/CommonTable";
 import URLS from "../../urils/URLS";
-import { getData } from "../../Fetch/Axios";
-import { useDispatch } from "react-redux";
-import { deleteSupervisorSectorAllocation } from "./Slice/vendorSectorSlice";
+import {
+  deleteSupervisorSectorAllocation,
+  getSectorsList,
+} from "./Slice/vendorSectorSlice";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import { getValueLabel } from "../../constant/const";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import search from "../../assets/Dashboard/icon-search.png";
+import VendorSectorSelectors from "./Slice/vendorSectorSelectors";
+import CustomInput from "../../commonComponents/CustomInput";
+import CustomTable from "../../commonComponents/CustomTable";
+import VendorSelectors from "../../Reports/VendorwiseReports/vendorSelectors";
+import { getAllocateSectorsData } from "../../Reports/VendorwiseReports/vendorslice";
 
 // sector allocation
 const VendorSectorAllocation = () => {
-  const params = useParams();
-  const [searchQuery, setSearchQuery] = useState();
   const [viewDeleteModal, setViewDeleteModal] = useState(false); // view delete model
-
-  const [loading, setLoading] = useState(false);
+  const [userType, setUserType] = useState([]);
   const [details, setDetails] = useState({
     list: [],
     pageLength: 25,
@@ -26,9 +31,28 @@ const VendorSectorAllocation = () => {
   });
 
   const [form] = Form.useForm();
+  const [formFilter] = Form.useForm();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { UserListDrop } = UserTypeSelector(); // user type list
+  const { AllocateSectorData, VendorReport_Loading } = VendorSelectors(); // allocate sector data
+  const { SectorListDrop } = VendorSectorSelectors(); // sector
+  const userTypeArray = ["13", "9", "14"]; // vendor supervisor, smo, naib tahsildar
+  // const userTypeArray = ["8", "9", "14"]; // vendor, smo, naib tahsildar
+
+  const filteredUserType = useMemo(() => {
+    return (
+      UserListDrop?.filter((data) => {
+        return userTypeArray.includes(String(data?.value));
+      }) || []
+    );
+  }, [UserListDrop]);
+
+  useEffect(() => {
+    if (JSON.stringify(filteredUserType) !== JSON.stringify(userType)) {
+      setUserType(filteredUserType);
+    }
+  }, [filteredUserType, userType]);
 
   const handleCancel = () => {
     setViewDeleteModal(false);
@@ -46,7 +70,7 @@ const VendorSectorAllocation = () => {
   };
 
   // handle delete API
-  const onFinish = async (value) => {
+  const onDeleteFinish = async (value) => {
     const url =
       URLS?.deleteAllocate_Sector?.path +
       `/${value?.user_id}/${value?.sector_id}`;
@@ -62,56 +86,54 @@ const VendorSectorAllocation = () => {
     setViewDeleteModal(false);
   };
 
-  const getUsers = async () => {
-    setLoading(true);
-
-    let uri = URLS.getAllocate_Sector.path + "?";
-    if (params.page) {
-      uri = uri + params.page;
+  // fiter finish
+  const onFinishForm = (values) => {
+    if (!values.phone && !values.sector_id && !values.user_type_id) {
+      message.success("Please select all required fields");
+      return;
     }
+    getUsers();
+  };
 
-    if (params.per_page) {
-      uri = uri + "&" + params.per_page;
-    }
+  // reset form
+  const resetForm = () => {
+    formFilter.resetFields();
+    getUsers();
+  };
 
-    if (searchQuery) {
-      uri = uri + searchQuery;
-    }
-
-    const extraHeaders = {
-      "x-api-version": URLS.getAllocate_Supervisor.version,
+  const getUsers = async (dataObj = {}) => {
+    const newParam = {
+      page: dataObj?.page || "1",
+      per_page: dataObj?.size || "25",
+      ...formFilter.getFieldsValue(),
     };
-    const res = await getData(uri, extraHeaders);
-
-    if (res) {
-      const data = res.data;
-
-      const list = data.listings.map((el, index) => {
-        return {
-          ...el,
-          sr: index + 1,
-        };
-      });
-
-      setDetails(() => {
-        return {
-          list: list,
-          pageLength: res?.data?.paging[0].length,
-          currentPage: res?.data?.paging[0].currentPage,
-          totalRecords: res?.data?.paging[0].totalrecords,
-        };
-      });
-    }
-    setLoading(false);
+    dispatch(getAllocateSectorsData(newParam));
   };
 
   useEffect(() => {
-    getUsers(); // users
-  }, [params, searchQuery]);
+    if (AllocateSectorData?.success) {
+      setDetails(() => {
+        return {
+          list: AllocateSectorData?.data?.listings,
+          pageLength: AllocateSectorData?.data?.paging[0].length,
+          currentPage: AllocateSectorData?.data?.paging[0].currentPage,
+          totalRecords: AllocateSectorData?.data?.paging[0].totalrecords,
+        };
+      });
+    } else {
+      setDetails({
+        list: [],
+        pageLength: 25,
+        currentPage: 1,
+      });
+    }
+  }, [AllocateSectorData]);
 
   useEffect(() => {
+    getUsers();
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
+    dispatch(getSectorsList()); // all sectors list
   }, []);
 
   const columns = [
@@ -203,14 +225,89 @@ const VendorSectorAllocation = () => {
             </Button>
           }
         ></CommonDivider>
-
-        <CommonTable
-          columns={columns}
-          uri={"sector-allocation"}
-          loading={loading}
-          details={details}
-          setUserDetails={setDetails}
-        ></CommonTable>
+        <Collapse
+          defaultActiveKey={["1"]}
+          size="small"
+          className="rounded-none mt-3"
+          items={[
+            {
+              key: 1,
+              label: (
+                <div className="flex items-center h-full">
+                  <img src={search} className="h-5" alt="Search Icon" />
+                </div>
+              ),
+              children: (
+                <Form
+                  form={formFilter}
+                  layout="vertical"
+                  onFinish={onFinishForm}
+                  key="form1"
+                >
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
+                    <CustomSelect
+                      name={"user_type_id"}
+                      label={"Select User Type"}
+                      placeholder="Select User Type"
+                      options={userType || []}
+                    />
+                    <CustomSelect
+                      name={"sector_id"}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={SectorListDrop || []}
+                    />
+                    <CustomInput
+                      name={"phone"}
+                      label={"Mobile No"}
+                      placeholder={"Mobile No"}
+                      maxLength={10}
+                    />
+                    <div className="flex justify-start my-4 space-x-2 ml-3">
+                      <div>
+                        <Button
+                          loading={VendorReport_Loading}
+                          type="button"
+                          htmlType="submit"
+                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                        >
+                          Search
+                        </Button>
+                      </div>
+                      <div>
+                        <Button
+                          loading={VendorReport_Loading}
+                          type="button"
+                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                          onClick={resetForm}
+                        >
+                          Reset
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </Form>
+              ),
+            },
+          ]}
+        />
+        <CustomTable
+          loading={VendorReport_Loading}
+          columns={columns || []}
+          bordered
+          dataSource={details || []}
+          scroll={{ x: 100, y: 400 }}
+          tableSubheading={{
+            "Total Records": details?.totalRecords,
+          }}
+          onPageChange={(page, size) => {
+            const obj = {
+              page: page,
+              size: size,
+            };
+            getUsers(obj);
+          }}
+        />
 
         <Modal
           title="Delete Supervisor Sector Allocation"
@@ -219,7 +316,7 @@ const VendorSectorAllocation = () => {
           footer={null}
           width={400}
         >
-          <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form form={form} layout="vertical" onFinish={onDeleteFinish}>
             <p>
               Are you sure you want to delete this Supervisor Sector Allocation
               Record?

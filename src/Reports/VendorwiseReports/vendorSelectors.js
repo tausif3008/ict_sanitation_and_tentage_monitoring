@@ -9,6 +9,9 @@ const VendorSelectors = () => {
   const VendorCatTypeData = useSelector(
     (state) => state?.vendorWiseSlice.vendor_data
   );
+  const AllocateSectorData = useSelector(
+    (state) => state?.vendorWiseSlice.allocateSector
+  );
 
   const VendorCatTypeDrop = useMemo(() => {
     return (
@@ -19,7 +22,12 @@ const VendorSelectors = () => {
     );
   }, [VendorCatTypeData]);
 
-  return { vendorReports, VendorReport_Loading, VendorCatTypeDrop };
+  return {
+    vendorReports,
+    VendorReport_Loading,
+    VendorCatTypeDrop,
+    AllocateSectorData,
+  };
 };
 
 export default VendorSelectors;

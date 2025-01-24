@@ -310,37 +310,29 @@ const SectorTypeReport = () => {
     <div>
       <CommonDivider label={"Sector-Type Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <ExportToPDF
-            titleName={`Sector-Type Registration Report (${fileDateName})`}
-            pdfName={fileName ? fileName : "Sector-Type Registration Report"}
-            tableTitles={pdfTitleParam || []}
-            headerData={["Sr no", ...pdfHeader] || []}
-            landscape={true}
-            IsLastLineBold={true}
-            rows={[
-              ...pdfData,
-              ["Total", vendorData?.list?.length, ...valuesArray],
-            ]}
-          />
-        </div>
-        <div>
-          {/* <ExportToExcel
-            excelData={excelData || []}
-            fileName={
-              fileName
-                ? `Sector-Type Registration Report ${fileName}`
-                : "Sector-Type Registration Report"
-            }
-            dynamicArray={[
-              {
-                name: "Total",
-                value: vendorData?.totalUnits,
-                colIndex: 3,
-              },
-            ]}
-          /> */}
-        </div>
+        <ExportToPDF
+          titleName={`Sector-Type Registration Report (${fileDateName})`}
+          pdfName={fileName ? fileName : "Sector-Type Registration Report"}
+          tableTitles={pdfTitleParam || []}
+          headerData={["Sr no", ...pdfHeader] || []}
+          landscape={true}
+          IsLastLineBold={true}
+          rows={[
+            ...pdfData,
+            ["Total", vendorData?.list?.length, ...valuesArray],
+          ]}
+        />
+        {/* <ExportToExcel
+          excelData={excelData || []}
+          fileName={fileName ? fileName : "Sector-Type Registration Report"}
+          dynamicArray={[
+            {
+              name: "Total",
+              value: vendorData?.totalUnits,
+              colIndex: 3,
+            },
+          ]}
+        /> */}
       </div>
       <Collapse
         defaultActiveKey={["1"]}
