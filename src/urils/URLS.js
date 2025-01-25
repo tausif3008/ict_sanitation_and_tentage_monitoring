@@ -187,6 +187,10 @@ const URLS = {
   //   path: "/allocation-asset/entry",
   //   version: 5.43,
   // },
+
+  //search
+ getSearchAllocate_Asset: { path: "/allocation/search", version: 5.43 },
+
   reAllocate_Asset: {
     path: "/allocation/re",
     version: 5.43,

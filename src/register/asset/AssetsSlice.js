@@ -34,9 +34,13 @@ export const getAssetAllocationData =
   async (dispatch) => {
     try {
       dispatch(setLoading(true));
-      const res = await axiosInstance.get(`${URLS?.getAllocate_Asset?.path}`, {
-        params: params,
-      });
+      // const res = await axiosInstance.get(`${URLS?.getAllocate_Asset?.path}`, {
+      const res = await axiosInstance.get(
+        `${URLS?.getSearchAllocate_Asset?.path}`,
+        {
+          params: params,
+        }
+      );
       dispatch(postAllocate(res?.data));
     } catch (error) {
       console.error("In get asset allocation data error", error);
