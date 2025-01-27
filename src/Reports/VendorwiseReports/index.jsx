@@ -15,8 +15,6 @@ import {
   fiveTypes,
   getValueLabel,
   OrderBy,
-  renderMonitoringSorting,
-  renderSorting,
   SectorWiseReportcolumns,
 } from "../../constant/const";
 import { getFormData } from "../../urils/getFormData";

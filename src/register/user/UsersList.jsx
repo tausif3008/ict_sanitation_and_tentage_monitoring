@@ -18,6 +18,8 @@ import search from "../../assets/Dashboard/icon-search.png";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
 import { getValueLabel } from "../../constant/const";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
 const UserList = () => {
   const [loading, setLoading] = useState(false);
@@ -41,6 +43,7 @@ const UserList = () => {
     });
   };
   const { UserListDrop } = UserTypeSelector(); // user type list
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const values = form.getFieldValue("user_type_id"); // Get all form values
   const fileName = getValueLabel(values, UserListDrop, "All User List");
 
@@ -98,6 +101,7 @@ const UserList = () => {
   useEffect(() => {
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
+    dispatch(getSectorsList()); // all sectors
   }, []);
 
   const getVal = (val) => {
@@ -109,12 +113,6 @@ const UserList = () => {
   };
 
   const columns = [
-    {
-      title: "Sr. No", // Asset main type
-      dataIndex: "sr",
-      key: "sr",
-      width: 80,
-    },
     {
       title: "User Type",
       dataIndex: "user_type",
@@ -147,6 +145,14 @@ const UserList = () => {
         } else {
           return text;
         }
+      },
+    },
+    {
+      title: "Allocate Sector",
+      dataIndex: "allocate_sector_id",
+      key: "allocate_sector_id",
+      render: (text) => {
+        return text ? getValueLabel(text, SectorListDrop, null) || "-" : "-";
       },
     },
     {
@@ -216,6 +222,7 @@ const UserList = () => {
     "Name",
     "Phone",
     "Email",
+    "Allocate Sector",
     "Address",
     "City",
     "State",
@@ -225,12 +232,13 @@ const UserList = () => {
   const columnPercentages = [
     4, // Sr No (10%)
     13, // User Type (15%)
-    15, // Name (20%)
+    14, // Name (20%)
     10, // Phone (15%)
-    20, // Email (20%)
-    20, // Address (10%)
-    9, // City (9%)
-    9, // State (5%)
+    18, // Email (20%)
+    7, // Address (10%)
+    18, // Address (10%)
+    8, // City (9%)
+    8, // State (5%)
     // 0   // Country (0%) – if unused, no space is allocated for this column
   ];
 
@@ -258,11 +266,18 @@ const UserList = () => {
             Phone: Number(data?.phone) || "",
             Email: data?.email || "",
             Address: data?.address || "",
+            "Allocate Sector":
+              Number(data?.allocate_sector_id) === 0
+                ? "-"
+                : `Sector ${data?.allocate_sector_id}` || "",
             City: data?.city_name || "",
             State: data?.state_name || "",
             Country: data?.country_name || "",
           };
         });
+
+      // Call the export function
+      isExcel && exportToExcel(myexcelData, `${fileName}`);
 
       const pdfData =
         !isExcel &&
@@ -272,14 +287,14 @@ const UserList = () => {
           data?.name || "",
           data?.phone || "",
           data?.email || "",
+          Number(data?.allocate_sector_id) === 0
+            ? "-"
+            : `Sector ${data?.allocate_sector_id}` || "",
           data?.address || "",
           data?.city_name || "",
           data?.state_name || "",
           // data?.country_name,
         ]);
-
-      // Call the export function
-      isExcel && exportToExcel(myexcelData, `${fileName}`);
 
       // Call the export function
       !isExcel &&

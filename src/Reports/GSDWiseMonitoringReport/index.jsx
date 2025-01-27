@@ -122,6 +122,7 @@ const GsdWiseMonitoringReport = () => {
   useEffect(() => {
     if (GSDMonitoring_data) {
       let myData = GSDMonitoring_data?.data;
+      console.log("myData", myData);
       const selectedPercentage = formValue?.percentage;
       if (selectedPercentage) {
         const filteredData = myData?.gsd?.filter((circle) => {

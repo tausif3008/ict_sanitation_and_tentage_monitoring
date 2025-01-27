@@ -167,30 +167,6 @@ const AssetsList = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
-
-      // const unitCount = data?.listings?.reduce((acc, listing) => {
-      //   return acc + (listing?.units?.length || 0);
-      // }, 0);
-      // setTotalUnit(unitCount);
-
-      // const myexcelData = data?.listings?.map((data, index) => {
-      //   return {
-      //     sr: index + 1,
-      //     Category: data?.asset_main_type_name,
-      //     "Toilets & Tentage Type": data?.asset_type_name,
-      //     "Vendor Name": data?.vendor_name,
-      //     "GSD Name": data?.agent_name,
-      //     Sector: data?.sector_name,
-      //     Circle: data?.circle_name,
-      //     "Vendor Item Code": data?.vendor_asset_code,
-      //     Code: Number(data?.code),
-      //     Unit: Number(data?.unit),
-      //     "Register Date": data?.tagged_at
-      //       ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
-      //       : "",
-      //   };
-      // });
-      // setExcelData(myexcelData);
     }
     setLoading(false);
   };
@@ -419,18 +395,28 @@ const AssetsList = () => {
   // excel file
   const exportToFile = async (isExcel) => {
     try {
-      const url = URLS.assetList.path + "?page=1&per_page=5000";
-      const res = await dispatch(
-        getPdfExcelData(`${url}${searchQuery ? searchQuery : ""}`)
-      );
+      const url = URLS.assetListExport.path;
+      const finalValues = {
+        ...form.getFieldsValue(),
+      };
+      if (finalValues?.form_date || finalValues?.to_date) {
+        const dayjsObjectFrom = dayjs(finalValues?.form_date?.$d);
+        const dayjsObjectTo = dayjs(finalValues?.to_date?.$d);
 
+        // Format the date as 'YYYY-MM-DD'
+        const start = dayjsObjectFrom.format("YYYY-MM-DD");
+        const end = dayjsObjectTo.format("YYYY-MM-DD");
+        finalValues.form_date = finalValues?.form_date ? start : end;
+        finalValues.to_date = finalValues?.to_date ? end : start;
+      }
+      const res = await dispatch(getPdfExcelData(url, finalValues));
       if (!res?.data?.listings) {
         throw new Error("No listings found in the response data.");
       }
 
       // Calculate total units
       const unitCount = res?.data?.listings?.reduce((total, listing) => {
-        return total + (listing?.units?.length || 0);
+        return total + Number(listing?.unit) || 0;
       }, 0);
 
       // Map data for Excel
@@ -453,8 +439,8 @@ const AssetsList = () => {
             }),
             Code: Number(data?.code),
             Unit: Number(data?.unit),
-            "Register Date": data?.tagged_at
-              ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+            "Register Date": data?.created_at
+              ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
               : "",
           };
         });
@@ -467,7 +453,7 @@ const AssetsList = () => {
           {
             name: "Total Unit",
             value: unitCount,
-            colIndex: 10,
+            colIndex: 9,
           },
         ]);
 
@@ -487,8 +473,8 @@ const AssetsList = () => {
             : []),
           Number(data?.code),
           Number(data?.unit),
-          data?.tagged_at
-            ? moment(data?.tagged_at).format("DD-MMM-YYYY hh:mm A")
+          data?.created_at
+            ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
             : "",
         ]);
 
@@ -511,10 +497,7 @@ const AssetsList = () => {
           pdfHeader,
           // pdfData,
           // true
-          [
-            ...pdfData,
-            ["", "", "", "", "", "", "", "Total Unit", "", unitCount, ""],
-          ],
+          [...pdfData, ["", "", "", "Total Unit", unitCount, ""]],
           true,
           true,
           [],
@@ -744,8 +727,12 @@ const AssetsList = () => {
         columns={columns}
         uri={"asset-list"}
         details={details}
+        totalName="Total Code Count"
         loading={loading}
         scroll={{ x: 1500, y: 400 }}
+        // tableSubheading={{
+        //   "Total Unit": details?.totalunit || 0,
+        // }}
       ></CommonTable>
 
       <Modal

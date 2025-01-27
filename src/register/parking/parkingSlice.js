@@ -18,6 +18,9 @@ export const parkingSlice = createSlice({
     postSuccess: (state, action) => {
       state.name = action.payload;
     },
+    postReport: (state, action) => {
+      state.report_data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
@@ -25,17 +28,21 @@ export const parkingSlice = createSlice({
 });
 
 // get parking data
-export const getParkingData = (url) => async (dispatch) => {
-  try {
-    dispatch(setLoading(true));
-    const res = await axiosInstance.get(`${url}`);
-    dispatch(postSuccess(res?.data));
-  } catch (error) {
-    console.error("In get parking data error", error);
-  } finally {
-    dispatch(setLoading(false));
-  }
-};
+export const getParkingData =
+  (url, param = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.get(`${url}`, {
+        params: param,
+      });
+      dispatch(postSuccess(res?.data));
+    } catch (error) {
+      console.error("In get parking data error", error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
 // add parking data
 export const addParkingData = (data) => async (dispatch) => {
@@ -54,5 +61,22 @@ export const addParkingData = (data) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess } = parkingSlice.actions;
+// get Parking reports
+export const getParkingReports = (data) => async (dispatch) => {
+  try {
+    dispatch(setLoading(true));
+    const res = await axiosInstance.post(`${URLS?.parkingReport?.path}`, data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    dispatch(postReport(res?.data));
+  } catch (error) {
+    console.error("In get Parking reports error", error);
+  } finally {
+    dispatch(setLoading(false));
+  }
+};
+
+export const { setLoading, postSuccess,postReport } = parkingSlice.actions;
 export default parkingSlice.reducer;

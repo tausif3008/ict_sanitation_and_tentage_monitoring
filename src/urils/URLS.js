@@ -95,6 +95,7 @@ const URLS = {
 
   // asset
   assetList: { path: "/asset", version: 5.43 },
+  assetListExport: { path: "/asset/export", version: 5.43 },
   addAssetList: { path: "/asset/entry", version: 5.43 },
   edtAssetList: { path: "/asset/edit", version: 5.43 },
   deleteAssetList: { path: "/asset/delete", version: 5.43 },
@@ -120,6 +121,7 @@ const URLS = {
   // parking
   parking: { path: "/parking", version: 5.43 },
   addParking: { path: "/parking/entry", version: 5.43 },
+  parkingReport: { path: "/reporting/parking", version: 5.43 },
 
   // proposed sectors
   vendorProposedSectors: {
@@ -189,7 +191,7 @@ const URLS = {
   // },
 
   //search
- getSearchAllocate_Asset: { path: "/allocation/search", version: 5.43 },
+  getSearchAllocate_Asset: { path: "/allocation/search", version: 5.43 },
 
   reAllocate_Asset: {
     path: "/allocation/re",

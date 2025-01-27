@@ -29,6 +29,7 @@ import {
   monitoring_dailyWeekly_reports,
   sector_wise_regi_reports,
   sector_type_wise_regi_reports,
+  parking_wise_monitoring_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -555,13 +556,24 @@ const Navbar = ({ lang, setLang }) => {
         ),
       },
       sector_type_wise_regi_reports?.includes(userRoleId) && {
-        key: "10",
+        key: "13",
         label: (
           <Link
             className="text-black no-underline"
             to="/sector-type-wise-registration-report"
           >
             Sector & Type Wise Registration Report
+          </Link>
+        ),
+      },
+      parking_wise_monitoring_reports?.includes(userRoleId) && {
+        key: "14",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/parking-wise-monitoring-report"
+          >
+            Parking Wise Monitoring Report
           </Link>
         ),
       },

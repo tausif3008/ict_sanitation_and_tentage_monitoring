@@ -134,6 +134,10 @@ export const vehicleType = [
   { value: "Compactor", label: "Compactor" },
   { value: "Tipper", label: "Tipper" },
 ];
+export const parkingType = [
+  { value: "mela_area_parking", label: "Mela Area Parking" },
+  { value: "city_parking", label: "City Parking" },
+];
 
 export const percentageOptions = [
   { value: "100", label: "100%" },

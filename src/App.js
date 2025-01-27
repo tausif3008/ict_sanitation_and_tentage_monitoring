@@ -97,6 +97,7 @@ import {
   monitoring_dailyWeekly_reports,
   sector_wise_regi_reports,
   sector_type_wise_regi_reports,
+  parking_wise_monitoring_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -109,6 +110,7 @@ import AssetAllocation from "./Allocation/AssetAllocation";
 import AssetAllocationForm from "./Allocation/AssetAllocation/assetAllocationForm";
 import SectorWiseRegistrationReport from "./Reports/SectorWiseRegistrationReport";
 import SectorTypeReport from "./Reports/SectorTypeReport";
+import ParkingMonitoringReport from "./Reports/Parking";
 
 function App() {
   const navigate = useNavigate();
@@ -704,6 +706,17 @@ function App() {
               <ProtectedRoute
                 condition={gsd_wise_monitoring_reports?.includes(userRoleId)}
                 component={GsdWiseMonitoringReport}
+              />
+            }
+          />
+          <Route
+            path="parking-wise-monitoring-report"
+            element={
+              <ProtectedRoute
+                condition={parking_wise_monitoring_reports?.includes(
+                  userRoleId
+                )}
+                component={ParkingMonitoringReport}
               />
             }
           />
