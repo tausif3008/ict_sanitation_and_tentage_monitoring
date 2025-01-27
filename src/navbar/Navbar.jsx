@@ -331,9 +331,9 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-    ].sort((a, b) => {
-      const labelA = a.label.props.children.toLowerCase();
-      const labelB = b.label.props.children.toLowerCase();
+    ]?.sort((a, b) => {
+      const labelA = a?.label?.props?.children?.toLowerCase();
+      const labelB = b?.label?.props?.children?.toLowerCase();
       if (labelA < labelB) return -1;
       if (labelA > labelB) return 1;
       return 0;
@@ -584,9 +584,9 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-    ].sort((a, b) => {
-      const labelA = a.label.props.children.toLowerCase();
-      const labelB = b.label.props.children.toLowerCase();
+    ]?.sort((a, b) => {
+      const labelA = a?.label?.props?.children?.toLowerCase();
+      const labelB = b?.label?.props?.children?.toLowerCase();
       if (labelA < labelB) return -1;
       if (labelA > labelB) return 1;
       return 0;

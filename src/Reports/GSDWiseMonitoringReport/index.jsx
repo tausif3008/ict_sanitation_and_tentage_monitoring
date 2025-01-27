@@ -67,7 +67,7 @@ const GsdWiseMonitoringReport = () => {
     ...(formValue?.sector_id
       ? [
           {
-            label: `Sector Name : ${sectorName || "Combined"}`,
+            label: `Allocate Sector : ${sectorName || "Combined"}`,
           },
         ]
       : []),
@@ -170,7 +170,12 @@ const GsdWiseMonitoringReport = () => {
           Sr: index + 1,
           Name: data?.name,
           "Mobile Number": Number(data?.phone),
-          "Sector Name":
+          "Allocate Sectors": getValueLabel(
+            `${data?.allocate_sector_id}`,
+            SectorListDrop,
+            "-"
+          ),
+          "Worked Sectors":
             Array.isArray(data?.workedsectors) && data?.workedsectors.length > 0
               ? data?.workedsectors
                   .map((value) => {
@@ -210,7 +215,16 @@ const GsdWiseMonitoringReport = () => {
         width: 100,
       },
       {
-        title: "Sector Name",
+        title: "Allocate Sectors",
+        dataIndex: "allocate_sector_id",
+        key: "allocate_sector_id",
+        width: 100,
+        render: (text, record) => {
+          return text ? getValueLabel(`${text}`, SectorListDrop, "-") : "-";
+        },
+      },
+      {
+        title: "Worked Sectors",
         dataIndex: "workedsectors",
         key: "workedsectors",
         width: 100,
@@ -279,7 +293,8 @@ const GsdWiseMonitoringReport = () => {
     "Sr No",
     "GSD Name",
     "Mobile Number",
-    "Sector Name",
+    "Allocate Sectors",
+    "Worked Sectors",
     "Total Allocation",
     "Monitoring",
     "Monitoring%",
@@ -293,7 +308,8 @@ const GsdWiseMonitoringReport = () => {
         opt?.Sr,
         opt?.Name,
         opt?.["Mobile Number"],
-        opt?.["Sector Name"],
+        opt?.["Allocate Sectors"],
+        opt?.["Worked Sectors"],
         opt?.["Total Allocation"],
         opt?.Monitoring,
         opt?.["Monitoring%"],
@@ -311,12 +327,14 @@ const GsdWiseMonitoringReport = () => {
           pdfName={fileName}
           headerData={pdfHeader}
           IsLastLineBold={true}
+          landscape={true}
           tableTitles={pdfTitleParam || []}
           rows={[
             ...pdfData,
             [
               "",
               "Total",
+              "",
               "",
               "",
               count?.total_allocation,
@@ -334,17 +352,17 @@ const GsdWiseMonitoringReport = () => {
             {
               name: "Total Allocation",
               value: count?.total_allocation,
-              colIndex: 5,
+              colIndex: 6,
             },
             {
               name: "Monitoring",
               value: count?.todaysmonitaring,
-              colIndex: 6,
+              colIndex: 7,
             },
             {
               name: "Pending Monitoring",
               value: count?.totalPendingMonitoring,
-              colIndex: 8,
+              colIndex: 9,
             },
           ]}
         />
