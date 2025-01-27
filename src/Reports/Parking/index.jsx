@@ -230,7 +230,7 @@ const ParkingMonitoringReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "Sector Wise";
+    let name = "Parking Wise";
     if (vendorName) {
       name += `- ${vendorName}`;
     }
@@ -536,8 +536,6 @@ const ParkingMonitoringReport = () => {
     "Toilet Clean",
     // "Toilet Clean%",
   ];
-
-  console.log("ParkingsData", ParkingsData);
 
   // pdf data
   const pdfData = ParkingsData?.map((sector, index) => [
