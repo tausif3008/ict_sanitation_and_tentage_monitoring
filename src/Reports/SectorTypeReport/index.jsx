@@ -22,9 +22,9 @@ import { getSectorTypeRegData } from "../SectorSlice/sectorSlice";
 import CustomTable from "../../commonComponents/CustomTable";
 import VendorSelectors from "../VendorwiseReports/vendorSelectors";
 import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
+import ExportToExcel from "../ExportToExcel";
 
 const SectorTypeReport = () => {
-  // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [totalCount, setTotalCount] = useState({});
@@ -231,11 +231,18 @@ const SectorTypeReport = () => {
         width: 60,
       },
       ...columnNames,
+      {
+        title: "Sector Total",
+        dataIndex: "sector_total",
+        key: "sector_total",
+        width: 60,
+      },
     ];
   }, [SectorTypeRegReport_data]); // Only recompute when SectorTypeRegReport_data changes
 
   useEffect(() => {
     if (SectorTypeRegReport_data) {
+      let sectorCount = {};
       const tableData = SectorTypeRegReport_data?.data?.listings?.map(
         (item) => {
           const sectorData = {
@@ -245,6 +252,11 @@ const SectorTypeReport = () => {
           item?.asset_types?.forEach((element, index) => {
             sectorData[`dataIndex${index}`] = element?.tagging_units;
           });
+          const count = item?.asset_types.reduce((total, data) => {
+            return total + (Number(data?.tagging_units) || 0);
+          }, 0);
+          sectorData[`sector_total`] = count;
+          sectorCount[item?.sector_name] = count;
           return sectorData;
         }
       );
@@ -296,6 +308,8 @@ const SectorTypeReport = () => {
       Object.keys(item).forEach((key) => {
         if (key.startsWith("dataIndex")) {
           row.push(item[key]); // Add the value to the row
+        } else if (key.startsWith("sector_total")) {
+          row.push(item["sector_total"]); // Add the value to the row
         }
       });
 
@@ -303,6 +317,23 @@ const SectorTypeReport = () => {
     });
   }, [vendorData]);
   const columnPercentages = [5, 10];
+
+  const result =
+    pdfData?.map((valueArray) => {
+      return ["Sr no", ...pdfHeader]?.reduce((acc, key, index) => {
+        acc[key] = valueArray[index]; // Assign corresponding value to each key
+        return acc;
+      }, {});
+    }) || [];
+
+  const dynamicArray =
+    Object.entries(totalCount)?.map((data, index) => {
+      return {
+        name: data[0],
+        value: data[1],
+        colIndex: index + 3, // Start with column index 2 (Sector Name and Sector Total)
+      };
+    }) || [];
 
   return (
     <div>
@@ -317,23 +348,21 @@ const SectorTypeReport = () => {
           headerData={["Sr no", ...pdfHeader] || []}
           landscape={true}
           IsLastLineBold={true}
+          IsLastColumnBold={true}
           columnPercentages={columnPercentages}
           rows={[
             ...pdfData,
             ["Total", vendorData?.list?.length, ...valuesArray],
           ]}
         />
-        {/* <ExportToExcel
-          excelData={excelData || []}
-          fileName={fileName ? fileName : "Sector & Type Wise Registration Report"}
-          dynamicArray={[
-            {
-              name: "Total",
-              value: vendorData?.totalUnits,
-              colIndex: 3,
-            },
-          ]}
-        /> */}
+        <ExportToExcel
+          excelData={result || []}
+          IsLastColumnBold={true}
+          fileName={
+            fileName ? fileName : "Sector & Type Wise Registration Report"
+          }
+          dynamicArray={dynamicArray || []}
+        />
       </div>
       <Collapse
         defaultActiveKey={["1"]}

@@ -6,6 +6,7 @@ import { saveAs } from "file-saver";
 const ExportToExcel = ({
   excelData = [],
   fileName = "excel_file",
+  IsLastColumnBold = false,
   dynamicArray = [],
   columnProperties = [],
   redToGreenProperties = [],
@@ -135,6 +136,11 @@ const ExportToExcel = ({
           // Apply left alignment for other types of data
           cell.alignment = { horizontal: "left" };
         }
+
+        // Apply bold to the last column if IsLastColumnBold is true
+        if (IsLastColumnBold && cellIndex === columnCount) {
+          cell.font = { bold: true };
+        }
       });
     });
 
@@ -159,7 +165,7 @@ const ExportToExcel = ({
     // Apply filter to the first row (header row) for all columns
     worksheet.autoFilter = {
       from: worksheet.getCell("A1"),
-      to: worksheet.getCell(`C1`), // Adjust to the last column you are using (here assuming 3 columns)
+      to: worksheet.getCell(`${lastColumn}1`), // Adjust to the last column you are using
     };
 
     // Save the file

@@ -12,6 +12,7 @@ const ExportToPDF = ({
   rows,
   landscape = false,
   IsLastLineBold = false,
+  IsLastColumnBold = false,
   IsNoBold = false, // Is Number Bold
   applyTableStyles = false,
   tableFont = 8,
@@ -157,19 +158,33 @@ const ExportToPDF = ({
         const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
         const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
         const isFirstColumn = data.column.index === 0;
+        const columnCount = data.table.columns?.length || 0; // You may need to adjust this according to your data structure
+        const isLastColumn = data.column.index === columnCount - 1; // Check if it's the last column
         data.cell.styles.halign = "center";
         const containsPercentage = data.cell.text?.[0].includes("%");
         const numberPart = data.cell.text?.[0].match(/\d+/); // Matches one or more digits
         const numberParts = numberPart?.[0];
 
+        // if (
+        //   (isLastRow && IsLastLineBold) ||
+        //   (IsNoBold &&
+        //     isNumber &&
+        //     !isFirstColumn &&
+        //     Number(data.cell.text) !== 0)
+        // ) {
+        //   data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
+        //   data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
+        //   data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
+        // }
         if (
           (isLastRow && IsLastLineBold) ||
+          (isLastColumn && IsLastColumnBold) ||
           (IsNoBold &&
             isNumber &&
             !isFirstColumn &&
             Number(data.cell.text) !== 0)
         ) {
-          data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
+          data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row or last column
           data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
           data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
         }
