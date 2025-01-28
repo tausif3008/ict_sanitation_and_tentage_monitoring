@@ -10,27 +10,20 @@ import {
   getValueLabel,
   OrderBy,
   parkingType,
-  VendorWiseReportcolumns,
 } from "../../constant/const";
 import ExportToPDF from "../reportFile";
 import ExportToExcel from "../ExportToExcel";
 import CommonDivider from "../../commonComponents/CommonDivider";
-import { getSectorReports } from "../SectorSlice/sectorSlice";
 import URLS from "../../urils/URLS";
-import SectorReportSelectors from "../SectorSlice/sectorSelector";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import VendorSelectors from "../VendorwiseReports/vendorSelectors";
-import ViewVendorsSectors from "../../register/AssetType/viewVendors";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import {
-  getVendorCategoryTypeDrop,
-  getVendorReports,
-} from "../VendorwiseReports/vendorslice";
+import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
 import { getFormData } from "../../urils/getFormData";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
@@ -39,7 +32,6 @@ import ParkingSelector from "../../register/parking/parkingSelector";
 
 const ParkingMonitoringReport = () => {
   const [filesName, setFilesName] = useState(null); // files Name
-  const [showModal, setShowModal] = useState(null);
   const [showTypeOption, setShowTypeOption] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState({
     totalQnty: 0,
@@ -52,30 +44,17 @@ const ParkingMonitoringReport = () => {
     toiletunclean: 0,
     toiletclean: 0,
   });
-  const [count, setCount] = useState({
-    total: 0,
-    registered: 0,
-    monitoring: 0,
-    partially_compliant: 0,
-    compliant: 0,
-    not_compliant: 0,
-    toiletunclean: 0,
-    toiletclean: 0,
-  });
 
   const dateFormat = "YYYY-MM-DD";
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
   const dispatch = useDispatch();
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const { VendorReport_Loading, vendorReports, VendorCatTypeDrop } =
-    VendorSelectors(); // vendor dropdown & Reports
-  const vendorsData = vendorReports?.data?.vendors || [];
+  const { VendorReport_Loading, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { ParkingsData, loading } = ParkingSelector(); // parking report data
 
   const userRoleId = localStorage.getItem("role_id");
-  const UserId = localStorage.getItem("userId");
   const Category_mainType_id = localStorage.getItem("category_mainType_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -93,6 +72,11 @@ const ParkingMonitoringReport = () => {
   const vendorName = getValueLabel(
     formValue?.vendor_id,
     VendorCatTypeDrop,
+    null
+  );
+  const sectorName = getValueLabel(
+    formValue?.mapped_sector_id,
+    SectorListDrop,
     null
   );
   const orderByName = getValueLabel(formValue?.order_by, OrderBy, null);
@@ -120,48 +104,17 @@ const ParkingMonitoringReport = () => {
     {
       label: `Type : ${assetTypeName || pdfTitleData?.type || "Combined"}`,
     },
+    ...(formValue?.mapped_sector_id
+      ? [
+          {
+            label: `Mapped Sector Name : ${sectorName || "Combined"}`,
+          },
+        ]
+      : []),
     {
       label: `Sort By : ${orderByName || "Combined"}`,
     },
   ];
-
-  // close module
-  const handleCancel = () => {
-    setShowModal(null);
-    setCount({
-      total: 0,
-      registered: 0,
-      monitoring: 0,
-      partially_compliant: 0,
-      compliant: 0,
-      not_compliant: 0,
-      toiletunclean: 0,
-    });
-  };
-
-  // vendor click
-  const handleClick = (record) => {
-    const finalValues = {
-      ...(formValue?.asset_main_type_id && {
-        asset_main_type_id: formValue?.asset_main_type_id,
-      }),
-      ...(formValue?.asset_type_id && {
-        asset_type_id: formValue?.asset_type_id,
-      }),
-      ...(formValue?.vendor_id && { vendor_id: formValue?.vendor_id }),
-      sector_id: record?.sector_id,
-      ...(formValue?.date && {
-        date: dayjs(formValue?.date).format("YYYY-MM-DD"),
-      }),
-      ...(userRoleId === "8" && { vendor_id: UserId }),
-      ...(userRoleId === "8" && {
-        asset_main_type_id: Category_mainType_id,
-      }),
-    };
-    setShowModal(record);
-    const url = URLS?.vendorReporting?.path;
-    dispatch(getVendorReports(url, finalValues)); // vendor reports
-  };
 
   // handle category
   const handleSelect = (value) => {
@@ -202,6 +155,9 @@ const ParkingMonitoringReport = () => {
         asset_main_type_id: values?.asset_main_type_id,
       }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.mapped_sector_id && {
+        mapped_sector_id: values?.mapped_sector_id,
+      }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.order_by && { order_by: values?.order_by }),
       ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
@@ -240,6 +196,9 @@ const ParkingMonitoringReport = () => {
     if (assetTypeName) {
       name += `- ${assetTypeName}`;
     }
+    if (sectorName) {
+      name += `- ${sectorName}`;
+    }
     if (fiveTypeIdName) {
       name += `- ${fiveTypeIdName}`;
     }
@@ -256,35 +215,36 @@ const ParkingMonitoringReport = () => {
 
   useEffect(() => {
     if (ParkingsData) {
-      const totalQty = ParkingsData?.reduce(
+      const myCountsData = ParkingsData;
+      const totalQty = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.total) || 0,
         0
       );
-      const totalRegister = ParkingsData?.reduce(
+      const totalRegister = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.registered) || 0,
         0
       );
-      const monitoring = ParkingsData?.reduce(
+      const monitoring = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.todaysmonitaring) || 0,
         0
       );
-      const partially_compliant = ParkingsData?.reduce(
+      const partially_compliant = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.partially_compliant) || 0,
         0
       );
-      const compliant = ParkingsData?.reduce(
+      const compliant = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.compliant) || 0,
         0
       );
-      const not_compliant = ParkingsData?.reduce(
+      const not_compliant = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.not_compliant) || 0,
         0
       );
-      const toiletunclean = ParkingsData?.reduce(
+      const toiletunclean = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.toiletunclean) || 0,
         0
       );
-      const toiletclean = ParkingsData?.reduce(
+      const toiletclean = myCountsData?.reduce(
         (acc, sector) => acc + Number(sector?.toiletclean) || 0,
         0
       );
@@ -302,55 +262,6 @@ const ParkingMonitoringReport = () => {
     }
   }, [ParkingsData]);
 
-  useEffect(() => {
-    if (vendorReports) {
-      const total = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.total),
-        0
-      );
-      const totalReg = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.registered),
-        0
-      );
-      const totalMonitoring = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.todaysmonitaring) || 0,
-        0
-      );
-      const partially_compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.partially_compliant) || 0,
-        0
-      );
-      const compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.compliant) || 0,
-        0
-      );
-      const not_compliant = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.not_compliant) || 0,
-        0
-      );
-      const toiletunclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.toiletunclean) || 0,
-        0
-      );
-      const toiletclean = vendorsData?.reduce(
-        (acc, circle) => acc + Number(circle?.toiletclean) || 0,
-        0
-      );
-
-      setCount({
-        total: total,
-        registered: totalReg,
-        monitoring: totalMonitoring,
-        partially_compliant: partially_compliant,
-        compliant: compliant,
-        not_compliant: not_compliant,
-        toiletunclean: toiletunclean,
-        toiletclean: toiletclean,
-      });
-    }
-  }, [vendorReports]);
-
-  // current data
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     let mainTypeIdLocal = "1";
@@ -407,17 +318,36 @@ const ParkingMonitoringReport = () => {
       dataIndex: "name",
       key: "name",
       width: 90,
-      render: renderColumn,
       sorter: (a, b) => {
-        const extractNumber = (str) => {
-          const match = str?.match(/\d+/); // Matches digits in the string
-          return match ? parseInt(match[0], 10) : 0; // Return the numeric part or 0 if not found
-        };
-        const numA = extractNumber(a?.name);
-        const numB = extractNumber(b?.name);
-        return numA - numB; // Numeric sorting
+        return a?.name?.localeCompare(b?.name);
       },
     },
+    {
+      title: "Mapped Sector",
+      dataIndex: "mapped_sector_id",
+      key: "mapped_sector_id",
+      width: 50,
+      render: (text) => {
+        return text ? getValueLabel(text, SectorListDrop, null) || "-" : "-";
+      },
+      sorter: (a, b) => a?.total - b?.total,
+    },
+    // {
+    //   title: "Parking Name",
+    //   dataIndex: "name",
+    //   key: "name",
+    //   width: 90,
+    //   render: renderColumn,
+    //   sorter: (a, b) => {
+    //     const extractNumber = (str) => {
+    //       const match = str?.match(/\d+/); // Matches digits in the string
+    //       return match ? parseInt(match[0], 10) : 0; // Return the numeric part or 0 if not found
+    //     };
+    //     const numA = extractNumber(a?.name);
+    //     const numB = extractNumber(b?.name);
+    //     return numA - numB; // Numeric sorting
+    //   },
+    // },
     {
       title: "Total Quantity",
       dataIndex: "total",
@@ -521,6 +451,7 @@ const ParkingMonitoringReport = () => {
   const pdfHeader = [
     "Sr No",
     "Parking Name",
+    "Mapped Sector",
     "Total",
     "Registered",
     "Monitoring",
@@ -541,6 +472,7 @@ const ParkingMonitoringReport = () => {
   const pdfData = ParkingsData?.map((sector, index) => [
     index + 1,
     sector?.name,
+    getValueLabel(sector?.mapped_sector_id, SectorListDrop, null) || "-",
     Number(sector?.total) || 0,
     Number(sector?.registered) || 0,
     Number(sector?.todaysmonitaring) || 0,
@@ -565,6 +497,8 @@ const ParkingMonitoringReport = () => {
     return ParkingsData?.map((data, index) => ({
       Sr: index + 1,
       Name: data?.name,
+      "Mapped Sector":
+        getValueLabel(data?.mapped_sector_id, SectorListDrop, null) || "-",
       Quantity: Number(data?.total),
       Registered: Number(data?.registered),
       Monitoring: Number(data?.todaysmonitaring) || 0,
@@ -615,6 +549,7 @@ const ParkingMonitoringReport = () => {
             [
               "",
               "Total",
+              "",
               totalQuantity?.totalQnty,
               totalQuantity?.registered,
               totalQuantity?.monitoring,
@@ -652,37 +587,37 @@ const ParkingMonitoringReport = () => {
             {
               name: "Register Unit",
               value: totalQuantity?.registered,
-              colIndex: 4,
+              colIndex: 5,
             },
             {
               name: "Monitoring",
               value: totalQuantity?.monitoring,
-              colIndex: 5,
+              colIndex: 6,
             },
             {
               name: "Partialy Compliant",
               value: totalQuantity?.partially_compliant,
-              colIndex: 7,
+              colIndex: 8,
             },
             {
               name: "Compliant",
               value: totalQuantity?.compliant,
-              colIndex: 8,
+              colIndex: 9,
             },
             {
               name: "Not Compliant",
               value: totalQuantity?.not_compliant,
-              colIndex: 9,
+              colIndex: 10,
             },
             {
               name: "Unclean",
               value: totalQuantity?.toiletunclean,
-              colIndex: 11,
+              colIndex: 12,
             },
             {
               name: "Clean",
               value: totalQuantity?.toiletclean,
-              colIndex: 13,
+              colIndex: 14,
             },
           ]}
         />
@@ -750,11 +685,10 @@ const ParkingMonitoringReport = () => {
                       placeholder={"Date"}
                     />
                   </Col>
-                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                  <Col key="mapped_sector_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
-                      name={"sector_id"}
+                      name={"mapped_sector_id"}
                       label={"Sector Name"}
-                      allowClear={false}
                       placeholder={"Select Sector Name"}
                       options={SectorListDrop || []}
                     />
@@ -772,7 +706,6 @@ const ParkingMonitoringReport = () => {
                     <CustomSelect
                       name={"parkingType"}
                       label={"Parking Type"}
-                      allowClear={false}
                       placeholder={"Parking Type"}
                       options={parkingType || []}
                     />
@@ -821,7 +754,7 @@ const ParkingMonitoringReport = () => {
         columns={columns}
         dataSource={ParkingsData || []}
         // dataSource={[...ParkingsData, ...lastTableRow] || []}
-        rowKey="sector_id"
+        rowKey="mapped_sector_id"
         pagination={{ pageSize: 30 }}
         scroll={{ x: 1700, y: 400 }}
         bordered
@@ -840,40 +773,6 @@ const ParkingMonitoringReport = () => {
               Toilet Unclean : {totalQuantity?.toiletunclean || 0}
             </strong>
             <strong>Toilet Clean : {totalQuantity?.toiletclean || 0}</strong>
-          </div>
-        )}
-      />
-
-      {/* total quantity */}
-      <ViewVendorsSectors
-        width={1200}
-        title={`Vendor Wise Report`}
-        openModal={showModal && !VendorReport_Loading}
-        handleCancel={handleCancel}
-        tableData={vendorsData || []}
-        // tableData={[...vendorsData, ...lastTableModalRow] || []}
-        // IsLastRowBold={true}
-        scroll={{ x: 1700, y: 400 }}
-        tableHeaderData={[
-          {
-            label: "Parking Name",
-            value: `${showModal?.name}`,
-          },
-        ]}
-        column={VendorWiseReportcolumns || []}
-        footer={() => (
-          <div className="flex justify-between">
-            <strong>Total: {vendorsData?.length || 0}</strong>
-            <strong>Quantity: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring: {count?.monitoring || 0}</strong>
-            <strong>
-              Partially Compliant: {count?.partially_compliant || 0}
-            </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant : {count?.not_compliant || 0}</strong>
-            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
-            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
           </div>
         )}
       />
