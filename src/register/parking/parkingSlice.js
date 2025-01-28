@@ -45,10 +45,10 @@ export const getParkingData =
   };
 
 // add parking data
-export const addParkingData = (data) => async (dispatch) => {
+export const addParkingData = (url, data) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${URLS?.addParking?.path}`, data, {
+    const res = await axiosInstance.post(`${url}`, data, {
       headers: {
         "Content-Type": "multipart/form-data",
       },
@@ -78,5 +78,5 @@ export const getParkingReports = (data) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess,postReport } = parkingSlice.actions;
+export const { setLoading, postSuccess, postReport } = parkingSlice.actions;
 export default parkingSlice.reducer;

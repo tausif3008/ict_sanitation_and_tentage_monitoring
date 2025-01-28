@@ -426,7 +426,7 @@ const SectorWiseReport = () => {
       key: "registered",
       width: 50,
       render: renderColumn,
-      sorter: (a, b) => a?.total - b?.total,
+      sorter: (a, b) => a?.registered - b?.registered,
     },
     {
       title: "Monitoring",

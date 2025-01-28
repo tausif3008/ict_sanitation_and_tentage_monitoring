@@ -54,11 +54,6 @@ const ParkingMonitoringReport = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { ParkingsData, loading } = ParkingSelector(); // parking report data
 
-  const userRoleId = localStorage.getItem("role_id");
-  const Category_mainType_id = localStorage.getItem("category_mainType_id");
-  const sessionDataString = localStorage.getItem("sessionData");
-  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
-
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
     AssetMainTypeDrop,
@@ -124,7 +119,7 @@ const ParkingMonitoringReport = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
-    if (userRoleId !== "8" && value) {
+    if (value) {
       const paramData = {
         asset_main_type_id: value,
       };
@@ -137,7 +132,7 @@ const ParkingMonitoringReport = () => {
     form.setFieldsValue({
       vendor_id: null,
     });
-    if (userRoleId !== "8" && value) {
+    if (value) {
       const paramData = {
         asset_main_type_id: formValue?.asset_main_type_id,
         asset_type_id: value,
@@ -162,12 +157,6 @@ const ParkingMonitoringReport = () => {
       ...(values?.order_by && { order_by: values?.order_by }),
       ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
-      ...(userRoleId === "8" && {
-        vendor_id: sessionData?.id,
-      }),
-      ...(userRoleId === "8" && {
-        asset_main_type_id: Category_mainType_id,
-      }),
     };
     callApi(finalValues);
   };
@@ -265,9 +254,7 @@ const ParkingMonitoringReport = () => {
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     let mainTypeIdLocal = "1";
-    if (userRoleId === "8") {
-      mainTypeIdLocal = Category_mainType_id || "1";
-    }
+
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
       asset_main_type_id: mainTypeIdLocal,
@@ -275,19 +262,14 @@ const ParkingMonitoringReport = () => {
     });
     const url = URLS?.assetType?.path + mainTypeIdLocal;
     dispatch(getAssetTypes(url)); // get assset type
-    if (userRoleId !== "8") {
-      const paramData = {
-        asset_main_type_id: mainTypeIdLocal,
-      };
-      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
-    }
+    const paramData = {
+      asset_main_type_id: mainTypeIdLocal,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
     const finalValues = {
       date: newDate,
       order_by: "monitaring_per",
       asset_main_type_id: mainTypeIdLocal,
-      ...(userRoleId === "8" && {
-        vendor_id: sessionData?.id,
-      }),
     };
     callApi(finalValues);
   };
@@ -362,7 +344,7 @@ const ParkingMonitoringReport = () => {
       key: "registered",
       width: 50,
       render: renderColumn,
-      sorter: (a, b) => a?.total - b?.total,
+      sorter: (a, b) => a?.registered - b?.registered,
     },
     {
       title: "Monitoring",
@@ -643,18 +625,16 @@ const ParkingMonitoringReport = () => {
                 key="form1"
               >
                 <Row gutter={[16, 16]} align="middle">
-                  {userRoleId !== "8" && (
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop?.slice(0, 2) || []}
-                        allowClear={false}
-                      />
-                    </Col>
-                  )}
+                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_main_type_id"}
+                      label={"Select Category"}
+                      placeholder={"Select Category"}
+                      onSelect={handleSelect}
+                      options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      allowClear={false}
+                    />
+                  </Col>
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"asset_type_id"}
@@ -667,16 +647,14 @@ const ParkingMonitoringReport = () => {
                       }}
                     />
                   </Col>
-                  {userRoleId != "8" && (
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorCatTypeDrop || []}
-                      />
-                    </Col>
-                  )}
+                  <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"vendor_id"}
+                      label={"Select Vendor"}
+                      placeholder={"Select Vendor"}
+                      options={VendorCatTypeDrop || []}
+                    />
+                  </Col>
                   <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
                     <CustomDatepicker
                       name={"date"}

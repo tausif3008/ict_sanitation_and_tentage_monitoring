@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
 import { Collapse, Form, Button } from "antd";
+import { EditOutlined } from "@ant-design/icons";
 import CommonDivider from "../../commonComponents/CommonDivider"; // Adjust path as necessary
 import { getParkingData } from "./parkingSlice";
 import URLS from "../../urils/URLS";
@@ -81,6 +82,32 @@ const ParkingList = () => {
       render: (text) => {
         return text ? getValueLabel(text, SectorListDrop, null) || "-" : "-";
       },
+    },
+    {
+      title: "Action",
+      dataIndex: "action",
+      key: "action",
+      fixed: "right",
+      width: 105,
+      render: (text, record) => (
+        <>
+          <div className="flex justify-between">
+            <Button
+              className="bg-blue-100 border-blue-500 focus:ring-blue-500 hover:bg-blue-200 rounded-full"
+              onClick={() => {
+                navigate(`/add-parking-form`, {
+                  state: {
+                    key: "UpdateKey",
+                    record: record, // Pass the record as part of the state
+                  },
+                });
+              }}
+            >
+              <EditOutlined />
+            </Button>
+          </div>
+        </>
+      ),
     },
   ];
 

@@ -8,6 +8,10 @@ import CustomInput from "../../commonComponents/CustomInput";
 import ParkingSelector from "./parkingSelector";
 import { getFormData } from "../../urils/getFormData";
 import { addParkingData } from "./parkingSlice";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import URLS from "../../urils/URLS";
 
 const AddParkingForm = () => {
   const [form] = Form.useForm();
@@ -18,6 +22,7 @@ const AddParkingForm = () => {
   const record = location.state?.record;
 
   const { loading } = ParkingSelector(); // parking selector
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
 
   // API
   const onFinish = async (values) => {
@@ -27,7 +32,12 @@ const AddParkingForm = () => {
     };
 
     const formData = getFormData(finalData);
-    const res = await dispatch(addParkingData(formData)); // Add API
+    const res = await dispatch(
+      addParkingData(
+        key === "UpdateKey" ? URLS.editParking.path : URLS?.addParking?.path,
+        formData
+      )
+    ); // Add API
     if (res?.success) {
       message.success(
         key === "UpdateKey"
@@ -40,13 +50,14 @@ const AddParkingForm = () => {
     }
   };
 
+  useEffect(() => {
+    dispatch(getSectorsList()); // all sectors
+  }, []);
+
   // set value
   useEffect(() => {
     if (key === "UpdateKey") {
-      form.setFieldsValue({
-        parking_id: Number(record?.parking_id),
-        name: record?.name,
-      });
+      form.setFieldsValue(record);
     }
   }, [record, key]);
 
@@ -79,6 +90,18 @@ const AddParkingForm = () => {
                   {
                     required: true,
                     message: "Please enter the Parking Name",
+                  },
+                ]}
+              />
+              <CustomSelect
+                name={"mapped_sector_id"}
+                label={"Select Sector"}
+                placeholder={"Select Sector"}
+                options={SectorListDrop || []}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please Select Sector",
                   },
                 ]}
               />

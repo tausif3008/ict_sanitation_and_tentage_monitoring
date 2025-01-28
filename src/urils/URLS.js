@@ -121,6 +121,7 @@ const URLS = {
   // parking
   parking: { path: "/parking", version: 5.43 },
   addParking: { path: "/parking/entry", version: 5.43 },
+  editParking: { path: "/parking/edit", version: 5.43 },
   parkingReport: { path: "/reporting/parking", version: 5.43 },
 
   // proposed sectors
