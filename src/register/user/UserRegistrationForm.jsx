@@ -11,6 +11,7 @@ import CustomInput from "../../commonComponents/CustomInput";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
+import { activeOptions } from "../../constant/const";
 
 const UserRegistrationForm = () => {
   const [loading, setLoading] = useState(false);
@@ -20,20 +21,18 @@ const UserRegistrationForm = () => {
   const location = useLocation();
   const key = location.state?.key;
   const record = location.state?.record;
-
   const { UserListDrop } = UserTypeSelector(); // user type list
 
   const onFinish = async (values) => {
     setLoading(true);
     const finalValue = {
       ...values,
-      status: 1,
+      ...(key === "AddKey" && { status: 1 }),
     };
 
     if (key === "UpdateKey") {
       finalValue.user_id = record.user_id;
     }
-
     const res = await postData(
       getFormData(finalValue),
       key === "UpdateKey" ? URLS.editUser.path : URLS.register.path,
@@ -41,7 +40,6 @@ const UserRegistrationForm = () => {
         version: URLS.register.version,
       }
     );
-
     if (res?.data?.success) {
       form.resetFields();
       navigate("/users");
@@ -159,6 +157,15 @@ const UserRegistrationForm = () => {
               state_id={record?.state_id}
               city_id={record?.city_id}
             ></CountryStateCity>
+            {key === "UpdateKey" && (
+              <CustomSelect
+                name={"status"}
+                label={"Select Status"}
+                placeholder={"Select Status"}
+                rules={[{ required: true, message: "Please select Status" }]}
+                options={activeOptions || []}
+              />
+            )}
             <CustomInput
               type="textarea"
               label={<div className="font-semibold">Address </div>}

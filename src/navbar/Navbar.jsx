@@ -30,6 +30,7 @@ import {
   sector_wise_regi_reports,
   sector_type_wise_regi_reports,
   parking_wise_monitoring_reports,
+  attendance_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -577,6 +578,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      // attendance_reports?.includes(userRoleId) && {
+      //   key: "15",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/attendance-report">
+      //       Attendance Report
+      //     </Link>
+      //   ),
+      // },
       gsd_wise_monitoring_reports?.includes(userRoleId) && {
         key: "11",
         label: (

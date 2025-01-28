@@ -1,8 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { EditOutlined } from "@ant-design/icons";
-import { Button, message, Collapse, notification, Row, Col, Form } from "antd";
+import {
+  CheckCircleOutlined,
+  CloseCircleOutlined,
+  EditOutlined,
+} from "@ant-design/icons";
+import {
+  Button,
+  message,
+  Collapse,
+  notification,
+  Row,
+  Col,
+  Form,
+  Tooltip,
+} from "antd";
 
 import CommonTable from "../../commonComponents/CommonTable";
 import CommonDivider from "../../commonComponents/CommonDivider";
@@ -153,6 +166,27 @@ const UserList = () => {
       key: "allocate_sector_id",
       render: (text) => {
         return text ? getValueLabel(text, SectorListDrop, null) || "-" : "-";
+      },
+    },
+    {
+      title: "Status",
+      dataIndex: "status",
+      key: "status",
+      width: 90,
+      render: (text) => {
+        return text === "1" ? (
+          <div className="flex justify-center items-center">
+            <Tooltip title="Active">
+              <CheckCircleOutlined className="text-green-500 text-2xl" />
+            </Tooltip>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center">
+            <Tooltip title="Inactive">
+              <CloseCircleOutlined className="text-red-500 text-2xl" />
+            </Tooltip>
+          </div>
+        );
       },
     },
     {
@@ -332,130 +366,120 @@ const UserList = () => {
         }
       ></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(false);
-            }}
-          >
-            Download Pdf
-          </Button>
-        </div>
-        <div>
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(true);
-            }}
-          >
-            Download Excel
-          </Button>
-        </div>
+        <Button
+          type="primary"
+          onClick={() => {
+            exportToFile(false);
+          }}
+        >
+          Download Pdf
+        </Button>
+        <Button
+          type="primary"
+          onClick={() => {
+            exportToFile(true);
+          }}
+        >
+          Download Excel
+        </Button>
       </div>
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
-            {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 16]} align="middle">
-                    <Col key="user_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"user_type_id"}
-                        label={"Select User Type"}
-                        placeholder={"Select User Type"}
-                        options={UserListDrop || []}
-                      />
-                    </Col>
-                    <Col key="name" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name="name"
-                        label="Name"
-                        placeholder="Name"
-                      />
-                    </Col>
-                    <Col key="phone" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name="phone"
-                        label="Phone Number"
-                        placeholder="Phone Number"
-                        maxLength={10}
-                        accept={"onlyNumber"}
-                        rules={[
-                          {
-                            required: false,
-                            message: "Please enter your mobile number!",
-                          },
-                          {
-                            pattern: /^[0-9]{10}$/,
-                            message:
-                              "Please enter a valid 10-digit mobile number",
-                          },
-                        ]}
-                      />
-                    </Col>
-                    <Col key="email" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name="email"
-                        label="Email"
-                        placeholder="Email"
-                        rules={[
-                          {
-                            required: false,
-                            message: "Please input your email!",
-                          },
-                          {
-                            type: "email",
-                            message: "The input is not a valid email!",
-                          },
-                        ]}
-                      />
-                    </Col>
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  <Col key="user_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"user_type_id"}
+                      label={"Select User Type"}
+                      placeholder={"Select User Type"}
+                      options={UserListDrop || []}
+                    />
+                  </Col>
+                  <Col key="name" xs={24} sm={12} md={6} lg={5}>
+                    <CustomInput name="name" label="Name" placeholder="Name" />
+                  </Col>
+                  <Col key="phone" xs={24} sm={12} md={6} lg={5}>
+                    <CustomInput
+                      name="phone"
+                      label="Phone Number"
+                      placeholder="Phone Number"
+                      maxLength={10}
+                      accept={"onlyNumber"}
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please enter your mobile number!",
+                        },
+                        {
+                          pattern: /^[0-9]{10}$/,
+                          message:
+                            "Please enter a valid 10-digit mobile number",
+                        },
+                      ]}
+                    />
+                  </Col>
+                  <Col key="email" xs={24} sm={12} md={6} lg={5}>
+                    <CustomInput
+                      name="email"
+                      label="Email"
+                      placeholder="Email"
+                      rules={[
+                        {
+                          required: false,
+                          message: "Please input your email!",
+                        },
+                        {
+                          type: "email",
+                          message: "The input is not a valid email!",
+                        },
+                      ]}
+                    />
+                  </Col>
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
                     </div>
-                  </Row>
-                </Form>
-              ),
-            },
-          ]}
-        />
-        {contextHolder}
-      </div>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
+      {contextHolder}
       <div className="h-3"></div>
       <CommonTable
         loading={loading}
