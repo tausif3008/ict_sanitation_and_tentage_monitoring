@@ -97,13 +97,10 @@ const AddParkingForm = () => {
                 name={"mapped_sector_id"}
                 label={"Select Sector"}
                 placeholder={"Select Sector"}
-                options={SectorListDrop || []}
-                rules={[
-                  {
-                    required: true,
-                    message: "Please Select Sector",
-                  },
-                ]}
+                options={
+                  [{ value: "0", label: "City Parking" }, ...SectorListDrop] ||
+                  []
+                }
               />
             </div>
             <div className="flex w-full justify-end">
