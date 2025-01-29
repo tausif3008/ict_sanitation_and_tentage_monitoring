@@ -5,7 +5,7 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import { dateOptions } from "../../constant/const";
+import { dateOptions, getValueLabel } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 // import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -20,7 +20,7 @@ import { getAttendanceReports } from "./Slice/attendanceslice";
 import AttendanceSelector from "./Slice/attendanceSelector";
 
 const AttendanceReport = () => {
-  // const [excelData, setExcelData] = useState([]);
+  const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   // const [tableColumns, setTableColumns] = useState([
@@ -51,6 +51,11 @@ const AttendanceReport = () => {
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AttendanceData, loading } = AttendanceSelector();
 
+  const agentName = getValueLabel(
+    formValue?.user_id,
+    monitoringAgentDrop,
+    null
+  );
   // const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   // const percentageName = getValueLabel(
   //   `${formValue?.percentage}`,
@@ -58,20 +63,31 @@ const AttendanceReport = () => {
   //   null
   // );
   // const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+  const fileDateName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : "All Dates";
 
   // file name
-  // const getReportName = () => {
-  //   let name = "GSD Wise";
-  //   if (sectorName) {
-  //     name += `- ${sectorName}`;
-  //   }
-  //   if (percentageName) {
-  //     name += `- ${percentageName}`;
-  //   }
-  //   name += `- Monitoring Report ${fileDateName}`;
-  //   return name;
-  // };
-  // const fileName = getReportName();
+  const getReportName = () => {
+    let name = "Attendance";
+    if (agentName) {
+      name += `- ${agentName}`;
+    }
+    // if (sectorName) {
+    //   name += `- ${sectorName}`;
+    // }
+    // if (percentageName) {
+    //   name += `- ${percentageName}`;
+    // }
+    name += `- Report ${fileDateName}`;
+    return name;
+  };
+  const fileName = getReportName();
 
   // const pdfTitleParam = [
   //   ...(formValue?.sector_id
@@ -110,23 +126,23 @@ const AttendanceReport = () => {
     );
   };
 
-  const getUsers = async (dataObj = {}) => {
-    const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
-    const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
-    const newParam = {
-      page: dataObj?.page || "1",
-      per_page: dataObj?.size || "25",
-      ...form.getFieldsValue(),
-      ...(formValue?.date_format === "Date Range" && {
-        form_date: startDate,
-      }),
-      ...(formValue?.date_format === "Date Range" && {
-        to_date: endDate,
-        date_format: null,
-      }),
-    };
-    callApi(newParam);
-  };
+  // const getUsers = async (dataObj = {}) => {
+  //   const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
+  //   const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
+  //   const newParam = {
+  //     page: dataObj?.page || "1",
+  //     per_page: dataObj?.size || "25",
+  //     ...form.getFieldsValue(),
+  //     ...(formValue?.date_format === "Date Range" && {
+  //       form_date: startDate,
+  //     }),
+  //     ...(formValue?.date_format === "Date Range" && {
+  //       to_date: endDate,
+  //       date_format: null,
+  //     }),
+  //   };
+  //   callApi(newParam);
+  // };
 
   // fiter finish
   const onFinishForm = (values) => {
@@ -218,8 +234,8 @@ const AttendanceReport = () => {
     });
 
     // Add columns for each unique date and shift
-    dateKeys.forEach((date) => {
-      columns.push({
+    dateKeys?.forEach((date) => {
+      columns?.push({
         title: `${date} Shift 1`,
         dataIndex: `${date}_shift_1`,
         key: `${date}_shift_1`,
@@ -347,11 +363,42 @@ const AttendanceReport = () => {
   //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
   // }, [excelData]);
 
+  // console.log("tableData", tableData);
+  const myExcelItems = useMemo(() => {
+    if (!tableData?.list) return [];
+
+    return tableData?.list?.map((opt, index) => {
+      const row = {
+        Sr: index + 1, // Serial number
+        Name: opt?.name, // Name
+      };
+
+      // Iterate over the keys of the user object
+      Object.keys(opt)?.forEach((key) => {
+        if (key.includes("_shift_")) {
+          const [date, shift] = key.split("_shift_");
+          const formattedDate = date.split("-").reverse().join("-");
+          const newKey = `${formattedDate} Shift ${shift}`;
+          row[newKey] =
+            opt[key] === undefined
+              ? "-"
+              : opt[key] === "1"
+              ? "Present"
+              : "Absent";
+        }
+      });
+
+      return row; // Return the row data
+    });
+  }, [tableData]);
+
+  // console.log(myExcelItems);
+
   return (
     <div>
       <CommonDivider label={"Attendance Report"} />
-      {/* <div className="flex justify-end gap-2 font-semibold">
-        <ExportToPDF
+      <div className="flex justify-end gap-2 font-semibold">
+        {/* <ExportToPDF
           titleName={`Attendance Report ${fileDateName}`}
           pdfName={fileName}
           headerData={pdfHeader}
@@ -372,30 +419,30 @@ const AttendanceReport = () => {
               count?.totalPendingMonitoring,
             ],
           ]}
-        />
+        /> */}
         <ExportToExcel
-          excelData={excelData || []}
+          excelData={myExcelItems || []}
           titleName={fileName}
           fileName={fileName}
-          dynamicArray={[
-            {
-              name: "Total Allocation",
-              value: count?.total_allocation,
-              colIndex: 6,
-            },
-            {
-              name: "Monitoring",
-              value: count?.todaysmonitaring,
-              colIndex: 7,
-            },
-            {
-              name: "Pending Monitoring",
-              value: count?.totalPendingMonitoring,
-              colIndex: 9,
-            },
-          ]}
+          // dynamicArray={[
+          //   {
+          //     name: "Total Allocation",
+          //     value: count?.total_allocation,
+          //     colIndex: 6,
+          //   },
+          //   {
+          //     name: "Monitoring",
+          //     value: count?.todaysmonitaring,
+          //     colIndex: 7,
+          //   },
+          //   {
+          //     name: "Pending Monitoring",
+          //     value: count?.totalPendingMonitoring,
+          //     colIndex: 9,
+          //   },
+          // ]}
         />
-      </div> */}
+      </div>
       <Collapse
         defaultActiveKey={["1"]}
         size="small"

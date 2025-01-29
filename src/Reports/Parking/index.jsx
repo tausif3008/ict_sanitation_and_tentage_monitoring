@@ -69,6 +69,11 @@ const ParkingMonitoringReport = () => {
     VendorCatTypeDrop,
     null
   );
+  const ParkingTypeName = getValueLabel(
+    formValue?.parking_type,
+    parkingType,
+    null
+  );
   const sectorName = getValueLabel(
     formValue?.mapped_sector_id,
     SectorListDrop,
@@ -188,6 +193,9 @@ const ParkingMonitoringReport = () => {
     }
     if (sectorName) {
       name += `- ${sectorName}`;
+    }
+    if (ParkingTypeName) {
+      name += `- ${ParkingTypeName}`;
     }
     if (fiveTypeIdName) {
       name += `- ${fiveTypeIdName}`;
@@ -565,7 +573,7 @@ const ParkingMonitoringReport = () => {
             {
               name: "Total",
               value: totalQuantity?.totalQnty,
-              colIndex: 3,
+              colIndex: 4,
             },
             {
               name: "Register Unit",
