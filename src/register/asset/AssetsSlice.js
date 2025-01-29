@@ -22,6 +22,9 @@ const assetsSlice = createSlice({
     postAllocate: (state, action) => {
       state.allocate_data = action.payload;
     },
+    postView: (state, action) => {
+      state.view_data = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
@@ -49,6 +52,23 @@ export const getAssetAllocationData =
     }
   };
 
+// get asset view data
+export const getAssetViewData =
+  (params = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.get(`${URLS?.assetViews?.path}`, {
+        params: params,
+      });
+      dispatch(postView(res?.data));
+    } catch (error) {
+      console.error("In get asset view data error", error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
 // get pdf and excel data
 export const getPdfExcelData =
   (url, params = null) =>
@@ -65,5 +85,6 @@ export const getPdfExcelData =
     }
   };
 
-export const { setLoading, postSuccess, postAllocate } = assetsSlice.actions;
+export const { setLoading, postSuccess, postAllocate, postView } =
+  assetsSlice.actions;
 export default assetsSlice.reducer;

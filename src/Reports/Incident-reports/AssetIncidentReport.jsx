@@ -5,90 +5,99 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import { dateOptions } from "../../constant/const";
+import {
+  dateOptions,
+  dateWeekOptions,
+  getValueLabel,
+  percentageOptions,
+} from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-// import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-// import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomTable from "../../commonComponents/CustomTable";
 import ExportToExcel from "../ExportToExcel";
 import ExportToPDF from "../reportFile";
 import URLS from "../../urils/URLS";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import MonitoringSelector from "../../complaince/monitoringSelector";
-import { getAttendanceReports } from "./Slice/attendanceslice";
-import AttendanceSelector from "./Slice/attendanceSelector";
+import { getAttendanceReports } from "../Attendance/Slice/attendanceslice";
+import AttendanceSelector from "../Attendance/Slice/attendanceSelector";
+import CustomInput from "../../commonComponents/CustomInput";
+import { getAssetViewData } from "../../register/asset/AssetsSlice";
+import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
+import IncidentReportSelector from "./Slice/IncidentReportSelector";
+import { getAssetIncidentReportData } from "./Slice/IncidentReportSlice";
+// import { getAttendanceReports } from "./Slice/attendanceslice";
+// import AttendanceSelector from "./Slice/attendanceSelector";
 
-const AttendanceReport = () => {
-  // const [excelData, setExcelData] = useState([]);
+const AssetIncidentReport = () => {
+  const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  // const [tableColumns, setTableColumns] = useState([
-  //   {
-  //     title: "Name",
-  //     dataIndex: "name",
-  //     key: "name",
-  //     width: 150,
-  //   },
-  // ]);
   const [tableData, setTableData] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
-  // const [count, setCount] = useState({
-  //   total: 0,
-  //   registered: 0,
-  //   todaysmonitaring: 0,
-  //   totalPendingMonitoring: 0,
-  //   total_allocation: 0,
-  // });
+  const [count, setCount] = useState({
+    total: 0,
+    registered: 0,
+    todaysmonitaring: 0,
+    totalPendingMonitoring: 0,
+    total_allocation: 0,
+  });
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
-  // const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
-  const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { AssetUnitList, AssetViewData } = ToiletAndTentageSelector(); // monitoring agent drop
+  //   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AttendanceData, loading } = AttendanceSelector();
+  const { AssetIncidentData } = IncidentReportSelector();
 
-  // const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
-  // const percentageName = getValueLabel(
-  //   `${formValue?.percentage}`,
-  //   percentageOptions,
-  //   null
-  // );
-  // const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+  //   console.log("AssetViewData", AssetViewData);
+  console.log("AssetIncidentData", AssetIncidentData);
+
+  const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
+  const percentageName = getValueLabel(
+    `${formValue?.percentage}`,
+    percentageOptions,
+    null
+  );
+  const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
 
   // file name
-  // const getReportName = () => {
-  //   let name = "GSD Wise";
-  //   if (sectorName) {
-  //     name += `- ${sectorName}`;
-  //   }
-  //   if (percentageName) {
-  //     name += `- ${percentageName}`;
-  //   }
-  //   name += `- Monitoring Report ${fileDateName}`;
-  //   return name;
-  // };
-  // const fileName = getReportName();
+  const getReportName = () => {
+    let name = "GSD Wise";
+    if (sectorName) {
+      name += `- ${sectorName}`;
+    }
+    if (percentageName) {
+      name += `- ${percentageName}`;
+    }
+    name += `- Monitoring Report ${fileDateName}`;
+    return name;
+  };
+  const fileName = getReportName();
 
-  // const pdfTitleParam = [
-  //   ...(formValue?.sector_id
-  //     ? [
-  //         {
-  //           label: `Allocate Sector : ${sectorName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  //   ...(formValue?.percentage
-  //     ? [
-  //         {
-  //           label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  // ];
+  const pdfTitleParam = [
+    ...(formValue?.sector_id
+      ? [
+          {
+            label: `Allocate Sector : ${sectorName || "Combined"}`,
+          },
+        ]
+      : []),
+    ...(formValue?.percentage
+      ? [
+          {
+            label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
+          },
+        ]
+      : []),
+  ];
 
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
@@ -128,12 +137,13 @@ const AttendanceReport = () => {
     callApi(newParam);
   };
 
-  // fiter finish
+  // filter finish
   const onFinishForm = (values) => {
     const startDate = dayjs(values?.form_date).format("YYYY-MM-DD");
     const endDate = dayjs(values?.to_date).format("YYYY-MM-DD");
     const finalData = {
       ...values,
+      assets_id: AssetViewData?.data?.asset?.[0]?.assets_id,
     };
     if (values.date_format === "Today") {
       finalData.form_date = moment().format("YYYY-MM-DD");
@@ -143,6 +153,8 @@ const AttendanceReport = () => {
       finalData.to_date = endDate;
     }
     finalData.date_format = null;
+    finalData.assets_code = null;
+    // console.log("finalData", finalData);
     callApi(finalData);
   };
 
@@ -161,198 +173,124 @@ const AttendanceReport = () => {
     const finalValues = {
       page: 1,
       per_page: 10,
-      form_date: moment().format("YYYY-MM-DD"),
-      to_date: moment().format("YYYY-MM-DD"),
+      date_format: "Today",
     };
     callApi(finalValues);
   };
 
   const callApi = async (data) => {
-    dispatch(getAttendanceReports(data)); // vendor reports
+    dispatch(getAssetIncidentReportData(data)); // asset incident reports
   };
 
   useEffect(() => {
-    getCurrentData();
+    // getCurrentData();
     // dispatch(getSectorsList()); // all sectors
-    const urls = URLS?.monitoringAgent?.path;
-    dispatch(getMonitoringAgent(urls)); // monitoring agent list
+    // const urls = URLS?.monitoringAgent?.path;
+    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
-  const dynamicColumns = useMemo(() => {
-    const columns = [
-      {
-        title: "Name",
-        dataIndex: "name",
-        key: "name",
-        width: 80,
-      },
-    ];
-    const dateKeys = new Set();
-    const { users } = AttendanceData?.data || [];
-
-    const transformedUsers = users?.map((user) => {
-      const transformedUser = {
-        user_id: user?.user_id,
-        name: user?.name,
-      };
-
-      // Loop through the attendances_date and add the shift values for each date
-      for (const date in user?.attendances_date) {
-        const shifts = user?.attendances_date[date];
-        transformedUser[`${date}_shift_1`] = shifts?.shift_1;
-        transformedUser[`${date}_shift_2`] = shifts?.shift_2;
-      }
-
-      return transformedUser;
-    });
-
-    // Collect unique dates from the transformed user data
-    transformedUsers?.forEach((user) => {
-      Object.keys(user)?.forEach((key) => {
-        // Extract date and shift information from keys like '2025-01-28_shift_1'
-        const [date, shift] = key.split("_shift_");
-        if (shift && date) {
-          dateKeys.add(date); // Collect unique dates
-        }
-      });
-    });
-
-    // Add columns for each unique date and shift
-    dateKeys.forEach((date) => {
-      columns.push({
-        title: `${date} Shift 1`,
-        dataIndex: `${date}_shift_1`,
-        key: `${date}_shift_1`,
-        width: 50,
-        render: (text) => {
-          if (text === "1") {
-            return (
-              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
-                Present
-              </span>
-            );
-          } else if (text === "0") {
-            return (
-              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
-                Absent
-              </span>
-            );
-          } else {
-            return "-";
-          }
-        },
-      });
-
-      columns.push({
-        title: `${date} Shift 2`,
-        dataIndex: `${date}_shift_2`,
-        key: `${date}_shift_2`,
-        width: 50,
-        render: (text) => {
-          if (text === "1") {
-            return (
-              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
-                Present
-              </span>
-            );
-          } else if (text === "0") {
-            return (
-              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
-                Absent
-              </span>
-            );
-          } else {
-            return "-";
-          }
-        },
-      });
-    });
-
-    return columns;
-  }, [AttendanceData]);
-
   useEffect(() => {
-    if (AttendanceData) {
-      const { users } = AttendanceData?.data || [];
-      const transformedUsers = users?.map((user) => {
-        const transformedUser = {
-          user_id: user?.user_id,
-          name: user?.name,
-        };
-        // Loop through the attendances_date and add the shift values for each date
-        for (const date in user?.attendances_date) {
-          const shifts = user?.attendances_date[date];
-          transformedUser[`${date}_shift_1`] = shifts?.shift_1;
-          transformedUser[`${date}_shift_2`] = shifts?.shift_2;
-        }
-
-        return transformedUser;
+    if (AssetIncidentData) {
+      const { questions = [], monitoring = [] } = AssetIncidentData?.data || {};
+      console.log("questions", questions);
+      console.log("monitoring", monitoring);
+      const r = questions?.map((data) => {
+        return monitoring?.map((item) => {});
       });
+      //   const r = questions?.map((data) => {
+      //     return {
+      //         ...data
+      //     //   title: "Shift 1",
+      //     //   dataIndex: "shift_1",
+      //     //   key: "shift_1",
+      //     //   width: 100,
+      //     //   render: (text) => {
+      //     //     return text === "1" ? "Present" : "Absent";
+      //     //   },
+      //     //   sorter: (a, b) => {
+      //     //     return a?.shift_1?.localeCompare(b?.shift_1);
+      //     //   },
+      //     };
+      //   });
+      //   setTableData((prevDetails) => ({
+      //     ...prevDetails,
+      //     list: myData?.attendances || [],
+      //     pageLength: myData?.paging?.[0]?.length || 0,
+      //     currentPage: myData?.paging?.[0]?.currentpage || 1,
+      //     totalRecords: myData?.paging?.[0]?.totalrecords || 0,
+      //   }));
 
-      const dateKeys = new Set();
-      transformedUsers?.forEach((user) => {
-        Object.keys(user)?.forEach((key) => {
-          // Extract date and shift information from keys like '2025-01-28_shift_1'
-          const [date, shift] = key.split("_shift_");
-          if (shift && date) {
-            dateKeys.add(date); // Collect unique dates
-          }
-        });
-      });
+      //   setCount({
+      //     total: myData?.attendances?.length,
+      //   });
 
-      // Generate columns for each unique date and shift
-      dateKeys?.forEach((date) => {
-        dynamicColumns?.push({
-          title: `${date} Shift 1`,
-          dataIndex: `${date}_shift_1`,
-          key: `${date}_shift_1`,
-          width: 150,
-        });
-        dynamicColumns?.push({
-          title: `${date} Shift 2`,
-          dataIndex: `${date}_shift_2`,
-          key: `${date}_shift_2`,
-          width: 150,
-        });
-      });
-
-      setTableData((prevDetails) => ({
-        ...prevDetails,
-        list: transformedUsers || [],
-        // pageLength: myData?.paging?.[0]?.length || 0,
-        // currentPage: myData?.paging?.[0]?.currentpage || 1,
-        // totalRecords: myData?.paging?.[0]?.totalrecords || 0,
-      }));
-
-      // setCount({
-      //   total: myData?.attendances?.length,
-      // });
-      // const myexcelData = myData?.attendances?.map((data, index) => {
-      //   return {
-      //     Sr: index + 1,
-      //     Name: data?.users_name,
-      //     "Shift 1": data?.shift_1 === "1" ? "Present" : "Absent",
-      //     "Shift 2": data?.shift_2 === "1" ? "Present" : "Absent",
-      //   };
-      // });
-      // setExcelData(myexcelData);
+      //   const myexcelData = myData?.attendances?.map((data, index) => {
+      //     return {
+      //       Sr: index + 1,
+      //       Name: data?.users_name,
+      //       "Shift 1": data?.shift_1 === "1" ? "Present" : "Absent",
+      //       "Shift 2": data?.shift_2 === "1" ? "Present" : "Absent",
+      //     };
+      //   });
+      //   setExcelData(myexcelData);
     }
-  }, [AttendanceData]);
+  }, [AssetIncidentData]);
 
+  const columns = useMemo(
+    () => [
+      {
+        title: "GSD Name",
+        dataIndex: "users_name",
+        key: "users_name",
+        width: 100,
+        sorter: (a, b) => {
+          const nameA = a?.users_name ? a?.users_name?.toString() : "";
+          const nameB = b?.users_name ? b?.users_name?.toString() : "";
+          return nameA?.localeCompare(nameB);
+        },
+      },
+      {
+        title: "Shift 1",
+        dataIndex: "shift_1",
+        key: "shift_1",
+        width: 100,
+        render: (text) => {
+          return text === "1" ? "Present" : "Absent";
+        },
+        sorter: (a, b) => {
+          return a?.shift_1?.localeCompare(b?.shift_1);
+        },
+      },
+      {
+        title: "Shift 2",
+        dataIndex: "shift_2",
+        key: "shift_2",
+        width: 100,
+        render: (text) => {
+          return text === "1" ? "Present" : "Absent";
+        },
+        sorter: (a, b) => {
+          return a?.shift_2?.localeCompare(b?.shift_2);
+        },
+      },
+    ],
+    [SectorListDrop]
+  );
   // pdf header
-  // const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
+  const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
 
-  // // pdf data
-  // const pdfData = useMemo(() => {
-  //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
-  // }, [excelData]);
+  // pdf data
+  const pdfData = useMemo(() => {
+    return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
+  }, [excelData]);
+  let timeoutId = null;
 
   return (
     <div>
-      <CommonDivider label={"Attendance Report"} />
+      <CommonDivider label={"Asset Incident Report"} />
       {/* <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
-          titleName={`Attendance Report ${fileDateName}`}
+          titleName={`Asset Incident Report ${fileDateName}`}
           pdfName={fileName}
           headerData={pdfHeader}
           IsLastLineBold={true}
@@ -416,7 +354,7 @@ const AttendanceReport = () => {
                 key="form1"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
-                  <CustomSelect
+                  {/* <CustomSelect
                     name={"user_id"}
                     label={"Select GSD"}
                     placeholder={"Select GSD"}
@@ -425,13 +363,42 @@ const AttendanceReport = () => {
                     isOnSearchFind={true}
                     apiAction={getMonitoringAgent}
                     onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                  />
-                  {/* <CustomSelect
-                    name={"sector_id"}
-                    label={"Select Sector"}
-                    placeholder={"Select Sector"}
-                    options={SectorListDrop || []}
                   /> */}
+                  <CustomInput
+                    name={"assets_code"}
+                    label={"Asset Code"}
+                    placeholder={"Asset Code"}
+                    type="Number"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please Add Asset Code!",
+                      },
+                    ]}
+                    onChange={(e) => {
+                      if (timeoutId) {
+                        clearTimeout(timeoutId);
+                      }
+                      timeoutId = setTimeout(() => {
+                        const obj = {
+                          assets_code: e.target.value,
+                        };
+                        dispatch(getAssetViewData(obj));
+                      }, 1000);
+                    }}
+                  />
+                  <CustomSelect
+                    name={"unit_no"}
+                    label={"Select Unit"}
+                    placeholder={"Select Unit"}
+                    options={AssetUnitList || []}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a Unit!",
+                      },
+                    ]}
+                  />
                   {/* <CustomDatepicker
                     name={"date"}
                     label={"Date"}
@@ -443,7 +410,13 @@ const AttendanceReport = () => {
                     label={"Select Date Type"}
                     placeholder={"Select Date Type"}
                     onSelect={handleDateSelect}
-                    options={dateOptions || []}
+                    options={dateWeekOptions || []}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select Date Type!",
+                      },
+                    ]}
                   />
                   {showDateRange && (
                     <>
@@ -531,24 +504,23 @@ const AttendanceReport = () => {
       />
       <CustomTable
         loading={loading}
-        columns={dynamicColumns || []}
+        columns={columns || []}
         bordered
         dataSource={tableData || []}
         scroll={{ x: 800, y: 400 }}
         tableSubheading={{
-          "Total Records": AttendanceData?.data?.users?.length,
+          "Total Records": tableData?.totalRecords,
         }}
-        pagination={true}
-        // onPageChange={(page, size) => {
-        //   const obj = {
-        //     page: page,
-        //     size: size,
-        //   };
-        //   getUsers(obj);
-        // }}
+        onPageChange={(page, size) => {
+          const obj = {
+            page: page,
+            size: size,
+          };
+          getUsers(obj);
+        }}
       />
     </div>
   );
 };
 
-export default AttendanceReport;
+export default AssetIncidentReport;

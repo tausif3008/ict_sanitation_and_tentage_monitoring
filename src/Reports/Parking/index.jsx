@@ -153,6 +153,7 @@ const ParkingMonitoringReport = () => {
       ...(values?.mapped_sector_id && {
         mapped_sector_id: values?.mapped_sector_id,
       }),
+      ...(values?.parking_type && { parking_type: values?.parking_type }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.order_by && { order_by: values?.order_by }),
       ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
@@ -680,9 +681,9 @@ const ParkingMonitoringReport = () => {
                       options={OrderBy || []}
                     />
                   </Col>
-                  <Col key="parkingType" xs={24} sm={12} md={6} lg={5}>
+                  <Col key="parking_type" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
-                      name={"parkingType"}
+                      name={"parking_type"}
                       label={"Parking Type"}
                       placeholder={"Parking Type"}
                       options={parkingType || []}

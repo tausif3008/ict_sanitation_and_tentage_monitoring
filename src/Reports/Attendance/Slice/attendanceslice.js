@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../../Redux/action";
 import axiosInstance from "../../../Axios/commonAxios";
+import URLS from "../../../urils/URLS";
 
 const initialState = {
   loading: false,
@@ -24,13 +25,11 @@ export const attendanceSlice = createSlice({
 });
 
 // get Attendance reports
-export const getAttendanceReports = (url, data) => async (dispatch) => {
+export const getAttendanceReports = (params) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(`${url}`, data, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+    const res = await axiosInstance.get(`${URLS?.getAttendanceList?.path}`, {
+      params: params,
     });
     dispatch(postSuccess(res?.data));
   } catch (error) {

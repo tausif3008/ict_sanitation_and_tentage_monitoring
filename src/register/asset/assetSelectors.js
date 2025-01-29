@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { useSelector } from "react-redux";
 
 const ToiletAndTentageSelector = () => {
@@ -7,8 +7,24 @@ const ToiletAndTentageSelector = () => {
   const AssetAllocateData = useSelector(
     (state) => state?.assetsSlice.allocate_data
   );
+  const AssetViewData = useSelector((state) => state?.assetsSlice.view_data);
 
-  return { AssetExcel_data, loading, AssetAllocateData };
+  const AssetUnitList = useMemo(() => {
+    return AssetViewData?.data?.asset?.[0]?.units?.map((data) => {
+      return {
+        value: data?.unit_no,
+        label: data?.unit_code,
+      };
+    });
+  }, [AssetViewData]);
+
+  return {
+    AssetExcel_data,
+    loading,
+    AssetAllocateData,
+    AssetViewData,
+    AssetUnitList,
+  };
 };
 
 export default ToiletAndTentageSelector;

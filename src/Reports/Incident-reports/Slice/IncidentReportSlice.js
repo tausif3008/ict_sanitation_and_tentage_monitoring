@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { revertAll } from "../../../Redux/action";
 import axiosInstance from "../../../Axios/commonAxios";
+import URLS from "../../../urils/URLS";
 
 const initialState = {
   loading: false,
@@ -17,6 +18,9 @@ export const IncidentReportSlice = createSlice({
     },
     postSuccess: (state, action) => {
       state.name = action.payload;
+    },
+    postIncident: (state, action) => {
+      state.incident_data = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -36,6 +40,23 @@ export const getIncidentReportData = (url) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
+// get asset Incident Report Data
+export const getAssetIncidentReportData =
+  (param = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.get(`${URLS?.assetIncident?.path}`, {
+        params: param,
+      });
+      dispatch(postIncident(res?.data));
+    } catch (error) {
+      console.error("In get asset Incident report data error", error);
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
 
-export const { setLoading, postSuccess } = IncidentReportSlice.actions;
+export const { setLoading, postSuccess, postIncident } =
+  IncidentReportSlice.actions;
 export default IncidentReportSlice.reducer;

@@ -20,6 +20,9 @@ const URLS = {
     version: "5.43",
   },
 
+  // Attendance
+  getAttendanceList: { path: "/attendance", version: 5.43 },
+
   // module permission
   allModulePermission: { path: "/module-permission", version: 5.43 },
   ModulePermissionEdit: { path: "/module-permission/edit", version: 5.43 },
@@ -95,6 +98,7 @@ const URLS = {
 
   // asset
   assetList: { path: "/asset", version: 5.43 },
+  assetViews: { path: "/asset/views", version: 5.43 },
   assetListExport: { path: "/asset/export", version: 5.43 },
   addAssetList: { path: "/asset/entry", version: 5.43 },
   edtAssetList: { path: "/asset/edit", version: 5.43 },
@@ -103,6 +107,7 @@ const URLS = {
 
   //reporting
   sectors: { path: "/sector", version: 5.43 },
+  assetIncident: { path: "/reporting/asset-incident", version: 5.43 },
 
   // circle wise report
   allCircleList: { path: "/circle", version: 5.43 },
