@@ -267,13 +267,13 @@ const AttendanceReport = () => {
         render: (text) => {
           if (text === "1") {
             return (
-              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
+              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
                 Present
               </span>
             );
           } else if (text === "0") {
             return (
-              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
+              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
                 Absent
               </span>
             );
@@ -581,7 +581,7 @@ const AttendanceReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 800, y: 400 }}
+        scroll={{ x: 2000, y: 400 }}
         tableSubheading={{
           "Total Records": AttendanceData?.data?.users?.length,
         }}
