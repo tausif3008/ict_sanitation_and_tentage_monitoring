@@ -167,22 +167,26 @@ const GsdWiseMonitoringReport = () => {
         0
       );
 
+      const ascendingOrderData = myData?.gsd
+        ? [...myData?.gsd]?.sort((a, b) => a?.performance - b?.performance)
+        : [];
+
       setGsdData((prevDetails) => ({
         ...prevDetails,
-        list: myData?.gsd || [],
+        list: ascendingOrderData,
         pageLength: myData?.paging?.[0]?.length || 0,
         currentPage: myData?.paging?.[0]?.currentpage || 1,
         totalRecords: myData?.paging?.[0]?.totalrecords || 0,
       }));
 
       setCount({
-        total: myData?.gsd?.length,
+        total: ascendingOrderData?.length,
         todaysmonitaring: totalMonitoring,
         total_allocation: total_allocation,
         totalPendingMonitoring: total_allocation - totalMonitoring,
       });
 
-      const myexcelData = myData?.gsd?.map((data, index) => {
+      const myexcelData = ascendingOrderData?.map((data, index) => {
         return {
           Sr: index + 1,
           Name: data?.name,
