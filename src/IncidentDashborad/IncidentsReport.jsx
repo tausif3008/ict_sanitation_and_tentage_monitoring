@@ -1,6 +1,6 @@
+import React from "react";
 import { DatePicker, Progress } from "antd";
 import moment from "moment";
-import React from "react";
 import Chart from "react-apexcharts";
 import processIcon from "./../assets/Dashboard/InprogressIcon.png";
 import resolvedIcon from "./../assets/Dashboard/ResolvedIcon.png";

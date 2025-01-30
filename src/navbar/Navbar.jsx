@@ -450,7 +450,7 @@ const Navbar = ({ lang, setLang }) => {
 
   // reports
   const reports_items = (lang, dict) => {
-    return [
+    const filteredReports = [
       monitoring_reports?.includes(userRoleId) && {
         key: "2",
         label: (
@@ -492,14 +492,6 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      // circle_wise_reports?.includes(userRoleId) && {
-      //   key: "4",
-      //   label: (
-      //     <Link className="text-black no-underline" to="/circle-wise-report">
-      //       Circle Wise Report
-      //     </Link>
-      //   ),
-      // },
       vendor_wise_reports?.includes(userRoleId) && {
         key: "5",
         label: (
@@ -614,7 +606,8 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-    ]?.sort((a, b) => {
+    ].filter(Boolean); // Remove undefined or false values
+    return filteredReports?.sort((a, b) => {
       const labelA = a?.label?.props?.children?.toLowerCase();
       const labelB = b?.label?.props?.children?.toLowerCase();
       if (labelA < labelB) return -1;
@@ -622,6 +615,180 @@ const Navbar = ({ lang, setLang }) => {
       return 0;
     });
   };
+
+  // const reports_items = (lang, dict) => {
+  //   return [
+  //     monitoring_reports?.includes(userRoleId) && {
+  //       key: "2",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/monitoring"
+  //         >
+  //           Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     monitoring_dailyWeekly_reports?.includes(userRoleId) && {
+  //       key: "10",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/monitoring-daily-report"
+  //         >
+  //           Daily Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     monitoring_dailyWeekly_reports?.includes(userRoleId) && {
+  //       key: "11",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/weekly-monitoring-report"
+  //         >
+  //           Weekly Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     sector_wise_reports?.includes(userRoleId) && {
+  //       key: "3",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/sector-wise-report">
+  //           Sector Wise Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     // circle_wise_reports?.includes(userRoleId) && {
+  //     //   key: "4",
+  //     //   label: (
+  //     //     <Link className="text-black no-underline" to="/circle-wise-report">
+  //     //       Circle Wise Report
+  //     //     </Link>
+  //     //   ),
+  //     // },
+  //     vendor_wise_reports?.includes(userRoleId) && {
+  //       key: "5",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/vendor-wise-report">
+  //           Vendor Wise Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     incident_reports?.includes(userRoleId) && {
+  //       key: "6",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/incident-report">
+  //           Incident Report
+  //         </Link>
+  //       ),
+  //     },
+  //     inspections_reports?.includes(userRoleId) && {
+  //       key: "7",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/inspection-report">
+  //           Inspection Report
+  //         </Link>
+  //       ),
+  //     },
+  //     gsd_wise_regi_reports?.includes(userRoleId) && {
+  //       key: "8",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/gsd-wise-registration-report"
+  //         >
+  //           GSD Wise Registration Report
+  //         </Link>
+  //       ),
+  //     },
+  //     vendor_wise_regi_reports?.includes(userRoleId) && {
+  //       key: "9",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/vendor-wise-registration-report"
+  //         >
+  //           Vendor Wise Registration Report
+  //         </Link>
+  //       ),
+  //     },
+  //     sector_wise_regi_reports?.includes(userRoleId) && {
+  //       key: "10",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/sector-wise-registration-report"
+  //         >
+  //           Sector Wise Registration Report
+  //         </Link>
+  //       ),
+  //     },
+  //     sector_type_wise_regi_reports?.includes(userRoleId) && {
+  //       key: "13",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/sector-type-wise-registration-report"
+  //         >
+  //           Sector & Type Wise Registration Report
+  //         </Link>
+  //       ),
+  //     },
+  //     parking_wise_monitoring_reports?.includes(userRoleId) && {
+  //       key: "14",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/parking-wise-monitoring-report"
+  //         >
+  //           Parking Wise Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     attendance_reports?.includes(userRoleId) && {
+  //       key: "15",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/attendance-report">
+  //           Attendance Report
+  //         </Link>
+  //       ),
+  //     },
+  //     asset_incident_reports?.includes(userRoleId) && {
+  //       key: "16",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/asset-incident-report">
+  //           Asset Incident Report
+  //         </Link>
+  //       ),
+  //     },
+  //     gsd_wise_monitoring_reports?.includes(userRoleId) && {
+  //       key: "11",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/gsd-wise-monitoring-report"
+  //         >
+  //           GSD Wise Monitoring Report
+  //         </Link>
+  //       ),
+  //     },
+  //     vehicle_reports?.includes(userRoleId) && {
+  //       key: "12",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/vehicle-report">
+  //           Vehicle Report
+  //         </Link>
+  //       ),
+  //     },
+  //   ]?.sort((a, b) => {
+  //     const labelA = a?.label?.props?.children?.toLowerCase();
+  //     const labelB = b?.label?.props?.children?.toLowerCase();
+  //     if (labelA < labelB) return -1;
+  //     if (labelA > labelB) return 1;
+  //     return 0;
+  //   });
+  // };
 
   const setting_item = (dict, lang, navigate) => {
     const list = [

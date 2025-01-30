@@ -33,7 +33,6 @@ import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Sl
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
-  // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [incidentData, setIncidentData] = useState({
@@ -70,6 +69,9 @@ const IncidentReports = () => {
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
   const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
   const userSectorArray = sessionData?.allocatedsectors || [];
+  const userCategoryId =
+    sessionData?.allocatedmaintype?.[0]?.asset_main_type_id;
+  const IsVendor = Number(userRoleId) === 8;
 
   const SectorArray = useMemo(() => {
     return (
@@ -138,7 +140,7 @@ const IncidentReports = () => {
     form.setFieldsValue({
       to_user_id: null,
     });
-    value && userRoleId != "8" && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
+    value && !IsVendor && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
   };
 
   // handle date select
@@ -164,7 +166,7 @@ const IncidentReports = () => {
 
   const getData = async () => {
     let uri = URLS?.incidencesReport?.path + "?";
-    if (userRoleId === "8") {
+    if (IsVendor) {
       uri = uri + `to_user_id=${user_Id}`;
     }
     if (params.page) {
@@ -219,6 +221,11 @@ const IncidentReports = () => {
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     dispatch(getSectorsList()); // all sectors
     getTodayData();
+
+    if (IsVendor) {
+      const url = URLS?.assetType?.path + userCategoryId;
+      dispatch(getAssetTypes(url)); // get assset type
+    }
   }, []);
 
   useEffect(() => {
@@ -278,7 +285,7 @@ const IncidentReports = () => {
       key: "asset_types_name",
       width: 180,
     },
-    ...(userRoleId === "8"
+    ...(IsVendor
       ? []
       : [
           {
@@ -448,15 +455,23 @@ const IncidentReports = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 0]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        options={AssetMainTypeDrop || []}
-                        onSelect={handleSelect}
-                      />
-                    </Col>
+                    {!IsVendor && (
+                      <Col
+                        key="asset_main_type_id"
+                        xs={24}
+                        sm={12}
+                        md={6}
+                        lg={5}
+                      >
+                        <CustomSelect
+                          name={"asset_main_type_id"}
+                          label={"Select Category"}
+                          placeholder={"Select Category"}
+                          options={AssetMainTypeDrop || []}
+                          onSelect={handleSelect}
+                        />
+                      </Col>
+                    )}
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_id"}
@@ -466,7 +481,7 @@ const IncidentReports = () => {
                         onSelect={handleTypeSelect}
                       />
                     </Col>
-                    {userRoleId != "8" && (
+                    {!IsVendor && (
                       <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
                         <CustomSelect
                           name={"to_user_id"}

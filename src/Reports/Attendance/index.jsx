@@ -53,12 +53,27 @@ const AttendanceReport = () => {
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AttendanceData, loading } = AttendanceSelector();
 
+  const userRoleId = localStorage.getItem("role_id");
+  const isSmoUser = Number(userRoleId) === 9;
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
+  const userSectorArray = sessionData?.allocatedsectors || [];
+
+  const SectorArray = useMemo(() => {
+    return (
+      SectorListDrop?.filter((obj1) =>
+        userSectorArray?.some((obj2) => obj2?.sector_id === obj1?.value)
+      ) || []
+    );
+  }, [SectorListDrop, userSectorArray]);
+
   const agentName = getValueLabel(
     formValue?.user_id,
     monitoringAgentDrop,
     null
   );
-  // const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
+  const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   // const percentageName = getValueLabel(
   //   `${formValue?.percentage}`,
   //   percentageOptions,
@@ -80,9 +95,9 @@ const AttendanceReport = () => {
     if (agentName) {
       name += `- ${agentName}`;
     }
-    // if (sectorName) {
-    //   name += `- ${sectorName}`;
-    // }
+    if (sectorName) {
+      name += `- ${sectorName}`;
+    }
     // if (percentageName) {
     //   name += `- ${percentageName}`;
     // }
@@ -175,12 +190,14 @@ const AttendanceReport = () => {
     setShowDateRange(false);
     form.setFieldsValue({
       date_format: "Today",
+      ...(isSmoUser && { sector_id: userSectorId }),
     });
     const finalValues = {
       page: 1,
       per_page: 10,
       form_date: moment().format("YYYY-MM-DD"),
       to_date: moment().format("YYYY-MM-DD"),
+      ...(isSmoUser && { sector_id: userSectorId }),
     };
     callApi(finalValues);
   };
@@ -472,11 +489,18 @@ const AttendanceReport = () => {
                     apiAction={getMonitoringAgent}
                     onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                   />
-                  <CustomSelect
+                  {/* <CustomSelect
                     name={"sector_id"}
                     label={"Select Sector"}
                     placeholder={"Select Sector"}
                     options={SectorListDrop || []}
+                  /> */}
+                  <CustomSelect
+                    name={"sector_id"}
+                    label={"Select Sector"}
+                    placeholder={"Select Sector"}
+                    allowClear={isSmoUser ? false : true}
+                    options={isSmoUser ? SectorArray : SectorListDrop || []}
                   />
                   {/* <CustomDatepicker
                     name={"date"}

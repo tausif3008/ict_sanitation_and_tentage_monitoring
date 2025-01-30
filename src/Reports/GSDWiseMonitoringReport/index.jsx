@@ -56,14 +56,6 @@ const GsdWiseMonitoringReport = () => {
     );
   }, [SectorListDrop, userSectorArray]);
 
-  // const userRoleId = localStorage.getItem("role_id");
-  // const SessionData = localStorage.getItem("sessionData");
-  // const sessionObject = JSON.parse(SessionData);
-  // const IsSmoUser = Number(userRoleId) === 9;
-
-  // console.log("userRoleId", userRoleId);
-  console.log("SectorArray", SectorArray);
-
   const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   const percentageName = getValueLabel(
     `${formValue?.percentage}`,
@@ -125,8 +117,8 @@ const GsdWiseMonitoringReport = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     form.setFieldsValue({
       date: dayjs(newDate, globalDateFormat),
+      ...(isSmoUser && { sector_id: userSectorId }),
     });
-    isSmoUser && form.setFieldValue("sector_id", userSectorId);
     const finalValues = {
       date: newDate,
       ...(isSmoUser && { sector_id: userSectorId }),

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router";
 import { useDispatch } from "react-redux";
 import { Collapse, Form, Button, notification, Row, Col, message } from "antd";
@@ -73,6 +73,12 @@ const Monitoring = () => {
   // const ImageUrl = localStorage.getItem("ImageUrl") || "";
   const userRoleId = localStorage.getItem("role_id");
   const UserId = localStorage.getItem("userId");
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userCategoryId =
+    sessionData?.allocatedmaintype?.[0]?.asset_main_type_id;
+  const IsVendor = Number(userRoleId) === 8;
+
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
@@ -89,7 +95,7 @@ const Monitoring = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
-    if (userRoleId !== "8" && value) {
+    if (!IsVendor && value) {
       const paramData = {
         asset_main_type_id: value,
       };
@@ -101,7 +107,7 @@ const Monitoring = () => {
     form.setFieldsValue({
       vendor_id: null,
     });
-    if (userRoleId !== "8" && value) {
+    if (!IsVendor && value) {
       const paramData = {
         asset_main_type_id: formValue?.asset_main_type_id,
         asset_type_id: value,
@@ -181,7 +187,7 @@ const Monitoring = () => {
   const getDetails = async () => {
     setLoading(true);
     let uri = URLS.monitoring.path + "?";
-    if (userRoleId === "8") {
+    if (IsVendor) {
       uri = uri + `&vendor_id=${UserId}`;
     }
     if (params.page) {
@@ -211,23 +217,6 @@ const Monitoring = () => {
           totalRecords: data.paging[0].totalrecords,
         };
       });
-
-      // const myexcelData = data?.listings?.map((data, index) => {
-      //   return {
-      //     sr: index + 1,
-      //     "Asset Type Name": data?.asset_type_name,
-      //     Code: Number(data?.asset_code),
-      //     Unit: Number(data?.unit_no),
-      //     "Monitoring Agent Name": data?.agent_name,
-      //     "Vendor Name": data?.vendor_name,
-      //     Sector: data?.sector_name,
-      //     Circle: data?.circle_name,
-      //     Date: data?.created_at
-      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-      //       : "",
-      //   };
-      // });
-      // setExcelData(myexcelData);
     }
     setLoading(false);
   };
@@ -262,12 +251,15 @@ const Monitoring = () => {
   }, [params, searchQuery]);
 
   useEffect(() => {
-    const urls = URLS?.monitoringAgent?.path;
-    dispatch(getMonitoringAgent(urls)); // monitoring agent list
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
-    if (userRoleId !== "8") {
+    if (!IsVendor) {
+      const urls = URLS?.monitoringAgent?.path;
+      dispatch(getMonitoringAgent(urls)); // monitoring agent list
       dispatch(getVendorCategoryTypeDrop()); // vendor list
+    } else {
+      const url = URLS?.assetType?.path + userCategoryId;
+      dispatch(getAssetTypes(url)); // get assset type
     }
   }, []);
 
@@ -318,13 +310,17 @@ const Monitoring = () => {
         return numA - numB; // Numeric sorting
       },
     },
-    {
-      title: "Vendor Name",
-      dataIndex: "vendor_name",
-      key: "vendor_name",
-      sorter: (a, b) => a?.vendor_name?.localeCompare(b?.vendor_name),
-      width: 210,
-    },
+    ...(!IsVendor
+      ? [
+          {
+            title: "Vendor Name",
+            dataIndex: "vendor_name",
+            key: "vendor_name",
+            sorter: (a, b) => a?.vendor_name?.localeCompare(b?.vendor_name),
+            width: 210,
+          },
+        ]
+      : []),
     // {
     //   title: "Circle Name",
     //   dataIndex: "circle_name",
@@ -375,7 +371,7 @@ const Monitoring = () => {
       },
       width: 120,
     },
-    ...(userRoleId !== "8"
+    ...(!IsVendor
       ? [
           {
             title: "GSD Name",
@@ -626,15 +622,23 @@ const Monitoring = () => {
                   key="form1"
                 >
                   <Row gutter={[16, 0]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop?.slice(0, 2) || []}
-                      />
-                    </Col>
+                    {!IsVendor && (
+                      <Col
+                        key="asset_main_type_id"
+                        xs={24}
+                        sm={12}
+                        md={6}
+                        lg={5}
+                      >
+                        <CustomSelect
+                          name={"asset_main_type_id"}
+                          label={"Select Category"}
+                          placeholder={"Select Category"}
+                          onSelect={handleSelect}
+                          options={AssetMainTypeDrop?.slice(0, 2) || []}
+                        />
+                      </Col>
+                    )}
                     <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_id"}
@@ -644,7 +648,7 @@ const Monitoring = () => {
                         onSelect={handleTypeSelect}
                       />
                     </Col>
-                    {userRoleId !== "8" && (
+                    {!IsVendor && (
                       <>
                         <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                           <CustomSelect
