@@ -103,8 +103,6 @@ const AssetRegistrationForm = () => {
     }
   }, [record, key]);
 
-  console.log("record", record);
-
   return (
     <div className="mt-3">
       <div className="mx-auto p-3 bg-white shadow-md rounded-lg mt-3 w-full">
@@ -173,6 +171,17 @@ const AssetRegistrationForm = () => {
                 {
                   required: true,
                   message: "Please Add Asset Code!",
+                },
+              ]}
+            />
+            <CustomInput
+              name={"unit"}
+              label={"Units"}
+              placeholder={"Unit"}
+              rules={[
+                {
+                  required: true,
+                  message: "Please Add Unit!",
                 },
               ]}
             />

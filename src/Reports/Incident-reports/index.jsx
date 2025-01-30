@@ -61,6 +61,7 @@ const IncidentReports = () => {
   };
 
   const userRoleId = localStorage.getItem("role_id");
+  const isSmoUser = Number(userRoleId) === 9;
   const user_Id = localStorage.getItem("userId");
   const categoryType = form.getFieldValue("asset_main_type_id");
   const asset_type_id_name = form.getFieldValue("asset_type_id");
@@ -119,7 +120,7 @@ const IncidentReports = () => {
   };
 
   const getTodayData = () => {
-    userRoleId === "9" && form.setFieldValue("sector_id", userSectorId);
+    isSmoUser && form.setFieldValue("sector_id", userSectorId);
   };
 
   // handle asset main type
@@ -175,7 +176,7 @@ const IncidentReports = () => {
     if (searchQuery) {
       uri = uri + searchQuery;
     }
-    if (userRoleId === "9" && !uri.includes(`sector_id=${userSectorId}`)) {
+    if (isSmoUser && !uri.includes(`sector_id=${userSectorId}`)) {
       uri = uri + `sector_id=${userSectorId}`;
     }
     dispatch(getIncidentReportData(basicUrl + uri)); // Fetch the data
@@ -334,7 +335,7 @@ const IncidentReports = () => {
     try {
       const url = URLS.incidencesReport.path + "?page=1&per_page=5000";
       let newUrl = `${url}${searchQuery ? searchQuery : ""}`;
-      if (userRoleId === "9" && !newUrl.includes(`sector_id=${userSectorId}`)) {
+      if (isSmoUser && !newUrl.includes(`sector_id=${userSectorId}`)) {
         newUrl = newUrl + `&sector_id=${userSectorId}`;
       }
       const res = await dispatch(getPdfExcelData(newUrl));
@@ -554,14 +555,10 @@ const IncidentReports = () => {
                     <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"sector_id"}
-                        allowClear={userRoleId === "9" ? false : true}
+                        allowClear={isSmoUser ? false : true}
                         label={"Select Sector"}
                         placeholder={"Select Sector"}
-                        options={
-                          userRoleId === "9"
-                            ? SectorArray
-                            : SectorListDrop || []
-                        }
+                        options={isSmoUser ? SectorArray : SectorListDrop || []}
                       />{" "}
                     </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">

@@ -41,6 +41,29 @@ const GsdWiseMonitoringReport = () => {
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { GSDMonitoring_data, gsd_monitoringLoader } = GSDMonitoringSelector();
 
+  const userRoleId = localStorage.getItem("role_id");
+  const isSmoUser = Number(userRoleId) === 9;
+  const sessionDataString = localStorage.getItem("sessionData");
+  const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
+  const userSectorId = sessionData?.allocatedsectors?.[0]?.sector_id;
+  const userSectorArray = sessionData?.allocatedsectors || [];
+
+  const SectorArray = useMemo(() => {
+    return (
+      SectorListDrop?.filter((obj1) =>
+        userSectorArray?.some((obj2) => obj2?.sector_id === obj1?.value)
+      ) || []
+    );
+  }, [SectorListDrop, userSectorArray]);
+
+  // const userRoleId = localStorage.getItem("role_id");
+  // const SessionData = localStorage.getItem("sessionData");
+  // const sessionObject = JSON.parse(SessionData);
+  // const IsSmoUser = Number(userRoleId) === 9;
+
+  // console.log("userRoleId", userRoleId);
+  console.log("SectorArray", SectorArray);
+
   const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   const percentageName = getValueLabel(
     `${formValue?.percentage}`,
@@ -103,8 +126,10 @@ const GsdWiseMonitoringReport = () => {
     form.setFieldsValue({
       date: dayjs(newDate, globalDateFormat),
     });
+    isSmoUser && form.setFieldValue("sector_id", userSectorId);
     const finalValues = {
       date: newDate,
+      ...(isSmoUser && { sector_id: userSectorId }),
     };
     callApi(finalValues);
   };
@@ -122,7 +147,6 @@ const GsdWiseMonitoringReport = () => {
   useEffect(() => {
     if (GSDMonitoring_data) {
       let myData = GSDMonitoring_data?.data;
-      console.log("myData", myData);
       const selectedPercentage = formValue?.percentage;
       if (selectedPercentage) {
         const filteredData = myData?.gsd?.filter((circle) => {
@@ -393,7 +417,8 @@ const GsdWiseMonitoringReport = () => {
                       name={"sector_id"}
                       label={"Select Sector"}
                       placeholder={"Select Sector"}
-                      options={SectorListDrop || []}
+                      allowClear={isSmoUser ? false : true}
+                      options={isSmoUser ? SectorArray : SectorListDrop || []}
                     />
                   </Col>
                   <Col key="percentage" xs={24} sm={12} md={6} lg={5}>

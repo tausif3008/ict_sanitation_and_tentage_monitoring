@@ -183,6 +183,12 @@ export const dateWeekOptions = [
     value: "Date Range",
   },
 ];
+export const AllCountOptions = [
+  {
+    label: "All Count",
+    value: true,
+  },
+];
 
 export const dateDayOptions = [
   {

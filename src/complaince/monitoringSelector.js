@@ -14,7 +14,7 @@ const MonitoringSelector = () => {
     return monitoringAgentData?.data?.users?.map((data) => {
       return {
         value: data?.user_id,
-        label: data?.name,
+        label: `${data?.name} - ${data?.phone}`,
       };
     });
   }, [monitoringAgentData]); // monitoring agent dropdown

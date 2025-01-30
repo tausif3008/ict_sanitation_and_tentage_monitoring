@@ -318,6 +318,11 @@ const VendorRegistrationReport = () => {
                         placeholder={"Select Date Type"}
                         options={dateWeekOptions || []}
                         onSelect={handleDateSelect}
+                        onChange={(value) => {
+                          if (!value) {
+                            setShowDateRange(false);
+                          }
+                        }}
                       />
                     </Col>
                     {showDateRange && (

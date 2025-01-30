@@ -5,26 +5,24 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import {
-  dateOptions,
-  dateWeekOptions,
-  getValueLabel,
-} from "../../constant/const";
+import { dateWeekOptions, getValueLabel } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 // import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 // import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomTable from "../../commonComponents/CustomTable";
 import ExportToExcel from "../ExportToExcel";
-import ExportToPDF from "../reportFile";
+// import ExportToPDF from "../reportFile";
 import URLS from "../../urils/URLS";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import { getAttendanceReports } from "./Slice/attendanceslice";
 import AttendanceSelector from "./Slice/attendanceSelector";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
 const AttendanceReport = () => {
-  const [excelData, setExcelData] = useState([]);
+  // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   // const [tableColumns, setTableColumns] = useState([
@@ -51,7 +49,7 @@ const AttendanceReport = () => {
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
-  // const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AttendanceData, loading } = AttendanceSelector();
 
@@ -193,7 +191,7 @@ const AttendanceReport = () => {
 
   useEffect(() => {
     getCurrentData();
-    // dispatch(getSectorsList()); // all sectors
+    dispatch(getSectorsList()); // all sectors
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
@@ -367,7 +365,6 @@ const AttendanceReport = () => {
   //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
   // }, [excelData]);
 
-  // console.log("tableData", tableData);
   const myExcelItems = useMemo(() => {
     if (!tableData?.list) return [];
 
@@ -395,8 +392,6 @@ const AttendanceReport = () => {
       return row; // Return the row data
     });
   }, [tableData]);
-
-  // console.log(myExcelItems);
 
   return (
     <div>
@@ -477,12 +472,12 @@ const AttendanceReport = () => {
                     apiAction={getMonitoringAgent}
                     onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                   />
-                  {/* <CustomSelect
+                  <CustomSelect
                     name={"sector_id"}
                     label={"Select Sector"}
                     placeholder={"Select Sector"}
                     options={SectorListDrop || []}
-                  /> */}
+                  />
                   {/* <CustomDatepicker
                     name={"date"}
                     label={"Date"}
