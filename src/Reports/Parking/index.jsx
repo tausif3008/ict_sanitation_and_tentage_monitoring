@@ -19,10 +19,7 @@ import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import VendorSelectors from "../VendorwiseReports/vendorSelectors";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomSelect from "../../commonComponents/CustomSelect";
-import {
-  getAssetMainTypes,
-  getAssetTypes,
-} from "../../register/AssetType/AssetTypeSlice";
+import { getAssetTypes } from "../../register/AssetType/AssetTypeSlice";
 import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
 import { getFormData } from "../../urils/getFormData";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -39,6 +36,7 @@ const ParkingMonitoringReport = () => {
   });
   const [filesName, setFilesName] = useState(null); // files Name
   const [showTypeOption, setShowTypeOption] = useState(null);
+  const [parkingTypeOption, setParkingTypeOption] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState({
     totalQnty: 0,
     registered: 0,
@@ -55,34 +53,13 @@ const ParkingMonitoringReport = () => {
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
   const dispatch = useDispatch();
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
+  const { AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const parkingDropdown =
     [{ value: "0", label: "City Parking" }, ...SectorListDrop] || [];
   const { ParkingsData, loading } = ParkingSelector(); // parking report data
 
-  useEffect(() => {
-    if (ParkingsData) {
-      setDetails(() => {
-        return {
-          list: ParkingsData,
-        };
-      });
-    } else {
-      setDetails({
-        list: [],
-        pageLength: 25,
-        currentPage: 1,
-      });
-    }
-  }, [ParkingsData]);
-
-  const catTypeName = getValueLabel(
-    formValue?.asset_main_type_id,
-    AssetMainTypeDrop,
-    null
-  );
   const assetTypeName = getValueLabel(
     formValue?.asset_type_id,
     AssetTypeDrop,
@@ -123,47 +100,24 @@ const ParkingMonitoringReport = () => {
         ]
       : []),
     {
-      label: `Category : ${catTypeName || "Combined"}`,
+      label: `Parking Type : ${ParkingTypeName || sectorName || "Combined"}`,
     },
     {
       label: `Type : ${assetTypeName || pdfTitleData?.type || "Combined"}`,
     },
-    ...(formValue?.mapped_sector_id
-      ? [
-          {
-            label: `Mapped Sector Name : ${sectorName || "Combined"}`,
-          },
-        ]
-      : []),
     {
       label: `Sort By : ${orderByName || "Combined"}`,
     },
   ];
 
-  // handle category
-  const handleSelect = (value) => {
-    form.setFieldsValue({
-      asset_type_id: null,
-      vendor_id: null,
-    });
-    const url = URLS?.assetType?.path + value;
-    dispatch(getAssetTypes(url)); // get assset type
-    if (value) {
-      const paramData = {
-        asset_main_type_id: value,
-      };
-      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
-    }
-  };
-
   // handle asset type
   const handleTypeSelect = (value) => {
     form.setFieldsValue({
       vendor_id: null,
+      asset_type_ids: null,
     });
     if (value) {
       const paramData = {
-        asset_main_type_id: formValue?.asset_main_type_id,
         asset_type_id: value,
       };
       dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
@@ -175,9 +129,6 @@ const ParkingMonitoringReport = () => {
     const dayjsDate = new Date(values?.date);
     const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");
     const finalValues = {
-      ...(values?.asset_main_type_id && {
-        asset_main_type_id: values?.asset_main_type_id,
-      }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.mapped_sector_id && {
         mapped_sector_id: values?.mapped_sector_id,
@@ -201,6 +152,7 @@ const ParkingMonitoringReport = () => {
     form.resetFields();
     getCurrentData();
     setFilesName(null);
+    setParkingTypeOption(null);
   };
 
   // file name
@@ -208,9 +160,6 @@ const ParkingMonitoringReport = () => {
     let name = "Parking Wise";
     if (vendorName) {
       name += `- ${vendorName}`;
-    }
-    if (catTypeName) {
-      name += `- ${catTypeName}`;
     }
     if (assetTypeName) {
       name += `- ${assetTypeName}`;
@@ -228,7 +177,7 @@ const ParkingMonitoringReport = () => {
       name += `- ${orderByName}`;
     }
     name += ` (${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
-    return name;
+    return `${name} Monitoring Report`;
   };
 
   useEffect(() => {
@@ -286,45 +235,42 @@ const ParkingMonitoringReport = () => {
 
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
-    let mainTypeIdLocal = "1";
-
+    handleTypeSelect(1);
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
-      asset_main_type_id: mainTypeIdLocal,
       order_by: "monitaring_per",
+      asset_type_ids: fiveTypes?.[0]?.value,
     });
-    const url = URLS?.assetType?.path + mainTypeIdLocal;
-    dispatch(getAssetTypes(url)); // get assset type
-    const paramData = {
-      asset_main_type_id: mainTypeIdLocal,
-    };
-    dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
     const finalValues = {
+      asset_type_ids: fiveTypes?.[0]?.value,
       date: newDate,
       order_by: "monitaring_per",
-      asset_main_type_id: mainTypeIdLocal,
     };
     callApi(finalValues);
   };
 
   useEffect(() => {
     getCurrentData(); // current data
-    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
-    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    const url = URLS?.assetType?.path + 1;
+    dispatch(getAssetTypes(url)); // get assset type
     dispatch(getSectorsList()); // all sectors
   }, []);
 
-  // Create a reusable render function
-  const renderColumn = (text, record) => {
-    return (
-      <span
-      // onClick={() => handleClick(record)}
-      // className="cursor-pointer hover:text-blue-500 hover:underline"
-      >
-        {text ? text : 0}
-      </span>
-    );
-  };
+  useEffect(() => {
+    if (ParkingsData) {
+      setDetails(() => {
+        return {
+          list: ParkingsData,
+        };
+      });
+    } else {
+      setDetails({
+        list: [],
+        pageLength: 25,
+        currentPage: 1,
+      });
+    }
+  }, [ParkingsData]);
 
   // table column
   const columns = [
@@ -352,7 +298,7 @@ const ParkingMonitoringReport = () => {
     //   dataIndex: "name",
     //   key: "name",
     //   width: 90,
-    //   render: renderColumn,
+
     //   sorter: (a, b) => {
     //     const extractNumber = (str) => {
     //       const match = str?.match(/\d+/); // Matches digits in the string
@@ -368,7 +314,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "total",
       key: "total",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.total - b?.total,
     },
     {
@@ -376,7 +321,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "registered",
       key: "registered",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.registered - b?.registered,
     },
     {
@@ -384,7 +328,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "todaysmonitaring",
       key: "todaysmonitaring",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.todaysmonitaring - b?.todaysmonitaring,
     },
     {
@@ -392,9 +335,9 @@ const ParkingMonitoringReport = () => {
       dataIndex: "monitaring_per",
       key: "monitaring_per",
       width: 50,
-      render: (text, record) => {
+      render: (text) => {
         const roundedText = text ? `${Math.round(text)}%` : "00";
-        return renderColumn(roundedText, record);
+        return roundedText;
       },
       sorter: (a, b) => a?.monitaring_per - b?.monitaring_per,
     },
@@ -404,7 +347,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "partially_compliant",
       key: "partially_compliant",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.partially_compliant - b?.partially_compliant,
     },
     {
@@ -412,7 +354,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "compliant",
       key: "compliant",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.compliant - b?.compliant,
     },
     {
@@ -420,7 +361,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "not_compliant",
       key: "not_compliant",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.not_compliant - b?.not_compliant,
     },
     {
@@ -430,7 +370,7 @@ const ParkingMonitoringReport = () => {
       width: 50,
       render: (text, record) => {
         const roundedText = text ? `${Math.round(text)}%` : "00";
-        return renderColumn(roundedText, record);
+        return roundedText;
       },
       sorter: (a, b) => a?.not_compliant_per - b?.not_compliant_per,
     },
@@ -439,7 +379,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "toiletunclean",
       key: "toiletunclean",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.toiletunclean - b?.toiletunclean,
     },
     {
@@ -449,7 +388,7 @@ const ParkingMonitoringReport = () => {
       width: 50,
       render: (text, record) => {
         const roundedText = text ? `${Math.round(text)}%` : "00";
-        return renderColumn(roundedText, record);
+        return roundedText;
       },
       sorter: (a, b) => a?.toiletunclean_per - b?.toiletunclean_per,
     },
@@ -458,7 +397,6 @@ const ParkingMonitoringReport = () => {
       dataIndex: "toiletclean",
       key: "toiletclean",
       width: 50,
-      render: renderColumn,
       sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
   ];
@@ -542,7 +480,6 @@ const ParkingMonitoringReport = () => {
       <CommonDivider label={"Parking-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <ExportToPDF
-          // titleName={filesName ? filesName : `Parking-Wise Monitoring Report`}
           titleName={`Parking-Wise Monitoring Report (${dayjs(
             formValue?.date
           ).format("DD-MMM-YYYY")})`}
@@ -551,14 +488,14 @@ const ParkingMonitoringReport = () => {
           IsLastLineBold={true}
           landscape={true}
           tableTitles={pdfTitleParam || []}
-          columnProperties={formValue?.order_by === "monitaring_per" ? [5] : []} // 6 columns
+          columnProperties={formValue?.order_by === "monitaring_per" ? [6] : []} // 7 columns
           redToGreenProperties={
             formValue?.order_by === "not_compliant_per"
-              ? [9]
+              ? [10]
               : formValue?.order_by === "toiletunclean_per"
-              ? [11]
+              ? [12]
               : []
-          } // 10, 12 columns  100 to 0
+          } // 11, 13 columns  100 to 0
           rows={[
             ...pdfData,
             [
@@ -584,12 +521,12 @@ const ParkingMonitoringReport = () => {
         />
         <ExportToExcel
           excelData={myexcelData || []}
-          columnProperties={formValue?.order_by === "monitaring_per" ? [6] : []} // 6 columns
+          columnProperties={formValue?.order_by === "monitaring_per" ? [7] : []} // 6 columns
           redToGreenProperties={
             formValue?.order_by === "not_compliant_per"
-              ? [10]
+              ? [11]
               : formValue?.order_by === "toiletunclean_per"
-              ? [12]
+              ? [13]
               : []
           }
           fileName={filesName ? filesName : `Vendor-Wise Report`}
@@ -658,16 +595,6 @@ const ParkingMonitoringReport = () => {
                 key="form1"
               >
                 <Row gutter={[16, 16]} align="middle">
-                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                    <CustomSelect
-                      name={"asset_main_type_id"}
-                      label={"Select Category"}
-                      placeholder={"Select Category"}
-                      onSelect={handleSelect}
-                      options={AssetMainTypeDrop?.slice(0, 2) || []}
-                      allowClear={false}
-                    />
-                  </Col>
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"asset_type_id"}
@@ -702,6 +629,12 @@ const ParkingMonitoringReport = () => {
                       label={"Sector Name"}
                       placeholder={"Select Sector Name"}
                       options={SectorListDrop || []}
+                      onChange={(value) => {
+                        setParkingTypeOption(value);
+                        form.setFieldsValue({
+                          parking_type: null,
+                        });
+                      }}
                     />
                   </Col>
                   <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
@@ -713,15 +646,17 @@ const ParkingMonitoringReport = () => {
                       options={OrderBy || []}
                     />
                   </Col>
-                  <Col key="parking_type" xs={24} sm={12} md={6} lg={5}>
-                    <CustomSelect
-                      name={"parking_type"}
-                      label={"Parking Type"}
-                      placeholder={"Parking Type"}
-                      options={parkingType || []}
-                    />
-                  </Col>
-                  {formValue?.asset_main_type_id === "1" && !showTypeOption && (
+                  {!parkingTypeOption && (
+                    <Col key="parking_type" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"parking_type"}
+                        label={"Parking Type"}
+                        placeholder={"Parking Type"}
+                        options={parkingType || []}
+                      />
+                    </Col>
+                  )}
+                  {!showTypeOption && (
                     <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_type_ids"}
