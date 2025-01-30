@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
-import { Table, Collapse, Form, Button, Row, Col } from "antd";
+import { Collapse, Form, Button, Row, Col } from "antd";
 
 import search from "../../assets/Dashboard/icon-search.png";
 import {
@@ -29,8 +29,14 @@ import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Sl
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getParkingReports } from "../../register/parking/parkingSlice";
 import ParkingSelector from "../../register/parking/parkingSelector";
+import CustomTable from "../../commonComponents/CustomTable";
 
 const ParkingMonitoringReport = () => {
+  const [details, setDetails] = useState({
+    list: [],
+    pageLength: 25,
+    currentPage: 1,
+  });
   const [filesName, setFilesName] = useState(null); // files Name
   const [showTypeOption, setShowTypeOption] = useState(null);
   const [totalQuantity, setTotalQuantity] = useState({
@@ -50,9 +56,27 @@ const ParkingMonitoringReport = () => {
   const formValue = form.getFieldsValue();
   const dispatch = useDispatch();
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
-  const { VendorReport_Loading, VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const parkingDropdown =
+    [{ value: "0", label: "City Parking" }, ...SectorListDrop] || [];
   const { ParkingsData, loading } = ParkingSelector(); // parking report data
+
+  useEffect(() => {
+    if (ParkingsData) {
+      setDetails(() => {
+        return {
+          list: ParkingsData,
+        };
+      });
+    } else {
+      setDetails({
+        list: [],
+        pageLength: 25,
+        currentPage: 1,
+      });
+    }
+  }, [ParkingsData]);
 
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
@@ -76,7 +100,7 @@ const ParkingMonitoringReport = () => {
   );
   const sectorName = getValueLabel(
     formValue?.mapped_sector_id,
-    SectorListDrop,
+    parkingDropdown,
     null
   );
   const orderByName = getValueLabel(formValue?.order_by, OrderBy, null);
@@ -319,7 +343,7 @@ const ParkingMonitoringReport = () => {
       key: "mapped_sector_id",
       width: 50,
       render: (text) => {
-        return text ? getValueLabel(text, SectorListDrop, null) || "-" : "-";
+        return text ? getValueLabel(text, parkingDropdown, null) || "-" : "-";
       },
       sorter: (a, b) => a?.total - b?.total,
     },
@@ -463,7 +487,7 @@ const ParkingMonitoringReport = () => {
   const pdfData = ParkingsData?.map((sector, index) => [
     index + 1,
     sector?.name,
-    getValueLabel(sector?.mapped_sector_id, SectorListDrop, null) || "-",
+    getValueLabel(sector?.mapped_sector_id, parkingDropdown, null) || "-",
     Number(sector?.total) || 0,
     Number(sector?.registered) || 0,
     Number(sector?.todaysmonitaring) || 0,
@@ -489,7 +513,7 @@ const ParkingMonitoringReport = () => {
       Sr: index + 1,
       Name: data?.name,
       "Mapped Sector":
-        getValueLabel(data?.mapped_sector_id, SectorListDrop, null) || "-",
+        getValueLabel(data?.mapped_sector_id, parkingDropdown, null) || "-",
       Quantity: Number(data?.total),
       Registered: Number(data?.registered),
       Monitoring: Number(data?.todaysmonitaring) || 0,
@@ -736,16 +760,16 @@ const ParkingMonitoringReport = () => {
         ]}
       />
 
-      <Table
-        loading={loading || VendorReport_Loading}
-        columns={columns}
-        dataSource={ParkingsData || []}
-        // dataSource={[...ParkingsData, ...lastTableRow] || []}
-        rowKey="mapped_sector_id"
-        pagination={{ pageSize: 30 }}
-        scroll={{ x: 1700, y: 400 }}
+      <CustomTable
+        loading={loading}
+        columns={columns || []}
         bordered
-        // rowClassName={rowClassName}
+        dataSource={details || []}
+        scroll={{ x: 1000, y: 400 }}
+        pagination={true}
+        tableSubheading={{
+          "Total Records": details?.list?.length,
+        }}
         footer={() => (
           <div className="flex justify-between">
             <strong>Total Quantity: {totalQuantity?.totalQnty || 0}</strong>

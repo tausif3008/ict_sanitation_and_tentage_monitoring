@@ -5,7 +5,11 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import { dateOptions, getValueLabel } from "../../constant/const";
+import {
+  dateOptions,
+  dateWeekOptions,
+  getValueLabel,
+} from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 // import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -201,6 +205,7 @@ const AttendanceReport = () => {
         dataIndex: "name",
         key: "name",
         width: 80,
+        sticky: "left", // Makes the "Name" column sticky on the left side
       },
     ];
     const dateKeys = new Set();
@@ -225,10 +230,9 @@ const AttendanceReport = () => {
     // Collect unique dates from the transformed user data
     transformedUsers?.forEach((user) => {
       Object.keys(user)?.forEach((key) => {
-        // Extract date and shift information from keys like '2025-01-28_shift_1'
         const [date, shift] = key.split("_shift_");
         if (shift && date) {
-          dateKeys.add(date); // Collect unique dates
+          dateKeys.add(date);
         }
       });
     });
@@ -490,7 +494,7 @@ const AttendanceReport = () => {
                     label={"Select Date Type"}
                     placeholder={"Select Date Type"}
                     onSelect={handleDateSelect}
-                    options={dateOptions || []}
+                    options={dateWeekOptions || []}
                   />
                   {showDateRange && (
                     <>
