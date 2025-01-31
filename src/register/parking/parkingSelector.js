@@ -8,8 +8,6 @@ const ParkingSelector = () => {
     (state) => state?.parkingSlice.report_data
   );
 
-  console.log("parkingReportData", parkingReportData);
-
   const ParkingsData = useMemo(() => {
     return (
       parkingReportData?.data?.parkings?.map((item) => ({

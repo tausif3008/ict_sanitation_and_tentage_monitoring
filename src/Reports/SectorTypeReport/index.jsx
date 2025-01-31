@@ -145,6 +145,7 @@ const SectorTypeReport = () => {
     form.setFieldsValue({
       asset_type_id: null,
       vendor_id: null,
+      asset_type_ids: null,
     });
     // const url = URLS?.assetType?.path + value;
     // dispatch(getAssetTypes(url)); // get assset type
@@ -193,11 +194,13 @@ const SectorTypeReport = () => {
   const getData = async () => {
     const finalData = {
       asset_main_type_id: "1",
+      asset_type_ids: fiveTypes?.[0]?.value,
     };
     dispatch(getSectorTypeRegData(finalData)); // Fetch the data
     handleSelect("1");
     form.setFieldsValue({
       asset_main_type_id: "1",
+      asset_type_ids: fiveTypes?.[0]?.value,
     });
   };
 

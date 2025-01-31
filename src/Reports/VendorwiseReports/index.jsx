@@ -167,6 +167,7 @@ const VendorReports = () => {
     form.setFieldsValue({
       asset_type_id: null,
       vendor_id: null,
+      asset_type_ids: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
@@ -222,12 +223,14 @@ const VendorReports = () => {
       date: newDate,
       asset_main_type_id: "1",
       order_by: "monitaring_per",
+      asset_type_ids: fiveTypes?.[0]?.value,
     };
     callApi(finalValues);
     form.setFieldsValue({
       date: dayjs(newDate, dateFormat),
       asset_main_type_id: "1",
       order_by: "monitaring_per",
+      asset_type_ids: fiveTypes?.[0]?.value,
     });
     const url = URLS?.assetType?.path + "1";
     const paramData = {

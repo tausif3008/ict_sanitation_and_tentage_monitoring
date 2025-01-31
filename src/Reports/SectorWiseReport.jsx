@@ -162,6 +162,7 @@ const SectorWiseReport = () => {
     form.setFieldsValue({
       asset_type_id: null,
       vendor_id: null,
+      asset_type_ids: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
@@ -177,6 +178,7 @@ const SectorWiseReport = () => {
   const handleTypeSelect = (value) => {
     form.setFieldsValue({
       vendor_id: null,
+      asset_type_ids: null,
     });
     if (userRoleId !== "8" && value) {
       const paramData = {
@@ -242,7 +244,7 @@ const SectorWiseReport = () => {
       name += `- ${orderByName}`;
     }
     name += ` (${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
-    return name;
+    return `${name} Monitoring Report`;
   };
 
   useEffect(() => {
@@ -356,6 +358,7 @@ const SectorWiseReport = () => {
       date: dayjs(newDate, dateFormat),
       asset_main_type_id: mainTypeIdLocal,
       order_by: "monitaring_per",
+      asset_type_ids: fiveTypes?.[0]?.value,
     });
     const url = URLS?.assetType?.path + mainTypeIdLocal;
     dispatch(getAssetTypes(url)); // get assset type
@@ -369,6 +372,7 @@ const SectorWiseReport = () => {
       date: newDate,
       order_by: "monitaring_per",
       asset_main_type_id: mainTypeIdLocal,
+      asset_type_ids: fiveTypes?.[0]?.value,
       ...(userRoleId === "8" && {
         vendor_id: sessionData?.id,
       }),

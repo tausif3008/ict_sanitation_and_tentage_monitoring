@@ -131,8 +131,11 @@ const SectorWiseRegistrationReport = () => {
   // reset form
   const resetForm = () => {
     form.resetFields();
-    getData();
     setShowDateRange(false);
+    form.setFieldsValue({
+      total_counts: AllCountOptions?.[0]?.value,
+    });
+    getData();
   };
 
   // handle asset main type
