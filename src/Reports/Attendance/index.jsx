@@ -5,7 +5,11 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import { dateWeekOptions, getValueLabel } from "../../constant/const";
+import {
+  dateWeekOptions,
+  getFormatedNumber,
+  getValueLabel,
+} from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 // import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -606,7 +610,8 @@ const AttendanceReport = () => {
         dataSource={tableData || []}
         scroll={{ x: 2000, y: 400 }}
         tableSubheading={{
-          "Total Records": AttendanceData?.data?.users?.length,
+          "Total Records":
+            getFormatedNumber(AttendanceData?.data?.users?.length) || 0,
         }}
         pagination={true}
         // onPageChange={(page, size) => {

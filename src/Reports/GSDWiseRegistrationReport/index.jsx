@@ -12,7 +12,11 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions, getValueLabel } from "../../constant/const";
+import {
+  dateWeekOptions,
+  getFormatedNumber,
+  getValueLabel,
+} from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -457,8 +461,8 @@ const GsdRegistrationReport = () => {
         scroll={{ x: 300, y: 400 }}
         pagination={true}
         tableSubheading={{
-          "Total Records": gsdData?.list?.length,
-          "Total Units": gsdData?.totalUnits,
+          "Total Records": getFormatedNumber(gsdData?.list?.length) || 0,
+          "Total Units": getFormatedNumber(gsdData?.totalUnits) || 0,
         }}
       />
     </div>

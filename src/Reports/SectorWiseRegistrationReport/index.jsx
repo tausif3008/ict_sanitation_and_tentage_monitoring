@@ -14,6 +14,7 @@ import {
 import {
   AllCountOptions,
   dateWeekOptions,
+  getFormatedNumber,
   getValueLabel,
 } from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
@@ -466,8 +467,9 @@ const SectorWiseRegistrationReport = () => {
         dataSource={vendorData || []}
         scroll={{ x: 100, y: 400 }}
         tableSubheading={{
-          "Total Records": vendorData?.list?.length,
-          "Total Register Units": vendorData?.totalUnits,
+          "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
+          "Total Register Units":
+            getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
     </div>

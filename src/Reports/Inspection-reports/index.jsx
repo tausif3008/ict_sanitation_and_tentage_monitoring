@@ -17,7 +17,7 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import CommonTable from "../../commonComponents/CommonTable";
 import search from "../../assets/Dashboard/icon-search.png";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
-import { dateWeekOptions } from "../../constant/const";
+import { dateWeekOptions, getFormatedNumber } from "../../constant/const";
 import InspectionReportSelector from "./Slice/InspectionReportSelector";
 import { getInspectionReportData } from "./Slice/InspectionReportSlice";
 import { getFormData } from "../../urils/getFormData";
@@ -476,10 +476,13 @@ const InspectionReports = () => {
         scroll={{ x: 1000, y: 400 }}
         pageSizeOptions={["100"]} // Available page size options
         tableSubheading={{
-          "Total Inspections": inspectionData?.totalInspections,
-          "Positive Response": inspectionData?.PositiveResponse,
-          "Negative Response": inspectionData?.NegativeResponse,
-          Escalations: inspectionData?.Escalations,
+          "Total Inspections":
+            getFormatedNumber(inspectionData?.totalInspections) || 0,
+          "Positive Response":
+            getFormatedNumber(inspectionData?.PositiveResponse) || 0,
+          "Negative Response":
+            getFormatedNumber(inspectionData?.NegativeResponse) || 0,
+          Escalations: getFormatedNumber(inspectionData?.Escalations) || 0,
         }}
       ></CommonTable>
     </div>

@@ -13,6 +13,7 @@ import ExportToExcel from "../ExportToExcel";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
   fiveTypes,
+  getFormatedNumber,
   getValueLabel,
   OrderBy,
   SectorWiseReportcolumns,
@@ -833,16 +834,31 @@ const VendorReports = () => {
         bordered
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Quantity: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring: {count?.todaysmonitaring || 0}</strong>
             <strong>
-              Partially Compliant: {count?.partially_compliant || 0}
+              Total Quantity: {getFormatedNumber(count?.total) || 0}
             </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant : {count?.not_compliant || 0}</strong>
-            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
-            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
+            <strong>
+              Registered: {getFormatedNumber(count?.registered) || 0}
+            </strong>
+            <strong>
+              Monitoring: {getFormatedNumber(count?.todaysmonitaring) || 0}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(count?.partially_compliant) || 0}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(count?.compliant) || 0}
+            </strong>
+            <strong>
+              Not Compliant: {getFormatedNumber(count?.not_compliant) || 0}
+            </strong>
+            <strong>
+              Toilet Unclean: {getFormatedNumber(count?.toiletunclean) || 0}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(count?.toiletclean) || 0}
+            </strong>
           </div>
         )}
       />
@@ -864,19 +880,35 @@ const VendorReports = () => {
         column={SectorWiseReportcolumns || []}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total: {sectorData?.length || 0}</strong>
-            <strong>Quantity: {modalQuantity?.total || 0}</strong>
-            <strong>Registered: {modalQuantity?.registered || 0}</strong>
-            <strong>Monitoring: {modalQuantity?.todaysmonitaring || 0}</strong>
+            <strong>Total: {getFormatedNumber(sectorData?.length) || 0}</strong>
             <strong>
-              Partially Compliant: {modalQuantity?.partially_compliant || 0}
+              Quantity: {getFormatedNumber(modalQuantity?.total) || 0}
             </strong>
-            <strong>Compliant : {modalQuantity?.compliant || 0}</strong>
-            <strong>Not Compliant : {modalQuantity?.not_compliant || 0}</strong>
             <strong>
-              Toilet Unclean : {modalQuantity?.toiletunclean || 0}
+              Registered: {getFormatedNumber(modalQuantity?.registered) || 0}
             </strong>
-            <strong>Toilet Clean : {modalQuantity?.toiletclean || 0}</strong>
+            <strong>
+              Monitoring:{" "}
+              {getFormatedNumber(modalQuantity?.todaysmonitaring) || 0}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(modalQuantity?.partially_compliant) || 0}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(modalQuantity?.compliant) || 0}
+            </strong>
+            <strong>
+              Not Compliant:{" "}
+              {getFormatedNumber(modalQuantity?.not_compliant) || 0}
+            </strong>
+            <strong>
+              Toilet Unclean:{" "}
+              {getFormatedNumber(modalQuantity?.toiletunclean) || 0}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(modalQuantity?.toiletclean) || 0}
+            </strong>
           </div>
         )}
       />

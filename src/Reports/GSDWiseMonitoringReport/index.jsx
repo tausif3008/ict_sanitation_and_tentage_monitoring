@@ -5,6 +5,7 @@ import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
 import {
+  getFormatedNumber,
   getValueLabel,
   globalDateFormat,
   percentageOptions,
@@ -468,10 +469,11 @@ const GsdWiseMonitoringReport = () => {
         dataSource={gsdData || []}
         scroll={{ x: 800, y: 400 }}
         tableSubheading={{
-          "Total Records": gsdData?.list?.length,
-          "Total Allocation": count?.total_allocation,
-          "Total Monitoring": count?.todaysmonitaring,
-          "Total Pending Monitoring": count?.totalPendingMonitoring,
+          "Total Records": getFormatedNumber(gsdData?.list?.length) || 0,
+          "Total Allocation": getFormatedNumber(count?.total_allocation) || 0,
+          "Total Monitoring": getFormatedNumber(count?.todaysmonitaring) || 0,
+          "Total Pending Monitoring":
+            getFormatedNumber(count?.totalPendingMonitoring) || 0,
         }}
         pagination={true}
       />

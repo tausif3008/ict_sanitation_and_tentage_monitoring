@@ -27,8 +27,6 @@ const CustomNumericCaptcha = ({
     form.setFieldValue("captcha", randomCaptcha);
     setCaptcha(randomCaptcha?.split("").join(" "));
   };
-  // console.log("captcha", captcha);
-  // console.log("captcha", form.getFieldValue("captcha"));
 
   useEffect(() => {
     generateCaptcha();

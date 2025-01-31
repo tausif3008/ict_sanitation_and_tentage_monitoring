@@ -11,6 +11,7 @@ import { getAssetMainTypes } from "../../register/AssetType/AssetTypeSlice";
 import {
   dateWeekOptions,
   fiveTypes,
+  getFormatedNumber,
   getValueLabel,
 } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
@@ -529,7 +530,7 @@ const SectorTypeReport = () => {
         dataSource={vendorData || []}
         scroll={{ x: 1800, y: 400 }}
         tableSubheading={{
-          "Total Records": vendorData?.list?.length,
+          "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
         }}
       />
     </div>

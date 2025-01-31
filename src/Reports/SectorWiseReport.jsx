@@ -20,6 +20,7 @@ import AssetTypeSelectors from "../register/AssetType/assetTypeSelectors";
 import { getFormData } from "../urils/getFormData";
 import {
   fiveTypes,
+  getFormatedNumber,
   getValueLabel,
   OrderBy,
   VendorWiseReportcolumns,
@@ -686,124 +687,115 @@ const SectorWiseReport = () => {
         />
       </div>
 
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
-            {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 16]} align="middle">
-                    {userRoleId !== "8" && (
-                      <Col
-                        key="asset_main_type_id"
-                        xs={24}
-                        sm={12}
-                        md={6}
-                        lg={5}
-                      >
-                        <CustomSelect
-                          name={"asset_main_type_id"}
-                          label={"Select Category"}
-                          placeholder={"Select Category"}
-                          onSelect={handleSelect}
-                          options={AssetMainTypeDrop?.slice(0, 2) || []}
-                          allowClear={false}
-                        />
-                      </Col>
-                    )}
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  {userRoleId !== "8" && (
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Asset Type"}
-                        placeholder={"Select Asset Type"}
-                        options={AssetTypeDrop || []}
-                        onSelect={handleTypeSelect}
-                        onChange={(value) => {
-                          setShowTypeOption(value);
-                        }}
-                      />
-                    </Col>
-                    {userRoleId != "8" && (
-                      <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                        <CustomSelect
-                          name={"vendor_id"}
-                          label={"Select Vendor"}
-                          placeholder={"Select Vendor"}
-                          options={VendorCatTypeDrop || []}
-                        />
-                      </Col>
-                    )}
-                    <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"order_by"}
-                        label={"Order By"}
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        onSelect={handleSelect}
+                        options={AssetMainTypeDrop?.slice(0, 2) || []}
                         allowClear={false}
-                        placeholder={"Select Order By"}
-                        options={OrderBy || []}
                       />
                     </Col>
-                    {formValue?.asset_main_type_id === "1" &&
-                      !showTypeOption && (
-                        <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"asset_type_ids"}
-                            label={"Select Type"}
-                            placeholder={"Select Type"}
-                            options={fiveTypes || []}
-                          />
-                        </Col>
-                      )}
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={SectorReport_Loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={SectorReport_Loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
+                  )}
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Asset Type"}
+                      placeholder={"Select Asset Type"}
+                      options={AssetTypeDrop || []}
+                      onSelect={handleTypeSelect}
+                      onChange={(value) => {
+                        setShowTypeOption(value);
+                      }}
+                    />
+                  </Col>
+                  {userRoleId != "8" && (
+                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"vendor_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorCatTypeDrop || []}
+                      />
+                    </Col>
+                  )}
+                  <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                    <CustomDatepicker
+                      name={"date"}
+                      label={"Date"}
+                      className="w-full"
+                      placeholder={"Date"}
+                    />
+                  </Col>
+                  <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"order_by"}
+                      label={"Order By"}
+                      allowClear={false}
+                      placeholder={"Select Order By"}
+                      options={OrderBy || []}
+                    />
+                  </Col>
+                  {formValue?.asset_main_type_id === "1" && !showTypeOption && (
+                    <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_ids"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={fiveTypes || []}
+                      />
+                    </Col>
+                  )}
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={SectorReport_Loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
                     </div>
-                  </Row>
-                </Form>
-              ),
-            },
-          ]}
-        />
-      </div>
+                    <div>
+                      <Button
+                        loading={SectorReport_Loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
       <Table
         loading={SectorReport_Loading || VendorReport_Loading}
         columns={columns}
@@ -816,18 +808,33 @@ const SectorWiseReport = () => {
         // rowClassName={rowClassName}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Quantity: {totalQuantity?.totalQnty || 0}</strong>
-            <strong>Registered: {totalQuantity?.registered || 0}</strong>
-            <strong>Monitoring: {totalQuantity?.monitoring || 0}</strong>
             <strong>
-              Partially Compliant: {totalQuantity?.partially_compliant || 0}
+              Total Quantity: {getFormatedNumber(totalQuantity?.totalQnty) || 0}
             </strong>
-            <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
-            <strong>Not Compliant : {totalQuantity?.not_compliant || 0}</strong>
             <strong>
-              Toilet Unclean : {totalQuantity?.toiletunclean || 0}
+              Registered: {getFormatedNumber(totalQuantity?.registered) || 0}
             </strong>
-            <strong>Toilet Clean : {totalQuantity?.toiletclean || 0}</strong>
+            <strong>
+              Monitoring: {getFormatedNumber(totalQuantity?.monitoring) || 0}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(totalQuantity?.partially_compliant) || 0}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(totalQuantity?.compliant) || 0}
+            </strong>
+            <strong>
+              Not Compliant:{" "}
+              {getFormatedNumber(totalQuantity?.not_compliant) || 0}
+            </strong>
+            <strong>
+              Toilet Unclean:{" "}
+              {getFormatedNumber(totalQuantity?.toiletunclean) || 0}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(totalQuantity?.toiletclean) || 0}
+            </strong>
           </div>
         )}
       />
@@ -851,17 +858,32 @@ const SectorWiseReport = () => {
         column={VendorWiseReportcolumns || []}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total: {vendorsData?.length || 0}</strong>
-            <strong>Quantity: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring: {count?.monitoring || 0}</strong>
             <strong>
-              Partially Compliant: {count?.partially_compliant || 0}
+              Total: {getFormatedNumber(vendorsData?.length) || 0}
             </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant : {count?.not_compliant || 0}</strong>
-            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
-            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
+            <strong>Quantity: {getFormatedNumber(count?.total) || 0}</strong>
+            <strong>
+              Registered: {getFormatedNumber(count?.registered) || 0}
+            </strong>
+            <strong>
+              Monitoring: {getFormatedNumber(count?.monitoring) || 0}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(count?.partially_compliant) || 0}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(count?.compliant) || 0}
+            </strong>
+            <strong>
+              Not Compliant: {getFormatedNumber(count?.not_compliant) || 0}
+            </strong>
+            <strong>
+              Toilet Unclean: {getFormatedNumber(count?.toiletunclean) || 0}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(count?.toiletclean) || 0}
+            </strong>
           </div>
         )}
       />

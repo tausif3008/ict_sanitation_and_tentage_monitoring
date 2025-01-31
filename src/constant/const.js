@@ -8,6 +8,11 @@ export const getValueLabel = (dataId, List, defaultName) => {
   }
 };
 
+// format number
+export const getFormatedNumber = (number = 0) => {
+  return (Number(number) || 0).toLocaleString("en-IN");
+};
+
 export const checkLoginAvailability = (loginData, navigate) => {
   if (loginData) {
     if (loginData?.user_type_id === "8") {

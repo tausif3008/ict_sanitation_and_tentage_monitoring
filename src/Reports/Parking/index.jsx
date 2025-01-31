@@ -7,6 +7,7 @@ import { Collapse, Form, Button, Row, Col } from "antd";
 import search from "../../assets/Dashboard/icon-search.png";
 import {
   fiveTypes,
+  getFormatedNumber,
   getValueLabel,
   OrderBy,
   parkingType,
@@ -707,18 +708,33 @@ const ParkingMonitoringReport = () => {
         }}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Total Quantity: {totalQuantity?.totalQnty || 0}</strong>
-            <strong>Registered: {totalQuantity?.registered || 0}</strong>
-            <strong>Monitoring: {totalQuantity?.monitoring || 0}</strong>
             <strong>
-              Partially Compliant: {totalQuantity?.partially_compliant || 0}
+              Total Quantity: {getFormatedNumber(totalQuantity?.totalQnty) || 0}
             </strong>
-            <strong>Compliant : {totalQuantity?.compliant || 0}</strong>
-            <strong>Not Compliant : {totalQuantity?.not_compliant || 0}</strong>
             <strong>
-              Toilet Unclean : {totalQuantity?.toiletunclean || 0}
+              Registered: {getFormatedNumber(totalQuantity?.registered) || 0}
             </strong>
-            <strong>Toilet Clean : {totalQuantity?.toiletclean || 0}</strong>
+            <strong>
+              Monitoring: {getFormatedNumber(totalQuantity?.monitoring) || 0}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(totalQuantity?.partially_compliant) || 0}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(totalQuantity?.compliant) || 0}
+            </strong>
+            <strong>
+              Not Compliant:{" "}
+              {getFormatedNumber(totalQuantity?.not_compliant) || 0}
+            </strong>
+            <strong>
+              Toilet Unclean:{" "}
+              {getFormatedNumber(totalQuantity?.toiletunclean) || 0}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(totalQuantity?.toiletclean) || 0}
+            </strong>
           </div>
         )}
       />

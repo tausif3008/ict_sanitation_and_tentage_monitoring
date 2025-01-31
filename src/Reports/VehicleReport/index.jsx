@@ -12,7 +12,11 @@ import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import CustomTable from "../../commonComponents/CustomTable";
-import { getValueLabel, vehicleType } from "../../constant/const";
+import {
+  getFormatedNumber,
+  getValueLabel,
+  vehicleType,
+} from "../../constant/const";
 import search from "../../assets/Dashboard/icon-search.png";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
@@ -438,7 +442,7 @@ const VehicleReports = ({ modalName = "Vehicle Report", showPdf = true }) => {
             dataSource={details || []}
             scroll={{ x: 100, y: 400 }}
             tableSubheading={{
-              "Total Records": details?.totalRecords,
+              "Total Records": getFormatedNumber(details?.totalRecords) || 0,
             }}
             onPageChange={(page, size) => {
               const obj = {

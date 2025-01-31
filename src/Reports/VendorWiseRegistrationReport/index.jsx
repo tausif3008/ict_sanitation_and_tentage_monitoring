@@ -12,7 +12,11 @@ import {
   getAssetMainTypes,
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
-import { dateWeekOptions, getValueLabel } from "../../constant/const";
+import {
+  dateWeekOptions,
+  getFormatedNumber,
+  getValueLabel,
+} from "../../constant/const";
 import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -422,8 +426,8 @@ const VendorRegistrationReport = () => {
         dataSource={vendorData || []}
         scroll={{ x: 100, y: 400 }}
         tableSubheading={{
-          "Total Records": vendorData?.list?.length,
-          "Total Units": vendorData?.totalUnits,
+          "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
+          "Total Units": getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
     </div>
