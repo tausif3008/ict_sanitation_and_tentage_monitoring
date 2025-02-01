@@ -209,7 +209,7 @@ const VendorSectorAllocation = () => {
     <div className="">
       <>
         <CommonDivider
-          label={"Allocate Sectors"}
+          label={"Allotted Sector"}
           compo={
             <Button
               className="bg-orange-300 mb-1"

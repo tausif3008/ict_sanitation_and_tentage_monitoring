@@ -192,7 +192,7 @@ const GsdWiseMonitoringReport = () => {
           Sr: index + 1,
           Name: data?.name,
           "Mobile Number": Number(data?.phone),
-          "Allocate Sectors": getValueLabel(
+          "Allotted Sector": getValueLabel(
             `${data?.allocate_sector_id}`,
             SectorListDrop,
             "-"
@@ -237,7 +237,7 @@ const GsdWiseMonitoringReport = () => {
         width: 100,
       },
       {
-        title: "Allocate Sectors",
+        title: "Allotted Sector",
         dataIndex: "allocate_sector_id",
         key: "allocate_sector_id",
         width: 100,
@@ -315,7 +315,7 @@ const GsdWiseMonitoringReport = () => {
     "Sr No",
     "GSD Name",
     "Mobile Number",
-    "Allocate Sectors",
+    "Allotted Sector",
     "Worked Sectors",
     "Total Allocation",
     "Monitoring",
@@ -330,7 +330,7 @@ const GsdWiseMonitoringReport = () => {
         opt?.Sr,
         opt?.Name,
         opt?.["Mobile Number"],
-        opt?.["Allocate Sectors"],
+        opt?.["Allotted Sector"],
         opt?.["Worked Sectors"],
         opt?.["Total Allocation"],
         opt?.Monitoring,
