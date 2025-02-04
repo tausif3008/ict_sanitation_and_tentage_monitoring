@@ -5,6 +5,7 @@ import card_red from "../assets/Dashboard/card_red.png";
 import card_purple from "../assets/Dashboard/card_purple.png";
 import { useOutletContext } from "react-router";
 import SanitationDashSelector from "../SanitationDashboard/Slice/sanitationDashboardSelector";
+import { getFormatedNumber } from "../constant/const";
 
 const IssueCount = () => {
   const [dict, lang] = useOutletContext();
@@ -16,10 +17,6 @@ const IssueCount = () => {
     registered = 0,
   } = SanitationDash_data?.data?.asset_counts || {};
 
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat("en-IN").format(number);
-  };
-
   return (
     <div className="p-3 mx-auto bg-white rounded-xl space-y-4">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -29,7 +26,7 @@ const IssueCount = () => {
               <span className="text-green-600">
                 {dict.number_of_toilets_cesspool[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(total)}</h2>
+              <h2 className="text-2xl font-bold">{getFormatedNumber(total)}</h2>
             </div>
           </div>
           <img
@@ -45,7 +42,9 @@ const IssueCount = () => {
               <span className="text-[#eab308]">
                 {dict.number_of_toilets_jetspray[lang]}
               </span>
-              <h2 className="text-2xl font-bold">{formatNumber(registered)}</h2>
+              <h2 className="text-2xl font-bold">
+                {getFormatedNumber(registered)}
+              </h2>
             </div>
           </div>
           <img
@@ -62,7 +61,7 @@ const IssueCount = () => {
                 {dict.number_of_toilets_manpower[lang]}
               </span>
               <h2 className="text-2xl font-bold">
-                {formatNumber(under_monitoring)}
+                {getFormatedNumber(under_monitoring)}
               </h2>
             </div>
           </div>
@@ -80,7 +79,7 @@ const IssueCount = () => {
                 {dict.number_of_toilets_odor_free[lang]}
               </span>
               <h2 className="text-2xl font-bold">
-                {formatNumber(off_monitoring)}
+                {getFormatedNumber(off_monitoring)}
               </h2>
             </div>
           </div>

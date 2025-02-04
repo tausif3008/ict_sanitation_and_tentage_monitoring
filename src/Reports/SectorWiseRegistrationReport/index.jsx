@@ -192,6 +192,12 @@ const SectorWiseRegistrationReport = () => {
         },
         0
       );
+      const totalCounts = SectorRegReport_data?.data?.listings?.reduce(
+        (total, item) => {
+          return total + Number(item?.total);
+        },
+        0
+      );
       setVendorData((prevDetails) => ({
         ...prevDetails,
         list: SectorRegReport_data?.data?.listings || [],
@@ -200,13 +206,14 @@ const SectorWiseRegistrationReport = () => {
         totalRecords:
           SectorRegReport_data?.data?.paging?.[0]?.totalrecords || 0,
         totalUnits: unitCount,
+        totalCount: totalCounts,
       }));
       const myexcelData = SectorRegReport_data?.data?.listings?.map(
         (data, index) => {
           return {
             Sr: index + 1,
             "Sector name": data?.sectors_name,
-            "Total Units": Number(data?.total_units) || 0,
+            "Total Units": Number(data?.total) || 0,
             "Register Units": Number(data?.tagging_units) || 0,
           };
         }
@@ -228,9 +235,9 @@ const SectorWiseRegistrationReport = () => {
       ? [
           {
             title: "Total Units",
-            dataIndex: "total_units",
-            key: "total_units",
-            sorter: (a, b) => a?.total_units - b?.total_units,
+            dataIndex: "total",
+            key: "total",
+            sorter: (a, b) => a?.total - b?.total,
           },
         ]
       : []),
@@ -287,7 +294,7 @@ const SectorWiseRegistrationReport = () => {
             [
               "",
               "Total",
-              ...(formValue?.total_counts ? [0 || 0] : []),
+              ...(formValue?.total_counts ? [vendorData?.totalCount || 0] : []),
               vendorData?.totalUnits,
             ],
           ]}
@@ -297,7 +304,12 @@ const SectorWiseRegistrationReport = () => {
           fileName={fileName ? fileName : "Sector Wise Registration Report"}
           dynamicArray={[
             {
-              name: "Total",
+              name: "Total Units",
+              value: vendorData?.totalCount,
+              colIndex: 3,
+            },
+            {
+              name: "Total Register Units",
               value: vendorData?.totalUnits,
               colIndex: 4,
             },
@@ -468,6 +480,7 @@ const SectorWiseRegistrationReport = () => {
         scroll={{ x: 100, y: 400 }}
         tableSubheading={{
           "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
+          "Total Units": getFormatedNumber(vendorData?.totalCount) || 0,
           "Total Register Units":
             getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
