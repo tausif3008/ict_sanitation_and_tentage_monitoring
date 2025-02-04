@@ -12,6 +12,8 @@ import CustomSelect from "../../commonComponents/CustomSelect";
 import { getUserTypeList } from "../../permission/UserTypePermission/userTypeSlice";
 import UserTypeSelector from "../../permission/UserTypePermission/userTypeSelector";
 import { activeOptions } from "../../constant/const";
+import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 
 const UserRegistrationForm = () => {
   const [loading, setLoading] = useState(false);
@@ -22,6 +24,8 @@ const UserRegistrationForm = () => {
   const key = location.state?.key;
   const record = location.state?.record;
   const { UserListDrop } = UserTypeSelector(); // user type list
+  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const IsGsd = Number(record?.user_type_id) === 6;
 
   const onFinish = async (values) => {
     setLoading(true);
@@ -50,6 +54,7 @@ const UserRegistrationForm = () => {
   useEffect(() => {
     const uri = URLS?.allUserType?.path;
     dispatch(getUserTypeList(uri)); //  user type
+    IsGsd && dispatch(getSectorsList()); // all sectors
   }, []);
 
   // set value
@@ -110,7 +115,6 @@ const UserRegistrationForm = () => {
                 },
               ]}
             />
-            {/* {key === "AddKey" && ( */}
             <CustomInput
               label={<div className="font-semibold">Password</div>}
               name="password"
@@ -129,7 +133,6 @@ const UserRegistrationForm = () => {
                 },
               ]}
             />
-            {/* )} */}
             <CustomInput
               label={<div className="font-semibold">Name (Display Name) </div>}
               name="name"
@@ -145,12 +148,14 @@ const UserRegistrationForm = () => {
               // ]}
               placeholder={"Email ID"}
             />
-            {/* <CustomInput
-              label={<div className="font-semibold">Company</div>}
-              name="company"
-              rules={[{ required: true, message: "Please enter the company" }]}
-              placeholder={"Company"}
-            /> */}
+            {IsGsd && (
+              <CustomSelect
+                name={"allocate_sector_id"}
+                label={"Select Sector"}
+                placeholder={"Select Sector"}
+                options={SectorListDrop || []}
+              />
+            )}
             <CountryStateCity
               form={form}
               country_id={record?.country_id}

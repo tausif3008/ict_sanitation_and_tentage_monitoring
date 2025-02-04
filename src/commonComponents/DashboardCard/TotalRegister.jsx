@@ -1,14 +1,11 @@
 import React from "react";
 import { useOutletContext } from "react-router";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { getFormatedNumber } from "../../constant/const";
 // import card_orange from "../../assets/Dashboard/card_orange.png"
 
 const TotalRegister = ({ handleRegister, registered = 0, today = 0 }) => {
   const [dict, lang] = useOutletContext();
-
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat("en-IN").format(number);
-  };
 
   return (
     <>
@@ -30,7 +27,9 @@ const TotalRegister = ({ handleRegister, registered = 0, today = 0 }) => {
                 {dict.total_registered[lang]}
               </span>
             </div>
-            <h2 className="text-2xl font-bold">{formatNumber(registered)}</h2>
+            <h2 className="text-2xl font-bold">
+              {getFormatedNumber(registered)}
+            </h2>
           </div>
         </div>
         <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
@@ -39,7 +38,7 @@ const TotalRegister = ({ handleRegister, registered = 0, today = 0 }) => {
               {dict.todays_registered[lang]}
             </h6>
             <p className="text-l text-center text-blue-600 font-bold">
-              {formatNumber(today)}
+              {getFormatedNumber(today)}
             </p>
           </div>
         </div>

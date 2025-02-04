@@ -1,14 +1,11 @@
 import React from "react";
 import { useOutletContext } from "react-router";
 import { Icon } from "@iconify/react/dist/iconify.js";
+import { getFormatedNumber } from "../../constant/const";
 // import card_red from "../../assets/Dashboard/card_red.png"
 
 const UnderMonitoring = ({ total = 0, today = 0 }) => {
   const [dict, lang] = useOutletContext();
-
-  const formatNumber = (number) => {
-    return new Intl.NumberFormat("en-IN").format(number);
-  };
 
   return (
     <>
@@ -27,7 +24,7 @@ const UnderMonitoring = ({ total = 0, today = 0 }) => {
                 {dict.under_monitoring[lang]}
               </span>
             </div>
-            <h2 className="text-2xl font-bold">{formatNumber(total)}</h2>
+            <h2 className="text-2xl font-bold">{getFormatedNumber(total)}</h2>
           </div>
         </div>
         <div className="absolute bottom-0 right-0 h-full w-auto object-cover">
@@ -36,7 +33,7 @@ const UnderMonitoring = ({ total = 0, today = 0 }) => {
               {dict.todays_under_monitoring[lang]}
             </h6>
             <p className="text-l text-center text-blue-600 font-bold">
-              {formatNumber(today)}
+              {getFormatedNumber(today)}
             </p>
           </div>
         </div>

@@ -13,6 +13,7 @@ import { getFormData } from "../urils/getFormData";
 import { DICT, langingPage } from "../utils/dictionary";
 // import QuestionSelector from "../register/questions/questionSelector";
 import {
+  getFormatedNumber,
   getPercentage,
   priorityToiletTypes_Id,
   VendorWiseReportcolumns,
@@ -238,20 +239,6 @@ const ToiletDetails = () => {
     }
   }, [vendorReports]);
 
-  const lastTableModalRow = [
-    {
-      name: vendorsData?.length,
-      total: count?.total,
-      registered: count?.registered,
-      todaysmonitaring: count?.monitoring,
-      partially_compliant: count?.partially_compliant,
-      compliant: count?.compliant,
-      not_compliant: count?.not_compliant,
-      toiletunclean: count?.toiletunclean,
-      toiletclean: count?.toiletclean,
-    },
-  ];
-
   return (
     <>
       <div className="p-4 bg-white rounded-xl space-y-4">
@@ -376,8 +363,13 @@ const ToiletDetails = () => {
                       <strong>
                         {lang === "en" ? item?.name : item?.name_hi}
                       </strong>
-                      <div>Total Quantity: {item?.total}</div>
-                      <div>Registered Quantity: {item?.registered}</div>
+                      <div>
+                        Total Quantity: {getFormatedNumber(item?.total || 0)}
+                      </div>
+                      <div>
+                        Registered Quantity:{" "}
+                        {getFormatedNumber(item?.registered || 0)}
+                      </div>
                     </div>
                   }
                   placement="top"
@@ -496,7 +488,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {item?.todaysmonitaring || 0}
+                          {getFormatedNumber(item?.todaysmonitaring || 0)}
                         </span>
                       </div>
                     </div>
@@ -505,7 +497,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-yellow-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {(Number(item?.partially_compliant) || 0) +
+                          {(getFormatedNumber(item?.partially_compliant) || 0) +
                             " (" +
                             getPercentage(
                               Number(item?.partially_compliant) || 0,
@@ -518,7 +510,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-purple-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {(Number(item?.compliant) || 0) +
+                          {(getFormatedNumber(item?.compliant) || 0) +
                             " (" +
                             getPercentage(
                               Number(item?.compliant) || 0,
@@ -531,7 +523,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {(Number(item?.not_compliant) || 0) +
+                          {(getFormatedNumber(item?.not_compliant) || 0) +
                             " (" +
                             getPercentage(
                               Number(item?.not_compliant) || 0,
@@ -560,7 +552,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-lime-300 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {(Number(item?.toiletclean) || 0) +
+                          {(getFormatedNumber(item?.toiletclean) || 0) +
                             " (" +
                             getPercentage(
                               Number(item?.toiletclean) || 0,
@@ -573,7 +565,7 @@ const ToiletDetails = () => {
                       <div className="col-md-4 flex items-center">
                         <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                         <span className="text-sm font-semibold">
-                          {(Number(item?.toiletunclean) || 0) +
+                          {(getFormatedNumber(item?.toiletunclean) || 0) +
                             " (" +
                             getPercentage(
                               Number(item?.toiletunclean) || 0,
@@ -632,22 +624,34 @@ const ToiletDetails = () => {
         handleCancel={handleCancel}
         scroll={{ x: 1700, y: 400 }}
         tableData={vendorDetails?.list || []}
-        // tableData={[...vendorDetails?.list, ...lastTableModalRow] || []}
         // IsLastRowBold={true}
         column={VendorWiseReportcolumns || []}
         footer={() => (
           <div className="flex justify-between">
-            <strong>Vendors: {vendorsData?.length}</strong>
-            <strong>Total: {count?.total || 0}</strong>
-            <strong>Registered: {count?.registered || 0}</strong>
-            <strong>Monitoring : {count?.monitoring || 0}</strong>
+            <strong>Vendors: {getFormatedNumber(vendorsData?.length)}</strong>
+            <strong>Total: {getFormatedNumber(count?.total || 0)}</strong>
             <strong>
-              Partialy Compliant : {count?.partially_compliant || 0}
+              Registered: {getFormatedNumber(count?.registered || 0)}
             </strong>
-            <strong>Compliant : {count?.compliant || 0}</strong>
-            <strong>Not Compliant: {count?.not_compliant || 0}</strong>
-            <strong>Toilet Unclean : {count?.toiletunclean || 0}</strong>
-            <strong>Toilet Clean : {count?.toiletclean || 0}</strong>
+            <strong>
+              Monitoring: {getFormatedNumber(count?.monitoring || 0)}
+            </strong>
+            <strong>
+              Partially Compliant:{" "}
+              {getFormatedNumber(count?.partially_compliant || 0)}
+            </strong>
+            <strong>
+              Compliant: {getFormatedNumber(count?.compliant || 0)}
+            </strong>
+            <strong>
+              Not Compliant: {getFormatedNumber(count?.not_compliant || 0)}
+            </strong>
+            <strong>
+              Toilet Unclean: {getFormatedNumber(count?.toiletunclean || 0)}
+            </strong>
+            <strong>
+              Toilet Clean: {getFormatedNumber(count?.toiletclean || 0)}
+            </strong>
           </div>
         )}
       />
