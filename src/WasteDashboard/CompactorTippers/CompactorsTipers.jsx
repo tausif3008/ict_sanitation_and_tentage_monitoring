@@ -10,14 +10,18 @@ import {
 } from "../../register/AssetType/AssetTypeSlice";
 import ViewVendorsSectors from "../../register/AssetType/viewVendors";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
-import { vendorColumn } from "../../constant/const";
+import { getFormatedNumber } from "../../constant/const";
+// import { vendorColumn } from "../../constant/const";
 // import { icon } from "leaflet";
 
 const CompactorsTippers = () => {
   const [showVendors, setshowVendors] = useState(false);
   const [showVendorsList, setVendorsList] = useState([]); // vendor list
   const [rowRecord, setRowRecord] = useState(); // vendor list all quantity
-  const [allQuantity, setAllQuantity] = useState(0); // vendor list all quantity
+  const [allQuantity, setAllQuantity] = useState({
+    alloted: 0,
+    received: 0,
+  }); // vendor list all quantity
 
   const dispatch = useDispatch();
   const { VendorListAssetType, AssetType, loading } = AssetTypeSelectors(); // asset type wise vendor list
@@ -124,7 +128,10 @@ const CompactorsTippers = () => {
   const handleShowVendors = (value) => {
     setRowRecord(value);
     setVendorsList([]);
-    setAllQuantity(0);
+    setAllQuantity({
+      alloted: 0,
+      received: 0,
+    });
     value?.asset_type_id &&
       dispatch(getVendorListAssetType(value?.asset_type_id));
     setshowVendors(true);
@@ -152,7 +159,13 @@ const CompactorsTippers = () => {
         },
         0
       );
-      setAllQuantity(totalQuantity);
+      let RecQuantity = VendorListAssetType?.data?.userdetails?.reduce(
+        (accumulator, data) => {
+          return accumulator + Number(data?.total_received_quantity || 0);
+        },
+        0
+      );
+      setAllQuantity({ alloted: totalQuantity, received: RecQuantity });
       setVendorsList(myData); // asset type wise vendor list
     }
   }, [VendorListAssetType]);
@@ -224,12 +237,47 @@ const CompactorsTippers = () => {
     });
   }, [vehicleArray, assettypes]);
 
-  const pdfHeader = ["Sr No", "Vendor Name", "Allotted Quantity"];
+  const vendorColumns = [
+    {
+      title: "Sr No",
+      dataIndex: "sr_no",
+      key: "sr_no",
+      width: "10%",
+    },
+    {
+      title: "Vendor Name",
+      dataIndex: "user_name",
+      key: "user_name",
+    },
+    {
+      title: "Allotted Quantity",
+      dataIndex: "total_allotted_quantity",
+      key: "total_allotted_quantity",
+      width: "20%",
+    },
+    {
+      title: "Received Quantity",
+      dataIndex: "total_received_quantity",
+      key: "total_received_quantity",
+      width: "20%",
+      render: (text) => {
+        return text ? text : 0;
+      },
+    },
+  ];
+
+  const pdfHeader = [
+    "Sr No",
+    "Vendor Name",
+    "Allotted Quantity",
+    "Received Quantity",
+  ];
   const pdfData = useMemo(() => {
     return showVendorsList?.map((vendor, index) => [
       index + 1,
       vendor?.user_name || "-",
       vendor?.total_allotted_quantity || 0,
+      vendor?.total_received_quantity || 0,
     ]);
   }, [showVendorsList]);
 
@@ -324,13 +372,29 @@ const CompactorsTippers = () => {
             },
           ] || []
         }
-        column={vendorColumn || []}
-        footer={`Total Allotted Quantity : ${allQuantity}`}
+        column={vendorColumns || []}
+        footer={() => (
+          <div className="flex justify-end gap-2">
+            <strong>
+              Total Allotted Quantity:{" "}
+              {getFormatedNumber(allQuantity?.alloted) || 0}
+            </strong>
+            <strong>
+              Total Received Quantity:{" "}
+              {getFormatedNumber(allQuantity?.received) || 0}
+            </strong>
+          </div>
+        )}
         showPdfbutton={true}
         pdfTitleName={`${rowRecord?.name} Vendor Report`}
         pdfName={`${rowRecord?.name} Vendor Report`}
         pdfHeader={pdfHeader || []}
-        tablePdfData={[...pdfData, ["", "Total", allQuantity]] || []}
+        tablePdfData={
+          [
+            ...pdfData,
+            ["", "Total", allQuantity?.alloted, allQuantity?.received],
+          ] || []
+        }
       />
     </>
   );
