@@ -217,6 +217,99 @@ const AttendanceReport = () => {
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
+  // const dynamicColumns = useMemo(() => {
+  //   const columns = [
+  //     {
+  //       title: "Name",
+  //       dataIndex: "name",
+  //       key: "name",
+  //       width: 80,
+  //       sticky: "left", // Makes the "Name" column sticky on the left side
+  //     },
+  //   ];
+  //   const dateKeys = new Set();
+  //   const { users } = AttendanceData?.data || [];
+
+  //   const transformedUsers = users?.map((user) => {
+  //     const transformedUser = {
+  //       user_id: user?.user_id,
+  //       name: user?.name,
+  //     };
+
+  //     // Loop through the attendances_date and add the shift values for each date
+  //     for (const date in user?.attendances_date) {
+  //       const shifts = user?.attendances_date[date];
+  //       transformedUser[`${date}_shift_1`] = shifts?.shift_1;
+  //       transformedUser[`${date}_shift_2`] = shifts?.shift_2;
+  //     }
+
+  //     return transformedUser;
+  //   });
+
+  //   // Collect unique dates from the transformed user data
+  //   transformedUsers?.forEach((user) => {
+  //     Object.keys(user)?.forEach((key) => {
+  //       const [date, shift] = key.split("_shift_");
+  //       if (shift && date) {
+  //         dateKeys.add(date);
+  //       }
+  //     });
+  //   });
+
+  //   // Add columns for each unique date and shift
+  //   dateKeys?.forEach((date) => {
+  //     columns?.push({
+  //       title: `${date} Shift 1`,
+  //       dataIndex: `${date}_shift_1`,
+  //       key: `${date}_shift_1`,
+  //       width: 50,
+  //       render: (text) => {
+  //         if (text === "1") {
+  //           return (
+  //             <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
+  //               Present
+  //             </span>
+  //           );
+  //         } else if (text === "0") {
+  //           return (
+  //             <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
+  //               Absent
+  //             </span>
+  //           );
+  //         } else {
+  //           return "-";
+  //         }
+  //       },
+  //     });
+
+  //     columns.push({
+  //       title: `${date} Shift 2`,
+  //       dataIndex: `${date}_shift_2`,
+  //       key: `${date}_shift_2`,
+  //       width: 50,
+  //       render: (text) => {
+  //         if (text === "1") {
+  //           return (
+  //             <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
+  //               Present
+  //             </span>
+  //           );
+  //         } else if (text === "0") {
+  //           return (
+  //             <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
+  //               Absent
+  //             </span>
+  //           );
+  //         } else {
+  //           return "-";
+  //         }
+  //       },
+  //     });
+  //   });
+
+  //   return columns;
+  // }, [AttendanceData]);
+
   const dynamicColumns = useMemo(() => {
     const columns = [
       {
@@ -227,6 +320,7 @@ const AttendanceReport = () => {
         sticky: "left", // Makes the "Name" column sticky on the left side
       },
     ];
+
     const dateKeys = new Set();
     const { users } = AttendanceData?.data || [];
 
@@ -256,54 +350,72 @@ const AttendanceReport = () => {
       });
     });
 
-    // Add columns for each unique date and shift
+    // Add columns for each unique date and group Shift 1 and Shift 2 under that date
     dateKeys?.forEach((date) => {
-      columns?.push({
-        title: `${date} Shift 1`,
-        dataIndex: `${date}_shift_1`,
-        key: `${date}_shift_1`,
-        width: 50,
-        render: (text) => {
-          if (text === "1") {
-            return (
-              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
-                Present
-              </span>
-            );
-          } else if (text === "0") {
-            return (
-              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
-                Absent
-              </span>
-            );
-          } else {
-            return "-";
-          }
-        },
-      });
-
       columns.push({
-        title: `${date} Shift 2`,
-        dataIndex: `${date}_shift_2`,
-        key: `${date}_shift_2`,
-        width: 50,
-        render: (text) => {
-          if (text === "1") {
-            return (
-              <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
-                Present
-              </span>
-            );
-          } else if (text === "0") {
-            return (
-              <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
-                Absent
-              </span>
-            );
-          } else {
-            return "-";
-          }
-        },
+        title: () => (
+          <>
+            {date}
+            {/* <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                marginTop: 5,
+              }}
+            >
+              <div style={{ width: "50%" }}>Shift 1</div>
+              <div style={{ width: "50%" }}>Shift 2</div>
+            </div> */}
+          </>
+        ),
+        children: [
+          {
+            title: "Shift 1",
+            dataIndex: `${date}_shift_1`,
+            key: `${date}_shift_1`,
+            width: 50,
+            render: (text) => {
+              if (text === "1") {
+                return (
+                  <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
+                    Present
+                  </span>
+                );
+              } else if (text === "0") {
+                return (
+                  <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
+                    Absent
+                  </span>
+                );
+              } else {
+                return "-";
+              }
+            },
+          },
+          {
+            title: "Shift 2",
+            dataIndex: `${date}_shift_2`,
+            key: `${date}_shift_2`,
+            width: 50,
+            render: (text) => {
+              if (text === "1") {
+                return (
+                  <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
+                    Present
+                  </span>
+                );
+              } else if (text === "0") {
+                return (
+                  <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
+                    Absent
+                  </span>
+                );
+              } else {
+                return "-";
+              }
+            },
+          },
+        ],
       });
     });
 

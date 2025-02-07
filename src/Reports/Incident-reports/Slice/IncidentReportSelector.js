@@ -6,11 +6,11 @@ const IncidentReportSelector = () => {
     (state) => state?.IncidentReportSlice.name
   );
   const loading = useSelector((state) => state?.IncidentReportSlice.loading);
-  const AssetIncidentData = useSelector(
-    (state) => state?.IncidentReportSlice.incident_data
+  const AssetUnitData = useSelector(
+    (state) => state?.IncidentReportSlice.unit_data
   );
 
-  return { IncidentReport_data, loading, AssetIncidentData };
+  return { IncidentReport_data, loading, AssetUnitData };
 };
 
 export default IncidentReportSelector;

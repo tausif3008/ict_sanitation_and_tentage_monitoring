@@ -114,7 +114,7 @@ import SectorWiseRegistrationReport from "./Reports/SectorWiseRegistrationReport
 import SectorTypeReport from "./Reports/SectorTypeReport";
 import ParkingMonitoringReport from "./Reports/Parking";
 import AttendanceReport from "./Reports/Attendance";
-import AssetIncidentReport from "./Reports/Incident-reports/AssetIncidentReport";
+import AssetUnitReport from "./Reports/Incident-reports/AssetUnitReport";
 
 function App() {
   const navigate = useNavigate();
@@ -725,11 +725,11 @@ function App() {
             }
           />
           <Route
-            path="asset-incident-report"
+            path="asset-unit-report"
             element={
               <ProtectedRoute
                 condition={asset_incident_reports?.includes(userRoleId)}
-                component={AssetIncidentReport}
+                component={AssetUnitReport}
               />
             }
           />

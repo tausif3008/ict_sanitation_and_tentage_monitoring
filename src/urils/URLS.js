@@ -108,6 +108,7 @@ const URLS = {
   //reporting
   sectors: { path: "/sector", version: 5.43 },
   assetIncident: { path: "/reporting/asset-incident", version: 5.43 },
+  assetUnit: { path: "/reporting/asset-unit-report", version: 5.43 },
 
   // circle wise report
   allCircleList: { path: "/circle", version: 5.43 },

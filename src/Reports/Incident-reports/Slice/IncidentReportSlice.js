@@ -6,7 +6,7 @@ import URLS from "../../../urils/URLS";
 const initialState = {
   loading: false,
   name: null,
-  dash_data: null,
+  unit_data: null,
 };
 
 export const IncidentReportSlice = createSlice({
@@ -19,8 +19,8 @@ export const IncidentReportSlice = createSlice({
     postSuccess: (state, action) => {
       state.name = action.payload;
     },
-    postIncident: (state, action) => {
-      state.incident_data = action.payload;
+    postUnit: (state, action) => {
+      state.unit_data = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -40,23 +40,23 @@ export const getIncidentReportData = (url) => async (dispatch) => {
     dispatch(setLoading(false));
   }
 };
-// get asset Incident Report Data
-export const getAssetIncidentReportData =
+// get asset Unit Report Data
+export const getAssetUnitReportData =
   (param = null) =>
   async (dispatch) => {
     try {
       dispatch(setLoading(true));
-      const res = await axiosInstance.get(`${URLS?.assetIncident?.path}`, {
+      const res = await axiosInstance.get(`${URLS?.assetUnit?.path}`, {
         params: param,
       });
-      dispatch(postIncident(res?.data));
+      dispatch(postUnit(res?.data));
     } catch (error) {
-      console.error("In get asset Incident report data error", error);
+      console.error("In get asset Unit report data error", error);
     } finally {
       dispatch(setLoading(false));
     }
   };
 
-export const { setLoading, postSuccess, postIncident } =
+export const { setLoading, postSuccess, postUnit } =
   IncidentReportSlice.actions;
 export default IncidentReportSlice.reducer;

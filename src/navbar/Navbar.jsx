@@ -582,7 +582,7 @@ const Navbar = ({ lang, setLang }) => {
       asset_incident_reports?.includes(userRoleId) && {
         key: "16",
         label: (
-          <Link className="text-black no-underline" to="/asset-incident-report">
+          <Link className="text-black no-underline" to="/asset-unit-report">
             Asset Incident Report
           </Link>
         ),
@@ -757,7 +757,7 @@ const Navbar = ({ lang, setLang }) => {
   //     asset_incident_reports?.includes(userRoleId) && {
   //       key: "16",
   //       label: (
-  //         <Link className="text-black no-underline" to="/asset-incident-report">
+  //         <Link className="text-black no-underline" to="/asset-unit-report">
   //           Asset Incident Report
   //         </Link>
   //       ),

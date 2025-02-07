@@ -6,32 +6,21 @@ import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
 import {
-  dateOptions,
   dateWeekOptions,
   getValueLabel,
   percentageOptions,
 } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomTable from "../../commonComponents/CustomTable";
-import ExportToExcel from "../ExportToExcel";
-import ExportToPDF from "../reportFile";
-import URLS from "../../urils/URLS";
-import { getMonitoringAgent } from "../../complaince/monitoringSlice";
-import MonitoringSelector from "../../complaince/monitoringSelector";
-import { getAttendanceReports } from "../Attendance/Slice/attendanceslice";
-import AttendanceSelector from "../Attendance/Slice/attendanceSelector";
 import CustomInput from "../../commonComponents/CustomInput";
 import { getAssetViewData } from "../../register/asset/AssetsSlice";
 import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
-import { getAssetIncidentReportData } from "./Slice/IncidentReportSlice";
-// import { getAttendanceReports } from "./Slice/attendanceslice";
-// import AttendanceSelector from "./Slice/attendanceSelector";
+import { getAssetUnitReportData } from "./Slice/IncidentReportSlice";
 
-const AssetIncidentReport = () => {
+const AssetUnitReport = () => {
   const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
@@ -40,25 +29,13 @@ const AssetIncidentReport = () => {
     pageLength: 25,
     currentPage: 1,
   });
-  const [count, setCount] = useState({
-    total: 0,
-    registered: 0,
-    todaysmonitaring: 0,
-    totalPendingMonitoring: 0,
-    total_allocation: 0,
-  });
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { AssetUnitList, AssetViewData } = ToiletAndTentageSelector(); // monitoring agent drop
-  //   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
-  const { AttendanceData, loading } = AttendanceSelector();
-  const { AssetIncidentData } = IncidentReportSelector();
-
-  //   console.log("AssetViewData", AssetViewData);
-  console.log("AssetIncidentData", AssetIncidentData);
+  const { AssetUnitData, loading } = IncidentReportSelector();
 
   const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
   const percentageName = getValueLabel(
@@ -154,7 +131,6 @@ const AssetIncidentReport = () => {
     }
     finalData.date_format = null;
     finalData.assets_code = null;
-    // console.log("finalData", finalData);
     callApi(finalData);
   };
 
@@ -179,7 +155,7 @@ const AssetIncidentReport = () => {
   };
 
   const callApi = async (data) => {
-    dispatch(getAssetIncidentReportData(data)); // asset incident reports
+    dispatch(getAssetUnitReportData(data)); // asset incident reports
   };
 
   useEffect(() => {
@@ -190,93 +166,99 @@ const AssetIncidentReport = () => {
   }, []);
 
   useEffect(() => {
-    if (AssetIncidentData) {
-      const { questions = [], monitoring = [] } = AssetIncidentData?.data || {};
-      console.log("questions", questions);
-      console.log("monitoring", monitoring);
-      const r = questions?.map((data) => {
-        return monitoring?.map((item) => {});
+    if (AssetUnitData) {
+      const unitData = AssetUnitData?.data?.result;
+      const arrayData = unitData?.questionArray?.map((item) => ({
+        ...item,
+        ...Object.fromEntries(
+          Object.entries(item?.dates || {}).flatMap(([date, shifts]) => [
+            [`${date}_shift_1`, shifts?.shif_1 || "-"],
+            [`${date}_shift_2`, shifts?.shif_2 || "-"],
+          ])
+        ),
+      }));
+      setTableData({
+        list: arrayData,
+        pageLength: 25,
+        currentPage: 1,
       });
-      //   const r = questions?.map((data) => {
-      //     return {
-      //         ...data
-      //     //   title: "Shift 1",
-      //     //   dataIndex: "shift_1",
-      //     //   key: "shift_1",
-      //     //   width: 100,
-      //     //   render: (text) => {
-      //     //     return text === "1" ? "Present" : "Absent";
-      //     //   },
-      //     //   sorter: (a, b) => {
-      //     //     return a?.shift_1?.localeCompare(b?.shift_1);
-      //     //   },
-      //     };
-      //   });
-      //   setTableData((prevDetails) => ({
-      //     ...prevDetails,
-      //     list: myData?.attendances || [],
-      //     pageLength: myData?.paging?.[0]?.length || 0,
-      //     currentPage: myData?.paging?.[0]?.currentpage || 1,
-      //     totalRecords: myData?.paging?.[0]?.totalrecords || 0,
-      //   }));
-
-      //   setCount({
-      //     total: myData?.attendances?.length,
-      //   });
-
-      //   const myexcelData = myData?.attendances?.map((data, index) => {
-      //     return {
-      //       Sr: index + 1,
-      //       Name: data?.users_name,
-      //       "Shift 1": data?.shift_1 === "1" ? "Present" : "Absent",
-      //       "Shift 2": data?.shift_2 === "1" ? "Present" : "Absent",
-      //     };
-      //   });
-      //   setExcelData(myexcelData);
     }
-  }, [AssetIncidentData]);
+  }, [AssetUnitData]);
 
-  const columns = useMemo(
-    () => [
+  const dynamicColumns = useMemo(() => {
+    const columns = [
       {
-        title: "GSD Name",
-        dataIndex: "users_name",
-        key: "users_name",
-        width: 100,
-        sorter: (a, b) => {
-          const nameA = a?.users_name ? a?.users_name?.toString() : "";
-          const nameB = b?.users_name ? b?.users_name?.toString() : "";
-          return nameA?.localeCompare(nameB);
-        },
+        title: "Question",
+        dataIndex: "question",
+        key: "question",
+        width: 200,
       },
-      {
-        title: "Shift 1",
-        dataIndex: "shift_1",
-        key: "shift_1",
-        width: 100,
-        render: (text) => {
-          return text === "1" ? "Present" : "Absent";
-        },
-        sorter: (a, b) => {
-          return a?.shift_1?.localeCompare(b?.shift_1);
-        },
-      },
-      {
-        title: "Shift 2",
-        dataIndex: "shift_2",
-        key: "shift_2",
-        width: 100,
-        render: (text) => {
-          return text === "1" ? "Present" : "Absent";
-        },
-        sorter: (a, b) => {
-          return a?.shift_2?.localeCompare(b?.shift_2);
-        },
-      },
-    ],
-    [SectorListDrop]
-  );
-  // pdf header
+    ];
+    const unitData = AssetUnitData?.data?.result;
+    const dates = new Set();
+    unitData?.questionArray?.forEach((item) => {
+      Object.keys(item?.dates || {}).forEach((date) => {
+        dates.add(date); // Add date to the set (ensures unique dates)
+      });
+    });
+
+    dates?.forEach((date) => {
+      columns.push({
+        title: () => <>{date}</>,
+        children: [
+          {
+            title: "Shift 1",
+            dataIndex: `${date}_shift_1`,
+            key: `${date}_shift_1`,
+            width: 50,
+            render: (text) => {
+              if (text === "1") {
+                return (
+                  <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
+                    Yes
+                  </span>
+                );
+              } else if (text === "0") {
+                return (
+                  <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
+                    No
+                  </span>
+                );
+              } else {
+                return "-";
+              }
+            },
+          },
+          {
+            title: "Shift 2",
+            dataIndex: `${date}_shift_2`,
+            key: `${date}_shift_2`,
+            width: 50,
+            render: (text) => {
+              if (text === "1") {
+                return (
+                  <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
+                    Yes
+                  </span>
+                );
+              } else if (text === "0") {
+                return (
+                  <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
+                    No
+                  </span>
+                );
+              } else {
+                return "-";
+              }
+            },
+          },
+        ],
+      });
+    });
+
+    return columns;
+  }, [AssetUnitData]);
+
   const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
 
   // pdf data
@@ -286,11 +268,11 @@ const AssetIncidentReport = () => {
   let timeoutId = null;
 
   return (
-    <div>
-      <CommonDivider label={"Asset Incident Report"} />
+    <>
+      <CommonDivider label={"Asset Unit Report"} />
       {/* <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
-          titleName={`Asset Incident Report ${fileDateName}`}
+          titleName={`Asset Unit Report ${fileDateName}`}
           pdfName={fileName}
           headerData={pdfHeader}
           IsLastLineBold={true}
@@ -504,7 +486,7 @@ const AssetIncidentReport = () => {
       />
       <CustomTable
         loading={loading}
-        columns={columns || []}
+        columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
         scroll={{ x: 800, y: 400 }}
@@ -519,8 +501,8 @@ const AssetIncidentReport = () => {
           getUsers(obj);
         }}
       />
-    </div>
+    </>
   );
 };
 
-export default AssetIncidentReport;
+export default AssetUnitReport;
