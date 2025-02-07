@@ -118,11 +118,11 @@ const MonitoringReport = () => {
       dataIndex: "question_en",
       key: "question_en",
     },
-    {
-      title: "Question (HI)",
-      dataIndex: "question_hi",
-      key: "question_hi",
-    },
+    // {
+    //   title: "Question (HI)",
+    //   dataIndex: "question_hi",
+    //   key: "question_hi",
+    // },
     {
       title: "Image",
       dataIndex: "image",

@@ -7,6 +7,7 @@ const ExportToExcel = ({
   excelData = [],
   fileName = "excel_file",
   IsLastColumnBold = false,
+  IsNoBold = false,
   dynamicArray = [],
   columnProperties = [],
   redToGreenProperties = [],
@@ -139,6 +140,9 @@ const ExportToExcel = ({
 
         // Apply bold to the last column if IsLastColumnBold is true
         if (IsLastColumnBold && cellIndex === columnCount) {
+          cell.font = { bold: true };
+        }
+        if (value === "No" && IsNoBold) {
           cell.font = { bold: true };
         }
       });

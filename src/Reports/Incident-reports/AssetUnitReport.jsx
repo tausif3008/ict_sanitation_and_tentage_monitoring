@@ -15,6 +15,7 @@ import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
 import { getAssetUnitReportData } from "./Slice/IncidentReportSlice";
 import ExportToExcel from "../ExportToExcel";
+import ExportToPDF from "../reportFile";
 
 const AssetUnitReport = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -31,6 +32,7 @@ const AssetUnitReport = () => {
   const formValue = form.getFieldsValue();
   const { AssetUnitList, AssetViewData } = ToiletAndTentageSelector(); // monitoring agent drop
   const { AssetUnitData, loading } = IncidentReportSelector();
+  const AssetDetails = AssetUnitData?.data?.result || {};
 
   const fileDateName =
     formValue?.date_format === "Today"
@@ -43,12 +45,13 @@ const AssetUnitReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "Asset Unit";
+    let name = "";
     if (AssetUnitData?.success) {
-      name += `- ${AssetUnitData?.data?.result?.vendor_name}`;
+      name += `${AssetDetails?.vendor_name}`;
     }
+    name += "- UNIT with SHIFT WISE";
     if (formValue?.assets_code) {
-      name += `- (${formValue?.assets_code}`;
+      name += `(${formValue?.assets_code}`;
     }
     if (formValue?.unit_no) {
       name += `-${formValue?.unit_no})`;
@@ -58,22 +61,23 @@ const AssetUnitReport = () => {
   };
   const fileName = getReportName();
 
-  // const pdfTitleParam = [
-  //   ...(formValue?.sector_id
-  //     ? [
-  //         {
-  //           label: `Allocate Sector : ${sectorName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  //   ...(formValue?.percentage
-  //     ? [
-  //         {
-  //           label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  // ];
+  const pdfTitleParam = [
+    {
+      label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
+    },
+    {
+      label: `Category : ${AssetDetails?.asset_main_type_name || "Combined"}`,
+    },
+    {
+      label: `Type : ${AssetDetails?.asset_type_name || "Combined"}`,
+    },
+    {
+      label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
+    },
+    {
+      label: `Vendor No : ${AssetDetails?.vendor_phone || "Combined"}`,
+    },
+  ];
 
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
@@ -88,32 +92,13 @@ const AssetUnitReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
+    const maxDate = moment(startDate).clone().add(6, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
     );
   };
 
-  // const getUsers = async (dataObj = {}) => {
-  //   const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
-  //   const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
-  //   const newParam = {
-  //     page: dataObj?.page || "1",
-  //     per_page: dataObj?.size || "25",
-  //     ...form.getFieldsValue(),
-  //     ...(formValue?.date_format === "Date Range" && {
-  //       form_date: startDate,
-  //     }),
-  //     ...(formValue?.date_format === "Date Range" && {
-  //       to_date: endDate,
-  //       date_format: null,
-  //     }),
-  //   };
-  //   callApi(newParam);
-  // };
-
-  // filter finish
   const onFinishForm = (values) => {
     const startDate = dayjs(values?.form_date).format("YYYY-MM-DD");
     const endDate = dayjs(values?.to_date).format("YYYY-MM-DD");
@@ -173,8 +158,7 @@ const AssetUnitReport = () => {
 
   useEffect(() => {
     if (AssetUnitData) {
-      const unitData = AssetUnitData?.data?.result;
-      const arrayData = unitData?.questionArray?.map((item) => ({
+      const arrayData = AssetDetails?.questionArray?.map((item) => ({
         ...item,
         ...Object.fromEntries(
           Object.entries(item?.dates || {}).flatMap(([date, shifts]) => [
@@ -200,9 +184,8 @@ const AssetUnitReport = () => {
         width: 200,
       },
     ];
-    const unitData = AssetUnitData?.data?.result;
     const dates = new Set();
-    unitData?.questionArray?.forEach((item) => {
+    AssetDetails?.questionArray?.forEach((item) => {
       Object.keys(item?.dates || {}).forEach((date) => {
         dates.add(date); // Add date to the set (ensures unique dates)
       });
@@ -210,7 +193,7 @@ const AssetUnitReport = () => {
 
     dates?.forEach((date) => {
       columns.push({
-        title: () => <>{date}</>,
+        title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
         children: [
           {
             title: "Shift 1",
@@ -265,13 +248,6 @@ const AssetUnitReport = () => {
     return columns;
   }, [AssetUnitData]);
 
-  // const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
-
-  // // pdf data
-  // const pdfData = useMemo(() => {
-  //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
-  // }, [excelData]);
-
   const myExcelItems = useMemo(() => {
     if (!tableData?.list) return [];
     return tableData?.list?.map((opt, index) => {
@@ -293,36 +269,51 @@ const AssetUnitReport = () => {
     });
   }, [tableData]);
 
+  const pdfHeader = useMemo(() => {
+    return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
+  }, [myExcelItems]);
+
+  const pdfData = useMemo(() => {
+    return (
+      myExcelItems?.map((item) => {
+        return pdfHeader?.map((key) => {
+          return item?.[key] || ""; // You can replace '' with some default value if necessary
+        });
+      }) || []
+    );
+  }, [myExcelItems, pdfHeader]);
+
   return (
     <>
       <CommonDivider label={"Asset Unit Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        {/* <ExportToPDF
-          titleName={`Asset Unit Report ${fileDateName}`}
+        <ExportToPDF
+          titleName={`${fileName}`}
           pdfName={fileName}
           headerData={pdfHeader}
-          IsLastLineBold={true}
           landscape={true}
           tableTitles={pdfTitleParam || []}
-          rows={[
-            ...pdfData,
-            [
-              "",
-              "Total",
-              "",
-              "",
-              "",
-              count?.total_allocation,
-              count?.todaysmonitaring,
-              "",
-              count?.totalPendingMonitoring,
-            ],
-          ]}
-        /> */}
+          rows={pdfData || []}
+          // rows={[
+          //   ...pdfData,
+          //   [
+          //     "",
+          //     "Total",
+          //     "",
+          //     "",
+          //     "",
+          //     count?.total_allocation,
+          //     count?.todaysmonitaring,
+          //     "",
+          //     count?.totalPendingMonitoring,
+          //   ],
+          // ]}
+        />
         <ExportToExcel
           excelData={myExcelItems || []}
           titleName={fileName}
           fileName={fileName}
+          IsNoBold={true}
           // dynamicArray={[
           //   {
           //     name: "Total Allocation",
@@ -362,16 +353,6 @@ const AssetUnitReport = () => {
                 key="form1"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
-                  {/* <CustomSelect
-                    name={"user_id"}
-                    label={"Select GSD"}
-                    placeholder={"Select GSD"}
-                    options={monitoringAgentDrop || []}
-                    // search dropdown
-                    isOnSearchFind={true}
-                    apiAction={getMonitoringAgent}
-                    onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
-                  /> */}
                   <CustomInput
                     name={"assets_code"}
                     label={"Asset Code"}
@@ -407,12 +388,6 @@ const AssetUnitReport = () => {
                       },
                     ]}
                   />
-                  {/* <CustomDatepicker
-                    name={"date"}
-                    label={"Date"}
-                    className="w-full"
-                    placeholder={"Date"}
-                  /> */}
                   <CustomSelect
                     name={"date_format"}
                     label={"Select Date Type"}
@@ -520,13 +495,6 @@ const AssetUnitReport = () => {
           "Total Records": tableData?.list?.length,
         }}
         pagination={true}
-        // onPageChange={(page, size) => {
-        //   const obj = {
-        //     page: page,
-        //     size: size,
-        //   };
-        //   getUsers(obj);
-        // }}
       />
     </>
   );
