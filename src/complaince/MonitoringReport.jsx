@@ -31,9 +31,9 @@ const MonitoringReport = () => {
     if (res?.success && res.data?.monitoring?.length > 0) {
       const monitoringData = res.data.monitoring[0];
       const myexcelData = monitoringData.questions
-        ?.filter((item) => item?.answer === "0")
+        // ?.filter((item) => item?.answer === "0")
         // ?.filter((item) => item?.answer != "N" && item?.answer != "1")
-        // ?.filter((item) => item?.answer != "N" )
+        ?.filter((item) => item?.answer !== "N")
         ?.map((data, index) => {
           return {
             sr: index + 1,
@@ -53,7 +53,8 @@ const MonitoringReport = () => {
 
       // Excel data
       const myexcelDatas = monitoringData?.questions
-        ?.filter((item) => item?.answer === "0")
+        // ?.filter((item) => item?.answer === "0")
+        ?.filter((item) => item?.answer !== "N")
         ?.map((data, index) => {
           return {
             Sr: index + 1,
@@ -167,7 +168,7 @@ const MonitoringReport = () => {
   const pdfData = details?.map((opt, index) => [
     index + 1,
     opt?.question_en,
-    opt?.answer === "1" ? "Yes" : "No",
+    opt?.answer === "Yes" ? "Yes" : "No",
   ]);
 
   return (

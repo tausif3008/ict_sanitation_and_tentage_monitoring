@@ -30,6 +30,8 @@ import { exportToExcel } from "../ExportExcelFuntion";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import QuestionSelector from "../../register/questions/questionSelector";
+import { getQuestionList } from "../../register/questions/questionSlice";
 
 const IncidentReports = () => {
   const [searchQuery, setSearchQuery] = useState();
@@ -48,6 +50,7 @@ const IncidentReports = () => {
   const { AssetTypeVendorDrop } = VendorSupervisorSelector(); // asset type wise vendor
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
+  const { QuestionDrop } = QuestionSelector(); // questions
 
   const [form] = Form.useForm();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
@@ -220,6 +223,8 @@ const IncidentReports = () => {
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     dispatch(getSectorsList()); // all sectors
+    dispatch(getQuestionList()); // get question
+
     getTodayData();
 
     if (IsVendor) {
@@ -270,15 +275,19 @@ const IncidentReports = () => {
   }, [IncidentReport_data]);
 
   const columns = [
-    {
-      title: "Agent Name",
-      dataIndex: "agent_name",
-      key: "agent_name",
-      render: (text, record) => {
-        return text ? text : "GSD";
-      },
-      width: 180,
-    },
+    ...(IsVendor
+      ? []
+      : [
+          {
+            title: "Agent Name",
+            dataIndex: "agent_name",
+            key: "agent_name",
+            render: (text, record) => {
+              return text ? text : "GSD";
+            },
+            width: 180,
+          },
+        ]),
     {
       title: "Asset Type Name",
       dataIndex: "asset_types_name",
@@ -304,16 +313,16 @@ const IncidentReports = () => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
     },
-    {
-      title: "Resolved Date",
-      dataIndex: "resolved_at",
-      key: "resolved_at",
-      width: 180,
-      render: (text, record) => {
-        const date = moment(text).format("DD-MMM-YYYY");
-        return text ? (date === "Invalid date" ? "NA" : date) : "";
-      },
-    },
+    // {
+    //   title: "Resolved Date",
+    //   dataIndex: "resolved_at",
+    //   key: "resolved_at",
+    //   width: 180,
+    //   render: (text, record) => {
+    //     const date = moment(text).format("DD-MMM-YYYY");
+    //     return text ? (date === "Invalid date" ? "NA" : date) : "";
+    //   },
+    // },
     {
       title: "Code",
       dataIndex: "code",
@@ -324,17 +333,23 @@ const IncidentReports = () => {
       },
     },
     {
+      title: "Sector Name",
+      dataIndex: "sector_name",
+      key: "sector_name",
+      width: 80,
+    },
+    {
       title: "Question (Eng)",
       dataIndex: "question_en",
       key: "question_en",
       width: 270,
     },
-    {
-      title: "SLA Time",
-      dataIndex: "sla",
-      key: "sla",
-      width: 100,
-    },
+    // {
+    //   title: "SLA Time",
+    //   dataIndex: "sla",
+    //   key: "sla",
+    //   width: 100,
+    // },
   ];
 
   // excel && pdf file
@@ -357,20 +372,20 @@ const IncidentReports = () => {
       const myexcelData =
         isExcel &&
         res?.data?.incidences?.map((data, index) => {
-          const date = moment(data?.resolved_at).format("DD-MMM-YYYY hh:mm A");
+          // const date = moment(data?.resolved_at).format("DD-MMM-YYYY hh:mm A");
           return {
             Sr: index + 1,
             "Asset Type Name": data?.asset_types_name,
             Code: Number(data?.code),
             Unit: Number(data?.unit_no),
-            "GSD Name": data?.agent_name || "GSD",
-            "Vendor Name": data?.vendor_name,
+            ...(!IsVendor && { "GSD Name": data?.agent_name || "GSD" }),
+            ...(!IsVendor && { "Vendor Name": data?.vendor_name }),
             "Incidence Date": data?.incidence_at
               ? moment(data?.incidence_at).format("DD-MMM-YYYY hh:mm A")
               : "",
-            "Resolved Date": date === "Invalid date" ? "NA" : date,
+            // "Resolved Date": date === "Invalid date" ? "NA" : date,
             Sector: data?.sector_name,
-            Circle: data?.circle_name,
+            // Circle: data?.circle_name,
             Question: data?.question_en,
           };
         });
@@ -419,193 +434,192 @@ const IncidentReports = () => {
     <div>
       <CommonDivider label={"Incident-Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          {/* <ExportToExcel
+        {/* <ExportToExcel
             excelData={excelData || []}
             fileName={"Incident-Report"}
           /> */}
-          <Button
-            type="primary"
-            onClick={() => {
-              exportToFile(true);
-            }}
-          >
-            Download Excel
-          </Button>
-        </div>
+        <Button
+          type="primary"
+          onClick={() => {
+            exportToFile(true);
+          }}
+        >
+          Download Excel
+        </Button>
       </div>
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
-            {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 0]} align="middle">
-                    {!IsVendor && (
-                      <Col
-                        key="asset_main_type_id"
-                        xs={24}
-                        sm={12}
-                        md={6}
-                        lg={5}
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 0]} align="middle">
+                  {!IsVendor && (
+                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_main_type_id"}
+                        label={"Select Category"}
+                        placeholder={"Select Category"}
+                        options={AssetMainTypeDrop || []}
+                        onSelect={handleSelect}
+                      />
+                    </Col>
+                  )}
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Type"}
+                      placeholder={"Select Type"}
+                      options={AssetTypeDrop || []}
+                      onSelect={handleTypeSelect}
+                    />
+                  </Col>
+                  {!IsVendor && (
+                    <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"to_user_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={AssetTypeVendorDrop || []}
+                      />
+                    </Col>
+                  )}
+                  <Col key="code" xs={24} sm={12} md={6} lg={5}>
+                    <CustomInput
+                      name={"code"}
+                      label={"Asset Code"}
+                      placeholder={"Asset Code"}
+                    />
+                  </Col>
+                  <Col key="incidence_at" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"incidence_at"}
+                      label={"Select Date Type"}
+                      placeholder={"Select Date Type"}
+                      options={dateWeekOptions || []}
+                      onSelect={handleDateSelect}
+                    />
+                  </Col>
+                  {showDateRange && (
+                    <>
+                      <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"incidence_form_date"}
+                          label={"From Date (Incidence Date)"}
+                          className="w-full"
+                          placeholder={"Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a start date!",
+                            },
+                          ]}
+                          onChange={(date) => {
+                            const dayjsObjectFrom = dayjs(date?.$d);
+                            const startDate = dayjsObjectFrom;
+
+                            const dayjsObjectTo = dayjs(
+                              form.getFieldValue("incidence_to_date")?.$d
+                            );
+                            const endDate = dayjsObjectTo;
+
+                            // Condition 1: If startDate is after endDate, set end_time to null
+                            if (startDate.isAfter(endDate)) {
+                              form.setFieldValue("incidence_to_date", null);
+                            }
+
+                            // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                            const daysDifference = endDate.diff(
+                              startDate,
+                              "days"
+                            );
+                            if (daysDifference > 7) {
+                              form.setFieldValue("incidence_to_date", null);
+                            } else {
+                              // If the difference is within the allowed range, you can keep the value or process further if needed.
+                            }
+
+                            setStartDate(startDate.format("YYYY-MM-DD"));
+                          }}
+                        />
+                      </Col>
+                      <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"incidence_to_date"}
+                          label={"To Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a end date!",
+                            },
+                          ]}
+                          className="w-full"
+                          placeholder={"Date"}
+                          disabledDate={disabledDate}
+                        />
+                      </Col>
+                    </>
+                  )}
+                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"sector_id"}
+                      allowClear={isSmoUser ? false : true}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={isSmoUser ? SectorArray : SectorListDrop || []}
+                    />{" "}
+                  </Col>
+                  <Col key="question_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name="question_id" // This is the field name
+                      label={"Select Question"}
+                      placeholder={"Select Question"}
+                      options={QuestionDrop || []}
+                    />
+                  </Col>
+
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
                       >
-                        <CustomSelect
-                          name={"asset_main_type_id"}
-                          label={"Select Category"}
-                          placeholder={"Select Category"}
-                          options={AssetMainTypeDrop || []}
-                          onSelect={handleSelect}
-                        />
-                      </Col>
-                    )}
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={AssetTypeDrop || []}
-                        onSelect={handleTypeSelect}
-                      />
-                    </Col>
-                    {!IsVendor && (
-                      <Col key="to_user_id" xs={24} sm={12} md={6} lg={5}>
-                        <CustomSelect
-                          name={"to_user_id"}
-                          label={"Select Vendor"}
-                          placeholder={"Select Vendor"}
-                          options={AssetTypeVendorDrop || []}
-                        />
-                      </Col>
-                    )}
-                    <Col key="code" xs={24} sm={12} md={6} lg={5}>
-                      <CustomInput
-                        name={"code"}
-                        label={"Asset Code"}
-                        placeholder={"Asset Code"}
-                      />
-                    </Col>
-                    <Col key="incidence_at" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"incidence_at"}
-                        label={"Select Date Type"}
-                        placeholder={"Select Date Type"}
-                        options={dateWeekOptions || []}
-                        onSelect={handleDateSelect}
-                      />
-                    </Col>
-                    {showDateRange && (
-                      <>
-                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"incidence_form_date"}
-                            label={"From Date (Incidence Date)"}
-                            className="w-full"
-                            placeholder={"Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a start date!",
-                              },
-                            ]}
-                            onChange={(date) => {
-                              const dayjsObjectFrom = dayjs(date?.$d);
-                              const startDate = dayjsObjectFrom;
-
-                              const dayjsObjectTo = dayjs(
-                                form.getFieldValue("incidence_to_date")?.$d
-                              );
-                              const endDate = dayjsObjectTo;
-
-                              // Condition 1: If startDate is after endDate, set end_time to null
-                              if (startDate.isAfter(endDate)) {
-                                form.setFieldValue("incidence_to_date", null);
-                              }
-
-                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                              const daysDifference = endDate.diff(
-                                startDate,
-                                "days"
-                              );
-                              if (daysDifference > 7) {
-                                form.setFieldValue("incidence_to_date", null);
-                              } else {
-                                // If the difference is within the allowed range, you can keep the value or process further if needed.
-                              }
-
-                              setStartDate(startDate.format("YYYY-MM-DD"));
-                            }}
-                          />
-                        </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"incidence_to_date"}
-                            label={"To Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a end date!",
-                              },
-                            ]}
-                            className="w-full"
-                            placeholder={"Date"}
-                            disabledDate={disabledDate}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"sector_id"}
-                        allowClear={isSmoUser ? false : true}
-                        label={"Select Sector"}
-                        placeholder={"Select Sector"}
-                        options={isSmoUser ? SectorArray : SectorListDrop || []}
-                      />{" "}
-                    </Col>
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
+                        Search
+                      </Button>
                     </div>
-                  </Row>
-                </Form>
-              ),
-            },
-          ]}
-        />
-        {contextHolder}
-      </div>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
+      {contextHolder}
       <CommonTable
         loading={loading}
         uri={`incident-report`}

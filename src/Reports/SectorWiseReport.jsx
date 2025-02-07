@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
 import dayjs from "dayjs";
 import moment from "moment";
-import { Table, Collapse, Form, Button, Row, Col } from "antd";
+import { Table, Collapse, Form, Button, Row, Col, Tooltip } from "antd";
 
 import CommonDivider from "../commonComponents/CommonDivider";
 import ExportToPDF from "./reportFile";
@@ -70,7 +70,9 @@ const SectorWiseReport = () => {
   const vendorsData = vendorReports?.data?.vendors || [];
 
   const userRoleId = localStorage.getItem("role_id");
+  const IsVendor = Number(userRoleId) === 8;
   const UserId = localStorage.getItem("userId");
+  const UserName = localStorage.getItem("name");
   const Category_mainType_id = localStorage.getItem("category_mainType_id");
   const sessionDataString = localStorage.getItem("sessionData");
   const sessionData = sessionDataString ? JSON.parse(sessionDataString) : null;
@@ -101,14 +103,14 @@ const SectorWiseReport = () => {
     type: formValue?.asset_type_ids ? "Type 1 to Type 5" : "All Asset Types",
   };
 
+  const vendorLabel = formValue?.vendor_id
+    ? `Vendor Name : ${vendorName || "Combined"}`
+    : IsVendor
+    ? `Vendor Name : ${UserName || "Combined"}`
+    : null;
+
   const pdfTitleParam = [
-    ...(formValue?.vendor_id
-      ? [
-          {
-            label: `Vendor Name : ${vendorName || "Combined"}`,
-          },
-        ]
-      : []),
+    ...(vendorLabel ? [{ label: vendorLabel }] : []),
     {
       label: `Category : ${catTypeName || "Combined"}`,
     },
@@ -148,8 +150,8 @@ const SectorWiseReport = () => {
       ...(formValue?.date && {
         date: dayjs(formValue?.date).format("YYYY-MM-DD"),
       }),
-      ...(userRoleId === "8" && { vendor_id: UserId }),
-      ...(userRoleId === "8" && {
+      ...(IsVendor && { vendor_id: UserId }),
+      ...(IsVendor && {
         asset_main_type_id: Category_mainType_id,
       }),
     };
@@ -167,7 +169,7 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
-    if (userRoleId !== "8" && value) {
+    if (!IsVendor && value) {
       const paramData = {
         asset_main_type_id: value,
       };
@@ -181,7 +183,7 @@ const SectorWiseReport = () => {
       vendor_id: null,
       asset_type_ids: null,
     });
-    if (userRoleId !== "8" && value) {
+    if (!IsVendor && value) {
       const paramData = {
         asset_main_type_id: formValue?.asset_main_type_id,
         asset_type_id: value,
@@ -203,10 +205,10 @@ const SectorWiseReport = () => {
       ...(values?.order_by && { order_by: values?.order_by }),
       ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
       date: values?.date ? formattedDate : moment().format("YYYY-MM-DD"),
-      ...(userRoleId === "8" && {
+      ...(IsVendor && {
         vendor_id: sessionData?.id,
       }),
-      ...(userRoleId === "8" && {
+      ...(IsVendor && {
         asset_main_type_id: Category_mainType_id,
       }),
     };
@@ -231,6 +233,9 @@ const SectorWiseReport = () => {
     let name = "Sector Wise";
     if (vendorName) {
       name += `- ${vendorName}`;
+    }
+    if (IsVendor) {
+      name += `- ${UserName}`;
     }
     if (catTypeName) {
       name += `- ${catTypeName}`;
@@ -352,7 +357,7 @@ const SectorWiseReport = () => {
   const getCurrentData = () => {
     let newDate = dayjs().format("YYYY-MM-DD");
     let mainTypeIdLocal = "1";
-    if (userRoleId === "8") {
+    if (IsVendor) {
       mainTypeIdLocal = Category_mainType_id || "1";
     }
     form.setFieldsValue({
@@ -363,7 +368,7 @@ const SectorWiseReport = () => {
     });
     const url = URLS?.assetType?.path + mainTypeIdLocal;
     dispatch(getAssetTypes(url)); // get assset type
-    if (userRoleId !== "8") {
+    if (!IsVendor) {
       const paramData = {
         asset_main_type_id: mainTypeIdLocal,
       };
@@ -374,7 +379,7 @@ const SectorWiseReport = () => {
       order_by: "monitaring_per",
       asset_main_type_id: mainTypeIdLocal,
       asset_type_ids: fiveTypes?.[0]?.value,
-      ...(userRoleId === "8" && {
+      ...(IsVendor && {
         vendor_id: sessionData?.id,
       }),
     };
@@ -390,12 +395,14 @@ const SectorWiseReport = () => {
   // Create a reusable render function
   const renderColumn = (text, record) => {
     return (
-      <span
-        onClick={() => handleClick(record)}
-        className="cursor-pointer hover:text-blue-500 hover:underline"
-      >
-        {text ? text : 0}
-      </span>
+      <Tooltip title="View" placement="top">
+        <span
+          onClick={() => handleClick(record)}
+          className="cursor-pointer hover:text-blue-500 hover:underline"
+        >
+          {text ? text : 0}
+        </span>
+      </Tooltip>
     );
   };
 
@@ -707,7 +714,7 @@ const SectorWiseReport = () => {
                 key="form1"
               >
                 <Row gutter={[16, 16]} align="middle">
-                  {userRoleId !== "8" && (
+                  {!IsVendor && (
                     <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"asset_main_type_id"}
@@ -731,7 +738,7 @@ const SectorWiseReport = () => {
                       }}
                     />
                   </Col>
-                  {userRoleId != "8" && (
+                  {!IsVendor && (
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
                         name={"vendor_id"}

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
-import { Table, Collapse, Form, Button, Row, Col } from "antd";
+import { Table, Collapse, Form, Button, Row, Col, Tooltip } from "antd";
 import moment from "moment";
 import dayjs from "dayjs";
 
@@ -432,12 +432,14 @@ const VendorReports = () => {
   // Create a reusable render function
   const renderColumn = (text, record) => {
     return (
-      <span
-        onClick={() => handleClick(record)}
-        className="cursor-pointer hover:text-blue-500 hover:underline"
-      >
-        {text ? text : 0}
-      </span>
+      <Tooltip title="View" placement="top">
+        <span
+          onClick={() => handleClick(record)}
+          className="cursor-pointer hover:text-blue-500 hover:underline"
+        >
+          {text ? text : 0}
+        </span>
+      </Tooltip>
     );
   };
 
