@@ -5,23 +5,18 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import search from "../../assets/Dashboard/icon-search.png";
-import {
-  dateWeekOptions,
-  getValueLabel,
-  percentageOptions,
-} from "../../constant/const";
+import { dateWeekOptions } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomTable from "../../commonComponents/CustomTable";
 import CustomInput from "../../commonComponents/CustomInput";
 import { getAssetViewData } from "../../register/asset/AssetsSlice";
 import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
 import { getAssetUnitReportData } from "./Slice/IncidentReportSlice";
+import ExportToExcel from "../ExportToExcel";
 
 const AssetUnitReport = () => {
-  const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [tableData, setTableData] = useState({
@@ -29,52 +24,56 @@ const AssetUnitReport = () => {
     pageLength: 25,
     currentPage: 1,
   });
+  let timeoutId = null;
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
-  const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const { AssetUnitList, AssetViewData } = ToiletAndTentageSelector(); // monitoring agent drop
   const { AssetUnitData, loading } = IncidentReportSelector();
 
-  const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
-  const percentageName = getValueLabel(
-    `${formValue?.percentage}`,
-    percentageOptions,
-    null
-  );
-  const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+  const fileDateName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : "All Dates";
 
   // file name
   const getReportName = () => {
-    let name = "GSD Wise";
-    if (sectorName) {
-      name += `- ${sectorName}`;
+    let name = "Asset Unit";
+    if (AssetUnitData?.success) {
+      name += `- ${AssetUnitData?.data?.result?.vendor_name}`;
     }
-    if (percentageName) {
-      name += `- ${percentageName}`;
+    if (formValue?.assets_code) {
+      name += `- (${formValue?.assets_code}`;
     }
-    name += `- Monitoring Report ${fileDateName}`;
+    if (formValue?.unit_no) {
+      name += `-${formValue?.unit_no})`;
+    }
+    name += `- Report (${fileDateName})`;
     return name;
   };
   const fileName = getReportName();
 
-  const pdfTitleParam = [
-    ...(formValue?.sector_id
-      ? [
-          {
-            label: `Allocate Sector : ${sectorName || "Combined"}`,
-          },
-        ]
-      : []),
-    ...(formValue?.percentage
-      ? [
-          {
-            label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
-          },
-        ]
-      : []),
-  ];
+  // const pdfTitleParam = [
+  //   ...(formValue?.sector_id
+  //     ? [
+  //         {
+  //           label: `Allocate Sector : ${sectorName || "Combined"}`,
+  //         },
+  //       ]
+  //     : []),
+  //   ...(formValue?.percentage
+  //     ? [
+  //         {
+  //           label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
+  //         },
+  //       ]
+  //     : []),
+  // ];
 
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
@@ -96,23 +95,23 @@ const AssetUnitReport = () => {
     );
   };
 
-  const getUsers = async (dataObj = {}) => {
-    const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
-    const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
-    const newParam = {
-      page: dataObj?.page || "1",
-      per_page: dataObj?.size || "25",
-      ...form.getFieldsValue(),
-      ...(formValue?.date_format === "Date Range" && {
-        form_date: startDate,
-      }),
-      ...(formValue?.date_format === "Date Range" && {
-        to_date: endDate,
-        date_format: null,
-      }),
-    };
-    callApi(newParam);
-  };
+  // const getUsers = async (dataObj = {}) => {
+  //   const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
+  //   const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
+  //   const newParam = {
+  //     page: dataObj?.page || "1",
+  //     per_page: dataObj?.size || "25",
+  //     ...form.getFieldsValue(),
+  //     ...(formValue?.date_format === "Date Range" && {
+  //       form_date: startDate,
+  //     }),
+  //     ...(formValue?.date_format === "Date Range" && {
+  //       to_date: endDate,
+  //       date_format: null,
+  //     }),
+  //   };
+  //   callApi(newParam);
+  // };
 
   // filter finish
   const onFinishForm = (values) => {
@@ -137,28 +136,35 @@ const AssetUnitReport = () => {
   // reset form
   const resetForm = () => {
     form.resetFields();
-    getCurrentData();
+    // getCurrentData();
+    setShowDateRange(false);
+    setTableData({
+      list: [],
+      pageLength: 25,
+      currentPage: 1,
+    });
   };
 
   // current data
-  const getCurrentData = () => {
-    setShowDateRange(false);
-    form.setFieldsValue({
-      date_format: "Today",
-    });
-    const finalValues = {
-      page: 1,
-      per_page: 10,
-      date_format: "Today",
-    };
-    callApi(finalValues);
-  };
+  // const getCurrentData = () => {
+  //   setShowDateRange(false);
+  //   form.setFieldsValue({
+  //     date_format: "Today",
+  //   });
+  //   const finalValues = {
+  //     // page: 1,
+  //     // per_page: 10,
+  //     // date_format: "Today",
+  //   };
+  //   callApi(finalValues);
+  // };
 
   const callApi = async (data) => {
     dispatch(getAssetUnitReportData(data)); // asset incident reports
   };
 
   useEffect(() => {
+    form.resetFields();
     // getCurrentData();
     // dispatch(getSectorsList()); // all sectors
     // const urls = URLS?.monitoringAgent?.path;
@@ -259,19 +265,39 @@ const AssetUnitReport = () => {
     return columns;
   }, [AssetUnitData]);
 
-  const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
+  // const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
 
-  // pdf data
-  const pdfData = useMemo(() => {
-    return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
-  }, [excelData]);
-  let timeoutId = null;
+  // // pdf data
+  // const pdfData = useMemo(() => {
+  //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
+  // }, [excelData]);
+
+  const myExcelItems = useMemo(() => {
+    if (!tableData?.list) return [];
+    return tableData?.list?.map((opt, index) => {
+      const row = {
+        Sr: index + 1, // Serial number
+        Question: opt?.question, // Name
+      };
+      // Iterate over the keys of the user object
+      Object.keys(opt)?.forEach((key) => {
+        if (key.includes("_shift_")) {
+          const [date, shift] = key.split("_shift_");
+          const formattedDate = date.split("-").reverse().join("-");
+          const newKey = `${formattedDate} Shift ${shift}`;
+          row[newKey] =
+            opt[key] === "1" ? "Yes" : opt[key] === "0" ? "No" : "-";
+        }
+      });
+      return row; // Return the row data
+    });
+  }, [tableData]);
 
   return (
     <>
       <CommonDivider label={"Asset Unit Report"} />
-      {/* <div className="flex justify-end gap-2 font-semibold">
-        <ExportToPDF
+      <div className="flex justify-end gap-2 font-semibold">
+        {/* <ExportToPDF
           titleName={`Asset Unit Report ${fileDateName}`}
           pdfName={fileName}
           headerData={pdfHeader}
@@ -292,30 +318,30 @@ const AssetUnitReport = () => {
               count?.totalPendingMonitoring,
             ],
           ]}
-        />
+        /> */}
         <ExportToExcel
-          excelData={excelData || []}
+          excelData={myExcelItems || []}
           titleName={fileName}
           fileName={fileName}
-          dynamicArray={[
-            {
-              name: "Total Allocation",
-              value: count?.total_allocation,
-              colIndex: 6,
-            },
-            {
-              name: "Monitoring",
-              value: count?.todaysmonitaring,
-              colIndex: 7,
-            },
-            {
-              name: "Pending Monitoring",
-              value: count?.totalPendingMonitoring,
-              colIndex: 9,
-            },
-          ]}
+          // dynamicArray={[
+          //   {
+          //     name: "Total Allocation",
+          //     value: count?.total_allocation,
+          //     colIndex: 6,
+          //   },
+          //   {
+          //     name: "Monitoring",
+          //     value: count?.todaysmonitaring,
+          //     colIndex: 7,
+          //   },
+          //   {
+          //     name: "Pending Monitoring",
+          //     value: count?.totalPendingMonitoring,
+          //     colIndex: 9,
+          //   },
+          // ]}
         />
-      </div> */}
+      </div>
       <Collapse
         defaultActiveKey={["1"]}
         size="small"
@@ -491,15 +517,16 @@ const AssetUnitReport = () => {
         dataSource={tableData || []}
         scroll={{ x: 800, y: 400 }}
         tableSubheading={{
-          "Total Records": tableData?.totalRecords,
+          "Total Records": tableData?.list?.length,
         }}
-        onPageChange={(page, size) => {
-          const obj = {
-            page: page,
-            size: size,
-          };
-          getUsers(obj);
-        }}
+        pagination={true}
+        // onPageChange={(page, size) => {
+        //   const obj = {
+        //     page: page,
+        //     size: size,
+        //   };
+        //   getUsers(obj);
+        // }}
       />
     </>
   );
