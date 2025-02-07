@@ -196,7 +196,7 @@ const AssetUnitReport = () => {
         title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
         children: [
           {
-            title: "Shift 1",
+            title: "S1",
             dataIndex: `${date}_shift_1`,
             key: `${date}_shift_1`,
             width: 50,
@@ -219,7 +219,7 @@ const AssetUnitReport = () => {
             },
           },
           {
-            title: "Shift 2",
+            title: "S2",
             dataIndex: `${date}_shift_2`,
             key: `${date}_shift_2`,
             width: 50,
