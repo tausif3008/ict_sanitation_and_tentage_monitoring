@@ -62,12 +62,12 @@ const AssetUnitReport = () => {
   const fileName = getReportName();
 
   const pdfTitleParam = [
-    {
-      label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
-    },
-    {
-      label: `Category : ${AssetDetails?.asset_main_type_name || "Combined"}`,
-    },
+    // {
+    //   label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
+    // },
+    // {
+    //   label: `Category : ${AssetDetails?.asset_main_type_name || "Combined"}`,
+    // },
     {
       label: `Type : ${AssetDetails?.asset_type_name || "Combined"}`,
     },
@@ -75,7 +75,7 @@ const AssetUnitReport = () => {
       label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
     },
     {
-      label: `Vendor No : ${AssetDetails?.vendor_phone || "Combined"}`,
+      label: `Vendor Number : ${AssetDetails?.vendor_phone || "Combined"}`,
     },
   ];
 
@@ -204,13 +204,13 @@ const AssetUnitReport = () => {
               if (text === "1") {
                 return (
                   <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
-                    Yes
+                    Y
                   </span>
                 );
               } else if (text === "0") {
                 return (
                   <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
-                    No
+                    N
                   </span>
                 );
               } else {
@@ -227,13 +227,13 @@ const AssetUnitReport = () => {
               if (text === "1") {
                 return (
                   <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
-                    Yes
+                    Y
                   </span>
                 );
               } else if (text === "0") {
                 return (
                   <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
-                    No
+                    N
                   </span>
                 );
               } else {
@@ -261,8 +261,7 @@ const AssetUnitReport = () => {
           const [date, shift] = key.split("_shift_");
           const formattedDate = date.split("-").reverse().join("-");
           const newKey = `${formattedDate} Shift ${shift}`;
-          row[newKey] =
-            opt[key] === "1" ? "Yes" : opt[key] === "0" ? "No" : "-";
+          row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
         }
       });
       return row; // Return the row data
