@@ -74,9 +74,9 @@ const AssetUnitReport = () => {
     {
       label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
     },
-    {
-      label: `Vendor Number : ${AssetDetails?.vendor_phone || "Combined"}`,
-    },
+    // {
+    //   label: `Vendor Number : ${AssetDetails?.vendor_phone || "Combined"}`,
+    // },
   ];
 
   const handleDateSelect = (value) => {
@@ -92,7 +92,7 @@ const AssetUnitReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(6, "days");
+    const maxDate = moment(startDate).clone().add(9, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -193,7 +193,8 @@ const AssetUnitReport = () => {
 
     dates?.forEach((date) => {
       columns.push({
-        title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
+        // title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
+        title: () => <>{moment(date).format("DD-MMM")}</>,
         children: [
           {
             title: "S1",
@@ -260,7 +261,8 @@ const AssetUnitReport = () => {
         if (key.includes("_shift_")) {
           const [date, shift] = key.split("_shift_");
           const formattedDate = date.split("-").reverse().join("-");
-          const newKey = `${formattedDate} Shift ${shift}`;
+          //const newKey = `${formattedDate} Shift ${shift}`;
+          const newKey = `${formattedDate} S${shift}`;
           row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
         }
       });
