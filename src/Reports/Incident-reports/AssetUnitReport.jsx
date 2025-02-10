@@ -15,7 +15,7 @@ import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
 import { getAssetUnitReportData } from "./Slice/IncidentReportSlice";
 import ExportToExcel from "../ExportToExcel";
-import ExportToPDF from "../reportFile";
+import AssetUnitReportPdf from "./AssetUnitReportPdf";
 
 const AssetUnitReport = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -66,9 +66,6 @@ const AssetUnitReport = () => {
     },
     {
       label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
-    },
-    {
-      label: `Vendor Number : ${AssetDetails?.vendor_phone || "Combined"}`,
     },
   ];
 
@@ -123,30 +120,12 @@ const AssetUnitReport = () => {
     });
   };
 
-  // current data
-  // const getCurrentData = () => {
-  //   setShowDateRange(false);
-  //   form.setFieldsValue({
-  //     date_format: "Today",
-  //   });
-  //   const finalValues = {
-  //     // page: 1,
-  //     // per_page: 10,
-  //     // date_format: "Today",
-  //   };
-  //   callApi(finalValues);
-  // };
-
   const callApi = async (data) => {
     dispatch(getAssetUnitReportData(data)); // asset incident reports
   };
 
   useEffect(() => {
     form.resetFields();
-    // getCurrentData();
-    // dispatch(getSectorsList()); // all sectors
-    // const urls = URLS?.monitoringAgent?.path;
-    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
   useEffect(() => {
@@ -254,7 +233,7 @@ const AssetUnitReport = () => {
           const [date, shift] = key.split("_shift_");
           const formattedDate = date.split("-").reverse().join("-");
           const dateAndMonth = moment(formattedDate, "DD-MM-YYYY").format(
-            "DD-MM"
+            "DD-MMM"
           );
           const newKey = `${dateAndMonth} S-${shift}`;
           row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
@@ -303,11 +282,23 @@ const AssetUnitReport = () => {
   }, [myExcelItems, pdfHeader]);
   const columnPercentages = [3, 30];
 
+  // count
+  // const extractShiftValues = useMemo(() => {
+  //   return tableData?.list?.map((item) => {
+  //     // Extract values of keys that contain "shift" in the key name
+  //     const shiftValues = Object.keys(item)
+  //       .filter((key) => key.includes("shift"))
+  //       .map((key) => item[key]);
+
+  //     return shiftValues;
+  //   });
+  // }, [tableData]);
+
   return (
     <>
       <CommonDivider label={"PTC Id Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <ExportToPDF
+        <AssetUnitReportPdf
           titleName={`${fileName}`}
           pdfName={fileName}
           headerData={modifiedPdfHeader}
@@ -316,6 +307,7 @@ const AssetUnitReport = () => {
           compYstart={true}
           tableFont={5}
           landscape={true}
+          assetImg={AssetDetails?.photo}
           columnPercentages={columnPercentages || []}
           tableTitles={pdfTitleParam || []}
           rows={pdfData || []}
@@ -483,26 +475,23 @@ const AssetUnitReport = () => {
                     </>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </div>
               </Form>
