@@ -1,5 +1,5 @@
 import { Pagination, Table } from "antd";
-import React from "react";
+import React, { useState } from "react";
 
 const CustomTable = ({
   loading,
@@ -9,8 +9,21 @@ const CustomTable = ({
   onPageChange,
   tableSubheading = [],
   pagination = false,
+  pageSize = 10,
   ...rest
 }) => {
+  const [curPage, setCurPage] = useState({
+    pageNo: 1,
+    pageSize: pageSize,
+  });
+
+  const handleCurrentPageChange = (pageNumber, size) => {
+    setCurPage({
+      pageNo: pageNumber,
+      pageSize: size,
+    });
+  };
+
   const handlePageChange = (pageNumber, size) => {
     if (onPageChange) {
       onPageChange(pageNumber, size);
@@ -27,7 +40,19 @@ const CustomTable = ({
         bordered
         scroll={scroll || { x: 1600, y: 400 }}
         dataSource={dataSource?.list || []}
-        pagination={pagination}
+        // pagination={pagination}
+        pagination={
+          pagination
+            ? {
+                current: curPage?.pageNo || 1, // current page
+                total: dataSource?.list?.length || 0, // total records
+                pageSize: curPage?.pageSize, // page size
+                onChange: handleCurrentPageChange, // handle page change
+                showSizeChanger: true, // option to change page size
+                pageSizeOptions: ["10", "20", "50", "100"], // page size options
+              }
+            : false
+        }
         {...rest}
       />
 

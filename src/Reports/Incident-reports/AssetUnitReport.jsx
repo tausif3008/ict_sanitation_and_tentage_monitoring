@@ -15,7 +15,7 @@ import ToiletAndTentageSelector from "../../register/asset/assetSelectors";
 import IncidentReportSelector from "./Slice/IncidentReportSelector";
 import { getAssetUnitReportData } from "./Slice/IncidentReportSlice";
 import ExportToExcel from "../ExportToExcel";
-import ExportToPDF from "../reportFile";
+import AssetUnitReportPdf from "./AssetUnitReportPdf";
 
 const AssetUnitReport = () => {
   const [showDateRange, setShowDateRange] = useState(false);
@@ -45,38 +45,28 @@ const AssetUnitReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "";
-    if (AssetUnitData?.success) {
-      name += `${AssetDetails?.vendor_name}`;
-    }
-    name += "- UNIT with SHIFT WISE";
+    let name = "PTC Id ";
     if (formValue?.assets_code) {
       name += `(${formValue?.assets_code}`;
     }
     if (formValue?.unit_no) {
       name += `-${formValue?.unit_no})`;
     }
-    name += `- Report (${fileDateName})`;
+    name += ` Monitoring Report (${fileDateName})`;
     return name;
   };
   const fileName = getReportName();
 
   const pdfTitleParam = [
-    // {
-    //   label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
-    // },
-    // {
-    //   label: `Category : ${AssetDetails?.asset_main_type_name || "Combined"}`,
-    // },
+    {
+      label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
+    },
     {
       label: `Type : ${AssetDetails?.asset_type_name || "Combined"}`,
     },
     {
       label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
     },
-    // {
-    //   label: `Vendor Number : ${AssetDetails?.vendor_phone || "Combined"}`,
-    // },
   ];
 
   const handleDateSelect = (value) => {
@@ -92,7 +82,7 @@ const AssetUnitReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(6, "days");
+    const maxDate = moment(startDate).clone().add(9, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -130,30 +120,12 @@ const AssetUnitReport = () => {
     });
   };
 
-  // current data
-  // const getCurrentData = () => {
-  //   setShowDateRange(false);
-  //   form.setFieldsValue({
-  //     date_format: "Today",
-  //   });
-  //   const finalValues = {
-  //     // page: 1,
-  //     // per_page: 10,
-  //     // date_format: "Today",
-  //   };
-  //   callApi(finalValues);
-  // };
-
   const callApi = async (data) => {
     dispatch(getAssetUnitReportData(data)); // asset incident reports
   };
 
   useEffect(() => {
     form.resetFields();
-    // getCurrentData();
-    // dispatch(getSectorsList()); // all sectors
-    // const urls = URLS?.monitoringAgent?.path;
-    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
   useEffect(() => {
@@ -193,11 +165,10 @@ const AssetUnitReport = () => {
 
     dates?.forEach((date) => {
       columns.push({
-        // title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
         title: () => <>{moment(date).format("DD-MMM")}</>,
         children: [
           {
-            title: "S1",
+            title: "S-1",
             dataIndex: `${date}_shift_1`,
             key: `${date}_shift_1`,
             width: 50,
@@ -220,7 +191,7 @@ const AssetUnitReport = () => {
             },
           },
           {
-            title: "S2",
+            title: "S-2",
             dataIndex: `${date}_shift_2`,
             key: `${date}_shift_2`,
             width: 50,
@@ -260,60 +231,11 @@ const AssetUnitReport = () => {
       Object.keys(opt)?.forEach((key) => {
         if (key.includes("_shift_")) {
           const [date, shift] = key.split("_shift_");
-          // const formattedDate = date.split("-").reverse().join("-");
-          // const formattedDate1 = date.split("-").slice(1).reverse().join("-");
-
-          //========================
-          const months = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ];
-
-          const dateParts = date.trim().split("-");
-          // const day = dateParts[0];
-
-          const [year, month, day] = date.split("-");
-
-          // Array of month names
-          const monthNames = [
-            "Jan",
-            "Feb",
-            "Mar",
-            "Apr",
-            "May",
-            "Jun",
-            "Jul",
-            "Aug",
-            "Sep",
-            "Oct",
-            "Nov",
-            "Dec",
-          ];
-
-          // Format the date as "06 Feb"
-          const formattedDate = `${parseInt(day)} ${
-            monthNames[parseInt(month) - 1]
-          }`;
-
-          console.log(formattedDate); // Output: "6 Feb"
-
-          //--------------------
-
-          // const monthIndex = parseInt(dateParts[1], 10) - 1;
-          // const month = months[monthIndex];
-
-          //const newKey = `${formattedDate} Shift ${shift}`;
-          const newKey = `${formattedDate} S-${shift}`;
+          const formattedDate = date.split("-").reverse().join("-");
+          const dateAndMonth = moment(formattedDate, "DD-MM-YYYY").format(
+            "DD-MMM"
+          );
+          const newKey = `${dateAndMonth} S-${shift}`;
           row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
         }
       });
@@ -325,6 +247,30 @@ const AssetUnitReport = () => {
     return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
   }, [myExcelItems]);
 
+  const modifiedPdfHeader = useMemo(() => {
+    let mainArr = ["Sr", "Question"];
+    let subArr = [""];
+    pdfHeader?.forEach((item) => {
+      if (!mainArr.includes(item)) {
+        const split_data = item?.split(" ");
+        const part1 = split_data[0]; // '04-02'
+        if (!mainArr.includes(part1)) {
+          mainArr.push(part1);
+        }
+        const part2 = split_data[1]; // 'S-1'
+        subArr.push(part2);
+      }
+    });
+    const arr = mainArr?.map((data, index) => {
+      return {
+        content: data,
+        ...(index < 2 && { rowSpan: index == 0 ? 1 : 2 }),
+        ...(index > 1 && { colSpan: 2 }),
+      };
+    });
+    return [[...arr], subArr];
+  }, [pdfHeader]);
+
   const pdfData = useMemo(() => {
     return (
       myExcelItems?.map((item) => {
@@ -334,16 +280,35 @@ const AssetUnitReport = () => {
       }) || []
     );
   }, [myExcelItems, pdfHeader]);
+  const columnPercentages = [3, 30];
+
+  // count
+  // const extractShiftValues = useMemo(() => {
+  //   return tableData?.list?.map((item) => {
+  //     // Extract values of keys that contain "shift" in the key name
+  //     const shiftValues = Object.keys(item)
+  //       .filter((key) => key.includes("shift"))
+  //       .map((key) => item[key]);
+
+  //     return shiftValues;
+  //   });
+  // }, [tableData]);
 
   return (
     <>
-      <CommonDivider label={"Asset Unit Report"} />
+      <CommonDivider label={"PTC Id Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <ExportToPDF
+        <AssetUnitReportPdf
           titleName={`${fileName}`}
           pdfName={fileName}
-          headerData={pdfHeader}
+          headerData={modifiedPdfHeader}
+          isHeaderArray={true}
+          isNBoldRed={true}
+          compYstart={true}
+          tableFont={5}
           landscape={true}
+          assetImg={AssetDetails?.photo}
+          columnPercentages={columnPercentages || []}
           tableTitles={pdfTitleParam || []}
           rows={pdfData || []}
           // rows={[
@@ -510,26 +475,23 @@ const AssetUnitReport = () => {
                     </>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </div>
               </Form>
@@ -542,7 +504,8 @@ const AssetUnitReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 800, y: 400 }}
+        pageSize={20}
+        scroll={{ x: 800, y: 800 }}
         tableSubheading={{
           "Total Records": tableData?.list?.length,
         }}

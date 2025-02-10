@@ -3,13 +3,14 @@ import { jsPDF } from "jspdf";
 import moment from "moment";
 import "jspdf-autotable";
 import { Button, message } from "antd";
-import { IMAGELIST } from "../assets/Images/exportImages";
+import { IMAGELIST } from "../../assets/Images/exportImages";
 
-const ExportToPDF = ({
+const AssetUnitReportPdf = ({
   titleName,
   pdfName,
   headerData,
   rows,
+  assetImg,
   isHeaderArray = false,
   compYstart = false,
   isNBoldRed = false,
@@ -24,6 +25,8 @@ const ExportToPDF = ({
   tableTitles = [],
   columnPercentages = [], // column percentage
 }) => {
+  const ImageUrl = localStorage.getItem("ImageUrl") || "";
+
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
       message?.error("Data is not available");
@@ -59,12 +62,28 @@ const ExportToPDF = ({
     );
 
     // Image on the Right (Another logo or image)
+    const centerImageX = 38; // X position (from the center)
+    const centerImageY = 8; // Y position (from the top)
+    const centerImageWidth = 22; // Image width (adjust as needed)
+    const centerImageHeight = 22; // Image height (adjust as needed)
+    doc.addImage(
+      `${IMAGELIST?.kumbhMela}`,
+      "JPEG",
+      centerImageX,
+      centerImageY,
+      centerImageWidth,
+      centerImageHeight,
+      undefined,
+      undefined,
+      "FAST" // Adds compression for smaller file size
+    );
     const rightImageX = pageWidth - 35; // X position (from the right)
     const rightImageY = 7; // Y position (from the top)
     const rightImageWidth = 25; // Image width (adjust as needed)
     const rightImageHeight = 25; // Image height (adjust as needed)
     doc.addImage(
-      `${IMAGELIST?.kumbhMela}`,
+      `${ImageUrl}${assetImg}`,
+      //   `${IMAGELIST?.kumbhMela}`,
       "JPEG",
       rightImageX,
       rightImageY,
@@ -101,7 +120,7 @@ const ExportToPDF = ({
     doc.setFont("normal");
     doc.setFontSize(10);
     doc.y += compYstart ? 8 : 9;
-    doc.text(dateString, dateX + 30, doc.y);
+    doc.text(dateString, dateX + 30, doc.y + 2);
     doc.y += compYstart ? 3 : 4;
 
     doc.setFontSize(11);
@@ -134,6 +153,8 @@ const ExportToPDF = ({
       body: rows,
       styles: applyTableStyles ? tableStyles : null,
       startY: doc.y,
+      theme: "grid",
+      headStyles: { fillColor: "#387db7" }, // blue color for headers
       columnStyles: headerData?.reduce((styles, header, index) => {
         styles[index] = { cellWidth: columnWidths[index] }; // Assign width based on calculated value
         return styles;
@@ -246,4 +267,4 @@ const ExportToPDF = ({
   );
 };
 
-export default ExportToPDF;
+export default AssetUnitReportPdf;
