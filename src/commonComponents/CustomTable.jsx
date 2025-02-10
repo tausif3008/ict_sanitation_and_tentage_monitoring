@@ -9,6 +9,7 @@ const CustomTable = ({
   onPageChange,
   tableSubheading = [],
   pagination = false,
+  pageSize = 10,
   ...rest
 }) => {
   const handlePageChange = (pageNumber, size) => {
@@ -27,7 +28,7 @@ const CustomTable = ({
         bordered
         scroll={scroll || { x: 1600, y: 400 }}
         dataSource={dataSource?.list || []}
-        pagination={pagination}
+        pagination={{ pagination, pageSize: pageSize }}
         {...rest}
       />
 

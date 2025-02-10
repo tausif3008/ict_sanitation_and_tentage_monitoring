@@ -10,6 +10,9 @@ const ExportToPDF = ({
   pdfName,
   headerData,
   rows,
+  isHeaderArray = false,
+  compYstart = false,
+  isNBoldRed = false,
   landscape = false,
   IsLastLineBold = false,
   IsLastColumnBold = false,
@@ -27,7 +30,7 @@ const ExportToPDF = ({
       return "";
     }
     const doc = new jsPDF(landscape ? "landscape" : "");
-    doc.y = 15;
+    doc.y = compYstart ? 10 : 15;
 
     // Centered ICT heading
     const ictHeading = "Maha Kumbh 2025";
@@ -71,7 +74,7 @@ const ExportToPDF = ({
       undefined,
       "FAST" // Adds compression for smaller file size
     );
-    doc.y += 10;
+    doc.y += compYstart ? 8 : 10;
 
     // Add subheading centered between the images
     const subHeading = "ICT Sanitation and Tentage Monitoring System";
@@ -87,7 +90,7 @@ const ExportToPDF = ({
     const dateString = moment().format("DD-MMM-YYYY hh:mm A");
     const dateX = pageWidth - doc.getTextWidth(dateString) - 34; // 14 units from the right
 
-    doc.y += 13;
+    doc.y += compYstart ? 8 : 10;
 
     // Add title and date below the subheading
     doc.setFontSize(12);
@@ -97,21 +100,23 @@ const ExportToPDF = ({
     // Add date on the next line, maintaining the same X position for horizontal alignment
     doc.setFont("normal");
     doc.setFontSize(10);
-    doc.y += 10;
+    doc.y += compYstart ? 8 : 9;
     doc.text(dateString, dateX + 30, doc.y);
-    doc.y += 5;
+    doc.y += compYstart ? 3 : 4;
 
     doc.setFontSize(11);
     doc.setFont("bold");
     tableTitles?.forEach((field, index) => {
-      doc.text(field?.label, 20, (index + 1) * 5 + doc.y);
-      doc.y += 3;
+      doc.text(
+        field?.label,
+        index % 2 == 0 ? 20 : 170,
+        index % 2 == 0 ? (index + 1) * 3 + doc.y : index * 3 + doc.y
+      );
     });
+    // doc.y += 3; // Add space for odd indexed items
     doc.setFont("normal");
     doc.setFontSize(10);
-    doc.y += tableTitles?.length * 5;
-
-    // doc.y += 5;
+    doc.y += tableTitles?.length * 4;
 
     const tableStyles = {
       fontSize: tableFont,
@@ -125,7 +130,7 @@ const ExportToPDF = ({
 
     // Table header and content
     doc.autoTable({
-      head: [headerData],
+      head: isHeaderArray ? headerData : [headerData],
       body: rows,
       styles: applyTableStyles ? tableStyles : null,
       startY: doc.y,
@@ -136,24 +141,6 @@ const ExportToPDF = ({
       didDrawPage: function (data) {
         doc.y = data.cursor.y;
       },
-      // didParseCell: function (data) {
-      //   const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
-      //   const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
-      //   const isFirstColumn = data.column.index === 0;
-      //   data.cell.styles.halign = "center";
-
-      //   if (
-      //     (isLastRow && IsLastLineBold) ||
-      //     (IsNoBold &&
-      //       isNumber &&
-      //       !isFirstColumn &&
-      //       Number(data.cell.text) !== 0)
-      //   ) {
-      //     data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
-      //     data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
-      //     data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
-      //   }
-      // },
       didParseCell: function (data) {
         const isLastRow = data.row.index === rows.length - 1; // Check if it's the last row
         const isNumber = !isNaN(data.cell.text) && data.cell.text !== ""; // Check if it's a number (excluding empty)
@@ -165,17 +152,6 @@ const ExportToPDF = ({
         const numberPart = data.cell.text?.[0].match(/\d+/); // Matches one or more digits
         const numberParts = numberPart?.[0];
 
-        // if (
-        //   (isLastRow && IsLastLineBold) ||
-        //   (IsNoBold &&
-        //     isNumber &&
-        //     !isFirstColumn &&
-        //     Number(data.cell.text) !== 0)
-        // ) {
-        //   data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row
-        //   data.cell.styles.textColor = [10, 10, 10]; // Set text color to black
-        //   data.cell.styles.fontSize = applyTableStyles ? tableFont : 10; // Increase font size for emphasis
-        // }
         if (
           (isLastRow && IsLastLineBold) ||
           (isLastColumn && IsLastColumnBold) ||
@@ -239,28 +215,10 @@ const ExportToPDF = ({
             data.cell.styles.fillColor = `rgb(255, 255, 255)`;
           }
         }
-
-        // if (
-        //   containsPercentage &&
-        //   redToGreenProperties?.includes(data.column.index) &&
-        //   numberParts
-        // ) {
-        //   // Ensure percentage is between 0 and 100
-        //   const percentage = Math.min(Math.max(numberParts, 0), 100);
-
-        //   // Adjust the RGB values to go from red to green
-        //   const green = Math.floor((100 - percentage) * 2.55); // 100% red at 0%, 0% red at 100%
-        //   const red = Math.floor(percentage * 2.55); // 0% green at 0%, 100% green at 100%
-        //   const blue = 0; // Blue remains 0
-
-        //   // Validate and set background color
-        //   if (!isNaN(red) && !isNaN(green) && !isNaN(blue)) {
-        //     data.cell.styles.fillColor = `rgb(${red}, ${green}, ${blue})`; // Set background color
-        //     data.cell.styles.textColor = [10, 10, 10]; // Set text color to white for contrast
-        //   } else {
-        //     data.cell.styles.fillColor = `rgb(255, 255, 255)`; // Set to white if values are invalid
-        //   }
-        // }
+        if (data.cell.text?.[0] == "N" && isNBoldRed) {
+          data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row or last column
+          data.cell.styles.textColor = [255, 0, 0]; // Set text color to black
+        }
       },
     });
 
@@ -271,7 +229,7 @@ const ExportToPDF = ({
     // const footerText1 = "Maha Kumbh Mela 2025, Prayagraj Mela Authority.";
     const footerX = (pageWidth - doc.getTextWidth(footerText1)) / 2; // Center footer
     const footerX2 = (pageWidth - doc.getTextWidth(footerText2)) / 2; // Center footer
-    const footerY = doc.internal.pageSize.getHeight() - 20; // 20 units from the bottom
+    const footerY = doc.internal.pageSize.getHeight() - 15; // 15 units from the bottom
 
     doc.setFontSize(10);
     doc.text(footerText1, footerX, footerY + 5); // Adjust for footer spacing
