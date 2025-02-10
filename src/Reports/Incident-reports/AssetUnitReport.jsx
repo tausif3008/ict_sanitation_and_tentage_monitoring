@@ -92,7 +92,7 @@ const AssetUnitReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(9, "days");
+    const maxDate = moment(startDate).clone().add(6, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -260,9 +260,60 @@ const AssetUnitReport = () => {
       Object.keys(opt)?.forEach((key) => {
         if (key.includes("_shift_")) {
           const [date, shift] = key.split("_shift_");
-          const formattedDate = date.split("-").reverse().join("-");
+          // const formattedDate = date.split("-").reverse().join("-");
+          // const formattedDate1 = date.split("-").slice(1).reverse().join("-");
+
+          //========================
+          const months = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+
+          const dateParts = date.trim().split("-");
+          // const day = dateParts[0];
+
+          const [year, month, day] = date.split("-");
+
+          // Array of month names
+          const monthNames = [
+            "Jan",
+            "Feb",
+            "Mar",
+            "Apr",
+            "May",
+            "Jun",
+            "Jul",
+            "Aug",
+            "Sep",
+            "Oct",
+            "Nov",
+            "Dec",
+          ];
+
+          // Format the date as "06 Feb"
+          const formattedDate = `${parseInt(day)} ${
+            monthNames[parseInt(month) - 1]
+          }`;
+
+          console.log(formattedDate); // Output: "6 Feb"
+
+          //--------------------
+
+          // const monthIndex = parseInt(dateParts[1], 10) - 1;
+          // const month = months[monthIndex];
+
           //const newKey = `${formattedDate} Shift ${shift}`;
-          const newKey = `${formattedDate} S${shift}`;
+          const newKey = `${formattedDate} S-${shift}`;
           row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
         }
       });
