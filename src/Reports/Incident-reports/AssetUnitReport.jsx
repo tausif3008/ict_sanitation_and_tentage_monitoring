@@ -45,29 +45,22 @@ const AssetUnitReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "";
-    if (AssetUnitData?.success) {
-      name += `${AssetDetails?.vendor_name}`;
-    }
-    name += "- UNIT with SHIFT WISE";
+    let name = "PTC Id ";
     if (formValue?.assets_code) {
       name += `(${formValue?.assets_code}`;
     }
     if (formValue?.unit_no) {
       name += `-${formValue?.unit_no})`;
     }
-    name += `- Report (${fileDateName})`;
+    name += ` Monitoring Report (${fileDateName})`;
     return name;
   };
   const fileName = getReportName();
 
   const pdfTitleParam = [
-    // {
-    //   label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
-    // },
-    // {
-    //   label: `Category : ${AssetDetails?.asset_main_type_name || "Combined"}`,
-    // },
+    {
+      label: `Vendor Name : ${AssetDetails?.vendor_name || "Combined"}`,
+    },
     {
       label: `Type : ${AssetDetails?.asset_type_name || "Combined"}`,
     },
@@ -92,7 +85,7 @@ const AssetUnitReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(6, "days");
+    const maxDate = moment(startDate).clone().add(9, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -193,10 +186,10 @@ const AssetUnitReport = () => {
 
     dates?.forEach((date) => {
       columns.push({
-        title: () => <>{moment(date).format("DD-MMM-YYYY")}</>,
+        title: () => <>{moment(date).format("DD-MMM")}</>,
         children: [
           {
-            title: "Shift 1",
+            title: "S-1",
             dataIndex: `${date}_shift_1`,
             key: `${date}_shift_1`,
             width: 50,
@@ -219,7 +212,7 @@ const AssetUnitReport = () => {
             },
           },
           {
-            title: "Shift 2",
+            title: "S-2",
             dataIndex: `${date}_shift_2`,
             key: `${date}_shift_2`,
             width: 50,
@@ -260,7 +253,10 @@ const AssetUnitReport = () => {
         if (key.includes("_shift_")) {
           const [date, shift] = key.split("_shift_");
           const formattedDate = date.split("-").reverse().join("-");
-          const newKey = `${formattedDate} Shift ${shift}`;
+          const dateAndMonth = moment(formattedDate, "DD-MM-YYYY").format(
+            "DD-MM"
+          );
+          const newKey = `${dateAndMonth} S-${shift}`;
           row[newKey] = opt[key] === "1" ? "Y" : opt[key] === "0" ? "N" : "-";
         }
       });
@@ -272,6 +268,30 @@ const AssetUnitReport = () => {
     return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
   }, [myExcelItems]);
 
+  const modifiedPdfHeader = useMemo(() => {
+    let mainArr = ["Sr", "Question"];
+    let subArr = [""];
+    pdfHeader?.forEach((item) => {
+      if (!mainArr.includes(item)) {
+        const split_data = item?.split(" ");
+        const part1 = split_data[0]; // '04-02'
+        if (!mainArr.includes(part1)) {
+          mainArr.push(part1);
+        }
+        const part2 = split_data[1]; // 'S-1'
+        subArr.push(part2);
+      }
+    });
+    const arr = mainArr?.map((data, index) => {
+      return {
+        content: data,
+        ...(index < 2 && { rowSpan: index == 0 ? 1 : 2 }),
+        ...(index > 1 && { colSpan: 2 }),
+      };
+    });
+    return [[...arr], subArr];
+  }, [pdfHeader]);
+
   const pdfData = useMemo(() => {
     return (
       myExcelItems?.map((item) => {
@@ -281,16 +301,22 @@ const AssetUnitReport = () => {
       }) || []
     );
   }, [myExcelItems, pdfHeader]);
+  const columnPercentages = [3, 30];
 
   return (
     <>
-      <CommonDivider label={"Asset Unit Report"} />
+      <CommonDivider label={"PTC Id Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
           titleName={`${fileName}`}
           pdfName={fileName}
-          headerData={pdfHeader}
+          headerData={modifiedPdfHeader}
+          isHeaderArray={true}
+          isNBoldRed={true}
+          compYstart={true}
+          tableFont={5}
           landscape={true}
+          columnPercentages={columnPercentages || []}
           tableTitles={pdfTitleParam || []}
           rows={pdfData || []}
           // rows={[
@@ -489,7 +515,8 @@ const AssetUnitReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 800, y: 400 }}
+        pageSize={20}
+        scroll={{ x: 800, y: 800 }}
         tableSubheading={{
           "Total Records": tableData?.list?.length,
         }}
