@@ -183,6 +183,15 @@ const AttendanceReport = () => {
         width: 60,
         sticky: "left", // Makes the "Name" column sticky on the left side
       },
+      {
+        title: "Sector",
+        dataIndex: "allocate_sector_id",
+        key: "allocate_sector_id",
+        width: 50,
+        render: (text) => {
+          return text ? getValueLabel(text, SectorListDrop, "-") : "-";
+        },
+      },
     ];
 
     const dateKeys = new Set();
@@ -280,6 +289,7 @@ const AttendanceReport = () => {
           user_id: user?.user_id,
           name: user?.name,
           phone: user?.phone,
+          allocate_sector_id: user?.allocate_sector_id,
         };
         // Loop through the attendances_date and add the shift values for each date
         for (const date in user?.attendances_date) {
@@ -332,6 +342,9 @@ const AttendanceReport = () => {
         Sr: index + 1, // Serial number
         Name: opt?.name, // Name
         Phone: opt?.phone ? Number(opt?.phone) : "-", // Name
+        Sector: opt?.allocate_sector_id
+          ? getValueLabel(opt?.allocate_sector_id, SectorListDrop, "-")
+          : "-", // Name
       };
 
       // Iterate over the keys of the user object
@@ -357,7 +370,7 @@ const AttendanceReport = () => {
   }, [myExcelItems]);
 
   const modifiedPdfHeader = useMemo(() => {
-    let mainArr = ["Sr", "Name", "Phone"];
+    let mainArr = ["Sr", "Name", "Phone", "Sector"];
     let subArr = [""];
     pdfHeader?.forEach((item) => {
       if (!mainArr.includes(item)) {
@@ -374,8 +387,8 @@ const AttendanceReport = () => {
     const arr = mainArr?.map((data, index) => {
       return {
         content: data,
-        ...(index < 3 && { rowSpan: index == 0 ? 1 : 2 }),
-        ...(index > 2 && { colSpan: 2 }),
+        ...(index < 4 && { rowSpan: index == 0 ? 1 : 2 }),
+        ...(index > 3 && { colSpan: 2 }),
       };
     });
     return [[...arr], subArr];
@@ -447,7 +460,7 @@ const AttendanceReport = () => {
                     onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                   />
                   <CustomSelect
-                    name={"sector_id"}
+                    name={"allocate_sector_id"}
                     label={"Select Sector"}
                     placeholder={"Select Sector"}
                     allowClear={isSmoUser ? false : true}
@@ -546,7 +559,7 @@ const AttendanceReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 2100, y: 400 }}
+        scroll={{ x: 2200, y: 500 }}
         tableSubheading={{
           "Total Records":
             getFormatedNumber(AttendanceData?.data?.users?.length) || 0,
