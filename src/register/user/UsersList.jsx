@@ -36,6 +36,7 @@ import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Sl
 
 const UserList = () => {
   const [loading, setLoading] = useState(false);
+  const [showSectorDrop, setShowSectorDrop] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [userDetails, setUserDetails] = useState({
     list: [],
@@ -71,6 +72,7 @@ const UserList = () => {
 
   const resetForm = () => {
     form.resetFields();
+    setShowSectorDrop(false);
     setSearchQuery("&");
   };
 
@@ -409,8 +411,28 @@ const UserList = () => {
                       label={"Select User Type"}
                       placeholder={"Select User Type"}
                       options={UserListDrop || []}
+                      onChange={(value) => {
+                        if (Number(value) == 6) {
+                          setShowSectorDrop(true);
+                          form.setFieldValue("sector_id", null);
+                        } else {
+                          setShowSectorDrop(false);
+                          form.setFieldValue("sector_id", null);
+                        }
+                      }}
                     />
                   </Col>
+                  {showSectorDrop && (
+                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"sector_id"}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        allowClear={true}
+                        options={SectorListDrop || []}
+                      />
+                    </Col>
+                  )}
                   <Col key="name" xs={24} sm={12} md={6} lg={5}>
                     <CustomInput name="name" label="Name" placeholder="Name" />
                   </Col>
@@ -452,26 +474,22 @@ const UserList = () => {
                     />
                   </Col>
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -480,7 +498,6 @@ const UserList = () => {
         ]}
       />
       {contextHolder}
-      <div className="h-3"></div>
       <CommonTable
         loading={loading}
         uri={"users"}

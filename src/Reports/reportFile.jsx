@@ -10,9 +10,11 @@ const ExportToPDF = ({
   pdfName,
   headerData,
   rows,
+  showColumnBorder = false,
   isHeaderArray = false,
   compYstart = false,
-  isNBoldRed = false,
+  isNBoldRed = false, // N Bold and red
+  isABoldRed = false, // A Bold and red
   landscape = false,
   IsLastLineBold = false,
   IsLastColumnBold = false,
@@ -134,6 +136,8 @@ const ExportToPDF = ({
       body: rows,
       styles: applyTableStyles ? tableStyles : null,
       startY: doc.y,
+      theme: showColumnBorder ? "grid" : null,
+      headStyles: { fillColor: "#387db7" }, // blue color for headers
       columnStyles: headerData?.reduce((styles, header, index) => {
         styles[index] = { cellWidth: columnWidths[index] }; // Assign width based on calculated value
         return styles;
@@ -216,6 +220,10 @@ const ExportToPDF = ({
           }
         }
         if (data.cell.text?.[0] == "N" && isNBoldRed) {
+          data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row or last column
+          data.cell.styles.textColor = [255, 0, 0]; // Set text color to black
+        }
+        if (data.cell.text?.[0] == "A" && isABoldRed) {
           data.cell.styles.fontStyle = "bold"; // Set font style to bold for the last row or last column
           data.cell.styles.textColor = [255, 0, 0]; // Set text color to black
         }
