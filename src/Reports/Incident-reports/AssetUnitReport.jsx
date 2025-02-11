@@ -483,7 +483,6 @@ const AssetUnitReport = () => {
                     >
                       Search
                     </Button>
-
                     <Button
                       loading={loading}
                       type="button"
