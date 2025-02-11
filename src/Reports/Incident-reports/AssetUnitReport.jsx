@@ -64,9 +64,20 @@ const AssetUnitReport = () => {
     {
       label: `Type : ${AssetDetails?.asset_type_name || "Combined"}`,
     },
-    {
-      label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
-    },
+    ...(AssetDetails?.sector_name
+      ? [
+          {
+            label: `Sector : ${AssetDetails?.sector_name || "Combined"}`,
+          },
+        ]
+      : []),
+    ...(AssetDetails?.parking_name
+      ? [
+          {
+            label: `Parking Name : ${AssetDetails?.parking_name || "Combined"}`,
+          },
+        ]
+      : []),
   ];
 
   const handleDateSelect = (value) => {

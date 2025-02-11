@@ -75,7 +75,7 @@ const MonitoringReport = () => {
         asset_main_type_id: monitoringData?.asset_main_type_id,
         asset_main_type_name: monitoringData?.asset_main_type_name || "N/A",
         vendor_name: monitoringData?.vendor_name || "N/A",
-        sector_name: monitoringData?.sector_name || "N/A",
+        sector_name: monitoringData?.sector_name || null,
         circle_name: monitoringData?.circle_name || "N/A",
         latitude: monitoringData?.latitude || "N/A",
         longitude: monitoringData?.longitude || "N/A",
@@ -87,6 +87,7 @@ const MonitoringReport = () => {
         plot_no: monitoringData?.plot_no || null,
         mela_road_name: monitoringData?.mela_road_name || null,
         mela_patri_name: monitoringData?.mela_patri_name || null,
+        parking_name: monitoringData?.parking_name || null,
         sanstha_name_hi: monitoringData?.sanstha_name_hi || null,
         smscount: monitoringData?.smscount || null,
         vendor_phone: monitoringData?.vendor_phone || null,
@@ -187,24 +188,20 @@ const MonitoringReport = () => {
               {assetDetails?.asset_type_name}
             </span>
           </div>
-          <div>
-            {/* <Button type="primary" onClick={downloadPDF}>
+          {/* <Button type="primary" onClick={downloadPDF}>
               Download PDF
             </Button> */}
-            <MonitoringEngPdf
-              titleName={`Monitoring Report`}
-              pdfName={`Monitoring Report`}
-              headerData={pdfHeader || []}
-              rows={pdfData || []}
-              tableObject={assetDetails || {}}
-            />
-          </div>
-          <div>
-            <ExportToExcel
-              excelData={excelData || []}
-              fileName={`Monitoring Report`}
-            />
-          </div>
+          <MonitoringEngPdf
+            titleName={`Monitoring Report`}
+            pdfName={`Monitoring Report`}
+            headerData={pdfHeader || []}
+            rows={pdfData || []}
+            tableObject={assetDetails || {}}
+          />
+          <ExportToExcel
+            excelData={excelData || []}
+            fileName={`Monitoring Report`}
+          />
         </div>
         <Divider className="bg-d9 h-2/3 mt-1" />
         <div className="mt-3" ref={contentRef}>
@@ -233,12 +230,24 @@ const MonitoringReport = () => {
                     : {assetDetails?.vendor_name || "NA"}
                   </td>
                 </tr>
-                <tr>
-                  <td className="font-semibold w-[40%] border-0">Sector</td>
-                  <td className="border-0">
-                    : {assetDetails?.sector_name || "NA"}
-                  </td>
-                </tr>
+                {assetDetails?.sector_name && (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">Sector</td>
+                    <td className="border-0">
+                      : {assetDetails?.sector_name || "NA"}
+                    </td>
+                  </tr>
+                )}
+                {assetDetails?.parking_name && (
+                  <tr>
+                    <td className="font-semibold w-[40%] border-0">
+                      Parking Name
+                    </td>
+                    <td className="border-0">
+                      : {assetDetails?.parking_name || "NA"}
+                    </td>
+                  </tr>
+                )}
                 {/* tentage */}
                 {assetDetails?.asset_main_type_id === "2" && (
                   <>

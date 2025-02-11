@@ -98,7 +98,12 @@ const MonitoringEngPdf = ({
       ["Category", `: ${tableObject?.asset_main_type_name || ""}`],
       ["Type", `: ${tableObject?.asset_type_name || ""}`],
       ["Vendor Name", `: ${tableObject?.vendor_name || ""}`],
-      ["Sector", `: ${tableObject?.sector_name || ""}`],
+      ...(tableObject?.sector_name
+        ? [["Sector", `: ${tableObject?.sector_name || ""}`]]
+        : []),
+      ...(tableObject?.parking_name
+        ? [["Parking Name", `: ${tableObject?.parking_name || ""}`]]
+        : []),
 
       // Conditional block for asset_main_type_id === "2"
       ...(tableObject?.asset_main_type_id === "2"

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -48,6 +48,7 @@ const UserList = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -59,7 +60,20 @@ const UserList = () => {
   const { UserListDrop } = UserTypeSelector(); // user type list
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const values = form.getFieldValue("user_type_id"); // Get all form values
-  const fileName = getValueLabel(values, UserListDrop, "All User List");
+  const fileNames = getValueLabel(values, UserListDrop, "All User List");
+
+  const fileName = useMemo(() => {
+    if (formValue?.allocate_sector_id) {
+      const sectName = getValueLabel(
+        formValue?.allocate_sector_id,
+        SectorListDrop,
+        "-"
+      );
+      return `${fileNames} - ${sectName}`;
+    } else {
+      return `${fileNames}`;
+    }
+  }, [formValue?.allocate_sector_id, fileNames]);
 
   // fiter finish
   const onFinishForm = async (values) => {
@@ -414,18 +428,18 @@ const UserList = () => {
                       onChange={(value) => {
                         if (Number(value) == 6) {
                           setShowSectorDrop(true);
-                          form.setFieldValue("sector_id", null);
+                          form.setFieldValue("allocate_sector_id", null);
                         } else {
                           setShowSectorDrop(false);
-                          form.setFieldValue("sector_id", null);
+                          form.setFieldValue("allocate_sector_id", null);
                         }
                       }}
                     />
                   </Col>
                   {showSectorDrop && (
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <Col key="allocate_sector_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
-                        name={"sector_id"}
+                        name={"allocate_sector_id"}
                         label={"Select Sector"}
                         placeholder={"Select Sector"}
                         allowClear={true}
