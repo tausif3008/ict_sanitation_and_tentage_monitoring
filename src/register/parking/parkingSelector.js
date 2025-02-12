@@ -7,6 +7,9 @@ const ParkingSelector = () => {
   const parkingReportData = useSelector(
     (state) => state?.parkingSlice.report_data
   );
+  const ParkingTypeRegReport_data = useSelector(
+    (state) => state?.parkingSlice.parking_type
+  ); // Parking & Type Wise Registration Report
 
   const ParkingsData = useMemo(() => {
     return (
@@ -31,7 +34,14 @@ const ParkingSelector = () => {
     });
   }, [parkingData]);
 
-  return { parkingData, loading, parkingDrop, parkingReportData, ParkingsData };
+  return {
+    parkingData,
+    loading,
+    parkingDrop,
+    parkingReportData,
+    ParkingsData,
+    ParkingTypeRegReport_data,
+  };
 };
 
 export default ParkingSelector;
