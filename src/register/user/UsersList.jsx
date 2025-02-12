@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import {
@@ -36,6 +36,7 @@ import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Sl
 
 const UserList = () => {
   const [loading, setLoading] = useState(false);
+  const [showSectorDrop, setShowSectorDrop] = useState(false);
   const [searchQuery, setSearchQuery] = useState();
   const [userDetails, setUserDetails] = useState({
     list: [],
@@ -47,6 +48,7 @@ const UserList = () => {
   const params = useParams();
   const navigate = useNavigate();
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
   const [api, contextHolder] = notification.useNotification({ top: 100 });
   const openNotificationWithIcon = (type) => {
     api[type]({
@@ -58,7 +60,20 @@ const UserList = () => {
   const { UserListDrop } = UserTypeSelector(); // user type list
   const { SectorListDrop } = VendorSectorSelectors(); // all sector dropdown
   const values = form.getFieldValue("user_type_id"); // Get all form values
-  const fileName = getValueLabel(values, UserListDrop, "All User List");
+  const fileNames = getValueLabel(values, UserListDrop, "All User List");
+
+  const fileName = useMemo(() => {
+    if (formValue?.allocate_sector_id) {
+      const sectName = getValueLabel(
+        formValue?.allocate_sector_id,
+        SectorListDrop,
+        "-"
+      );
+      return `${fileNames} - ${sectName}`;
+    } else {
+      return `${fileNames}`;
+    }
+  }, [formValue?.allocate_sector_id, fileNames]);
 
   // fiter finish
   const onFinishForm = async (values) => {
@@ -71,6 +86,7 @@ const UserList = () => {
 
   const resetForm = () => {
     form.resetFields();
+    setShowSectorDrop(false);
     setSearchQuery("&");
   };
 
@@ -409,8 +425,28 @@ const UserList = () => {
                       label={"Select User Type"}
                       placeholder={"Select User Type"}
                       options={UserListDrop || []}
+                      onChange={(value) => {
+                        if (Number(value) == 6) {
+                          setShowSectorDrop(true);
+                          form.setFieldValue("allocate_sector_id", null);
+                        } else {
+                          setShowSectorDrop(false);
+                          form.setFieldValue("allocate_sector_id", null);
+                        }
+                      }}
                     />
                   </Col>
+                  {showSectorDrop && (
+                    <Col key="allocate_sector_id" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"allocate_sector_id"}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        allowClear={true}
+                        options={SectorListDrop || []}
+                      />
+                    </Col>
+                  )}
                   <Col key="name" xs={24} sm={12} md={6} lg={5}>
                     <CustomInput name="name" label="Name" placeholder="Name" />
                   </Col>
@@ -452,26 +488,22 @@ const UserList = () => {
                     />
                   </Col>
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -480,7 +512,6 @@ const UserList = () => {
         ]}
       />
       {contextHolder}
-      <div className="h-3"></div>
       <CommonTable
         loading={loading}
         uri={"users"}

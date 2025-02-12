@@ -12,11 +12,9 @@ import {
 } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
-// import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
-// import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import CustomTable from "../../commonComponents/CustomTable";
 import ExportToExcel from "../ExportToExcel";
-// import ExportToPDF from "../reportFile";
+import ExportToPDF from "../reportFile";
 import URLS from "../../urils/URLS";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import MonitoringSelector from "../../complaince/monitoringSelector";
@@ -26,29 +24,13 @@ import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 
 const AttendanceReport = () => {
-  // const [excelData, setExcelData] = useState([]);
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
-  // const [tableColumns, setTableColumns] = useState([
-  //   {
-  //     title: "Name",
-  //     dataIndex: "name",
-  //     key: "name",
-  //     width: 150,
-  //   },
-  // ]);
   const [tableData, setTableData] = useState({
     list: [],
     pageLength: 25,
     currentPage: 1,
   });
-  // const [count, setCount] = useState({
-  //   total: 0,
-  //   registered: 0,
-  //   todaysmonitaring: 0,
-  //   totalPendingMonitoring: 0,
-  //   total_allocation: 0,
-  // });
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
@@ -78,12 +60,7 @@ const AttendanceReport = () => {
     null
   );
   const sectorName = getValueLabel(formValue?.sector_id, SectorListDrop, null);
-  // const percentageName = getValueLabel(
-  //   `${formValue?.percentage}`,
-  //   percentageOptions,
-  //   null
-  // );
-  // const fileDateName = `(${dayjs(formValue?.date).format("DD-MMM-YYYY")})`;
+
   const fileDateName =
     formValue?.date_format === "Today"
       ? moment().format("DD-MMM-YYYY")
@@ -102,30 +79,22 @@ const AttendanceReport = () => {
     if (sectorName) {
       name += `- ${sectorName}`;
     }
-    // if (percentageName) {
-    //   name += `- ${percentageName}`;
-    // }
     name += `- Report ${fileDateName}`;
     return name;
   };
   const fileName = getReportName();
 
-  // const pdfTitleParam = [
-  //   ...(formValue?.sector_id
-  //     ? [
-  //         {
-  //           label: `Allocate Sector : ${sectorName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  //   ...(formValue?.percentage
-  //     ? [
-  //         {
-  //           label: `Monitoring Percentage :  ${percentageName || "Combined"}`,
-  //         },
-  //       ]
-  //     : []),
-  // ];
+  const pdfTitleParam = [
+    {
+      label: `Present :  P`,
+    },
+    {
+      label: `No Record :  -`,
+    },
+    {
+      label: `Absent :  A`,
+    },
+  ];
 
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
@@ -147,25 +116,6 @@ const AttendanceReport = () => {
     );
   };
 
-  // const getUsers = async (dataObj = {}) => {
-  //   const startDate = dayjs(formValue?.form_date).format("YYYY-MM-DD");
-  //   const endDate = dayjs(formValue?.to_date).format("YYYY-MM-DD");
-  //   const newParam = {
-  //     page: dataObj?.page || "1",
-  //     per_page: dataObj?.size || "25",
-  //     ...form.getFieldsValue(),
-  //     ...(formValue?.date_format === "Date Range" && {
-  //       form_date: startDate,
-  //     }),
-  //     ...(formValue?.date_format === "Date Range" && {
-  //       to_date: endDate,
-  //       date_format: null,
-  //     }),
-  //   };
-  //   callApi(newParam);
-  // };
-
-  // fiter finish
   const onFinishForm = (values) => {
     const startDate = dayjs(values?.form_date).format("YYYY-MM-DD");
     const endDate = dayjs(values?.to_date).format("YYYY-MM-DD");
@@ -217,99 +167,6 @@ const AttendanceReport = () => {
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
-  // const dynamicColumns = useMemo(() => {
-  //   const columns = [
-  //     {
-  //       title: "Name",
-  //       dataIndex: "name",
-  //       key: "name",
-  //       width: 80,
-  //       sticky: "left", // Makes the "Name" column sticky on the left side
-  //     },
-  //   ];
-  //   const dateKeys = new Set();
-  //   const { users } = AttendanceData?.data || [];
-
-  //   const transformedUsers = users?.map((user) => {
-  //     const transformedUser = {
-  //       user_id: user?.user_id,
-  //       name: user?.name,
-  //     };
-
-  //     // Loop through the attendances_date and add the shift values for each date
-  //     for (const date in user?.attendances_date) {
-  //       const shifts = user?.attendances_date[date];
-  //       transformedUser[`${date}_shift_1`] = shifts?.shift_1;
-  //       transformedUser[`${date}_shift_2`] = shifts?.shift_2;
-  //     }
-
-  //     return transformedUser;
-  //   });
-
-  //   // Collect unique dates from the transformed user data
-  //   transformedUsers?.forEach((user) => {
-  //     Object.keys(user)?.forEach((key) => {
-  //       const [date, shift] = key.split("_shift_");
-  //       if (shift && date) {
-  //         dateKeys.add(date);
-  //       }
-  //     });
-  //   });
-
-  //   // Add columns for each unique date and shift
-  //   dateKeys?.forEach((date) => {
-  //     columns?.push({
-  //       title: `${date} Shift 1`,
-  //       dataIndex: `${date}_shift_1`,
-  //       key: `${date}_shift_1`,
-  //       width: 50,
-  //       render: (text) => {
-  //         if (text === "1") {
-  //           return (
-  //             <span className="text-white bg-green-500 border border-black px-2 py-1 rounded my-2">
-  //               Present
-  //             </span>
-  //           );
-  //         } else if (text === "0") {
-  //           return (
-  //             <span className="text-white bg-red-500 border border-black px-2 py-1 rounded my-2">
-  //               Absent
-  //             </span>
-  //           );
-  //         } else {
-  //           return "-";
-  //         }
-  //       },
-  //     });
-
-  //     columns.push({
-  //       title: `${date} Shift 2`,
-  //       dataIndex: `${date}_shift_2`,
-  //       key: `${date}_shift_2`,
-  //       width: 50,
-  //       render: (text) => {
-  //         if (text === "1") {
-  //           return (
-  //             <span className="text-white bg-green-500 border border-black px-2 py-1 rounded">
-  //               Present
-  //             </span>
-  //           );
-  //         } else if (text === "0") {
-  //           return (
-  //             <span className="text-white bg-red-500 border border-black px-2 py-1 rounded">
-  //               Absent
-  //             </span>
-  //           );
-  //         } else {
-  //           return "-";
-  //         }
-  //       },
-  //     });
-  //   });
-
-  //   return columns;
-  // }, [AttendanceData]);
-
   const dynamicColumns = useMemo(() => {
     const columns = [
       {
@@ -318,6 +175,22 @@ const AttendanceReport = () => {
         key: "name",
         width: 80,
         sticky: "left", // Makes the "Name" column sticky on the left side
+      },
+      {
+        title: "Phone",
+        dataIndex: "phone",
+        key: "phone",
+        width: 60,
+        sticky: "left", // Makes the "Name" column sticky on the left side
+      },
+      {
+        title: "Sector",
+        dataIndex: "allocate_sector_id",
+        key: "allocate_sector_id",
+        width: 50,
+        render: (text) => {
+          return text ? getValueLabel(text, SectorListDrop, "-") : "-";
+        },
       },
     ];
 
@@ -353,21 +226,7 @@ const AttendanceReport = () => {
     // Add columns for each unique date and group Shift 1 and Shift 2 under that date
     dateKeys?.forEach((date) => {
       columns.push({
-        title: () => (
-          <>
-            {date}
-            {/* <div
-              style={{
-                display: "flex",
-                justifyContent: "space-between",
-                marginTop: 5,
-              }}
-            >
-              <div style={{ width: "50%" }}>Shift 1</div>
-              <div style={{ width: "50%" }}>Shift 2</div>
-            </div> */}
-          </>
-        ),
+        title: () => <>{moment(date, "YYYY-MM-DD").format("DD-MMM-YYYY")}</>,
         children: [
           {
             title: "Shift 1",
@@ -429,6 +288,8 @@ const AttendanceReport = () => {
         const transformedUser = {
           user_id: user?.user_id,
           name: user?.name,
+          phone: user?.phone,
+          allocate_sector_id: user?.allocate_sector_id,
         };
         // Loop through the attendances_date and add the shift values for each date
         for (const date in user?.attendances_date) {
@@ -466,37 +327,12 @@ const AttendanceReport = () => {
           width: 150,
         });
       });
-
       setTableData((prevDetails) => ({
         ...prevDetails,
         list: transformedUsers || [],
-        // pageLength: myData?.paging?.[0]?.length || 0,
-        // currentPage: myData?.paging?.[0]?.currentpage || 1,
-        // totalRecords: myData?.paging?.[0]?.totalrecords || 0,
       }));
-
-      // setCount({
-      //   total: myData?.attendances?.length,
-      // });
-      // const myexcelData = myData?.attendances?.map((data, index) => {
-      //   return {
-      //     Sr: index + 1,
-      //     Name: data?.users_name,
-      //     "Shift 1": data?.shift_1 === "1" ? "Present" : "Absent",
-      //     "Shift 2": data?.shift_2 === "1" ? "Present" : "Absent",
-      //   };
-      // });
-      // setExcelData(myexcelData);
     }
   }, [AttendanceData]);
-
-  // pdf header
-  // const pdfHeader = ["Sr No", "GSD Name", "Shift 1", "Shift 2"];
-
-  // // pdf data
-  // const pdfData = useMemo(() => {
-  //   return excelData?.map((opt) => [opt?.Sr, opt?.Name]) || [];
-  // }, [excelData]);
 
   const myExcelItems = useMemo(() => {
     if (!tableData?.list) return [];
@@ -505,6 +341,10 @@ const AttendanceReport = () => {
       const row = {
         Sr: index + 1, // Serial number
         Name: opt?.name, // Name
+        Phone: opt?.phone ? Number(opt?.phone) : "-", // Name
+        Sector: opt?.allocate_sector_id
+          ? getValueLabel(opt?.allocate_sector_id, SectorListDrop, "-")
+          : "-", // Name
       };
 
       // Iterate over the keys of the user object
@@ -512,13 +352,12 @@ const AttendanceReport = () => {
         if (key.includes("_shift_")) {
           const [date, shift] = key.split("_shift_");
           const formattedDate = date.split("-").reverse().join("-");
-          const newKey = `${formattedDate} Shift ${shift}`;
+          const dateAndMonth = moment(formattedDate, "DD-MM-YYYY").format(
+            "DD-MMM"
+          );
+          const newKey = `${dateAndMonth} Shift ${shift}`;
           row[newKey] =
-            opt[key] === undefined
-              ? "-"
-              : opt[key] === "1"
-              ? "Present"
-              : "Absent";
+            opt[key] === undefined ? "-" : opt[key] === "1" ? "P" : "A";
         }
       });
 
@@ -526,53 +365,68 @@ const AttendanceReport = () => {
     });
   }, [tableData]);
 
+  const pdfHeader = useMemo(() => {
+    return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
+  }, [myExcelItems]);
+
+  const modifiedPdfHeader = useMemo(() => {
+    let mainArr = ["Sr", "Name", "Phone", "Sector"];
+    let subArr = [""];
+    pdfHeader?.forEach((item) => {
+      if (!mainArr.includes(item)) {
+        const split_data = item?.split(" ");
+        const part1 = split_data[0]; // '04-02'
+        if (!mainArr.includes(part1)) {
+          mainArr.push(part1);
+        }
+        const part2 = split_data[1]; // 'Shift'
+        const part3 = split_data[2]; // '1'
+        subArr.push(`${part2?.[0]}-${part3}`);
+      }
+    });
+    const arr = mainArr?.map((data, index) => {
+      return {
+        content: data,
+        ...(index < 4 && { rowSpan: index == 0 ? 1 : 2 }),
+        ...(index > 3 && { colSpan: 2 }),
+      };
+    });
+    return [[...arr], subArr];
+  }, [pdfHeader]);
+
+  const pdfData = useMemo(() => {
+    return (
+      myExcelItems?.map((item) => {
+        return pdfHeader?.map((key) => {
+          return item?.[key] || ""; // You can replace '' with some default value if necessary
+        });
+      }) || []
+    );
+  }, [myExcelItems, pdfHeader]);
+  const columnPercentages = [5, 12];
+
   return (
     <div>
       <CommonDivider label={"Attendance Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        {/* <ExportToPDF
-          titleName={`Attendance Report ${fileDateName}`}
+        <ExportToPDF
+          titleName={`${fileName}`}
           pdfName={fileName}
-          headerData={pdfHeader}
-          IsLastLineBold={true}
+          headerData={modifiedPdfHeader}
+          isHeaderArray={true}
+          showColumnBorder={true}
+          compYstart={true}
+          tableFont={5}
+          isABoldRed={true}
           landscape={true}
+          columnPercentages={columnPercentages || []}
           tableTitles={pdfTitleParam || []}
-          rows={[
-            ...pdfData,
-            [
-              "",
-              "Total",
-              "",
-              "",
-              "",
-              count?.total_allocation,
-              count?.todaysmonitaring,
-              "",
-              count?.totalPendingMonitoring,
-            ],
-          ]}
-        /> */}
+          rows={pdfData || []}
+        />
         <ExportToExcel
           excelData={myExcelItems || []}
           titleName={fileName}
           fileName={fileName}
-          // dynamicArray={[
-          //   {
-          //     name: "Total Allocation",
-          //     value: count?.total_allocation,
-          //     colIndex: 6,
-          //   },
-          //   {
-          //     name: "Monitoring",
-          //     value: count?.todaysmonitaring,
-          //     colIndex: 7,
-          //   },
-          //   {
-          //     name: "Pending Monitoring",
-          //     value: count?.totalPendingMonitoring,
-          //     colIndex: 9,
-          //   },
-          // ]}
         />
       </div>
       <Collapse
@@ -605,30 +459,19 @@ const AttendanceReport = () => {
                     apiAction={getMonitoringAgent}
                     onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
                   />
-                  {/* <CustomSelect
-                    name={"sector_id"}
-                    label={"Select Sector"}
-                    placeholder={"Select Sector"}
-                    options={SectorListDrop || []}
-                  /> */}
                   <CustomSelect
-                    name={"sector_id"}
+                    name={"allocate_sector_id"}
                     label={"Select Sector"}
                     placeholder={"Select Sector"}
                     allowClear={isSmoUser ? false : true}
                     options={isSmoUser ? SectorArray : SectorListDrop || []}
                   />
-                  {/* <CustomDatepicker
-                    name={"date"}
-                    label={"Date"}
-                    className="w-full"
-                    placeholder={"Date"}
-                  /> */}
                   <CustomSelect
                     name={"date_format"}
                     label={"Select Date Type"}
                     placeholder={"Select Date Type"}
                     onSelect={handleDateSelect}
+                    onChange={handleDateSelect}
                     options={dateWeekOptions || []}
                   />
                   {showDateRange && (
@@ -688,26 +531,22 @@ const AttendanceReport = () => {
                     </>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </div>
               </Form>
@@ -720,19 +559,12 @@ const AttendanceReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 2000, y: 400 }}
+        scroll={{ x: 2200, y: 500 }}
         tableSubheading={{
           "Total Records":
             getFormatedNumber(AttendanceData?.data?.users?.length) || 0,
         }}
         pagination={true}
-        // onPageChange={(page, size) => {
-        //   const obj = {
-        //     page: page,
-        //     size: size,
-        //   };
-        //   getUsers(obj);
-        // }}
       />
     </div>
   );
