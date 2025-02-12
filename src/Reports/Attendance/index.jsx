@@ -39,6 +39,8 @@ const AttendanceReport = () => {
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AttendanceData, loading } = AttendanceSelector();
 
+  console.log("AttendanceData", AttendanceData);
+
   const userRoleId = localStorage.getItem("role_id");
   const isSmoUser = Number(userRoleId) === 9;
   const sessionDataString = localStorage.getItem("sessionData");
@@ -86,13 +88,13 @@ const AttendanceReport = () => {
 
   const pdfTitleParam = [
     {
-      label: `Present :  P`,
+      label: `P :  Present`,
     },
     {
-      label: `No Record :  -`,
+      label: `(-) : No Record`,
     },
     {
-      label: `Absent :  A`,
+      label: `A :  Absent`,
     },
   ];
 
@@ -109,7 +111,7 @@ const AttendanceReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
+    const maxDate = moment(startDate).clone().add(9, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -284,7 +286,12 @@ const AttendanceReport = () => {
   useEffect(() => {
     if (AttendanceData) {
       const { users } = AttendanceData?.data || [];
-      const transformedUsers = users?.map((user) => {
+      const sortedArray =
+        [...users]?.sort(
+          (a, b) =>
+            Number(a?.allocate_sector_id) - Number(b?.allocate_sector_id)
+        ) || [];
+      const transformedUsers = sortedArray?.map((user) => {
         const transformedUser = {
           user_id: user?.user_id,
           name: user?.name,
@@ -406,7 +413,7 @@ const AttendanceReport = () => {
   const columnPercentages = [5, 12];
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Attendance Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -473,6 +480,7 @@ const AttendanceReport = () => {
                     onSelect={handleDateSelect}
                     onChange={handleDateSelect}
                     options={dateWeekOptions || []}
+                    allowClear={false}
                   />
                   {showDateRange && (
                     <>
@@ -559,14 +567,14 @@ const AttendanceReport = () => {
         columns={dynamicColumns || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 2200, y: 500 }}
+        scroll={{ x: 2400, y: 500 }}
         tableSubheading={{
           "Total Records":
             getFormatedNumber(AttendanceData?.data?.users?.length) || 0,
         }}
         pagination={true}
       />
-    </div>
+    </>
   );
 };
 

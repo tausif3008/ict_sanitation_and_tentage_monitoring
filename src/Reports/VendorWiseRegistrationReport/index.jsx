@@ -13,6 +13,7 @@ import {
   getAssetTypes,
 } from "../../register/AssetType/AssetTypeSlice";
 import {
+  AllCountOptions,
   dateWeekOptions,
   getFormatedNumber,
   getValueLabel,
@@ -81,9 +82,10 @@ const VendorRegistrationReport = () => {
           ).format("DD-MMM-YYYY")}`
         : ""
     } `;
-    name += `Report`;
+    name += `Registration Report`;
     return name;
   };
+  const fileName = getReportName();
 
   const pdfTitleParam = [
     ...(formValue?.asset_main_type_id
@@ -129,13 +131,14 @@ const VendorRegistrationReport = () => {
     }
 
     const formData = getFormData(finalData);
-    dispatch(getVendorReportData(basicUrl + uri, formData)); // Fetch the data
+    getData(formData);
+    // dispatch(getVendorReportData(uri, formData)); // Fetch the data
   };
 
   // reset form
   const resetForm = () => {
     form.resetFields();
-    getData();
+    currentData();
     setShowDateRange(false);
   };
 
@@ -178,12 +181,21 @@ const VendorRegistrationReport = () => {
     );
   };
 
-  const getData = async () => {
-    dispatch(getVendorReportData(basicUrl + uri)); // Fetch the data
+  const getData = async (data = null) => {
+    dispatch(getVendorReportData(uri, data)); // Fetch the data
+  };
+
+  const currentData = async () => {
+    form.setFieldsValue({
+      total_counts: AllCountOptions?.[0]?.value,
+      asset_main_type_id: "1",
+    });
+    getData({ asset_main_type_id: 1 }); // get current data
+    handleSelect(1);
   };
 
   useEffect(() => {
-    getData(); // get current data
+    currentData(); // get current data
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
   }, []);
@@ -196,20 +208,28 @@ const VendorRegistrationReport = () => {
         },
         0
       );
+      const totalCounts = VendorReport_data?.data?.listings?.reduce(
+        (total, item) => {
+          return total + Number(item?.total);
+        },
+        0
+      );
       setVendorData((prevDetails) => ({
         ...prevDetails,
         list: VendorReport_data?.data?.listings || [],
         pageLength: VendorReport_data?.data?.paging?.[0]?.length || 0,
         currentPage: VendorReport_data?.data?.paging?.[0]?.currentpage || 1,
         totalRecords: VendorReport_data?.data?.paging?.[0]?.totalrecords || 0,
-        totalUnits: unitCount,
+        totalUnits: unitCount || 0,
+        totalCount: totalCounts || 0,
       }));
       const myexcelData = VendorReport_data?.data?.listings?.map(
         (data, index) => {
           return {
             Sr: index + 1,
             "Vendor name": data?.vendor_name,
-            Unit: Number(data?.tagging_units) || 0,
+            "Total Units": Number(data?.total) || 0,
+            "Register Unit": Number(data?.tagging_units) || 0,
           };
         }
       );
@@ -225,200 +245,230 @@ const VendorRegistrationReport = () => {
       render: (text, record) => {
         return text ? text : "GSD";
       },
+      sorter: (a, b) => a?.vendor_name?.localeCompare(b?.vendor_name || ""),
     },
+    ...(formValue?.total_counts
+      ? [
+          {
+            title: "Total Units",
+            dataIndex: "total",
+            key: "total",
+            sorter: (a, b) => a?.total - b?.total,
+          },
+        ]
+      : []),
     {
-      title: "Units",
+      title: "Register Units",
       dataIndex: "tagging_units",
       key: "tagging_units",
       sorter: (a, b) => a?.tagging_units - b?.tagging_units,
     },
   ];
 
-  const pdfHeader = ["Sr No", "Vendor Name", "Unit"];
+  const pdfHeader = [
+    "Sr No",
+    "Vendor Name",
+    ...(formValue?.total_counts ? ["Total Units"] : []),
+    "Register Unit",
+  ];
+
   const pdfData = useMemo(() => {
     return excelData?.map((sector, index) => [
       index + 1,
       sector["Vendor name"],
-      Number(sector?.Unit) || 0,
+      ...(formValue?.total_counts
+        ? [Number(sector?.["Total Units"]) || 0]
+        : []),
+      Number(sector?.["Register Unit"]) || 0,
     ]);
   }, [excelData]);
-  const fileName = getReportName();
 
   return (
     <div>
       <CommonDivider label={"Vendor Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <ExportToPDF
-            titleName={
-              fileName
-                ? `Vendor Wise Registration Report (${fileDateName})`
-                : "Vendor Wise Registration Report"
-            }
-            pdfName={fileName ? fileName : "Vendor Wise Registration Report"}
-            headerData={pdfHeader}
-            IsLastLineBold={true}
-            rows={[...pdfData, ["", "Total", vendorData?.totalUnits]]}
-            tableTitles={pdfTitleParam || []}
-          />
-        </div>
-        <div>
-          <ExportToExcel
-            excelData={excelData || []}
-            fileName={fileName ? fileName : "Vendor Wise Registration Report"}
-            dynamicArray={[
-              {
-                name: "Total",
-                value: vendorData?.totalUnits,
-                colIndex: 3,
-              },
-            ]}
-          />
-        </div>
-      </div>
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
+        <ExportToPDF
+          titleName={
+            fileName
+              ? `Vendor Wise Registration Report (${fileDateName})`
+              : "Vendor Wise Registration Report"
+          }
+          pdfName={fileName ? fileName : "Vendor Wise Registration Report"}
+          headerData={pdfHeader}
+          IsLastLineBold={true}
+          rows={[
+            ...pdfData,
+            [
+              "",
+              "Total",
+              ...(formValue?.total_counts ? [vendorData?.totalCount || 0] : []),
+              vendorData?.totalUnits,
+            ],
+          ]}
+          tableTitles={pdfTitleParam || []}
+        />
+        <ExportToExcel
+          excelData={excelData || []}
+          fileName={fileName ? fileName : "Vendor Wise Registration Report"}
+          dynamicArray={[
             {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 16]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        options={AssetMainTypeDrop || []}
-                        onSelect={handleSelect}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Type"}
-                        placeholder={"Select Type"}
-                        options={AssetTypeDrop || []}
-                        // onSelect={handleTypeSelect}
-                      />
-                    </Col>
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"date_format"}
-                        label={"Select Date Type"}
-                        placeholder={"Select Date Type"}
-                        options={dateWeekOptions || []}
-                        onSelect={handleDateSelect}
-                        onChange={(value) => {
-                          if (!value) {
-                            setShowDateRange(false);
-                          }
-                        }}
-                      />
-                    </Col>
-                    {showDateRange && (
-                      <>
-                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"form_date"}
-                            label={"From Date"}
-                            className="w-full"
-                            placeholder={"Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a start date!",
-                              },
-                            ]}
-                            onChange={(date) => {
-                              const dayjsObjectFrom = dayjs(date?.$d);
-                              const startDate = dayjsObjectFrom;
-
-                              const dayjsObjectTo = dayjs(
-                                form.getFieldValue("to_date")?.$d
-                              );
-                              const endDate = dayjsObjectTo;
-
-                              // Condition 1: If startDate is after endDate, set end_time to null
-                              if (startDate.isAfter(endDate)) {
-                                form.setFieldValue("to_date", null);
-                              }
-
-                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                              const daysDifference = endDate.diff(
-                                startDate,
-                                "days"
-                              );
-                              if (daysDifference > 7) {
-                                form.setFieldValue("to_date", null);
-                              } else {
-                                // If the difference is within the allowed range, you can keep the value or process further if needed.
-                              }
-
-                              setStartDate(startDate.format("YYYY-MM-DD"));
-                            }}
-                          />
-                        </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"to_date"}
-                            label={"To Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a end date!",
-                              },
-                            ]}
-                            className="w-full"
-                            placeholder={"Date"}
-                            disabledDate={disabledDate}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
-                    </div>
-                  </Row>
-                </Form>
-              ),
+              name: "Total Units",
+              value: vendorData?.totalCount,
+              colIndex: 3,
+            },
+            {
+              name: "Total Register Units",
+              value: vendorData?.totalUnits,
+              colIndex: 4,
             },
           ]}
         />
       </div>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_main_type_id"}
+                      label={"Select Category"}
+                      placeholder={"Select Category"}
+                      options={AssetMainTypeDrop.slice(0, 2) || []}
+                      onSelect={handleSelect}
+                      allowClear={false}
+                    />
+                  </Col>
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Type"}
+                      placeholder={"Select Type"}
+                      options={AssetTypeDrop || []}
+                      // onSelect={handleTypeSelect}
+                    />
+                  </Col>
+                  <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"date_format"}
+                      label={"Select Date Type"}
+                      placeholder={"Select Date Type"}
+                      options={dateWeekOptions || []}
+                      onSelect={handleDateSelect}
+                      onChange={(value) => {
+                        if (!value) {
+                          setShowDateRange(false);
+                        }
+                      }}
+                    />
+                  </Col>
+                  {showDateRange && (
+                    <>
+                      <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"form_date"}
+                          label={"From Date"}
+                          className="w-full"
+                          placeholder={"Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a start date!",
+                            },
+                          ]}
+                          onChange={(date) => {
+                            const dayjsObjectFrom = dayjs(date?.$d);
+                            const startDate = dayjsObjectFrom;
 
+                            const dayjsObjectTo = dayjs(
+                              form.getFieldValue("to_date")?.$d
+                            );
+                            const endDate = dayjsObjectTo;
+
+                            // Condition 1: If startDate is after endDate, set end_time to null
+                            if (startDate.isAfter(endDate)) {
+                              form.setFieldValue("to_date", null);
+                            }
+
+                            // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                            const daysDifference = endDate.diff(
+                              startDate,
+                              "days"
+                            );
+                            if (daysDifference > 7) {
+                              form.setFieldValue("to_date", null);
+                            } else {
+                              // If the difference is within the allowed range, you can keep the value or process further if needed.
+                            }
+
+                            setStartDate(startDate.format("YYYY-MM-DD"));
+                          }}
+                        />
+                      </Col>
+                      <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"to_date"}
+                          label={"To Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a end date!",
+                            },
+                          ]}
+                          className="w-full"
+                          placeholder={"Date"}
+                          disabledDate={disabledDate}
+                        />
+                      </Col>
+                    </>
+                  )}
+                  <Col key="total_counts" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"total_counts"}
+                      label={"Select Show Total Counts"}
+                      placeholder={"Select Show Total Counts"}
+                      options={AllCountOptions || []}
+                    />
+                  </Col>
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
       <CustomTable
         loading={loading}
         columns={columns || []}
@@ -427,7 +477,9 @@ const VendorRegistrationReport = () => {
         scroll={{ x: 100, y: 400 }}
         tableSubheading={{
           "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
-          "Total Units": getFormatedNumber(vendorData?.totalUnits) || 0,
+          "Total Units": getFormatedNumber(vendorData?.totalCount) || 0,
+          "Total Register Units":
+            getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
     </div>

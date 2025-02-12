@@ -62,9 +62,9 @@ const ExportToPDF = ({
 
     // Image on the Right (Another logo or image)
     const rightImageX = pageWidth - 35; // X position (from the right)
-    const rightImageY = 7; // Y position (from the top)
-    const rightImageWidth = 25; // Image width (adjust as needed)
-    const rightImageHeight = 25; // Image height (adjust as needed)
+    const rightImageY = 8; // 7 Y position (from the top)
+    const rightImageWidth = 22; // 25 Image width (adjust as needed)
+    const rightImageHeight = 22; // 25 Image height (adjust as needed)
     doc.addImage(
       `${IMAGELIST?.kumbhMela}`,
       "JPEG",
@@ -111,11 +111,11 @@ const ExportToPDF = ({
     tableTitles?.forEach((field, index) => {
       doc.text(
         field?.label,
-        index % 2 == 0 ? 20 : 170,
+        index % 2 == 0 ? 20 : landscape ? 170 : 110,
         index % 2 == 0 ? (index + 1) * 3 + doc.y : index * 3 + doc.y
       );
     });
-    // doc.y += 3; // Add space for odd indexed items
+    doc.y += 1; // Add space for odd indexed items
     doc.setFont("normal");
     doc.setFontSize(10);
     doc.y += tableTitles?.length * 4;

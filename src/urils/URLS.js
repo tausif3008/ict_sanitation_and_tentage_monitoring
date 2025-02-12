@@ -60,12 +60,15 @@ const URLS = {
     path: "/vendor-details?page=1&per_page=200&asset_main_type_id=",
     version: "5.43",
   }, // asset type wise vendor list / details
-
   vendorTypeCategoryDrop: {
     path: "/vendor-details/get-vendor-by-types",
     // path: "/vendor-details/get-vendor-by-types?asset_main_type_id=1&asset_type_id=1",
     version: "5.43",
   }, // vendor dropdown asset main type and asset type
+  vendor_type_wise_reg_report: {
+    path: "/reporting/vendor-asset-type-tagging",
+    version: 5.43,
+  },
 
   // questions
   questions: { path: "/questions", version: "5.43" },
@@ -129,6 +132,10 @@ const URLS = {
   addParking: { path: "/parking/entry", version: 5.43 },
   editParking: { path: "/parking/edit", version: 5.43 },
   parkingReport: { path: "/reporting/parking", version: 5.43 },
+  parking_type_wise_reg_report: {
+    path: "/reporting/parking-asset-type-tagging",
+    version: 5.43,
+  },
 
   // proposed sectors
   vendorProposedSectors: {

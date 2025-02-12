@@ -45,7 +45,7 @@ const AssetUnitReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "PTC Id ";
+    let name = "PTC ID ";
     if (formValue?.assets_code) {
       name += `(${formValue?.assets_code}`;
     }
@@ -307,7 +307,7 @@ const AssetUnitReport = () => {
 
   return (
     <>
-      <CommonDivider label={"PTC Id Wise Monitoring Report"} />
+      <CommonDivider label={"PTC ID Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <AssetUnitReportPdf
           titleName={`${fileName}`}

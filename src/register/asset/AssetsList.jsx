@@ -255,6 +255,12 @@ const AssetsList = () => {
       },
       width: 120,
     },
+    {
+      title: "GSD Phone",
+      dataIndex: "agent_phone",
+      key: "agent_phone",
+      width: 120,
+    },
     ...(categoryId === "2"
       ? [
           {
@@ -384,6 +390,7 @@ const AssetsList = () => {
       : ["Toilets Type"]),
     ...(formValue?.vendor_id ? [] : ["Vendor Name"]),
     "GSD Name",
+    "GSD Phone",
     ...(formValue?.sector_id ? [] : ["Sector"]),
     ...(formValue?.asset_main_type_id !== "1" ? ["Sanstha"] : []),
     ...(formValue?.asset_main_type_id !== "2" ? ["Parking"] : []),
@@ -429,6 +436,9 @@ const AssetsList = () => {
             Type: data?.asset_type_name,
             "Vendor Name": data?.vendor_name,
             "GSD Name": data?.agent_name,
+            "GSD Phone": data?.agent_phone
+              ? Number(data?.agent_phone) || "-"
+              : "-",
             Sector: data?.sector_name,
 
             ...(formValue?.asset_main_type_id !== "1" && {
@@ -453,7 +463,7 @@ const AssetsList = () => {
           {
             name: "Total Unit",
             value: unitCount,
-            colIndex: 9,
+            colIndex: 10,
           },
         ]);
 
@@ -464,6 +474,7 @@ const AssetsList = () => {
           ...(formValue?.asset_type_id ? [] : [data?.asset_type_name]),
           ...(formValue?.vendor_id ? [] : [data?.vendor_name]),
           data?.agent_name,
+          data?.agent_phone,
           ...(formValue?.sector_id ? [] : [data?.sector_name]),
           ...(formValue?.asset_main_type_id !== "1"
             ? [data?.sanstha_name]
