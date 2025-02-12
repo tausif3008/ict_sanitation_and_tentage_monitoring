@@ -136,7 +136,7 @@ const SectorWiseRegistrationReport = () => {
     form.setFieldsValue({
       total_counts: AllCountOptions?.[0]?.value,
     });
-    getData();
+    currentData(); // get current data
   };
 
   // handle asset main type
@@ -175,13 +175,19 @@ const SectorWiseRegistrationReport = () => {
     dispatch(getSectorWiseRegData(uri, data)); // Fetch the data
   };
 
-  useEffect(() => {
-    getData(); // get current data
-    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
-    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+  const currentData = async () => {
     form.setFieldsValue({
       total_counts: AllCountOptions?.[0]?.value,
+      asset_main_type_id: "1",
     });
+    getData({ asset_main_type_id: 1 }); // get current data
+    handleSelect(1);
+  };
+
+  useEffect(() => {
+    currentData();
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
   }, []);
 
   useEffect(() => {
@@ -344,6 +350,7 @@ const SectorWiseRegistrationReport = () => {
                       placeholder={"Select Category"}
                       options={AssetMainTypeDrop?.slice(0, 2) || []}
                       onSelect={handleSelect}
+                      allowClear={false}
                     />
                   </Col>
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
@@ -435,35 +442,25 @@ const SectorWiseRegistrationReport = () => {
                       label={"Select Show Total Counts"}
                       placeholder={"Select Show Total Counts"}
                       options={AllCountOptions || []}
-                      // onSelect={handleDateSelect}
-                      // onChange={(value) => {
-                      //   if (!value) {
-                      //     setShowDateRange(false);
-                      //   }
-                      // }}
                     />
                   </Col>
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>

@@ -583,7 +583,7 @@ const Navbar = ({ lang, setLang }) => {
         key: "16",
         label: (
           <Link className="text-black no-underline" to="/asset-unit-report">
-            PTC Id Wise Monitoring Report
+            PTC ID Wise Monitoring Report
           </Link>
         ),
       },
