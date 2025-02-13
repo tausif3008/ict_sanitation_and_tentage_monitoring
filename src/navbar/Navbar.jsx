@@ -43,7 +43,7 @@ import { checkLoginAvailability } from "../constant/const";
 const Navbar = ({ lang, setLang }) => {
   const dict = DICT;
   const [open, setOpen] = useState(false);
-  const [title, setTitle] = useState("");
+  // const [title, setTitle] = useState("");
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -361,94 +361,94 @@ const Navbar = ({ lang, setLang }) => {
     ];
   };
 
-  const schedule_items = (lang, dict, navigate) => {
-    return [
-      // {
-      //   key: "1",
-      //   label: (
-      //     <Link
-      //       className="text-black no-underline hover:text-green"
-      //       to="/scheduling-and-deployment"
-      //     >
-      //       Create
-      //     </Link>
-      //   ),
-      // },
-      {
-        key: "1",
-        label: (
-          <Link
-            className="text-black no-underline"
-            to="/create-sanitation-schedule"
-          >
-            Sanitation Management Schedule
-          </Link>
-        ),
-      },
-      {
-        key: "2",
-        label: (
-          <Link
-            className="text-black no-underline"
-            to="/create-tentage-schedule"
-          >
-            Tentage Management Schedule
-          </Link>
-        ),
-      },
-      {
-        key: "3",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/waste-management-schedule"
-          >
-            Waste Management Schedule
-          </Link>
-        ),
-      },
-    ];
-  };
+  // const schedule_items = (lang, dict, navigate) => {
+  //   return [
+  //     // {
+  //     //   key: "1",
+  //     //   label: (
+  //     //     <Link
+  //     //       className="text-black no-underline hover:text-green"
+  //     //       to="/scheduling-and-deployment"
+  //     //     >
+  //     //       Create
+  //     //     </Link>
+  //     //   ),
+  //     // },
+  //     {
+  //       key: "1",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/create-sanitation-schedule"
+  //         >
+  //           Sanitation Management Schedule
+  //         </Link>
+  //       ),
+  //     },
+  //     {
+  //       key: "2",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline"
+  //           to="/create-tentage-schedule"
+  //         >
+  //           Tentage Management Schedule
+  //         </Link>
+  //       ),
+  //     },
+  //     {
+  //       key: "3",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/waste-management-schedule"
+  //         >
+  //           Waste Management Schedule
+  //         </Link>
+  //       ),
+  //     },
+  //   ];
+  // };
 
-  const complaince_items = (lang, dict) => {
-    return [
-      {
-        key: "2",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/monitoring"
-          >
-            Monitoring
-          </Link>
-        ),
-      },
-      {
-        key: "3",
-        label: (
-          <Link className="text-black no-underline" to="/notification">
-            Notification
-          </Link>
-        ),
-      },
-    ];
-  };
+  // const complaince_items = (lang, dict) => {
+  //   return [
+  //     {
+  //       key: "2",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/monitoring"
+  //         >
+  //           Monitoring
+  //         </Link>
+  //       ),
+  //     },
+  //     {
+  //       key: "3",
+  //       label: (
+  //         <Link className="text-black no-underline" to="/notification">
+  //           Notification
+  //         </Link>
+  //       ),
+  //     },
+  //   ];
+  // };
 
-  const waste_items = (lang, dict) => {
-    return [
-      {
-        key: "2",
-        label: (
-          <Link
-            className="text-black no-underline hover:text-green"
-            to="/route"
-          >
-            Route
-          </Link>
-        ),
-      },
-    ];
-  };
+  // const waste_items = (lang, dict) => {
+  //   return [
+  //     {
+  //       key: "2",
+  //       label: (
+  //         <Link
+  //           className="text-black no-underline hover:text-green"
+  //           to="/route"
+  //         >
+  //           Route
+  //         </Link>
+  //       ),
+  //     },
+  //   ];
+  // };
 
   // reports
   const reports_items = (lang, dict) => {
@@ -871,45 +871,14 @@ const Navbar = ({ lang, setLang }) => {
     return list;
   };
 
-  // const [logName, setLogName] = useState(false);
-
-  // useEffect(() => {
-  //   if (loggedIn) {
-  //     setLogName(true);
-  //   }
-  // }, []);
-
-  // const handleLang = () => {
-  //   if (lang === "hi") {
-  //     setLang("en");
-  //   } else {
-  //     setLang("hi");
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const titleName = location.pathname.split("/").join("").split("-")[0];
-  //   if (titleName === "dashboard") {
-  //     setTitle("Sanitation");
-  //   } else if (titleName === "home") {
-  //     setTitle("");
-  //   } else {
-  //     setTitle(titleName);
-  //   }
-  // }, [location]);
-
   const isNavbarTransition =
     document.querySelector(".navbar-transition") == null;
 
   return (
-    <div className="px-3 font-nutino bg-white p-1 shadow-md">
+    <div className="px-3 font-nutino bg-white p-1 shadow-md max-w-full">
       <div className="flex w-full justify-between items-center">
         <div className="flex gap-2 items-center">
-          <button
-            // to={localStorage.getItem("sessionToken") ? "/dashboard" : "/home"}
-            onClick={handleButtonClick}
-            className="no-underline d-flex"
-          >
+          <button onClick={handleButtonClick} className="no-underline d-flex">
             <img
               src={IMAGELIST?.govt_logo}
               className={`h-[30px] sm:h-[20px] md:h-[30px] lg:h-14 xl:${
@@ -917,7 +886,6 @@ const Navbar = ({ lang, setLang }) => {
               }`}
               alt="UP Govt Logo"
             />
-
             <img
               src={IMAGELIST?.kumbhMela}
               className={`lg:mt-1 h-[28px] sm:h-[18px] md:h-[28px] lg:h-12 xl:${
@@ -926,84 +894,71 @@ const Navbar = ({ lang, setLang }) => {
               alt="Maha Kumbh 2025 Logo"
             />
           </button>
-
-          <div
-            className="z-50  flex items-center h-12 m-auto  justify-start font-bold text-lg"
+          {/* <div
+            className="z-50 flex items-center h-12 justify-start font-bold text-lg"
             style={{ color: "#FF9500" }}
+          > */}
+          {/* <span className="capitalize mr-1">{title} </span> */}
+          <button
+            onClick={handleButtonClick}
+            className="no-underline text-[13px] md:text-lg mr-1 bg-transparent border-none hover:text-blue-700 text-blue-500 font-bold"
           >
-            <span className="capitalize mr-1">{title} </span>
-            <Button
-              // onClick={() => {
-              //   checkLoginAvailability(sessionData, navigate);
-              // }}
-              onClick={handleButtonClick}
-              // to={
-              //   localStorage.getItem("sessionToken") ? "/dashboard" : "/login"
-              // }
-              className="no-underline text-2xl md:text-lg lg:text-md xl:text-xl xxl:text-2xl mr-1 bg-transparent border-none hover:text-blue-700 text-blue-500  font-bold"
-              // className="font-bold bg-transparent border text-black hover:text-blue-500 text-xs md:text-lg lg:text-md xl:text-md xxl:text-xl mr-1"
-            >
-              ICT Sanitation and Tentage Monitoring System
-            </Button>
-          </div>
+            ICT Sanitation & Tentage Monitoring System
+          </button>
+          {/* </div> */}
         </div>
 
-        <div className="flex">
-          <div className="z-50  flex items-center h-12 justify-center ">
-            <div className="hidden mt-0 xl:flex gap-1 justify-start items-center z-50 text-base font-semibold h-fit text-black lg:text-base">
-              {!loggedIn && (
-                <Link to={"/login"} className="no-underline text-black text-sm">
-                  <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                    {dict.home[lang]}
-                  </div>
-                </Link>
-              )}
-
-              {/* <Link className="text-black no-underline " to="/dashboard">
+        {/* <div className="flex"> */}
+        <div className="z-50  flex items-center h-12 justify-center ">
+          <div className="hidden mt-0 xl:flex gap-1 justify-start items-center z-50 text-base font-semibold h-fit text-black lg:text-base">
+            {!loggedIn && (
+              <Link to={"/login"} className="no-underline text-black text-sm">
+                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                  {dict.home[lang]}
+                </div>
+              </Link>
+            )}
+            {/* <Link className="text-black no-underline " to="/dashboard">
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                   Dashboard
                 </div>
               </Link> */}
-
-              {loggedIn && (
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
-                  <DropDown
-                    text="black"
-                    items={dashboards(lang, dict)}
-                    name={"Dashboard"}
-                  ></DropDown>
-                </div>
-              )}
-              {userAccess_param.includes(userRoleId) && (
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  <DropDown
-                    text="black"
-                    items={register_items(lang, dict)}
-                    // name={dict.register[lang]}
-                    name="User Access & Registration"
-                  ></DropDown>
-                </div>
-              )}
-
-              {masterData_param.includes(userRoleId) && (
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  <DropDown
-                    text="black"
-                    items={master_items(lang, dict)}
-                    // name={dict.register[lang]}
-                    name="Master Data Creation"
-                  ></DropDown>
-                </div>
-              )}
-
-              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+            {loggedIn && (
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
+                <DropDown
+                  text="black"
+                  items={dashboards(lang, dict)}
+                  name={"Dashboard"}
+                ></DropDown>
+              </div>
+            )}
+            {userAccess_param.includes(userRoleId) && (
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                <DropDown
+                  text="black"
+                  items={register_items(lang, dict)}
+                  // name={dict.register[lang]}
+                  name="User Access & Registration"
+                ></DropDown>
+              </div>
+            )}
+            {masterData_param.includes(userRoleId) && (
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                <DropDown
+                  text="black"
+                  items={master_items(lang, dict)}
+                  // name={dict.register[lang]}
+                  name="Master Data Creation"
+                ></DropDown>
+              </div>
+            )}
+            {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={schedule_items(lang, dict, navigate)}
                   name="Schedule"
                 ></DropDown>
               </div>
-
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
@@ -1011,8 +966,7 @@ const Navbar = ({ lang, setLang }) => {
                   name="Complaince"
                 ></DropDown>
               </div> */}
-
-              {/* {DMS_param.includes(userRoleId) && (
+            {/* {DMS_param.includes(userRoleId) && (
                 <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded ">
                   <DropDown
                     text="black"
@@ -1021,35 +975,32 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div>
               )} */}
-              {reports_param.includes(userRoleId) && (
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  <DropDown
-                    text="black"
-                    items={reports_items(lang, dict)}
-                    name="Reports"
-                  ></DropDown>
-                </div>
-              )}
-
-              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+            {reports_param.includes(userRoleId) && (
+              <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+                <DropDown
+                  text="black"
+                  items={reports_items(lang, dict)}
+                  name="Reports"
+                ></DropDown>
+              </div>
+            )}
+            {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                 <DropDown
                   text="black"
                   items={waste_items(lang, dict)}
                   name="Waste Management"
                 ></DropDown>
               </div> */}
-
+            <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
               <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
-                  <DropDown
-                    text="black"
-                    items={setting_item(dict, lang, navigate)}
-                    name={dict.setting[lang]}
-                  ></DropDown>
-                </div>
+                <DropDown
+                  text="black"
+                  items={setting_item(dict, lang, navigate)}
+                  name={dict.setting[lang]}
+                ></DropDown>
               </div>
-
-              {/* {!logName ? (
+            </div>
+            {/* {!logName ? (
                 <button onClick={() => handleNavigation("/login")}>
                   <div className="h-9 flex  items-center hover:bg-lime-300 px-2">
                     Login
@@ -1069,78 +1020,78 @@ const Navbar = ({ lang, setLang }) => {
                   </button>
                 </div>
               )} */}
-            </div>
+          </div>
 
-            <div className="flex w-11/12 m-auto justify-between xl:hidden">
-              <span className="flex items-center">
-                <Button
-                  className="flex xl:hidden bg-transparent border-none text-black"
-                  onClick={showDrawer}
-                >
-                  <MenuOutlined></MenuOutlined>
-                </Button>
-              </span>
-            </div>
+          <div className="flex w-11/12 justify-between xl:hidden">
+            <span className="flex items-start">
+              <Button
+                className="flex xl:hidden bg-transparent border-none text-black"
+                onClick={showDrawer}
+              >
+                <MenuOutlined></MenuOutlined>
+              </Button>
+            </span>
+          </div>
 
-            <Drawer
-              onClose={onClose}
-              open={open}
-              title={
-                <div className="text-violet-950 text-lg font-semibold">
-                  ICT Sanitation and Tentage Monitoring System
+          <Drawer
+            onClose={onClose}
+            open={open}
+            title={
+              <div className="text-violet-950 text-lg font-semibold">
+                ICT Sanitation & Tentage Monitoring System
+              </div>
+            }
+          >
+            <div className="text-base">
+              {loggedIn && (
+                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                  <DropDown
+                    text="black"
+                    items={dashboards(lang, dict)}
+                    name={"Dashboard"}
+                  ></DropDown>
                 </div>
-              }
-            >
-              <div className="text-base">
-                {loggedIn && (
-                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                    <DropDown
-                      text="black"
-                      items={dashboards(lang, dict)}
-                      name={"Dashboard"}
-                    ></DropDown>
-                  </div>
-                )}
+              )}
 
-                {!loggedIn && (
-                  <Link to={"/home"} className="no-underline text-black">
-                    <div className="h-10 text-black font- border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                      {dict.home[lang]}
-                    </div>
-                  </Link>
-                )}
-                {userAccess_param.includes(userRoleId) && (
-                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                    <DropDown
-                      text="black"
-                      items={register_items(lang, dict)}
-                      name={dict.register[lang]}
-                    ></DropDown>
+              {!loggedIn && (
+                <Link to={"/home"} className="no-underline text-black">
+                  <div className="h-10 text-black font- border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                    {dict.home[lang]}
                   </div>
-                )}
+                </Link>
+              )}
+              {userAccess_param.includes(userRoleId) && (
+                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                  <DropDown
+                    text="black"
+                    items={register_items(lang, dict)}
+                    name={dict.register[lang]}
+                  ></DropDown>
+                </div>
+              )}
 
-                {masterData_param.includes(userRoleId) && (
-                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                    <DropDown
-                      text="black"
-                      items={master_items(lang, dict)}
-                      // name={dict.register[lang]}
-                      name="Master Data Creation"
-                    ></DropDown>
-                  </div>
-                )}
+              {masterData_param.includes(userRoleId) && (
+                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                  <DropDown
+                    text="black"
+                    items={master_items(lang, dict)}
+                    // name={dict.register[lang]}
+                    name="Master Data Creation"
+                  ></DropDown>
+                </div>
+              )}
 
-                {DMS_param.includes(userRoleId) && (
-                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                    <DropDown
-                      text="black"
-                      items={dms_items(lang, dict)}
-                      name={"DMS"}
-                    ></DropDown>
-                  </div>
-                )}
+              {DMS_param.includes(userRoleId) && (
+                <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                  <DropDown
+                    text="black"
+                    items={dms_items(lang, dict)}
+                    name={"DMS"}
+                  ></DropDown>
+                </div>
+              )}
 
-                {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+              {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
                     text="black"
                     items={schedule_items(lang, dict, navigate)}
@@ -1148,32 +1099,32 @@ const Navbar = ({ lang, setLang }) => {
                   ></DropDown>
                 </div> */}
 
-                {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+              {/* <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
                     text="black"
                     items={complaince_items(lang, dict)}
                     name="Complaince"
                   ></DropDown>
                 </div> */}
-                {reports_param.includes(userRoleId) && (
-                  <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
-                    <DropDown
-                      text="black"
-                      items={reports_items(lang, dict)}
-                      name="Reports"
-                    ></DropDown>
-                  </div>
-                )}
-
+              {reports_param.includes(userRoleId) && (
                 <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
                   <DropDown
                     text="black"
-                    items={setting_item(dict, lang, navigate)}
-                    name={dict.setting[lang]}
+                    items={reports_items(lang, dict)}
+                    name="Reports"
                   ></DropDown>
                 </div>
+              )}
 
-                {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
+              <div className="h-10 text-black font-semibold border-b flex items-center hover:bg-orange-300  hover:text-black px-3 ">
+                <DropDown
+                  text="black"
+                  items={setting_item(dict, lang, navigate)}
+                  name={dict.setting[lang]}
+                ></DropDown>
+              </div>
+
+              {/* <div className="h-9 flex  items-center hover:bg-lime-300 px-2 rounded">
                   <DropDown
                     text="black"
                     items={waste_items(lang, dict)}
@@ -1193,14 +1144,14 @@ const Navbar = ({ lang, setLang }) => {
                   {dict.help[lang]}
                 </div> */}
 
-                {/* <button
+              {/* <button
                   onClick={handleLang}
                   className="h-10 w-full  text-black font-semibold border-b flex items-center hover:bg-lime-300 px-3 bg-04"
                 >
                   A / अ
                 </button> */}
 
-                {/* {!logName ? (
+              {/* {!logName ? (
                   <button onClick={() => handleNavigation("/login")}>
                     <div className="h-9 flex items-center hover:bg-lime-300 px-2 text-black font-semibold  ">
                       {dict.login[lang]}
@@ -1220,10 +1171,10 @@ const Navbar = ({ lang, setLang }) => {
                     </button>
                   </div>
                 )} */}
-              </div>
-            </Drawer>
-          </div>
+            </div>
+          </Drawer>
         </div>
+        {/* </div> */}
       </div>
     </div>
   );

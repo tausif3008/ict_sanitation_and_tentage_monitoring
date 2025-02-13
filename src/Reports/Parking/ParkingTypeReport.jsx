@@ -13,6 +13,7 @@ import {
   fiveTypes,
   getFormatedNumber,
   getValueLabel,
+  parkingType,
 } from "../../constant/const";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
@@ -53,6 +54,11 @@ const ParkingTypeReport = () => {
     VendorCatTypeDrop,
     null
   );
+  const ParkingTypeName = getValueLabel(
+    formValue?.parking_type,
+    parkingType,
+    null
+  );
 
   const fileDateName =
     formValue?.date_format === "Today"
@@ -71,6 +77,9 @@ const ParkingTypeReport = () => {
     }
     if (catTypeName) {
       name += `- ${catTypeName}`;
+    }
+    if (ParkingTypeName) {
+      name += `- ${ParkingTypeName}`;
     }
     if (formValue?.asset_type_ids) {
       name += `- Asset Type 1 to 5`;
@@ -98,10 +107,17 @@ const ParkingTypeReport = () => {
           },
         ]
       : []),
+    ...(formValue?.parking_type
+      ? [
+          {
+            label: `Parking Type :  ${ParkingTypeName}`,
+          },
+        ]
+      : []),
   ];
   const fileName = getReportName();
 
-  // fiter finish
+  // filter finish
   const onFinishForm = (values) => {
     const finalData = {
       ...(values?.asset_main_type_id && {
@@ -111,6 +127,7 @@ const ParkingTypeReport = () => {
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
       ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
       ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
+      ...(values?.parking_type && { parking_type: values?.parking_type }),
     };
 
     if (values?.date_format === "Today") {
@@ -147,8 +164,6 @@ const ParkingTypeReport = () => {
       vendor_id: null,
       asset_type_ids: null,
     });
-    // const url = URLS?.assetType?.path + value;
-    // dispatch(getAssetTypes(url)); // get assset type
     if (value) {
       const paramData = {
         asset_main_type_id: value,
@@ -391,6 +406,14 @@ const ParkingTypeReport = () => {
                       />
                     </Col>
                   )}
+                  <Col key="parking_type" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      label="Parking Type"
+                      name="parking_type"
+                      placeholder={"Select Parking Type"}
+                      options={parkingType || []}
+                    />
+                  </Col>
                   <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"date_format"}
