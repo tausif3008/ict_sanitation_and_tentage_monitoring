@@ -310,33 +310,33 @@ const ToiletDetails = () => {
           </div>
         </Form>
 
-        <div className="flex justify-start items-center space-x-6 mb-1">
-          <div className="flex items-center mb-4 mr-6">
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.todays_monitoring[lang]}</span>
-            </div>
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-yellow-400 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.Partial_Complaint[lang]}</span>
-            </div>
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-purple-500 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.complaint[lang]}</span>
-            </div>
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.not_Complaint[lang]}</span>
-            </div>
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-lime-300 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.clean[lang]}</span>
-            </div>
-            <div className="flex items-center mr-6">
-              <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-              <span className="text-sm">{dict.unclean[lang]}</span>
-            </div>
+        <div className="block md:flex justify-start items-center space-x-6 mb-1 ">
+          {/* <div className="flex items-center mb-4 mr-6"> */}
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-green-500 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.todays_monitoring[lang]}</span>
           </div>
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-yellow-400 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.Partial_Complaint[lang]}</span>
+          </div>
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-purple-500 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.complaint[lang]}</span>
+          </div>
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-blue-500 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.not_Complaint[lang]}</span>
+          </div>
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-lime-300 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.clean[lang]}</span>
+          </div>
+          <div className="flex items-center mr-6">
+            <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
+            <span className="text-sm">{dict.unclean[lang]}</span>
+          </div>
+          {/* </div> */}
         </div>
 
         <div

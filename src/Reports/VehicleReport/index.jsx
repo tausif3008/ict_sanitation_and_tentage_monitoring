@@ -320,121 +320,115 @@ const VehicleReports = ({ modalName = "Vehicle Report", showPdf = true }) => {
       <div className="flex justify-end gap-2 font-semibold">
         {showPdf && (
           <>
-            <div>
-              <Button
-                type="primary"
-                onClick={() => {
-                  exportToFile(false);
-                }}
-              >
-                Download Pdf
-              </Button>
-            </div>
-            <div>
-              <Button
-                type="primary"
-                onClick={() => {
-                  exportToFile(true);
-                }}
-              >
-                Download Excel
-              </Button>
-            </div>
+            <Button
+              type="primary"
+              onClick={() => {
+                exportToFile(false);
+              }}
+            >
+              Download Pdf
+            </Button>
+            <Button
+              type="primary"
+              onClick={() => {
+                exportToFile(true);
+              }}
+            >
+              Download Excel
+            </Button>
           </>
         )}
       </div>
       <div className="rounded-md w-full">
         <div className="mx-4 mb-6">
-          <div>
-            <Collapse
-              defaultActiveKey={["1"]}
-              size="small"
-              className="rounded-none mt-3"
-              items={[
-                {
-                  key: 1,
-                  label: (
-                    <div className="flex items-center h-full">
-                      <img src={search} className="h-5" alt="Search Icon" />
-                    </div>
-                  ),
-                  children: (
-                    <Form
-                      form={form}
-                      layout="vertical"
-                      onFinish={onFinishForm}
-                      key="form1"
-                    >
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
-                        <CustomSelect
-                          name={"user_id"}
-                          label={"Select Vendor"}
-                          placeholder={"Select Vendor"}
-                          options={VendorCatTypeDrop || []}
-                        />
-                        <CustomSelect
-                          label="Vehicle Type"
-                          name="type"
-                          placeholder={"Select Vehicle Type"}
-                          options={vehicleType || []}
-                        />
-                        <CustomInput
-                          label="Vehicle Number"
-                          name="number"
-                          placeholder="eg. AA00AA0000"
-                          maxLength={10}
-                        />
-                        <CustomInput
-                          label="IMEI Number"
-                          name="imei"
-                          placeholder="Enter IMEI Number"
-                        />
-                        <CustomInput
-                          label="Chassis Number"
-                          name="chassis_no"
-                          placeholder="Enter Chassis Number"
-                        />
-                        <CustomSelect
-                          name={"sector_id"}
-                          label={"Select Sector"}
-                          placeholder={"Select Sector"}
-                          options={SectorListDrop || []}
-                        />
-                        <CustomDatepicker
-                          name={"date"}
-                          label={"Date"}
-                          className="w-full"
-                          placeholder={"Date"}
-                        />
-                        <div className="flex justify-start my-4 space-x-2 ml-3">
-                          <div>
-                            <Button
-                              loading={loading}
-                              type="button"
-                              htmlType="submit"
-                              className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                            >
-                              Search
-                            </Button>
-                          </div>
-                          <div>
-                            <Button
-                              loading={loading}
-                              type="button"
-                              className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                              onClick={resetForm}
-                            >
-                              Reset
-                            </Button>
-                          </div>
+          <Collapse
+            defaultActiveKey={["1"]}
+            size="small"
+            className="rounded-none mt-3"
+            items={[
+              {
+                key: 1,
+                label: (
+                  <div className="flex items-center h-full">
+                    <img src={search} className="h-5" alt="Search Icon" />
+                  </div>
+                ),
+                children: (
+                  <Form
+                    form={form}
+                    layout="vertical"
+                    onFinish={onFinishForm}
+                    key="form1"
+                  >
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
+                      <CustomSelect
+                        name={"user_id"}
+                        label={"Select Vendor"}
+                        placeholder={"Select Vendor"}
+                        options={VendorCatTypeDrop || []}
+                      />
+                      <CustomSelect
+                        label="Vehicle Type"
+                        name="type"
+                        placeholder={"Select Vehicle Type"}
+                        options={vehicleType || []}
+                      />
+                      <CustomInput
+                        label="Vehicle Number"
+                        name="number"
+                        placeholder="eg. AA00AA0000"
+                        maxLength={10}
+                      />
+                      <CustomInput
+                        label="IMEI Number"
+                        name="imei"
+                        placeholder="Enter IMEI Number"
+                      />
+                      <CustomInput
+                        label="Chassis Number"
+                        name="chassis_no"
+                        placeholder="Enter Chassis Number"
+                      />
+                      <CustomSelect
+                        name={"sector_id"}
+                        label={"Select Sector"}
+                        placeholder={"Select Sector"}
+                        options={SectorListDrop || []}
+                      />
+                      <CustomDatepicker
+                        name={"date"}
+                        label={"Date"}
+                        className="w-full"
+                        placeholder={"Date"}
+                      />
+                      <div className="flex justify-start my-4 space-x-2 ml-3">
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            htmlType="submit"
+                            className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                          >
+                            Search
+                          </Button>
+                        </div>
+                        <div>
+                          <Button
+                            loading={loading}
+                            type="button"
+                            className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                            onClick={resetForm}
+                          >
+                            Reset
+                          </Button>
                         </div>
                       </div>
-                    </Form>
-                  ),
-                },
-              ]}
-            />
-          </div>
+                    </div>
+                  </Form>
+                ),
+              },
+            ]}
+          />
           <CustomTable
             loading={loading}
             columns={vehicleColumns || []}
