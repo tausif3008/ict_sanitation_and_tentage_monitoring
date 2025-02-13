@@ -152,14 +152,6 @@ const VendorRegistrationReport = () => {
     dispatch(getAssetTypes(url)); // get assset type
   };
 
-  //   // handle asset type
-  //   const handleTypeSelect = (value) => {
-  //     form.setFieldsValue({
-  //       to_user_id: null,
-  //     });
-  //     value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
-  //   };
-
   // handle date select
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
@@ -204,13 +196,13 @@ const VendorRegistrationReport = () => {
     if (VendorReport_data) {
       const unitCount = VendorReport_data?.data?.listings?.reduce(
         (total, item) => {
-          return total + Number(item?.tagging_units);
+          return total + Number(item?.tagging_units) || 0;
         },
         0
       );
       const totalCounts = VendorReport_data?.data?.listings?.reduce(
         (total, item) => {
-          return total + Number(item?.total);
+          return total + Number(item?.total_quantity) || 0;
         },
         0
       );
@@ -228,7 +220,7 @@ const VendorRegistrationReport = () => {
           return {
             Sr: index + 1,
             "Vendor name": data?.vendor_name,
-            "Total Units": Number(data?.total) || 0,
+            "Total Units": Number(data?.total_quantity) || 0,
             "Register Unit": Number(data?.tagging_units) || 0,
           };
         }
@@ -251,9 +243,9 @@ const VendorRegistrationReport = () => {
       ? [
           {
             title: "Total Units",
-            dataIndex: "total",
-            key: "total",
-            sorter: (a, b) => a?.total - b?.total,
+            dataIndex: "total_quantity",
+            key: "total_quantity",
+            sorter: (a, b) => a?.total_quantity - b?.total_quantity,
           },
         ]
       : []),

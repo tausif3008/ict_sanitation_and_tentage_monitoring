@@ -22,13 +22,11 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import { getData } from "../../Fetch/Axios";
 import { getPdfExcelData } from "./AssetsSlice";
-import { getVendorList } from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSlice";
 import {
   deleteSupervisorSectorAllocation,
   getSectorsList,
 } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
 import CustomSelect from "../../commonComponents/CustomSelect";
-import VendorSupervisorSelector from "../../vendor/VendorSupervisorRegistration/Slice/VendorSupervisorSelector";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import MonitoringSelector from "../../complaince/monitoringSelector";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
@@ -46,6 +44,8 @@ import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { asset_delete_permisssion } from "../../constant/permission";
 import ParkingSelector from "../parking/parkingSelector";
 import { getParkingData } from "../parking/parkingSlice";
+import VendorSelectors from "../../Reports/VendorwiseReports/vendorSelectors";
+import { getVendorCategoryTypeDrop } from "../../Reports/VendorwiseReports/vendorslice";
 
 const AssetsList = () => {
   const [isModalVisible, setIsModalVisible] = useState(false); // Modal visibility state
@@ -80,22 +80,84 @@ const AssetsList = () => {
     });
   };
 
-  const { VendorListDrop } = VendorSupervisorSelector(); // vendor
   const { SectorListDrop } = VendorSectorSelectors(); // sector
   const { monitoringAgentDrop } = MonitoringSelector(); // monitoring agent drop
   const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
   const { parkingDrop } = ParkingSelector(); // parking
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+
+  const pdfTitleData = {
+    category: getValueLabel(
+      formValue?.asset_main_type_id,
+      AssetMainTypeDrop,
+      null
+    ),
+    type: getValueLabel(formValue?.asset_type_id, AssetTypeDrop, null),
+    vendor: getValueLabel(formValue?.vendor_id, VendorCatTypeDrop, null),
+    sector: getValueLabel(formValue?.sector_id, SectorListDrop, null),
+  };
+
+  const fileDateName =
+    formValue?.date_format === "Today"
+      ? moment().format("DD-MMM-YYYY")
+      : formValue?.date_format === "Date Range"
+      ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
+          formValue?.to_date
+        ).format("DD-MMM-YYYY")}`
+      : "All Dates";
+
+  const getReportName = () => {
+    let name = "";
+    if (categoryId === "2") {
+      name = `Tentage List`;
+    } else {
+      name = `Toilets List`;
+    }
+    if (pdfTitleData?.vendor) {
+      name += ` - ${pdfTitleData?.vendor}`;
+    }
+    if (pdfTitleData?.category) {
+      name += `- ${pdfTitleData?.category}`;
+    }
+    if (pdfTitleData?.type) {
+      name += `- ${pdfTitleData?.type}`;
+    }
+    if (pdfTitleData?.sector) {
+      name += `- ${pdfTitleData?.sector}`;
+    }
+    name += ` - ${fileDateName} `;
+    return name;
+  };
+  const fileName = getReportName();
 
   // handle category
   const handleSelect = (value) => {
     form.setFieldsValue({
       asset_type_id: null,
+      vendor_id: null,
     });
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
+    const paramData = {
+      asset_main_type_id: value,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData));
   };
 
-  // fiter finish
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    if (value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
+  };
+
+  // filter finish
   const onFinishForm = (values) => {
     const finalData = {
       ...values,
@@ -120,9 +182,9 @@ const AssetsList = () => {
   // reset
   const resetForm = () => {
     form.resetFields();
-    form.setFieldValue("asset_main_type_id", "1");
     setSearchQuery("&asset_main_type_id=1");
     setShowDateRange(false);
+    getCurrentData();
   };
 
   // handle date
@@ -204,18 +266,20 @@ const AssetsList = () => {
     getDetails();
   }, [params, searchQuery]);
 
-  useEffect(() => {
+  const getCurrentData = () => {
     form.setFieldValue("asset_main_type_id", "1");
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    handleSelect("1"); // call asset type api
+  };
+
+  useEffect(() => {
+    getCurrentData();
     const urls = URLS?.monitoringAgent?.path;
     dispatch(getMonitoringAgent(urls)); // monitoring agent list
-    dispatch(getVendorList()); // vendor list
     dispatch(getSectorsList()); // all sectors list
     const url = URLS?.parking?.path;
     dispatch(getParkingData(url)); // get parking data
-    // dispatch(getAllCircleList()); // all circle list
-    handleSelect("1"); // call asset type api
   }, []);
 
   // disable date
@@ -455,11 +519,9 @@ const AssetsList = () => {
           };
         });
 
-      const heading = categoryId === "2" ? "Tentage List" : "Toilets List";
-
       // Call the export function
       isExcel &&
-        exportToExcel(myexcelData, heading, [
+        exportToExcel(myexcelData, fileName, [
           {
             name: "Total Unit",
             value: unitCount,
@@ -489,22 +551,11 @@ const AssetsList = () => {
             : "",
         ]);
 
-      const pdfTitleData = {
-        category: getValueLabel(
-          formValue?.asset_main_type_id,
-          AssetMainTypeDrop,
-          null
-        ),
-        type: getValueLabel(formValue?.asset_type_id, AssetTypeDrop, null),
-        vendor: getValueLabel(formValue?.vendor_id, VendorListDrop, null),
-        sector: getValueLabel(formValue?.sector_id, SectorListDrop, null),
-      };
-
       // Call the export function
       !isExcel &&
         ExportPdfFunction(
           ``,
-          "Registered Toilets & Tentage List",
+          fileName,
           pdfHeader,
           // pdfData,
           // true
@@ -590,6 +641,7 @@ const AssetsList = () => {
                       label={"Select Type"}
                       placeholder={"Select Type"}
                       options={AssetTypeDrop || []}
+                      onSelect={handleTypeSelect}
                     />
                   </Col>
                   <Col key="created_by" xs={24} sm={12} md={6} lg={5}>
@@ -609,7 +661,7 @@ const AssetsList = () => {
                       name={"vendor_id"}
                       label={"Select Vendor"}
                       placeholder={"Select Vendor"}
-                      options={VendorListDrop || []}
+                      options={VendorCatTypeDrop || []}
                     />
                   </Col>
                   <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>

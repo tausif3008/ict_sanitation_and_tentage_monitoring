@@ -765,26 +765,22 @@ const Monitoring = () => {
                       />
                     </Col>
                     <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
                     </div>
                   </Row>
                 </Form>
