@@ -32,6 +32,8 @@ import {
   parking_wise_monitoring_reports,
   attendance_reports,
   asset_incident_reports,
+  vendor_type_wise_regi_reports,
+  parking_type_wise_regi_reports,
 } from "../constant/permission";
 import { IMAGELIST } from "../assets/Images/exportImages";
 import { logOutUser } from "../Login/slice/loginSlice";
@@ -560,6 +562,28 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      vendor_type_wise_regi_reports?.includes(userRoleId) && {
+        key: "13",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/vendor-type-wise-registration-report"
+          >
+            Vendor & Type Wise Registration Report
+          </Link>
+        ),
+      },
+      parking_type_wise_regi_reports?.includes(userRoleId) && {
+        key: "13",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/parking-type-wise-registration-report"
+          >
+            Parking & Type Wise Registration Report
+          </Link>
+        ),
+      },
       parking_wise_monitoring_reports?.includes(userRoleId) && {
         key: "14",
         label: (
@@ -583,7 +607,7 @@ const Navbar = ({ lang, setLang }) => {
         key: "16",
         label: (
           <Link className="text-black no-underline" to="/asset-unit-report">
-            PTC Id Wise Monitoring Report
+            PTC ID Wise Monitoring Report
           </Link>
         ),
       },

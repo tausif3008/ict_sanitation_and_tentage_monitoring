@@ -7,29 +7,28 @@ import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
 import search from "../../assets/Dashboard/icon-search.png";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import { getAssetMainTypes } from "../../register/AssetType/AssetTypeSlice";
 import {
-  getAssetMainTypes,
-  getAssetTypes,
-} from "../../register/AssetType/AssetTypeSlice";
-import {
-  AllCountOptions,
   dateWeekOptions,
+  fiveTypes,
   getFormatedNumber,
   getValueLabel,
 } from "../../constant/const";
-import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { getFormData } from "../../urils/getFormData";
 import ExportToPDF from "../reportFile";
-import SectorReportSelectors from "../SectorSlice/sectorSelector";
-import { getSectorWiseRegData } from "../SectorSlice/sectorSlice";
 import CustomTable from "../../commonComponents/CustomTable";
+import VendorSelectors from "../VendorwiseReports/vendorSelectors";
+import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
+import ExportToExcel from "../ExportToExcel";
+import ParkingSelector from "../../register/parking/parkingSelector";
+import { getParkingTypeRegData } from "../../register/parking/parkingSlice";
 
-const SectorWiseRegistrationReport = () => {
-  const [excelData, setExcelData] = useState([]);
+const ParkingTypeReport = () => {
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
+  const [totalCount, setTotalCount] = useState({});
   const [vendorData, setVendorData] = useState({
     list: [],
     pageLength: 25,
@@ -37,21 +36,21 @@ const SectorWiseRegistrationReport = () => {
   });
 
   const dispatch = useDispatch();
-  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type
-  const { SectorReport_Loading, SectorRegReport_data } =
-    SectorReportSelectors(); // Sector Wise Report data
-
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
+  const { AssetMainTypeDrop } = AssetTypeSelectors(); // asset main type
+  const { ParkingTypeRegReport_data, loading } = ParkingSelector(); // Parking & Type Wise Registration Report
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const valuesArray = Object.values(totalCount);
 
   const catTypeName = getValueLabel(
     formValue?.asset_main_type_id,
     AssetMainTypeDrop,
     null
   );
-  const assetTypeName = getValueLabel(
-    formValue?.asset_type_id,
-    AssetTypeDrop,
+  const vendorName = getValueLabel(
+    formValue?.vendor_id,
+    VendorCatTypeDrop,
     null
   );
 
@@ -66,38 +65,36 @@ const SectorWiseRegistrationReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "Sector Wise";
+    let name = "Parking & Type";
+    if (vendorName) {
+      name = `${vendorName} Parking & Type`;
+    }
     if (catTypeName) {
       name += `- ${catTypeName}`;
     }
-    if (assetTypeName) {
-      name += `- ${assetTypeName}`;
+    if (formValue?.asset_type_ids) {
+      name += `- Asset Type 1 to 5`;
     }
-    name += ` - ${
-      formValue?.date_format === "Today"
-        ? moment().format("DD-MMM-YYYY")
-        : formValue?.date_format === "Date Range"
-        ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-            formValue?.to_date
-          ).format("DD-MMM-YYYY")}`
-        : ""
-    } `;
-    name += `Registration Report`;
+    name += ` - ${fileDateName} `;
+    name += `Report`;
     return name;
   };
 
   const pdfTitleParam = [
-    ...(formValue?.asset_main_type_id
+    ...(formValue?.vendor_id
       ? [
           {
-            label: `Category : ${catTypeName || "Combined"}`,
+            label: `Vendor Name : ${vendorName || "Combined"}`,
           },
         ]
       : []),
-    ...(formValue?.asset_type_id
+    {
+      label: `Category : ${catTypeName || "Combined"}`,
+    },
+    ...(formValue?.asset_type_ids
       ? [
           {
-            label: `Type : ${assetTypeName || "Combined"}`,
+            label: `Asset Type :  Asset Type 1 to 5`,
           },
         ]
       : []),
@@ -112,44 +109,54 @@ const SectorWiseRegistrationReport = () => {
       }),
       ...(values?.date_format && { date_format: values?.date_format }),
       ...(values?.asset_type_id && { asset_type_id: values?.asset_type_id }),
+      ...(values?.vendor_id && { vendor_id: values?.vendor_id }),
+      ...(values?.asset_type_ids && { asset_type_ids: values?.asset_type_ids }),
     };
 
     if (values?.date_format === "Today") {
       finalData.form_date = moment().format("YYYY-MM-DD");
       finalData.to_date = moment().format("YYYY-MM-DD");
-    } else if (values?.form_date || values?.to_date) {
+    }
+
+    if (values?.form_date || values?.to_date) {
       const dayjsObjectFrom = dayjs(values?.form_date?.$d);
       const dayjsObjectTo = dayjs(values?.to_date?.$d);
+
+      // Format the date as 'YYYY-MM-DD'
       const start = dayjsObjectFrom.format("YYYY-MM-DD");
       const end = dayjsObjectTo.format("YYYY-MM-DD");
       finalData.form_date = values?.form_date ? start : end;
       finalData.to_date = values?.to_date ? end : start;
     }
+
     const formData = getFormData(finalData);
-    getData(formData);
+    dispatch(getParkingTypeRegData(formData)); // Fetch the data
   };
 
   // reset form
   const resetForm = () => {
     form.resetFields();
     setShowDateRange(false);
-    form.setFieldsValue({
-      total_counts: AllCountOptions?.[0]?.value,
-    });
-    currentData(); // get current data
+    getData();
   };
 
-  // handle asset main type
+  // handle category
   const handleSelect = (value) => {
     form.setFieldsValue({
       asset_type_id: null,
-      to_user_id: null,
+      vendor_id: null,
+      asset_type_ids: null,
     });
-    const url = URLS?.assetType?.path + value;
-    dispatch(getAssetTypes(url)); // get assset type
+    // const url = URLS?.assetType?.path + value;
+    // dispatch(getAssetTypes(url)); // get assset type
+    if (value) {
+      const paramData = {
+        asset_main_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
   };
 
-  // handle date select
   const handleDateSelect = (value) => {
     if (value === "Date Range") {
       setShowDateRange(true);
@@ -170,159 +177,172 @@ const SectorWiseRegistrationReport = () => {
     );
   };
 
-  const getData = async (data = null) => {
-    const uri = URLS?.sector_wise_reg_report?.path;
-    dispatch(getSectorWiseRegData(uri, data)); // Fetch the data
-  };
-
-  const currentData = async () => {
-    form.setFieldsValue({
-      total_counts: AllCountOptions?.[0]?.value,
+  const getData = async () => {
+    const finalData = {
       asset_main_type_id: "1",
+      asset_type_ids: fiveTypes?.[0]?.value,
+    };
+    dispatch(getParkingTypeRegData(finalData)); // Fetch the data
+    handleSelect("1");
+    form.setFieldsValue({
+      asset_main_type_id: "1",
+      asset_type_ids: fiveTypes?.[0]?.value,
     });
-    getData({ asset_main_type_id: 1 }); // get current data
-    handleSelect(1);
   };
 
   useEffect(() => {
-    currentData();
+    getData();
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
   }, []);
 
-  useEffect(() => {
-    if (SectorRegReport_data) {
-      const unitCount = SectorRegReport_data?.data?.listings?.reduce(
-        (total, item) => {
-          return total + Number(item?.tagging_units);
-        },
-        0
-      );
-      const totalCounts = SectorRegReport_data?.data?.listings?.reduce(
-        (total, item) => {
-          return total + Number(item?.total);
-        },
-        0
-      );
-      setVendorData((prevDetails) => ({
-        ...prevDetails,
-        list: SectorRegReport_data?.data?.listings || [],
-        pageLength: SectorRegReport_data?.data?.paging?.[0]?.length || 0,
-        currentPage: SectorRegReport_data?.data?.paging?.[0]?.currentpage || 1,
-        totalRecords:
-          SectorRegReport_data?.data?.paging?.[0]?.totalrecords || 0,
-        totalUnits: unitCount,
-        totalCount: totalCounts,
-      }));
-      const myexcelData = SectorRegReport_data?.data?.listings?.map(
-        (data, index) => {
+  // Use useMemo to calculate dynamic columns
+  const memoizedColumns = useMemo(() => {
+    if (!ParkingTypeRegReport_data?.data?.listings) return [];
+    const columnNames =
+      ParkingTypeRegReport_data?.data?.listings?.[0]?.asset_types?.map(
+        (item, index) => {
           return {
-            Sr: index + 1,
-            "Sector name": data?.sectors_name,
-            "Total Units": Number(data?.total) || 0,
-            "Register Units": Number(data?.tagging_units) || 0,
+            title: `${item?.asset_type_name}`,
+            dataIndex: `dataIndex${index}`,
+            key: `${item?.asset_type_id}`,
+            width: 70,
+            sorter: (a, b) => a[`dataIndex${index}`] - b[`dataIndex${index}`], // Sorting by the dynamic column
           };
         }
       );
-      setExcelData(myexcelData);
-    }
-  }, [SectorRegReport_data]);
 
-  const columns = [
-    {
-      title: "Sector Name",
-      dataIndex: "sectors_name",
-      key: "sectors_name",
-      render: (text, record) => {
-        return text ? text : "GSD";
+    return [
+      {
+        title: "Parking Name",
+        dataIndex: "parking_name",
+        key: "parking_name",
+        width: 60,
       },
-    },
-    ...(formValue?.total_counts
-      ? [
-          {
-            title: "Total Units",
-            dataIndex: "total",
-            key: "total",
-            sorter: (a, b) => a?.total - b?.total,
-          },
-        ]
-      : []),
-    {
-      title: "Register Units",
-      dataIndex: "tagging_units",
-      key: "tagging_units",
-      sorter: (a, b) => a?.tagging_units - b?.tagging_units,
-    },
-  ];
+      ...columnNames,
+      {
+        title: "Parking Total",
+        dataIndex: "parking_total",
+        key: "parking_total",
+        width: 60,
+      },
+    ];
+  }, [ParkingTypeRegReport_data]); // Only recompute when ParkingTypeRegReport_data changes
 
-  const pdfHeader = [
-    "Sr No",
-    "Sector Name",
-    ...(formValue?.total_counts ? ["Total Units"] : []),
-    "Register Units",
-  ];
+  useEffect(() => {
+    if (ParkingTypeRegReport_data) {
+      let sectorCount = {};
+      const tableData = ParkingTypeRegReport_data?.data?.listings?.map(
+        (item) => {
+          const sectorData = {
+            id: item?.parking_id,
+            parking_name: item?.parking_name,
+          };
+          item?.asset_types?.forEach((element, index) => {
+            sectorData[`dataIndex${index}`] = element?.tagging_units;
+          });
+          const count = item?.asset_types.reduce((total, data) => {
+            return total + (Number(data?.tagging_units) || 0);
+          }, 0);
+          sectorData[`parking_total`] = count;
+          sectorCount[item?.parking_name] = count;
+          return sectorData;
+        }
+      );
+
+      let myCount = {};
+      ParkingTypeRegReport_data?.data?.listings?.forEach((item) => {
+        item?.asset_types.forEach((data) => {
+          const assetType = data?.asset_type_name;
+          const taggingUnits = Number(data?.tagging_units) || 0;
+
+          if (myCount[assetType]) {
+            myCount[assetType] += taggingUnits;
+          } else {
+            myCount[assetType] = taggingUnits;
+          }
+        });
+      });
+      setTotalCount(myCount);
+
+      setVendorData((prevDetails) => ({
+        ...prevDetails,
+        list: tableData || [],
+        pageLength: ParkingTypeRegReport_data?.data?.paging?.[0]?.length || 0,
+        currentPage:
+          ParkingTypeRegReport_data?.data?.paging?.[0]?.currentpage || 1,
+        totalRecords:
+          ParkingTypeRegReport_data?.data?.paging?.[0]?.totalrecords || 0,
+      }));
+    }
+  }, [ParkingTypeRegReport_data]);
+
+  const pdfHeader = useMemo(() => {
+    return memoizedColumns?.map((data, index) => data?.title);
+  }, [memoizedColumns]);
+
   const pdfData = useMemo(() => {
-    return excelData?.map((sector, index) => [
-      index + 1,
-      sector["Sector name"],
-      ...(formValue?.total_counts
-        ? [Number(sector?.["Total Units"]) || 0]
-        : []),
-      Number(sector?.["Register Units"]) || 0,
-    ]);
-  }, [excelData]);
+    return vendorData?.list?.map((item, index) => {
+      const row = [index + 1, item?.parking_name]; // Start with the row number (index + 1)
+      Object.keys(item).forEach((key) => {
+        if (key.startsWith("dataIndex")) {
+          row.push(item[key]); // Add the value to the row
+        } else if (key.startsWith("parking_total")) {
+          row.push(item["parking_total"]); // Add the value to the row
+        }
+      });
 
-  // const fileName =
-  //   formValue?.date_format === "Today"
-  //     ? moment().format("DD-MMM-YYYY")
-  //     : formValue?.date_format === "Date Range"
-  //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-  //         formValue?.to_date
-  //       ).format("DD-MMM-YYYY")}`
-  //     : null;
+      return row;
+    });
+  }, [vendorData]);
+  const columnPercentages = [5, 10];
+
+  const result =
+    pdfData?.map((valueArray) => {
+      return ["Sr no", ...pdfHeader]?.reduce((acc, key, index) => {
+        acc[key] = valueArray[index]; // Assign corresponding value to each key
+        return acc;
+      }, {});
+    }) || [];
+
+  const dynamicArray =
+    Object.entries(totalCount)?.map((data, index) => {
+      return {
+        name: data[0],
+        value: data[1],
+        colIndex: index + 3, // Start with column index 2 (Sector Name and Sector Total)
+      };
+    }) || [];
 
   return (
-    <div>
-      <CommonDivider label={"Sector Wise Registration Report"} />
+    <>
+      <CommonDivider label={"Parking & Type Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
-          titleName={
-            fileName
-              ? `Sector Wise Registration Report (${fileDateName})`
-              : "Sector Wise Registration Report"
+          titleName={`Parking & Type Wise Registration Report (${fileDateName})`}
+          pdfName={
+            fileName ? fileName : "Parking & Type Wise Registration Report"
           }
-          pdfName={fileName ? fileName : "Sector Wise Registration Report"}
           tableTitles={pdfTitleParam || []}
-          headerData={pdfHeader}
+          headerData={["Sr no", ...pdfHeader] || []}
+          landscape={true}
           IsLastLineBold={true}
+          IsLastColumnBold={true}
+          columnPercentages={columnPercentages}
           rows={[
             ...pdfData,
-            [
-              "",
-              "Total",
-              ...(formValue?.total_counts ? [vendorData?.totalCount || 0] : []),
-              vendorData?.totalUnits,
-            ],
+            ["Total", vendorData?.list?.length, ...valuesArray],
           ]}
         />
         <ExportToExcel
-          excelData={excelData || []}
-          fileName={fileName ? fileName : "Sector Wise Registration Report"}
-          dynamicArray={[
-            {
-              name: "Total Units",
-              value: vendorData?.totalCount,
-              colIndex: 3,
-            },
-            {
-              name: "Total Register Units",
-              value: vendorData?.totalUnits,
-              colIndex: 4,
-            },
-          ]}
+          excelData={result || []}
+          IsLastColumnBold={true}
+          fileName={
+            fileName ? fileName : "Parking & Type Wise Registration Report"
+          }
+          dynamicArray={dynamicArray || []}
         />
       </div>
-
       <Collapse
         defaultActiveKey={["1"]}
         size="small"
@@ -348,20 +368,29 @@ const SectorWiseRegistrationReport = () => {
                       name={"asset_main_type_id"}
                       label={"Select Category"}
                       placeholder={"Select Category"}
-                      options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      options={AssetMainTypeDrop || []}
                       onSelect={handleSelect}
                       allowClear={false}
                     />
                   </Col>
-                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                  <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
-                      name={"asset_type_id"}
-                      label={"Select Type"}
-                      placeholder={"Select Type"}
-                      options={AssetTypeDrop || []}
-                      // onSelect={handleTypeSelect}
+                      name={"vendor_id"}
+                      label={"Select Vendor"}
+                      placeholder={"Select Vendor"}
+                      options={VendorCatTypeDrop || []}
                     />
                   </Col>
+                  {formValue?.asset_main_type_id === "1" && (
+                    <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_ids"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={fiveTypes || []}
+                      />
+                    </Col>
+                  )}
                   <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"date_format"}
@@ -369,11 +398,6 @@ const SectorWiseRegistrationReport = () => {
                       placeholder={"Select Date Type"}
                       options={dateWeekOptions || []}
                       onSelect={handleDateSelect}
-                      onChange={(value) => {
-                        if (!value) {
-                          setShowDateRange(false);
-                        }
-                      }}
                     />
                   </Col>
                   {showDateRange && (
@@ -436,31 +460,27 @@ const SectorWiseRegistrationReport = () => {
                       </Col>
                     </>
                   )}
-                  <Col key="total_counts" xs={24} sm={12} md={6} lg={5}>
-                    <CustomSelect
-                      name={"total_counts"}
-                      label={"Select Show Total Counts"}
-                      placeholder={"Select Show Total Counts"}
-                      options={AllCountOptions || []}
-                    />
-                  </Col>
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <Button
-                      loading={SectorReport_Loading}
-                      type="button"
-                      htmlType="submit"
-                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                    >
-                      Search
-                    </Button>
-                    <Button
-                      loading={SectorReport_Loading}
-                      type="button"
-                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                      onClick={resetForm}
-                    >
-                      Reset
-                    </Button>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        loading={loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
                   </div>
                 </Row>
               </Form>
@@ -470,20 +490,17 @@ const SectorWiseRegistrationReport = () => {
       />
 
       <CustomTable
-        loading={SectorReport_Loading}
-        columns={columns || []}
+        loading={loading}
+        columns={memoizedColumns || []}
         bordered
         dataSource={vendorData || []}
-        scroll={{ x: 100, y: 400 }}
+        scroll={{ x: 1800, y: 400 }}
         tableSubheading={{
           "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
-          "Total Units": getFormatedNumber(vendorData?.totalCount) || 0,
-          "Total Register Units":
-            getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
-    </div>
+    </>
   );
 };
 
-export default SectorWiseRegistrationReport;
+export default ParkingTypeReport;

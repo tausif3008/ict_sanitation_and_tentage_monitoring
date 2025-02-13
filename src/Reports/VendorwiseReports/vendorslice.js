@@ -7,6 +7,7 @@ const initialState = {
   loading: false,
   name: null,
   vendor_data: null,
+  vendor_type: null,
 };
 
 export const vendorWiseSlice = createSlice({
@@ -24,6 +25,9 @@ export const vendorWiseSlice = createSlice({
     },
     postAllocateSector: (state, action) => {
       state.allocateSector = action.payload;
+    },
+    postVendorType: (state, action) => {
+      state.vendor_type = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -79,6 +83,37 @@ export const getAllocateSectorsData = (param) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postDrop, postAllocateSector } =
-  vendorWiseSlice.actions;
+// get vendor-type wise registration report data
+export const getVendorTypeRegData =
+  (data = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.post(
+        `${URLS?.vendor_type_wise_reg_report?.path}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      dispatch(postVendorType(res?.data));
+    } catch (error) {
+      console.error(
+        "In get vendor-type wise registration report data error",
+        error
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const {
+  setLoading,
+  postSuccess,
+  postDrop,
+  postAllocateSector,
+  postVendorType,
+} = vendorWiseSlice.actions;
 export default vendorWiseSlice.reducer;

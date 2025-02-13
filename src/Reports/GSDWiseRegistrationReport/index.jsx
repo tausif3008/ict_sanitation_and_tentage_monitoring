@@ -142,13 +142,14 @@ const GsdRegistrationReport = () => {
     }
 
     const formData = getFormData(finalData);
-    dispatch(getGSDReportData(basicUrl + uri, formData)); // Fetch the data
+    getData(formData);
+    // dispatch(getGSDReportData(uri, formData)); // Fetch the data
   };
 
   // reset form
   const resetForm = () => {
     form.resetFields();
-    getData();
+    currentData();
     setShowDateRange(false);
   };
 
@@ -192,12 +193,20 @@ const GsdRegistrationReport = () => {
   };
 
   // get current data
-  const getData = async () => {
-    dispatch(getGSDReportData(basicUrl + uri)); // Fetch the data
+  const getData = async (data = null) => {
+    dispatch(getGSDReportData(uri, data)); // Fetch the data
+  };
+
+  const currentData = async () => {
+    form.setFieldsValue({
+      asset_main_type_id: "1",
+    });
+    getData({ asset_main_type_id: 1 }); // get current data
+    handleSelect(1);
   };
 
   useEffect(() => {
-    getData();
+    currentData();
     const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     dispatch(getSectorsList()); // all sectors
@@ -334,8 +343,9 @@ const GsdRegistrationReport = () => {
                       name={"asset_main_type_id"}
                       label={"Select Category"}
                       placeholder={"Select Category"}
-                      options={AssetMainTypeDrop || []}
+                      options={AssetMainTypeDrop.slice(0, 2) || []}
                       onSelect={handleSelect}
+                      allowClear={false}
                     />
                   </Col>
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>

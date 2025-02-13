@@ -21,6 +21,9 @@ export const parkingSlice = createSlice({
     postReport: (state, action) => {
       state.report_data = action.payload;
     },
+    postParkingType: (state, action) => {
+      state.parking_type = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(revertAll, () => initialState);
@@ -78,5 +81,32 @@ export const getParkingReports = (data) => async (dispatch) => {
   }
 };
 
-export const { setLoading, postSuccess, postReport } = parkingSlice.actions;
+// get parking-type wise registration report data
+export const getParkingTypeRegData =
+  (data = null) =>
+  async (dispatch) => {
+    try {
+      dispatch(setLoading(true));
+      const res = await axiosInstance.post(
+        `${URLS?.parking_type_wise_reg_report?.path}`,
+        data,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
+      dispatch(postParkingType(res?.data));
+    } catch (error) {
+      console.error(
+        "In get parking-type wise registration report data error",
+        error
+      );
+    } finally {
+      dispatch(setLoading(false));
+    }
+  };
+
+export const { setLoading, postSuccess, postReport, postParkingType } =
+  parkingSlice.actions;
 export default parkingSlice.reducer;
