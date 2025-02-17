@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Button, Table, Image, Divider } from "antd";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import moment from "moment"; // For date formatting
 
@@ -19,6 +19,9 @@ const MonitoringReport = () => {
   const params = useParams();
   const navigate = useNavigate();
   const contentRef = useRef();
+  const location = useLocation();
+  const record = location.state?.record;
+
   const ImageUrl = localStorage.getItem("ImageUrl") || "";
 
   // Fetch monitoring details from the API
@@ -178,7 +181,14 @@ const MonitoringReport = () => {
         <div className="flex items-center gap-2 font-semibold">
           <Button
             className="bg-gray-200 rounded-full w-9 h-9"
-            onClick={() => navigate("/monitoring")}
+            onClick={() => {
+              navigate(`/monitoring`, {
+                state: {
+                  key: "monitoring",
+                  record: record,
+                },
+              });
+            }}
           >
             <ArrowLeftOutlined />
           </Button>
