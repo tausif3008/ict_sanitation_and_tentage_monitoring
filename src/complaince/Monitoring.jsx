@@ -14,6 +14,7 @@ import {
   dateOptions,
   getFormatedNumber,
   getValueLabel,
+  parkingType,
 } from "../constant/const";
 import URLS from "../urils/URLS";
 import { getData } from "../Fetch/Axios";
@@ -88,9 +89,14 @@ const Monitoring = () => {
   const asset_type_id_name = form.getFieldValue("asset_type_id");
   const vendor_id_name = form.getFieldValue("vendor_id");
   const GSD_name = form.getFieldValue("created_by");
-  const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, "");
-  const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, "");
-  const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, "");
+  const catTypeName = getValueLabel(categoryType, AssetMainTypeDrop, null);
+  const assetTypeName = getValueLabel(asset_type_id_name, AssetTypeDrop, null);
+  const vendorName = getValueLabel(vendor_id_name, VendorCatTypeDrop, null);
+  const ParkingTypeName = getValueLabel(
+    formValue?.parking_type,
+    parkingType,
+    null
+  );
 
   // handle category
   const handleSelect = (value) => {
@@ -242,6 +248,9 @@ const Monitoring = () => {
     if (assetTypeName) {
       reportName += `(${assetTypeName})`;
     }
+    if (ParkingTypeName) {
+      reportName += ` ${ParkingTypeName} `;
+    }
     return reportName
       ? `${reportName} - Monitoring Report`
       : "Toilet & Tentage Monitoring Report";
@@ -249,7 +258,13 @@ const Monitoring = () => {
 
   useEffect(() => {
     setFilesName(getReportName()); // file name
-  }, [categoryType, asset_type_id_name, vendor_id_name, GSD_name]);
+  }, [
+    categoryType,
+    asset_type_id_name,
+    vendor_id_name,
+    GSD_name,
+    ParkingTypeName,
+  ]);
 
   useEffect(() => {
     searchQuery && getDetails();
@@ -365,6 +380,9 @@ const Monitoring = () => {
       dataIndex: "sector_name",
       key: "sector_name",
       width: 110,
+      // render: (text, record) => {
+      //   return text ? text : parkingType?.[1]?.label;
+      // },
       sorter: (a, b) => {
         const extractNumber = (str) => {
           const match = str?.match(/\d+/); // Matches digits in the string
@@ -724,6 +742,14 @@ const Monitoring = () => {
                       </Col>
                     </>
                   )}
+                  <Col key="parking_type" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"parking_type"}
+                      label={"Parking Type"}
+                      placeholder={"Parking Type"}
+                      options={parkingType || []}
+                    />
+                  </Col>
                   <Col key="code" xs={24} sm={12} md={6} lg={5}>
                     <CustomInput
                       name={"code"}
@@ -800,7 +826,7 @@ const Monitoring = () => {
                       </Col>
                     </>
                   )}
-                  <Col key="clean_status" xs={24} sm={12} md={6} lg={5}>
+                  {/* <Col key="clean_status" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"clean_status"}
                       label={"Select Clean"}
@@ -815,7 +841,7 @@ const Monitoring = () => {
                       placeholder={"Select Compliant"}
                       options={CompliantStatus || []}
                     />
-                  </Col>
+                  </Col> */}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
                     <Button
                       loading={loading}
