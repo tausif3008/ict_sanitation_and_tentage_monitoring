@@ -286,6 +286,18 @@ const VendorReports = () => {
         (acc, circle) => acc + Number(circle?.toiletclean) || 0,
         0
       );
+      const manpower = vendorDetails?.list?.reduce(
+        (acc, circle) => acc + Number(circle?.cleaning_staff_yes) || 0,
+        0
+      );
+      const jetSpray = vendorDetails?.list?.reduce(
+        (acc, circle) => acc + Number(circle?.cleaned_by_jets_pray_yes) || 0,
+        0
+      );
+      const odorCount = vendorDetails?.list?.reduce(
+        (acc, circle) => acc + Number(circle?.unpleasant_yes) || 0,
+        0
+      );
 
       setCount({
         total: total,
@@ -296,6 +308,9 @@ const VendorReports = () => {
         not_compliant: not_compliant,
         toiletunclean: toiletunclean,
         toiletclean: toiletclean,
+        manpower: manpower,
+        jetSpray: jetSpray,
+        odorCount: odorCount,
       });
     }
   }, [vendorDetails?.list]);
@@ -401,8 +416,8 @@ const VendorReports = () => {
 
       const myexcelData = myFilterArray?.map((data, index) => {
         return {
-          Sr: index + 1,
-          Name: data?.name,
+          "Sr No": index + 1,
+          "Vendor Name": data?.name,
           Total: Number(data?.total) || 0,
           Registered: Number(data?.registered) || 0,
           Monitoring: Number(data?.todaysmonitaring) || 0,
@@ -423,6 +438,23 @@ const VendorReports = () => {
               ? `${Math.round(Number(data?.toiletunclean_per) || 0)}%`
               : "00%",
           "Toilet Clean": Number(data?.toiletclean) || 0,
+          Manpower: Number(data?.toiletunclean) || 0,
+          "Manpower (%)":
+            data?.cleaning_staff_yes != null
+              ? `${Math.round(Number(data?.cleaning_staff_yes) || 0)}%`
+              : "00%",
+          "Jet Spray": Number(data?.cleaned_by_jets_pray_yes) || 0,
+          "Jet Spray (%)":
+            data?.cleaned_by_jets_pray_yes_per != null
+              ? `${Math.round(
+                  Number(data?.cleaned_by_jets_pray_yes_per) || 0
+                )}%`
+              : "00%",
+          Odor: Number(data?.unpleasant_yes) || 0,
+          "Odor (%)":
+            data?.unpleasant_yes_per != null
+              ? `${Math.round(Number(data?.unpleasant_yes_per) || 0)}%`
+              : "00%",
         };
       });
       setExcelData(myexcelData);
@@ -555,276 +587,347 @@ const VendorReports = () => {
       render: renderColumn,
       sorter: (a, b) => a?.toiletclean - b?.toiletclean,
     },
+    {
+      title: "Manpower",
+      dataIndex: "cleaning_staff_yes",
+      key: "cleaning_staff_yes",
+      width: 50,
+      render: renderColumn,
+      sorter: (a, b) => a?.cleaning_staff_yes - b?.cleaning_staff_yes,
+    },
+    {
+      title: "Manpower (%)",
+      dataIndex: "cleaning_staff_yes_per",
+      key: "cleaning_staff_yes_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.cleaning_staff_yes_per - b?.cleaning_staff_yes_per,
+    },
+    {
+      title: "Jet Spray",
+      dataIndex: "cleaned_by_jets_pray_yes",
+      key: "cleaned_by_jets_pray_yes",
+      width: 50,
+      render: renderColumn,
+      sorter: (a, b) =>
+        a?.cleaned_by_jets_pray_yes - b?.cleaned_by_jets_pray_yes,
+    },
+    {
+      title: "Jet Spray (%)",
+      dataIndex: "cleaned_by_jets_pray_yes_per",
+      key: "cleaned_by_jets_pray_yes_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) =>
+        a?.cleaned_by_jets_pray_yes_per - b?.cleaned_by_jets_pray_yes_per,
+    },
+    {
+      title: "Odor",
+      dataIndex: "unpleasant_yes",
+      key: "unpleasant_yes",
+      width: 50,
+      render: renderColumn,
+      sorter: (a, b) => a?.unpleasant_yes - b?.unpleasant_yes,
+    },
+    {
+      title: "Odor (%)",
+      dataIndex: "unpleasant_yes_per",
+      key: "unpleasant_yes_per",
+      width: 50,
+      render: (text, record) => {
+        const roundedText = text ? `${Math.round(text)}%` : "00";
+        return renderColumn(roundedText, record);
+      },
+      sorter: (a, b) => a?.unpleasant_yes_per - b?.unpleasant_yes_per,
+    },
   ];
 
   // pdf header
-  const pdfHeader = [
-    "Sr No",
-    "Vendor Name",
-    "Total",
-    "Registered",
-    "Monitoring",
-    "Monitoring (%)",
-    "Compliant",
-    // "Compliant (%)",
-    "Partially Compliant",
-    // "Partially Compliant (%)",
-    "Not Compliant",
-    "Not Compliant (%)",
-    "Toilet Unclean",
-    "Toilet Unclean (%)",
-    "Toilet Clean",
-    // "Toilet Clean (%)",
-  ];
+  // const pdfHeader = [
+  //   "Sr No",
+  //   "Vendor Name",
+  //   "Total",
+  //   "Registered",
+  //   "Monitoring",
+  //   "Monitoring (%)",
+  //   "Compliant",
+  //   // "Compliant (%)",
+  //   "Partially Compliant",
+  //   // "Partially Compliant (%)",
+  //   "Not Compliant",
+  //   "Not Compliant (%)",
+  //   "Toilet Unclean",
+  //   "Toilet Unclean (%)",
+  //   "Toilet Clean",
+  //   // "Toilet Clean (%)",
+  // ];
+
+  const pdft = useMemo(() => {
+    return Object.keys(excelData?.[0] || {}); // Safely access the first object or an empty object
+  }, [excelData]);
+
+  const results = useMemo(() => {
+    if (excelData) {
+      return excelData?.map((row) => {
+        return Object.values(row); // Extract values of each object as an array
+      });
+    }
+    return []; // If excelData is undefined, return an empty array
+  }, [excelData]);
 
   // pdf data
-  const pdfData = useMemo(() => {
-    return (
-      excelData?.map((opt) => [
-        opt?.Sr,
-        opt?.Name,
-        opt?.Total,
-        opt?.Registered,
-        opt?.Monitoring,
-        opt?.["Monitoring (%)"],
-        opt?.Compliant,
-        // opt?.["Compliant (%)"],
-        opt?.["Partially Compliant"],
-        // opt?.["Partially Compliant (%)"],
-        opt?.["Not Compliant"],
-        opt?.["Not Compliant (%)"],
-        opt?.["Toilet Unclean"],
-        opt?.["Toilet Unclean (%)"],
-        opt?.["Toilet Clean"],
-        // opt?.["Toilet Clean (%)"],
-      ]) || []
-    );
-  }, [excelData]);
+  // const pdfData = useMemo(() => {
+  //   return (
+  //     excelData?.map((opt) => [
+  //       opt?.["Sr No"],
+  //       opt?.["Vendor Name"],
+  //       opt?.Total,
+  //       opt?.Registered,
+  //       opt?.Monitoring,
+  //       opt?.["Monitoring (%)"],
+  //       opt?.Compliant,
+  //       // opt?.["Compliant (%)"],
+  //       opt?.["Partially Compliant"],
+  //       // opt?.["Partially Compliant (%)"],
+  //       opt?.["Not Compliant"],
+  //       opt?.["Not Compliant (%)"],
+  //       opt?.["Toilet Unclean"],
+  //       opt?.["Toilet Unclean (%)"],
+  //       opt?.["Toilet Clean"],
+  //       // opt?.["Toilet Clean (%)"],
+  //     ]) || []
+  //   );
+  // }, [excelData]);
 
   return (
     <div>
       <CommonDivider label={"Vendor-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
-        <div>
-          <ExportToPDF
-            titleName={`Vendor-Wise Monitoring Report (${dayjs(
-              formValue?.date
-            ).format("DD-MMM-YYYY")})`}
-            // titleName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
-            pdfName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
-            headerData={pdfHeader}
-            IsLastLineBold={true}
-            landscape={true}
-            tableTitles={pdfTitleParam || []}
-            columnProperties={
-              formValue?.order_by === "monitaring_per" ? [5] : []
-            } // 6 columns
-            redToGreenProperties={
-              formValue?.order_by === "not_compliant_per"
-                ? [9]
-                : formValue?.order_by === "toiletunclean_per"
-                ? [11]
-                : []
-            } // 10, 12 columns  100 to 0
-            rows={[
-              ...pdfData,
-              [
-                "",
-                "Total",
-                count?.total,
-                count?.registered,
-                count?.todaysmonitaring,
-                "",
-                count?.compliant,
-                // "",
-                count?.partially_compliant,
-                // "",
-                count?.not_compliant,
-                "",
-                count?.toiletunclean,
-                "",
-                count?.toiletclean,
-                // "",
-              ],
-            ]}
-          />
-        </div>
-        <div>
-          <ExportToExcel
-            excelData={excelData || []}
-            columnProperties={
-              formValue?.order_by === "monitaring_per" ? [6] : []
-            } // 6 columns
-            redToGreenProperties={
-              formValue?.order_by === "not_compliant_per"
-                ? [10]
-                : formValue?.order_by === "toiletunclean_per"
-                ? [12]
-                : []
-            }
-            fileName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
-            dynamicArray={[
-              {
-                name: "Total",
-                value: count?.total,
-                colIndex: 3,
-              },
-              {
-                name: "Register Unit",
-                value: count?.registered,
-                colIndex: 4,
-              },
-              {
-                name: "Monitoring",
-                value: count?.todaysmonitaring,
-                colIndex: 5,
-              },
-              {
-                name: "Compliant",
-                value: count?.compliant,
-                colIndex: 7,
-              },
-              {
-                name: "Partialy Compliant",
-                value: count?.partially_compliant,
-                colIndex: 8,
-              },
-              {
-                name: "Not Compliant",
-                value: count?.not_compliant,
-                colIndex: 9,
-              },
-              {
-                name: "Unclean",
-                value: count?.toiletunclean,
-                colIndex: 11,
-              },
-              {
-                name: "Clean",
-                value: count?.toiletclean,
-                colIndex: 13,
-              },
-            ]}
-          />
-        </div>
-      </div>
-
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
+        <ExportToPDF
+          titleName={`Vendor-Wise Monitoring Report (${dayjs(
+            formValue?.date
+          ).format("DD-MMM-YYYY")})`}
+          // titleName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
+          pdfName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
+          headerData={pdft}
+          applyTableStyles={true}
+          tableFont={7}
+          // headerData={pdfHeader}
+          IsLastLineBold={true}
+          landscape={true}
+          tableTitles={pdfTitleParam || []}
+          columnProperties={formValue?.order_by === "monitaring_per" ? [5] : []} // 6 columns
+          redToGreenProperties={
+            formValue?.order_by === "not_compliant_per"
+              ? [9]
+              : formValue?.order_by === "toiletunclean_per"
+              ? [11]
+              : []
+          } // 10, 12 columns  100 to 0
+          rows={[
+            ...results,
+            // ...pdfData,
+            [
+              "",
+              "Total",
+              count?.total,
+              count?.registered,
+              count?.todaysmonitaring,
+              "",
+              count?.compliant,
+              // "",
+              count?.partially_compliant,
+              // "",
+              count?.not_compliant,
+              "",
+              count?.toiletunclean,
+              "",
+              count?.toiletclean,
+              count?.manpower,
+              "",
+              count?.jetSpray,
+              "",
+              count?.odorCount,
+              "",
+              // "",
+            ],
+          ]}
+        />
+        <ExportToExcel
+          excelData={excelData || []}
+          columnProperties={formValue?.order_by === "monitaring_per" ? [6] : []} // 6 columns
+          redToGreenProperties={
+            formValue?.order_by === "not_compliant_per"
+              ? [10]
+              : formValue?.order_by === "toiletunclean_per"
+              ? [12]
+              : []
+          }
+          fileName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
+          dynamicArray={[
             {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 0]} align="middle">
-                    <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_main_type_id"}
-                        allowClear={false}
-                        label={"Select Category"}
-                        placeholder={"Select Category"}
-                        onSelect={handleSelect}
-                        options={AssetMainTypeDrop?.slice(0, 2) || []}
-                      />
-                    </Col>
-                    <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"asset_type_id"}
-                        label={"Select Asset Type"}
-                        placeholder={"Select Asset Type"}
-                        options={AssetTypeDrop || []}
-                        onSelect={handleTypeSelect}
-                        onChange={(value) => {
-                          setShowTypeOption(value);
-                        }}
-                      />
-                    </Col>
-                    <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"vendor_id"}
-                        label={"Select Vendor"}
-                        placeholder={"Select Vendor"}
-                        options={VendorCatTypeDrop || []}
-                      />
-                    </Col>
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"sector_id"}
-                        label={"Select Sector"}
-                        placeholder={"Select Sector"}
-                        options={SectorListDrop || []}
-                      />
-                    </Col>
-                    <Col key="date" xs={24} sm={12} md={6} lg={5}>
-                      <CustomDatepicker
-                        name={"date"}
-                        label={"Date"}
-                        className="w-full"
-                        placeholder={"Date"}
-                      />
-                    </Col>
-                    <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"order_by"}
-                        label={"Order By"}
-                        allowClear={false}
-                        placeholder={"Select Order By"}
-                        options={OrderBy || []}
-                      />
-                    </Col>
-                    {formValue?.asset_main_type_id === "1" &&
-                      !showTypeOption && (
-                        <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
-                          <CustomSelect
-                            name={"asset_type_ids"}
-                            label={"Select Type"}
-                            placeholder={"Select Type"}
-                            options={fiveTypes || []}
-                          />
-                        </Col>
-                      )}
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={VendorReport_Loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={VendorReport_Loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
-                    </div>
-                  </Row>
-                </Form>
-              ),
+              name: "Total",
+              value: count?.total,
+              colIndex: 3,
+            },
+            {
+              name: "Register Unit",
+              value: count?.registered,
+              colIndex: 4,
+            },
+            {
+              name: "Monitoring",
+              value: count?.todaysmonitaring,
+              colIndex: 5,
+            },
+            {
+              name: "Compliant",
+              value: count?.compliant,
+              colIndex: 7,
+            },
+            {
+              name: "Partialy Compliant",
+              value: count?.partially_compliant,
+              colIndex: 8,
+            },
+            {
+              name: "Not Compliant",
+              value: count?.not_compliant,
+              colIndex: 9,
+            },
+            {
+              name: "Unclean",
+              value: count?.toiletunclean,
+              colIndex: 11,
+            },
+            {
+              name: "Clean",
+              value: count?.toiletclean,
+              colIndex: 13,
             },
           ]}
         />
       </div>
+
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 0]} align="middle">
+                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_main_type_id"}
+                      allowClear={false}
+                      label={"Select Category"}
+                      placeholder={"Select Category"}
+                      onSelect={handleSelect}
+                      options={AssetMainTypeDrop?.slice(0, 2) || []}
+                    />
+                  </Col>
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Asset Type"}
+                      placeholder={"Select Asset Type"}
+                      options={AssetTypeDrop || []}
+                      onSelect={handleTypeSelect}
+                      onChange={(value) => {
+                        setShowTypeOption(value);
+                      }}
+                    />
+                  </Col>
+                  <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"vendor_id"}
+                      label={"Select Vendor"}
+                      placeholder={"Select Vendor"}
+                      options={VendorCatTypeDrop || []}
+                    />
+                  </Col>
+                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"sector_id"}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={SectorListDrop || []}
+                    />
+                  </Col>
+                  <Col key="date" xs={24} sm={12} md={6} lg={5}>
+                    <CustomDatepicker
+                      name={"date"}
+                      label={"Date"}
+                      className="w-full"
+                      placeholder={"Date"}
+                    />
+                  </Col>
+                  <Col key="order_by" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"order_by"}
+                      label={"Order By"}
+                      allowClear={false}
+                      placeholder={"Select Order By"}
+                      options={OrderBy || []}
+                    />
+                  </Col>
+                  {formValue?.asset_main_type_id === "1" && !showTypeOption && (
+                    <Col key="asset_type_ids" xs={24} sm={12} md={6} lg={5}>
+                      <CustomSelect
+                        name={"asset_type_ids"}
+                        label={"Select Type"}
+                        placeholder={"Select Type"}
+                        options={fiveTypes || []}
+                      />
+                    </Col>
+                  )}
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <div>
+                      <Button
+                        loading={VendorReport_Loading}
+                        type="button"
+                        htmlType="submit"
+                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                      >
+                        Search
+                      </Button>
+                    </div>
+                    <div>
+                      <Button
+                        loading={VendorReport_Loading}
+                        type="button"
+                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                        onClick={resetForm}
+                      >
+                        Reset
+                      </Button>
+                    </div>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
 
       <Table
         loading={VendorReport_Loading || SectorReport_Loading}
@@ -832,7 +935,7 @@ const VendorReports = () => {
         dataSource={vendorDetails?.list || []}
         rowKey="sector_id"
         pagination={{ pageSize: 50 }}
-        scroll={{ x: 1800, y: 400 }}
+        scroll={{ x: 2000, y: 400 }}
         bordered
         footer={() => (
           <div className="flex justify-between">
@@ -861,6 +964,11 @@ const VendorReports = () => {
             <strong>
               Toilet Clean: {getFormatedNumber(count?.toiletclean) || 0}
             </strong>
+            <strong>Manpower: {getFormatedNumber(count?.manpower) || 0}</strong>
+            <strong>
+              Jet Spray: {getFormatedNumber(count?.jetSpray) || 0}
+            </strong>
+            <strong>Odor: {getFormatedNumber(count?.odorCount) || 0}</strong>
           </div>
         )}
       />
