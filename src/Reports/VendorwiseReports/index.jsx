@@ -648,31 +648,11 @@ const VendorReports = () => {
     },
   ];
 
-  // pdf header
-  // const pdfHeader = [
-  //   "Sr No",
-  //   "Vendor Name",
-  //   "Total",
-  //   "Registered",
-  //   "Monitoring",
-  //   "Monitoring (%)",
-  //   "Compliant",
-  //   // "Compliant (%)",
-  //   "Partially Compliant",
-  //   // "Partially Compliant (%)",
-  //   "Not Compliant",
-  //   "Not Compliant (%)",
-  //   "Toilet Unclean",
-  //   "Toilet Unclean (%)",
-  //   "Toilet Clean",
-  //   // "Toilet Clean (%)",
-  // ];
-
-  const pdft = useMemo(() => {
+  const pdfHeader = useMemo(() => {
     return Object.keys(excelData?.[0] || {}); // Safely access the first object or an empty object
   }, [excelData]);
 
-  const results = useMemo(() => {
+  const pdfData = useMemo(() => {
     if (excelData) {
       return excelData?.map((row) => {
         return Object.values(row); // Extract values of each object as an array
@@ -680,30 +660,6 @@ const VendorReports = () => {
     }
     return []; // If excelData is undefined, return an empty array
   }, [excelData]);
-
-  // pdf data
-  // const pdfData = useMemo(() => {
-  //   return (
-  //     excelData?.map((opt) => [
-  //       opt?.["Sr No"],
-  //       opt?.["Vendor Name"],
-  //       opt?.Total,
-  //       opt?.Registered,
-  //       opt?.Monitoring,
-  //       opt?.["Monitoring (%)"],
-  //       opt?.Compliant,
-  //       // opt?.["Compliant (%)"],
-  //       opt?.["Partially Compliant"],
-  //       // opt?.["Partially Compliant (%)"],
-  //       opt?.["Not Compliant"],
-  //       opt?.["Not Compliant (%)"],
-  //       opt?.["Toilet Unclean"],
-  //       opt?.["Toilet Unclean (%)"],
-  //       opt?.["Toilet Clean"],
-  //       // opt?.["Toilet Clean (%)"],
-  //     ]) || []
-  //   );
-  // }, [excelData]);
 
   return (
     <div>
@@ -713,12 +669,10 @@ const VendorReports = () => {
           titleName={`Vendor-Wise Monitoring Report (${dayjs(
             formValue?.date
           ).format("DD-MMM-YYYY")})`}
-          // titleName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
           pdfName={filesName ? filesName : `Vendor-Wise Monitoring Report`}
-          headerData={pdft}
+          headerData={pdfHeader}
           applyTableStyles={true}
           tableFont={7}
-          // headerData={pdfHeader}
           IsLastLineBold={true}
           landscape={true}
           tableTitles={pdfTitleParam || []}
@@ -731,7 +685,7 @@ const VendorReports = () => {
               : []
           } // 10, 12 columns  100 to 0
           rows={[
-            ...results,
+            ...pdfData,
             // ...pdfData,
             [
               "",
@@ -810,6 +764,21 @@ const VendorReports = () => {
               name: "Clean",
               value: count?.toiletclean,
               colIndex: 13,
+            },
+            {
+              name: "Manpower",
+              value: count?.manpower,
+              colIndex: 14,
+            },
+            {
+              name: "Jet Spray",
+              value: count?.jetSpray,
+              colIndex: 16,
+            },
+            {
+              name: "Odor",
+              value: count?.odorCount,
+              colIndex: 18,
             },
           ]}
         />
@@ -938,7 +907,7 @@ const VendorReports = () => {
         scroll={{ x: 2000, y: 400 }}
         bordered
         footer={() => (
-          <div className="flex justify-between">
+          <div className="flex justify-between gap-1">
             <strong>
               Total Quantity: {getFormatedNumber(count?.total) || 0}
             </strong>
