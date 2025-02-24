@@ -23,18 +23,31 @@ import VehicleReports from "../Reports/VehicleReport";
 const WastesDashboard = () => {
   return (
     <div className="grid grid-cols-4 mx-3 mt-3 gap-3">
-      <div className="col-span-4 grid lg:grid-cols-7 gap-3">
+      <div className="w-full border lg:col-span-1 col-span-4 shadow-md bg-white rounded-md">
+        <CompactorsTippers></CompactorsTippers>
+      </div>
+      <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md">
+        <VehicleReports modalName={"Vehicle Details"} showPdf={false} />
+      </div>
+
+      {/* <div className="col-span-4 grid lg:grid-cols-7 gap-3">
         <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md w-full">
           <CompactorsTippers></CompactorsTippers>
         </div>
         <div className="w-full border lg:col-span-4 col-span-4 shadow-md bg-white rounded-md">
           <AverageCollectionTimeChart></AverageCollectionTimeChart>
         </div>
+      </div> */}
+
+      {/* <div className="lg:col-span-3 col-span-4 border shadow-md bg-white rounded-md w-full"> */}
+      {/* <div className="col-span-1 shadow-md bg-white h-auto border rounded-md w-full">
+        <CompactorsTippers></CompactorsTippers>
       </div>
-      <div className="col-span-4 shadow-md bg-white h-auto rounded-md">
-        {/* <FacilityDetails></FacilityDetails> */}
+      <div className="col-span-3 shadow-md bg-white h-auto rounded-md">
         <VehicleReports modalName={"Vehicle Details"} showPdf={false} />
-      </div>
+      </div> */}
+      {/* <FacilityDetails></FacilityDetails> */}
+
       <div className="col-span-4 shadow-md bg-white rounded-md">
         <VehicleTrackingMapData></VehicleTrackingMapData>
       </div>
