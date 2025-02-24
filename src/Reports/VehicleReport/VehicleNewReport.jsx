@@ -18,12 +18,13 @@ import ExportToPDF from "../reportFile";
 import URLS from "../../urils/URLS";
 import { getMonitoringAgent } from "../../complaince/monitoringSlice";
 import MonitoringSelector from "../../complaince/monitoringSelector";
-import { getAttendanceReports } from "./Slice/attendanceslice";
-import AttendanceSelector from "./Slice/attendanceSelector";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
+import { getAttendanceReports } from "../Attendance/Slice/attendanceslice";
+import AttendanceSelector from "../Attendance/Slice/attendanceSelector";
+import CustomInput from "../../commonComponents/CustomInput";
 
-const AttendanceReport = () => {
+const VehicleImeiReport = () => {
   const [showDateRange, setShowDateRange] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [tableData, setTableData] = useState({
@@ -161,10 +162,10 @@ const AttendanceReport = () => {
   };
 
   useEffect(() => {
-    getCurrentData();
-    dispatch(getSectorsList()); // all sectors
-    const urls = URLS?.monitoringAgent?.path;
-    dispatch(getMonitoringAgent(urls)); // monitoring agent list
+    // getCurrentData();
+    // dispatch(getSectorsList()); // all sectors
+    // const urls = URLS?.monitoringAgent?.path;
+    // dispatch(getMonitoringAgent(urls)); // monitoring agent list
   }, []);
 
   const dynamicColumns = useMemo(() => {
@@ -412,7 +413,7 @@ const AttendanceReport = () => {
 
   return (
     <>
-      <CommonDivider label={"Attendance Report"} />
+      <CommonDivider label={"Vehicle IMEI Wise Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
           titleName={`${fileName}`}
@@ -454,88 +455,67 @@ const AttendanceReport = () => {
                 key="form1"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
-                  <CustomSelect
-                    name={"user_id"}
-                    label={"Select GSD"}
-                    placeholder={"Select GSD"}
-                    options={monitoringAgentDrop || []}
-                    // search dropdown
-                    isOnSearchFind={true}
-                    apiAction={getMonitoringAgent}
-                    onSearchUrl={`${URLS?.monitoringAgent?.path}&keywords=`}
+                  <CustomInput
+                    label="IMEI Number"
+                    name="imei"
+                    placeholder="Enter IMEI Number"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please Enter IMEI Number!",
+                      },
+                    ]}
                   />
-                  <CustomSelect
-                    name={"allocate_sector_id"}
-                    label={"Select Sector"}
-                    placeholder={"Select Sector"}
-                    allowClear={isSmoUser ? false : true}
-                    options={isSmoUser ? SectorArray : SectorListDrop || []}
+
+                  <CustomDatepicker
+                    name={"form_date"}
+                    label={"From Date"}
+                    className="w-full"
+                    placeholder={"From Date"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a start date!",
+                      },
+                    ]}
+                    onChange={(date) => {
+                      const dayjsObjectFrom = dayjs(date?.$d);
+                      const startDate = dayjsObjectFrom;
+
+                      const dayjsObjectTo = dayjs(
+                        form.getFieldValue("to_date")?.$d
+                      );
+                      const endDate = dayjsObjectTo;
+
+                      // Condition 1: If startDate is after endDate, set end_time to null
+                      if (startDate.isAfter(endDate)) {
+                        form.setFieldValue("to_date", null);
+                      }
+
+                      // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                      const daysDifference = endDate.diff(startDate, "days");
+                      if (daysDifference > 7) {
+                        form.setFieldValue("to_date", null);
+                      } else {
+                        // If the difference is within the allowed range, you can keep the value or process further if needed.
+                      }
+
+                      setStartDate(startDate.format("YYYY-MM-DD"));
+                    }}
                   />
-                  <CustomSelect
-                    name={"date_format"}
-                    label={"Select Date Type"}
-                    placeholder={"Select Date Type"}
-                    onSelect={handleDateSelect}
-                    onChange={handleDateSelect}
-                    options={dateWeekOptions || []}
-                    allowClear={false}
+                  <CustomDatepicker
+                    name={"to_date"}
+                    label={"To Date"}
+                    className="w-full"
+                    placeholder={"To Date"}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please select a end date!",
+                      },
+                    ]}
+                    disabledDate={disabledDate}
                   />
-                  {showDateRange && (
-                    <>
-                      <CustomDatepicker
-                        name={"form_date"}
-                        label={"From Date"}
-                        className="w-full"
-                        placeholder={"From Date"}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select a start date!",
-                          },
-                        ]}
-                        onChange={(date) => {
-                          const dayjsObjectFrom = dayjs(date?.$d);
-                          const startDate = dayjsObjectFrom;
-
-                          const dayjsObjectTo = dayjs(
-                            form.getFieldValue("to_date")?.$d
-                          );
-                          const endDate = dayjsObjectTo;
-
-                          // Condition 1: If startDate is after endDate, set end_time to null
-                          if (startDate.isAfter(endDate)) {
-                            form.setFieldValue("to_date", null);
-                          }
-
-                          // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                          const daysDifference = endDate.diff(
-                            startDate,
-                            "days"
-                          );
-                          if (daysDifference > 7) {
-                            form.setFieldValue("to_date", null);
-                          } else {
-                            // If the difference is within the allowed range, you can keep the value or process further if needed.
-                          }
-
-                          setStartDate(startDate.format("YYYY-MM-DD"));
-                        }}
-                      />
-                      <CustomDatepicker
-                        name={"to_date"}
-                        label={"To Date"}
-                        className="w-full"
-                        placeholder={"To Date"}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select a end date!",
-                          },
-                        ]}
-                        disabledDate={disabledDate}
-                      />
-                    </>
-                  )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
                     <Button
                       loading={loading}
@@ -576,4 +556,4 @@ const AttendanceReport = () => {
   );
 };
 
-export default AttendanceReport;
+export default VehicleImeiReport;

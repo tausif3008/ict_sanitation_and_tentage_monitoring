@@ -71,6 +71,7 @@ export const inspections_reports = ["1", "2", "3", "4", "5", "9"];
 export const gsd_wise_regi_reports = ["1", "2", "3", "4", "5"];
 export const gsd_wise_monitoring_reports = ["1", "2", "3", "4", "5", "9"];
 export const vehicle_reports = ["1", "2", "3", "4", "5"];
+export const vehicle_imei_reports = ["1", "2", "3", "4", "5"];
 export const vendor_wise_regi_reports = ["1", "2", "3", "4", "5"];
 export const sector_wise_regi_reports = ["1", "2", "3", "4", "5"];
 export const sector_type_wise_regi_reports = ["1", "2", "3", "4", "5"];
