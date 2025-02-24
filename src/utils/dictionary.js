@@ -337,6 +337,10 @@ export const DICT = {
     en: "Sanitation Toilets Count",
     hi: "स्वच्छता शौचालय गिनती",
   },
+  vehicle_count: {
+    en: "Vehicle Count",
+    hi: "वाहन गणना",
+  },
   Partial_Complaint: {
     en: "Partial Complaint",
     hi: "आंशिक शिकायत",

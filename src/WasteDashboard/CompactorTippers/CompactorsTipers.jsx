@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useDispatch } from "react-redux";
+import { useOutletContext } from "react-router";
 import { Icon } from "@iconify/react/dist/iconify.js";
 // import ReactApexChart from "react-apexcharts";
 
@@ -11,10 +12,12 @@ import {
 import ViewVendorsSectors from "../../register/AssetType/viewVendors";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import { getFormatedNumber } from "../../constant/const";
+import UserCard from "../../commonComponents/DashboardCard/UserCard";
 // import { vendorColumn } from "../../constant/const";
 // import { icon } from "leaflet";
 
 const CompactorsTippers = () => {
+  const [dict, lang] = useOutletContext();
   const [showVendors, setshowVendors] = useState(false);
   const [showVendorsList, setVendorsList] = useState([]); // vendor list
   const [rowRecord, setRowRecord] = useState(); // vendor list all quantity
@@ -283,7 +286,9 @@ const CompactorsTippers = () => {
 
   return (
     <>
-      <div className="flex  flex-col p-4 w-full  h-full">
+      <UserCard />
+      <div className="flex flex-col p-4 w-full  h-full">
+        <div className="text-xl font-bold mb-4">{dict.vehicle_count[lang]}</div>
         {/* <div className="flex justify-between gap-3 w-full">
           <div
             className="border flex justify-center text-start p-2 flex-col w-full"
@@ -326,7 +331,8 @@ const CompactorsTippers = () => {
             </div>
           </div>
         </div> */}
-        <div className="grid md:grid-cols-2 h-full gap-4">
+        <div className="grid grid-cols-1 lg:grid-cols-1 md:grid-cols-2 sm:grid-cols-2 gap-4">
+          {/* <div className="grid md:grid-cols-2 lg:grid-cols-4 h-full gap-4"> */}
           {mergedArray?.map((data) => {
             return (
               <div
@@ -344,7 +350,7 @@ const CompactorsTippers = () => {
                       <span className={`${data?.textColor}`}>{data?.name}</span>
                     </div>
                     <h2 className="text-2xl text-blue-500 font-bold">
-                      {data?.total_quantity || 0}
+                      {getFormatedNumber(data?.total_quantity) || 0}
                     </h2>
                   </div>
                 </div>
@@ -374,7 +380,7 @@ const CompactorsTippers = () => {
         }
         column={vendorColumns || []}
         footer={() => (
-          <div className="flex justify-end gap-2">
+          <div className="flex justify-end gap-3">
             <strong>
               Total Allotted Quantity:{" "}
               {getFormatedNumber(allQuantity?.alloted) || 0}

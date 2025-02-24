@@ -328,6 +328,12 @@ const AssetsList = () => {
     ...(categoryId === "2"
       ? [
           {
+            title: "Sector Name",
+            dataIndex: "sector_name",
+            key: "sector_name",
+            width: 80,
+          },
+          {
             title: "Sanstha Name",
             dataIndex: "sanstha_name_hi",
             key: "sanstha_name_hi",
@@ -337,18 +343,17 @@ const AssetsList = () => {
         ]
       : [
           {
-            title: "Sector Name",
+            title: "Sector / Parking",
             dataIndex: "sector_name",
             key: "sector_name",
-            render: (text) => text || "",
-            width: 80,
-          },
-          {
-            title: "Parking Name",
-            dataIndex: "parking_name",
-            key: "parking_name",
-            render: (text) => text || "",
-            width: 120,
+            render: (text, record) => {
+              return text
+                ? text
+                : record?.parking_name
+                ? record.parking_name
+                : "";
+            },
+            width: 130,
           },
         ]),
     {
@@ -455,9 +460,9 @@ const AssetsList = () => {
     ...(formValue?.vendor_id ? [] : ["Vendor Name"]),
     "GSD Name",
     "GSD Phone",
-    ...(formValue?.sector_id ? [] : ["Sector"]),
-    ...(formValue?.asset_main_type_id !== "1" ? ["Sanstha"] : []),
-    ...(formValue?.asset_main_type_id !== "2" ? ["Parking"] : []),
+    ...(formValue?.asset_main_type_id === "1" ? ["Sector / Parking"] : []),
+    ...(formValue?.asset_main_type_id === "2" ? ["Sector"] : []),
+    ...(formValue?.asset_main_type_id === "2" ? ["Sanstha"] : []),
     "Code",
     "Unit",
     "Register Date",
@@ -537,12 +542,18 @@ const AssetsList = () => {
           ...(formValue?.vendor_id ? [] : [data?.vendor_name]),
           data?.agent_name,
           data?.agent_phone,
-          ...(formValue?.sector_id ? [] : [data?.sector_name]),
-          ...(formValue?.asset_main_type_id !== "1"
-            ? [data?.sanstha_name]
+          ...(formValue?.asset_main_type_id === "1"
+            ? [
+                data?.sector_name
+                  ? data?.sector_name
+                  : data?.parking_name
+                  ? data?.parking_name
+                  : "",
+              ]
             : []),
-          ...(formValue?.asset_main_type_id !== "2"
-            ? [data?.parking_name]
+          ...(formValue?.asset_main_type_id === "2" ? [data?.sector_name] : []),
+          ...(formValue?.asset_main_type_id === "2"
+            ? [data?.sanstha_name]
             : []),
           Number(data?.code),
           Number(data?.unit),
@@ -584,7 +595,7 @@ const AssetsList = () => {
   };
 
   return (
-    <div className="">
+    <>
       <CommonDivider label={"Toilets & Tentage List"}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
         <Button
@@ -852,7 +863,7 @@ const AssetsList = () => {
           </Form.Item>
         </Form>
       </Modal>
-    </div>
+    </>
   );
 };
 
