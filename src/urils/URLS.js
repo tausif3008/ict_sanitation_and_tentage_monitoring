@@ -142,6 +142,8 @@ const URLS = {
     path: "/vendor-proposed-sectors",
     version: "5.43",
   },
+
+  // Vehicle
   vehicles: {
     path: "/vehicles",
     version: 5.43,
@@ -152,6 +154,10 @@ const URLS = {
   },
   editVehicle: {
     path: "/vehicles/edit",
+    version: 5.43,
+  },
+  getVehicleReports: {
+    path: "/vehicles/distance-report",
     version: 5.43,
   },
 
