@@ -24,22 +24,16 @@ export const VehicleReport = createSlice({
   },
 });
 
-// get vehicle report data
-export const getVehicleReportData = (data) => async (dispatch) => {
+// get vehicle IMEI report data
+export const getVehicleImeiReportData = (param) => async (dispatch) => {
   try {
     dispatch(setLoading(true));
-    const res = await axiosInstance.post(
-    //   `${URLS?.getGsdMonitoringData?.path}`,
-    //   data,
-    //   {
-    //     headers: {
-    //       "Content-Type": "multipart/form-data",
-    //     },
-    //   }
-    );
+    const res = await axiosInstance.get(`${URLS?.getVehicleReports?.path}`, {
+      params: param,
+    });
     dispatch(postSuccess(res?.data));
   } catch (error) {
-    console.error("In get vehicle report data error", error);
+    console.error("In get vehicle IMEI report data error", error);
   } finally {
     dispatch(setLoading(false));
   }
