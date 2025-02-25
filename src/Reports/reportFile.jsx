@@ -28,7 +28,7 @@ const ExportToPDF = ({
 }) => {
   const exportToPDF = () => {
     if (rows && rows?.length === 0) {
-      message?.error("Data is not available");
+      message?.error("No data available.");
       return "";
     }
     const doc = new jsPDF(landscape ? "landscape" : "");
