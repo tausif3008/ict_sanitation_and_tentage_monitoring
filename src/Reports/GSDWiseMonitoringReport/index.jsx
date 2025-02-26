@@ -341,7 +341,7 @@ const GsdWiseMonitoringReport = () => {
   }, [excelData]);
 
   return (
-    <div>
+    <>
       <CommonDivider label={"GSD Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -435,26 +435,22 @@ const GsdWiseMonitoringReport = () => {
                     />
                   </Col>
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={gsd_monitoringLoader}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={gsd_monitoringLoader}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={gsd_monitoringLoader}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={gsd_monitoringLoader}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -477,7 +473,7 @@ const GsdWiseMonitoringReport = () => {
         }}
         pagination={true}
       />
-    </div>
+    </>
   );
 };
 

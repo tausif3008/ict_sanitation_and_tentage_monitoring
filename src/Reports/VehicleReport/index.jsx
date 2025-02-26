@@ -220,20 +220,6 @@ const VehicleReports = ({ modalName = "Vehicle Report", showPdf = true }) => {
     ];
   }, [formValue]);
 
-  // const columnPercentages = [
-  //   4, // Sr No (10%)
-  //   13, // User Type (15%)
-  //   15, // Name (20%)
-  //   10, // Phone (15%)
-  //   20, // Email (20%)
-  //   20, // Address (10%)
-  //   9, // City (9%)
-  //   9, // State (5%)
-  //   // 0   // Country (0%) – if unused, no space is allocated for this column
-  // ];
-
-  // excel && pdf file
-
   const exportToFile = async (isExcel) => {
     const dayjsDate = new Date(formValue?.date);
     const formattedDate = moment(dayjsDate).format("YYYY-MM-DD");

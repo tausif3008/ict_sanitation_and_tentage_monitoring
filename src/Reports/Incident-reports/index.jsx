@@ -21,12 +21,10 @@ import {
 } from "../../register/AssetType/AssetTypeSlice";
 import { generateSearchQuery } from "../../urils/getSearchQuery";
 import { dateWeekOptions, getValueLabel } from "../../constant/const";
-// import ExportToExcel from "../ExportToExcel";
 import CustomSelect from "../../commonComponents/CustomSelect";
 import CustomInput from "../../commonComponents/CustomInput";
 import CustomDatepicker from "../../commonComponents/CustomDatepicker";
 import { exportToExcel } from "../ExportExcelFuntion";
-// import { ExportPdfFunction } from "../ExportPdfFunction";
 import { getPdfExcelData } from "../../register/asset/AssetsSlice";
 import VendorSectorSelectors from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSelectors";
 import { getSectorsList } from "../../vendor-section-allocation/vendor-sector/Slice/vendorSectorSlice";
@@ -89,15 +87,6 @@ const IncidentReports = () => {
     const finalData = {
       ...values,
     };
-    // if (values?.incidence_at === "Today") {
-    //   finalData.incidence_form_date = moment().format("YYYY-MM-DD");
-    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
-    // } else if (values?.incidence_at === "Week") {
-    //   finalData.incidence_form_date = moment()
-    //     .subtract(8, "days")
-    //     .format("YYYY-MM-DD");
-    //   finalData.incidence_to_date = moment().format("YYYY-MM-DD");
-    // } else
 
     if (values?.incidence_form_date || values?.incidence_to_date) {
       const dayjsObjectFrom = dayjs(values?.incidence_form_date?.$d);
@@ -173,7 +162,7 @@ const IncidentReports = () => {
       uri = uri + `to_user_id=${user_Id}`;
     }
     if (params.page) {
-      uri = uri + params.page;
+      uri = user_Id ? uri + "&" + params.page : uri + params.page;
     }
     if (params.per_page) {
       uri = uri + "&" + params.per_page;
@@ -224,7 +213,6 @@ const IncidentReports = () => {
     dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     dispatch(getSectorsList()); // all sectors
     dispatch(getQuestionList()); // get question
-
     getTodayData();
 
     if (IsVendor) {
@@ -313,16 +301,6 @@ const IncidentReports = () => {
         return text ? moment(text).format("DD-MMM-YYYY hh:mm A") : "";
       },
     },
-    // {
-    //   title: "Resolved Date",
-    //   dataIndex: "resolved_at",
-    //   key: "resolved_at",
-    //   width: 180,
-    //   render: (text, record) => {
-    //     const date = moment(text).format("DD-MMM-YYYY");
-    //     return text ? (date === "Invalid date" ? "NA" : date) : "";
-    //   },
-    // },
     {
       title: "Code",
       dataIndex: "code",
@@ -344,12 +322,6 @@ const IncidentReports = () => {
       key: "question_en",
       width: 270,
     },
-    // {
-    //   title: "SLA Time",
-    //   dataIndex: "sla",
-    //   key: "sla",
-    //   width: 100,
-    // },
   ];
 
   // excel && pdf file
@@ -399,39 +371,13 @@ const IncidentReports = () => {
             colIndex: 4,
           },
         ]);
-
-      // const pdfData =
-      //   !isExcel &&
-      //   res?.data?.listings?.map((data, index) => [
-      //     index + 1,
-      //     data?.asset_type_name,
-      //     data?.asset_code,
-      //     data?.unit_no,
-      //     data?.agent_name ? data?.agent_name : "GSD",
-      //     data?.vendor_name,
-      //     data?.sector_name,
-      //     data?.circle_name,
-      //     data?.created_at
-      //       ? moment(data?.created_at).format("DD-MMM-YYYY hh:mm A")
-      //       : "",
-      //   ]);
-
-      // Call the export function
-      // !isExcel &&
-      //   ExportPdfFunction(
-      //     "Toilet & Tentage Monitoring",
-      //     filesName,
-      //     "pdfHeader",
-      //     pdfData,
-      //     true
-      //   );
     } catch (error) {
       message.error(`Error occurred: ${error.message || "Unknown error"}`);
     }
   };
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Incident-Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         {/* <ExportToExcel
@@ -590,28 +536,23 @@ const IncidentReports = () => {
                       options={QuestionDrop || []}
                     />
                   </Col>
-
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -629,7 +570,7 @@ const IncidentReports = () => {
         subtotalName={"Total Units"}
         subtotalCount={incidentData?.totalUnits}
       ></CommonTable>
-    </div>
+    </>
   );
 };
 

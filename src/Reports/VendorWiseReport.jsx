@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button } from "antd";
 import { useNavigate } from "react-router-dom";
 import CommonDivider from "../commonComponents/CommonDivider";
-import { getData, postData } from "../Fetch/Axios";
+import { postData } from "../Fetch/Axios";
 import URLS from "../urils/URLS";
 import { basicUrl } from "../Axios/commonAxios";
 
@@ -77,7 +77,7 @@ const VendorWiseReport = () => {
   }, []);
 
   return (
-    <div>
+    <>
       <CommonDivider
         label={"Vendor-Wise Report"}
         compo={
@@ -89,7 +89,6 @@ const VendorWiseReport = () => {
           </Button>
         }
       />
-      <div className="h-3"></div>
       <Table
         loading={loading}
         columns={columns}
@@ -101,7 +100,7 @@ const VendorWiseReport = () => {
         }}
         rowKey="circle_id"
       />
-    </div>
+    </>
   );
 };
 
