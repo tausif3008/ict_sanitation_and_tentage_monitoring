@@ -5,7 +5,6 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { basicUrl } from "../../Axios/commonAxios";
 import search from "../../assets/Dashboard/icon-search.png";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
@@ -123,12 +122,6 @@ const GsdRegistrationReport = () => {
       finalData.form_date = moment().format("YYYY-MM-DD");
       finalData.to_date = moment().format("YYYY-MM-DD");
     }
-    //  else if (values?.date_format === "Week") {
-    //   finalData.form_date = moment()
-    //     .subtract(8, "days")
-    //     .format("YYYY-MM-DD");
-    //   finalData.to_date = moment().format("YYYY-MM-DD");
-    // } else
 
     if (values?.form_date || values?.to_date) {
       const dayjsObjectFrom = dayjs(values?.form_date?.$d);
@@ -143,7 +136,6 @@ const GsdRegistrationReport = () => {
 
     const formData = getFormData(finalData);
     getData(formData);
-    // dispatch(getGSDReportData(uri, formData)); // Fetch the data
   };
 
   // reset form
@@ -162,14 +154,6 @@ const GsdRegistrationReport = () => {
     const url = URLS?.assetType?.path + value;
     dispatch(getAssetTypes(url)); // get assset type
   };
-
-  // handle asset type
-  //   const handleTypeSelect = (value) => {
-  //     form.setFieldsValue({
-  //       to_user_id: null,
-  //     });
-  //     value && dispatch(getAssetTypeWiseVendorList(value)); // asset type wise vendor list
-  //   };
 
   // handle date select
   const handleDateSelect = (value) => {
@@ -295,7 +279,7 @@ const GsdRegistrationReport = () => {
   }, [excelData]);
 
   return (
-    <div>
+    <>
       <CommonDivider label={"GSD Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -354,7 +338,6 @@ const GsdRegistrationReport = () => {
                       label={"Select Type"}
                       placeholder={"Select Type"}
                       options={AssetTypeDrop || []}
-                      // onSelect={handleTypeSelect}
                     />
                   </Col>
                   <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
@@ -436,26 +419,22 @@ const GsdRegistrationReport = () => {
                     </>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -475,7 +454,7 @@ const GsdRegistrationReport = () => {
           "Total Units": getFormatedNumber(gsdData?.totalUnits) || 0,
         }}
       />
-    </div>
+    </>
   );
 };
 

@@ -5,7 +5,6 @@ import moment from "moment";
 import dayjs from "dayjs";
 import CommonDivider from "../../commonComponents/CommonDivider";
 import URLS from "../../urils/URLS";
-import { basicUrl } from "../../Axios/commonAxios";
 import search from "../../assets/Dashboard/icon-search.png";
 import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
 import {
@@ -276,7 +275,7 @@ const VendorRegistrationReport = () => {
   }, [excelData]);
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Vendor Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -474,7 +473,7 @@ const VendorRegistrationReport = () => {
             getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
-    </div>
+    </>
   );
 };
 

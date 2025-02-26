@@ -288,186 +288,176 @@ const InspectionReports = () => {
   ];
 
   return (
-    <div className="">
+    <>
       <CommonDivider label={"Inspection Report "}></CommonDivider>
       <div className="flex justify-end gap-2 font-semibold">
-        <div>
-          <ExportToExcel
-            excelData={excelData || []}
-            fileName={
-              date_format_name === "Today"
-                ? `Inspection-Report (${moment().format("DD-MMM-YYYY")})`
-                : `Inspection-Report (${form_date_name} to ${to_date_name})`
-            }
-            dynamicArray={[
-              {
-                name: "Total Unit",
-                value: inspectionData?.UnitCount,
-                colIndex: 3,
-              },
-              {
-                name: "Total Inspections",
-                value: inspectionData?.totalInspections,
-                colIndex: 6,
-              },
-              {
-                name: "Positive Response",
-                value: inspectionData?.PositiveResponse,
-                colIndex: 7,
-              },
-              {
-                name: "Negative Response",
-                value: inspectionData?.NegativeResponse,
-                colIndex: 8,
-              },
-              {
-                name: "Escalations",
-                value: inspectionData?.Escalations,
-                colIndex: 9,
-              },
-            ]}
-          />
-        </div>
-      </div>
-      <div>
-        <Collapse
-          defaultActiveKey={["1"]}
-          size="small"
-          className="rounded-none mt-3"
-          items={[
+        <ExportToExcel
+          excelData={excelData || []}
+          fileName={
+            date_format_name === "Today"
+              ? `Inspection-Report (${moment().format("DD-MMM-YYYY")})`
+              : `Inspection-Report (${form_date_name} to ${to_date_name})`
+          }
+          dynamicArray={[
             {
-              key: 1,
-              label: (
-                <div className="flex items-center h-full">
-                  <img src={search} className="h-5" alt="Search Icon" />
-                </div>
-              ),
-              children: (
-                <Form
-                  form={form}
-                  layout="vertical"
-                  onFinish={onFinishForm}
-                  key="form1"
-                >
-                  <Row gutter={[16, 16]} align="middle">
-                    <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"date_format"}
-                        label={"Select Date Type"}
-                        placeholder={"Select Date Type"}
-                        onSelect={handleDateSelect}
-                        options={dateWeekOptions || []}
-                        rules={[
-                          {
-                            required: true,
-                            message: "Please select Date Type",
-                          },
-                        ]}
-                      />{" "}
-                    </Col>
-                    {showDateRange && (
-                      <>
-                        <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"form_date"}
-                            label={"From Date"}
-                            className="w-full"
-                            placeholder={"Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a start date!",
-                              },
-                            ]}
-                            onChange={(date) => {
-                              const dayjsObjectFrom = dayjs(date?.$d);
-                              const startDate = dayjsObjectFrom;
-
-                              const dayjsObjectTo = dayjs(
-                                form.getFieldValue("to_date")?.$d
-                              );
-                              const endDate = dayjsObjectTo;
-
-                              // Condition 1: If startDate is after endDate, set end_time to null
-                              if (startDate.isAfter(endDate)) {
-                                form.setFieldValue("to_date", null);
-                              }
-
-                              // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
-                              const daysDifference = endDate.diff(
-                                startDate,
-                                "days"
-                              );
-                              if (daysDifference > 7) {
-                                form.setFieldValue("to_date", null);
-                              } else {
-                                // If the difference is within the allowed range, you can keep the value or process further if needed.
-                              }
-
-                              setStartDate(startDate.format("YYYY-MM-DD"));
-                            }}
-                          />
-                        </Col>
-                        <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
-                          <CustomDatepicker
-                            name={"to_date"}
-                            label={"To Date"}
-                            rules={[
-                              {
-                                required: true,
-                                message: "Please select a end date!",
-                              },
-                            ]}
-                            className="w-full"
-                            placeholder={"Date"}
-                            disabledDate={disabledDate}
-                          />
-                        </Col>
-                      </>
-                    )}
-                    <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
-                      <CustomSelect
-                        name={"sector_id"}
-                        allowClear={userRoleId === "9" ? false : true}
-                        label={"Select Sector"}
-                        placeholder={"Select Sector"}
-                        options={
-                          userRoleId === "9"
-                            ? SectorArray
-                            : SectorListDrop || []
-                        }
-                      />{" "}
-                    </Col>
-                    <div className="flex justify-start my-4 space-x-2 ml-3">
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          htmlType="submit"
-                          className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                        >
-                          Search
-                        </Button>
-                      </div>
-                      <div>
-                        <Button
-                          loading={loading}
-                          type="button"
-                          className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                          onClick={resetForm}
-                        >
-                          Reset
-                        </Button>
-                      </div>
-                    </div>
-                  </Row>
-                </Form>
-              ),
+              name: "Total Unit",
+              value: inspectionData?.UnitCount,
+              colIndex: 3,
+            },
+            {
+              name: "Total Inspections",
+              value: inspectionData?.totalInspections,
+              colIndex: 6,
+            },
+            {
+              name: "Positive Response",
+              value: inspectionData?.PositiveResponse,
+              colIndex: 7,
+            },
+            {
+              name: "Negative Response",
+              value: inspectionData?.NegativeResponse,
+              colIndex: 8,
+            },
+            {
+              name: "Escalations",
+              value: inspectionData?.Escalations,
+              colIndex: 9,
             },
           ]}
         />
-        {contextHolder}
       </div>
+      <Collapse
+        defaultActiveKey={["1"]}
+        size="small"
+        className="rounded-none mt-3"
+        items={[
+          {
+            key: 1,
+            label: (
+              <div className="flex items-center h-full">
+                <img src={search} className="h-5" alt="Search Icon" />
+              </div>
+            ),
+            children: (
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onFinishForm}
+                key="form1"
+              >
+                <Row gutter={[16, 16]} align="middle">
+                  <Col key="date_format" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"date_format"}
+                      label={"Select Date Type"}
+                      placeholder={"Select Date Type"}
+                      onSelect={handleDateSelect}
+                      options={dateWeekOptions || []}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Date Type",
+                        },
+                      ]}
+                    />{" "}
+                  </Col>
+                  {showDateRange && (
+                    <>
+                      <Col key="form_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"form_date"}
+                          label={"From Date"}
+                          className="w-full"
+                          placeholder={"Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a start date!",
+                            },
+                          ]}
+                          onChange={(date) => {
+                            const dayjsObjectFrom = dayjs(date?.$d);
+                            const startDate = dayjsObjectFrom;
+
+                            const dayjsObjectTo = dayjs(
+                              form.getFieldValue("to_date")?.$d
+                            );
+                            const endDate = dayjsObjectTo;
+
+                            // Condition 1: If startDate is after endDate, set end_time to null
+                            if (startDate.isAfter(endDate)) {
+                              form.setFieldValue("to_date", null);
+                            }
+
+                            // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
+                            const daysDifference = endDate.diff(
+                              startDate,
+                              "days"
+                            );
+                            if (daysDifference > 7) {
+                              form.setFieldValue("to_date", null);
+                            } else {
+                              // If the difference is within the allowed range, you can keep the value or process further if needed.
+                            }
+
+                            setStartDate(startDate.format("YYYY-MM-DD"));
+                          }}
+                        />
+                      </Col>
+                      <Col key="to_date" xs={24} sm={12} md={6} lg={5}>
+                        <CustomDatepicker
+                          name={"to_date"}
+                          label={"To Date"}
+                          rules={[
+                            {
+                              required: true,
+                              message: "Please select a end date!",
+                            },
+                          ]}
+                          className="w-full"
+                          placeholder={"Date"}
+                          disabledDate={disabledDate}
+                        />
+                      </Col>
+                    </>
+                  )}
+                  <Col key="sector_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"sector_id"}
+                      allowClear={userRoleId === "9" ? false : true}
+                      label={"Select Sector"}
+                      placeholder={"Select Sector"}
+                      options={
+                        userRoleId === "9" ? SectorArray : SectorListDrop || []
+                      }
+                    />{" "}
+                  </Col>
+                  <div className="flex justify-start my-4 space-x-2 ml-3">
+                    <Button
+                      loading={loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
+                  </div>
+                </Row>
+              </Form>
+            ),
+          },
+        ]}
+      />
+      {contextHolder}
       <CommonTable
         columns={columns}
         uri={"inspection-report"}
@@ -485,7 +475,7 @@ const InspectionReports = () => {
           Escalations: getFormatedNumber(inspectionData?.Escalations) || 0,
         }}
       ></CommonTable>
-    </div>
+    </>
   );
 };
 

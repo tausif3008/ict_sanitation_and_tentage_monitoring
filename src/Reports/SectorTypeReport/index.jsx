@@ -340,7 +340,7 @@ const SectorTypeReport = () => {
     }) || [];
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Sector & Type Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -398,15 +398,6 @@ const SectorTypeReport = () => {
                       allowClear={false}
                     />
                   </Col>
-                  {/* <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
-                    <CustomSelect
-                      name={"asset_type_id"}
-                      label={"Select Type"}
-                      placeholder={"Select Type"}
-                      options={AssetTypeDrop || []}
-                      onSelect={handleTypeSelect}
-                    />
-                  </Col> */}
                   <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"vendor_id"}
@@ -495,26 +486,22 @@ const SectorTypeReport = () => {
                     </>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -533,7 +520,7 @@ const SectorTypeReport = () => {
           "Total Records": getFormatedNumber(vendorData?.list?.length) || 0,
         }}
       />
-    </div>
+    </>
   );
 };
 

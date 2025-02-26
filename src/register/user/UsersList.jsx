@@ -363,7 +363,7 @@ const UserList = () => {
   };
 
   return (
-    <div className="">
+    <>
       <CommonDivider
         label={"User List"}
         compo={
@@ -520,7 +520,7 @@ const UserList = () => {
         scroll={{ x: 1800, y: 400 }}
         setUserDetails={setUserDetails}
       ></CommonTable>
-    </div>
+    </>
   );
 };
 

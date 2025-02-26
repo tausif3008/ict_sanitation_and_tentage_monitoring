@@ -272,17 +272,8 @@ const SectorWiseRegistrationReport = () => {
     ]);
   }, [excelData]);
 
-  // const fileName =
-  //   formValue?.date_format === "Today"
-  //     ? moment().format("DD-MMM-YYYY")
-  //     : formValue?.date_format === "Date Range"
-  //     ? `${dayjs(formValue?.form_date).format("DD-MMM-YYYY")} to ${dayjs(
-  //         formValue?.to_date
-  //       ).format("DD-MMM-YYYY")}`
-  //     : null;
-
   return (
-    <div>
+    <>
       <CommonDivider label={"Sector Wise Registration Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
@@ -482,7 +473,7 @@ const SectorWiseRegistrationReport = () => {
             getFormatedNumber(vendorData?.totalUnits) || 0,
         }}
       />
-    </div>
+    </>
   );
 };
 

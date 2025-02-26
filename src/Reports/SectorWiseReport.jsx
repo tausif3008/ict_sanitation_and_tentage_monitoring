@@ -595,7 +595,7 @@ const SectorWiseReport = () => {
   }, [sectorData]);
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Sector-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <ExportToPDF
@@ -776,26 +776,22 @@ const SectorWiseReport = () => {
                     </Col>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={SectorReport_Loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={SectorReport_Loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -853,8 +849,6 @@ const SectorWiseReport = () => {
         openModal={showModal && !VendorReport_Loading}
         handleCancel={handleCancel}
         tableData={vendorsData || []}
-        // tableData={[...vendorsData, ...lastTableModalRow] || []}
-        // IsLastRowBold={true}
         scroll={{ x: 1700, y: 400 }}
         tableHeaderData={[
           {
@@ -894,7 +888,7 @@ const SectorWiseReport = () => {
           </div>
         )}
       />
-    </div>
+    </>
   );
 };
 

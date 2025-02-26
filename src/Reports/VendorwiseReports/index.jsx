@@ -662,7 +662,7 @@ const VendorReports = () => {
   }, [excelData]);
 
   return (
-    <div>
+    <>
       <CommonDivider label={"Vendor-Wise Monitoring Report"} />
       <div className="flex justify-end gap-2 mb-4 font-semibold">
         <ExportToPDF
@@ -870,26 +870,22 @@ const VendorReports = () => {
                     </Col>
                   )}
                   <div className="flex justify-start my-4 space-x-2 ml-3">
-                    <div>
-                      <Button
-                        loading={VendorReport_Loading}
-                        type="button"
-                        htmlType="submit"
-                        className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
-                      >
-                        Search
-                      </Button>
-                    </div>
-                    <div>
-                      <Button
-                        loading={VendorReport_Loading}
-                        type="button"
-                        className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
-                        onClick={resetForm}
-                      >
-                        Reset
-                      </Button>
-                    </div>
+                    <Button
+                      loading={VendorReport_Loading}
+                      type="button"
+                      htmlType="submit"
+                      className="w-fit rounded-none text-white bg-blue-500 hover:bg-blue-600"
+                    >
+                      Search
+                    </Button>
+                    <Button
+                      loading={VendorReport_Loading}
+                      type="button"
+                      className="w-fit rounded-none text-white bg-orange-300 hover:bg-orange-600"
+                      onClick={resetForm}
+                    >
+                      Reset
+                    </Button>
                   </div>
                 </Row>
               </Form>
@@ -991,7 +987,7 @@ const VendorReports = () => {
           </div>
         )}
       />
-    </div>
+    </>
   );
 };
 
