@@ -639,6 +639,17 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
+      vehicle_imei_reports?.includes(userRoleId) && {
+        key: "12",
+        label: (
+          <Link
+            className="text-black no-underline"
+            to="/weekly-registration-report"
+          >
+            Weekly Registration Report
+          </Link>
+        ),
+      },
     ].filter(Boolean); // Remove undefined or false values
     return filteredReports?.sort((a, b) => {
       const labelA = a?.label?.props?.children?.toLowerCase();

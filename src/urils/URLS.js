@@ -98,6 +98,10 @@ const URLS = {
     version: 5.43,
   },
   monitoringDetails: { path: "/monitoring/details?id=", version: 5.43 },
+  weeklyRegReport: {
+    path: "/reporting/weekly-vendor-assetstype-email",
+    version: 5.43,
+  },
 
   // asset
   assetList: { path: "/asset", version: 5.43 },
