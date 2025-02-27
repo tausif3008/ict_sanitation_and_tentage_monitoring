@@ -12,6 +12,10 @@ import ExportToPDF from "../reportFile";
 import CustomInput from "../../commonComponents/CustomInput";
 import { getVehicleImeiReportData } from "./Slice/vehicleReport";
 import VehicleReportSelector from "./Slice/vehicleReportSelector";
+import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
+import VendorSelectors from "../VendorwiseReports/vendorSelectors";
+import CustomSelect from "../../commonComponents/CustomSelect";
+import { getValueLabel, vehicleType } from "../../constant/const";
 
 const VehicleImeiReport = () => {
   const [startDate, setStartDate] = useState(null);
@@ -25,34 +29,55 @@ const VehicleImeiReport = () => {
   const [form] = Form.useForm();
   const formValue = form.getFieldsValue();
   const { VehicleReportData, VehicleReportLoader } = VehicleReportSelector(); // vehicle report
+  const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const vehicleData = VehicleReportData?.data?.vehicles_data || [];
 
   const fileDateName = `${dayjs(formValue?.form_date).format(
     "DD-MMM-YYYY"
   )} to ${dayjs(formValue?.to_date).format("DD-MMM-YYYY")}`;
+
+  const vendorfileName = getValueLabel(
+    formValue?.vendor_id,
+    VendorCatTypeDrop,
+    undefined
+  );
+
   // file name
   const getReportName = () => {
     let name = "Vehicle IMEI";
-    // if (agentName) {
-    //   name += `- ${agentName}`;
-    // }
-    // if (sectorName) {
-    //   name += `- ${sectorName}`;
-    // }
+    if (vendorfileName) {
+      name += `- ${vendorfileName}`;
+    }
+    if (formValue?.vehicle_type) {
+      name += `- ${formValue?.vehicle_type}`;
+    }
     name += `- Report ${fileDateName}`;
     return name;
   };
   const fileName = getReportName();
 
   const pdfTitleParam = [
-    {
-      label: `IMEI Number :  ${formValue?.imei}`,
-    },
-    // {
-    //   label: `(-) : No Record`,
-    // },
-    // {
-    //   label: `A :  Absent`,
-    // },
+    ...(vendorfileName
+      ? [
+          {
+            label: `Vendor Name : ${vendorfileName}`,
+          },
+        ]
+      : []),
+    ...(formValue?.vehicle_type
+      ? [
+          {
+            label: `Vehicle Type : ${formValue?.vehicle_type}`,
+          },
+        ]
+      : []),
+    ...(formValue?.imei
+      ? [
+          {
+            label: `IMEI Number : ${formValue?.imei}`,
+          },
+        ]
+      : []),
   ];
 
   const disabledDate = (current) => {
@@ -78,6 +103,10 @@ const VehicleImeiReport = () => {
   // reset form
   const resetForm = () => {
     form.resetFields();
+    setTableData((prevDetails) => ({
+      ...prevDetails,
+      list: [] || [],
+    }));
   };
 
   const callApi = async (data) => {
@@ -85,69 +114,112 @@ const VehicleImeiReport = () => {
   };
 
   useEffect(() => {
+    const paramData = {
+      asset_main_type_id: 5,
+    };
+    dispatch(getVendorCategoryTypeDrop(paramData)); // asset type wise vendor list
     resetForm();
   }, []);
 
+  // table Data
   useEffect(() => {
-    const imei_details =
-      VehicleReportData?.data?.vehicles_data?.[formValue?.imei]?.imei_details ||
-      {};
-    if (!imei_details) return [];
-
-    setTableData((prevDetails) => ({
-      ...prevDetails,
-      list: Object.keys(imei_details)?.length === 0 ? [] : [imei_details] || [],
-    }));
-  }, [VehicleReportData, formValue?.imei]);
+    if (VehicleReportData?.success) {
+      const transformedData = vehicleData.map(({ imei_details, ...rest }) => ({
+        ...rest,
+        ...imei_details,
+      }));
+      setTableData((prevDetails) => ({
+        ...prevDetails,
+        list: transformedData || [],
+      }));
+    } else {
+      setTableData((prevDetails) => ({
+        ...prevDetails,
+        list: [] || [],
+      }));
+    }
+  }, [VehicleReportData]);
 
   // table column
   const dynamicColumn = useMemo(() => {
-    const imei_details =
-      VehicleReportData?.data?.vehicles_data?.[formValue?.imei]?.imei_details;
+    const imeiDetails = vehicleData?.[0]?.imei_details || {};
+    const columns =
+      Object.keys(imeiDetails || {})
+        ?.map((item, index) => {
+          const isValidDate = moment(item, "YYYY-MM-DD", true).isValid();
+          return {
+            title: isValidDate
+              ? moment(item, "YYYY-MM-DD").format("DD-MMM-YYYY")
+              : item,
+            dataIndex: item,
+            key: item,
+            width: 100,
+          };
+        })
+        .reverse() || [];
 
-    if (!imei_details) return [];
-    const keys = Object.keys(imei_details);
-    const sortedKeys = keys.sort() || [];
-    return sortedKeys?.map((item) => {
-      return {
-        title: moment(item, "YYYY-MM-DD", true).isValid()
-          ? moment(item, "YYYY-MM-DD").format("DD-MMM-YYYY")
-          : item,
-        dataIndex: item,
-        key: item,
-        width: 100,
-      };
-    });
+    const Columns = [
+      {
+        title: "Vendor Name",
+        dataIndex: "vendor_name",
+        key: "vendor_name",
+      },
+      {
+        title: "Vehicle Type",
+        dataIndex: "vehicle_type",
+        key: "vehicle_type",
+      },
+      {
+        title: "Vehicle Number",
+        dataIndex: "vehicle_no",
+        key: "vehicle_no",
+      },
+      {
+        title: "IMEI Number",
+        dataIndex: "imei",
+        key: "imei",
+      },
+    ];
+    return [...Columns, ...columns];
   }, [VehicleReportData, formValue?.imei]);
 
   // excel data
   const myExcelItems = useMemo(() => {
     if (!tableData?.list || tableData.list.length === 0) return []; // Return empty object if no data
 
-    const firstObject = tableData.list[0];
+    const excelObject = tableData?.list || [];
 
-    if (!firstObject) return {};
+    return excelObject?.map((item, index) => {
+      const dateData = {};
+      const otherData = {};
 
-    // Step 1: Extract keys and sort them
-    const sortedKeys = Object.keys(firstObject).sort((a, b) => {
-      const dateA = moment(a, "YYYY-MM-DD");
-      const dateB = moment(b, "YYYY-MM-DD");
-      return dateA.isBefore(dateB) ? -1 : 1; // Ascending order
+      Object.entries(item || {}).forEach(([key, value]) => {
+        // Check if the key follows the YYYY-MM-DD format
+        if (/^\d{4}-\d{2}-\d{2}$/.test(key)) {
+          dateData[key] = value;
+        }
+      });
+
+      Object.entries(dateData).forEach(([key, value]) => {
+        const myKey = moment(key, "YYYY-MM-DD").format("DD-MMM");
+        otherData[myKey] = value ? Number(value) || 0 : 0; // Update the otherData object with the formatted key
+      });
+
+      const sortedData = Object.fromEntries(
+        Object.entries(otherData).sort(([a], [b]) => a.localeCompare(b))
+      );
+
+      return {
+        "Sr No": index + 1,
+        "Vendor Name": item?.vendor_name,
+        "Vehicle Type": item?.vehicle_type,
+        "Vehicle Number": item?.vehicle_no,
+        "IMEI Number": item?.imei,
+        ...sortedData,
+      };
     });
 
-    // Step 2: Reconstruct the object with sorted keys
-    const sortedObject = sortedKeys.reduce((acc, key) => {
-      const formattedDate = moment(key, "YYYY-MM-DD").format("DD-MMM-YYYY");
-      acc[formattedDate] = firstObject[key]; // Add the key-value pair
-      return acc;
-    }, {});
-
-    const myObj = {
-      "Sr No": 1,
-      ...sortedObject,
-    };
-
-    return [myObj];
+    return [];
   }, [tableData]);
 
   // pdf header
@@ -155,12 +227,28 @@ const VehicleImeiReport = () => {
     return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
   }, [myExcelItems]);
 
+  // const pdfHeader = useMemo(() => {
+  //   return Object.keys(myExcelItems?.[0] || {}).filter(
+  //     (key) => key !== "Vendor Name"
+  //   ); // Exclude 'vendor_name' key
+  // }, [myExcelItems]);
+
   // pdf data
   const pdfData = useMemo(() => {
     return myExcelItems?.map((item) => {
       return Object.values(item);
     });
   }, [myExcelItems]);
+
+  // const pdfData = useMemo(() => {
+  //   return myExcelItems?.map((item) => {
+  //     // Filter out 'vendor_name' key and return values of the remaining properties
+  //     const filteredItem = Object.entries(item)
+  //       .filter(([key]) => key !== "Vendor Name") // Exclude 'vendor_name'
+  //       .map(([_, value]) => value); // Get the values of the remaining properties
+  //     return filteredItem;
+  //   });
+  // }, [myExcelItems]);
 
   return (
     <>
@@ -173,6 +261,7 @@ const VehicleImeiReport = () => {
           landscape={true}
           tableTitles={pdfTitleParam || []}
           rows={pdfData || []}
+          tableFont={5}
         />
         <ExportToExcel
           excelData={myExcelItems || []}
@@ -200,18 +289,29 @@ const VehicleImeiReport = () => {
                 key="form1"
               >
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-x-4">
+                  <CustomSelect
+                    name={"vendor_id"}
+                    label={"Select Vendor"}
+                    placeholder={"Select Vendor"}
+                    options={VendorCatTypeDrop || []}
+                  />
+                  <CustomSelect
+                    label="Vehicle Type"
+                    name="vehicle_type"
+                    placeholder={"Select Vehicle Type"}
+                    options={vehicleType || []}
+                  />
                   <CustomInput
                     label="IMEI Number"
                     name="imei"
                     placeholder="Enter IMEI Number"
-                    rules={[
-                      {
-                        required: true,
-                        message: "Please Enter IMEI Number!",
-                      },
-                    ]}
+                    // rules={[
+                    //   {
+                    //     required: true,
+                    //     message: "Please Enter IMEI Number!",
+                    //   },
+                    // ]}
                   />
-
                   <CustomDatepicker
                     name={"form_date"}
                     label={"From Date"}
@@ -290,9 +390,9 @@ const VehicleImeiReport = () => {
         columns={dynamicColumn || []}
         bordered
         dataSource={tableData || []}
-        scroll={{ x: 1400, y: 500 }}
+        scroll={{ x: 1600, y: 500 }}
         tableSubheading={{
-          "Total Records": 1,
+          "Total Records": tableData?.list?.length || 0,
         }}
         pagination={true}
       />

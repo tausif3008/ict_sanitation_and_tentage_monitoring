@@ -103,6 +103,7 @@ import {
   vendor_type_wise_regi_reports,
   parking_type_wise_regi_reports,
   vehicle_imei_reports,
+  registration_dailyWeekly_reports,
 } from "./constant/permission";
 import MonitoringDailyReport from "./complaince/MonitoringDailyReport";
 import WeeklyMonitoringReport from "./Reports/Weekly-Monitoring-Report";
@@ -121,6 +122,7 @@ import AssetUnitReport from "./Reports/Incident-reports/AssetUnitReport";
 import VendorTypeReport from "./Reports/VendorwiseReports/VendorTypeReport";
 import ParkingTypeReport from "./Reports/Parking/ParkingTypeReport";
 import VehicleImeiReport from "./Reports/VehicleReport/VehicleNewReport";
+import WeeklyRegistrationReport from "./Reports/WeeklyRegReport";
 
 function App() {
   const navigate = useNavigate();
@@ -662,6 +664,17 @@ function App() {
               <ProtectedRoute
                 condition={monitoring_dailyWeekly_reports?.includes(userRoleId)}
                 component={WeeklyMonitoringReport}
+              />
+            }
+          />
+          <Route
+            path="weekly-registration-report"
+            element={
+              <ProtectedRoute
+                condition={registration_dailyWeekly_reports?.includes(
+                  userRoleId
+                )}
+                component={WeeklyRegistrationReport}
               />
             }
           />
