@@ -44,7 +44,7 @@ const VehicleImeiReport = () => {
 
   // file name
   const getReportName = () => {
-    let name = "Vehicle IMEI";
+    let name = "Vehicle Tracking";
     if (vendorfileName) {
       name += `- ${vendorfileName}`;
     }
@@ -56,21 +56,45 @@ const VehicleImeiReport = () => {
   };
   const fileName = getReportName();
 
+  // const pdfTitleParam = [
+  //   {
+  //     label: `Vendor Name : ${vendorfileName} || All Vendors`,
+  //   },
+  //   {
+  //     label: `Vehicle Type : ${formValue?.vehicle_type} || Compactor & `,
+  //   },
+  //   // ...(vendorfileName
+  //   //   ? [
+  //   //       {
+  //   //         label: `Vendor Name : ${vendorfileName}`,
+  //   //       },
+  //   //     ]
+  //   //   : []),
+  //   // ...(formValue?.vehicle_type
+  //   //   ? [
+  //   //       {
+  //   //         label: `Vehicle Type : ${formValue?.vehicle_type}`,
+  //   //       },
+  //   //     ]
+  //   //   : []),
+  //   ...(formValue?.imei
+  //     ? [
+  //         {
+  //           label: `IMEI Number : ${formValue?.imei}`,
+  //         },
+  //       ]
+  //     : []),
+  // ];
+
   const pdfTitleParam = [
-    ...(vendorfileName
-      ? [
-          {
-            label: `Vendor Name : ${vendorfileName}`,
-          },
-        ]
-      : []),
-    ...(formValue?.vehicle_type
-      ? [
-          {
-            label: `Vehicle Type : ${formValue?.vehicle_type}`,
-          },
-        ]
-      : []),
+    {
+      label: `Vendor Name : ${vendorfileName || "All Vendors"}`,
+    },
+    {
+      label: `Vehicle Type : ${
+        formValue?.vehicle_type || "Compactor & Tipper"
+      }`,
+    },
     ...(formValue?.imei
       ? [
           {
@@ -78,6 +102,9 @@ const VehicleImeiReport = () => {
           },
         ]
       : []),
+    {
+      label: `Note : Data in Kilometer(Km)`,
+    },
   ];
 
   const disabledDate = (current) => {
@@ -154,6 +181,9 @@ const VehicleImeiReport = () => {
             dataIndex: item,
             key: item,
             width: 100,
+            render: (text) => {
+              return text != null && !isNaN(text) ? Math.round(text) : "";
+            },
           };
         })
         .reverse() || [];
@@ -196,7 +226,9 @@ const VehicleImeiReport = () => {
       Object.entries(item || {}).forEach(([key, value]) => {
         // Check if the key follows the YYYY-MM-DD format
         if (/^\d{4}-\d{2}-\d{2}$/.test(key)) {
-          dateData[key] = value;
+          // Round value if it's a valid number, otherwise set an empty string
+          dateData[key] =
+            value != null && !isNaN(value) ? Math.round(value) : "";
         }
       });
 
@@ -223,36 +255,36 @@ const VehicleImeiReport = () => {
   }, [tableData]);
 
   // pdf header
-  const pdfHeader = useMemo(() => {
-    return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
-  }, [myExcelItems]);
-
   // const pdfHeader = useMemo(() => {
-  //   return Object.keys(myExcelItems?.[0] || {}).filter(
-  //     (key) => key !== "Vendor Name"
-  //   ); // Exclude 'vendor_name' key
+  //   return Object.keys(myExcelItems?.[0] || []); // This will return the keys as an array
   // }, [myExcelItems]);
 
-  // pdf data
-  const pdfData = useMemo(() => {
-    return myExcelItems?.map((item) => {
-      return Object.values(item);
-    });
+  const pdfHeader = useMemo(() => {
+    return Object.keys(myExcelItems?.[0] || {}).filter(
+      (key) => key !== "Vendor Name" && key !== "Vehicle Type"
+    ); // Exclude 'vendor_name' key
   }, [myExcelItems]);
 
+  // pdf data
   // const pdfData = useMemo(() => {
   //   return myExcelItems?.map((item) => {
-  //     // Filter out 'vendor_name' key and return values of the remaining properties
-  //     const filteredItem = Object.entries(item)
-  //       .filter(([key]) => key !== "Vendor Name") // Exclude 'vendor_name'
-  //       .map(([_, value]) => value); // Get the values of the remaining properties
-  //     return filteredItem;
+  //     return Object.values(item);
   //   });
   // }, [myExcelItems]);
 
+  const pdfData = useMemo(() => {
+    return myExcelItems?.map((item) => {
+      // Filter out 'vendor_name' key and return values of the remaining properties
+      const filteredItem = Object.entries(item)
+        .filter(([key]) => key !== "Vendor Name" && key !== "Vehicle Type") // Exclude 'vendor_name'
+        .map(([_, value]) => value); // Get the values of the remaining properties
+      return filteredItem;
+    });
+  }, [myExcelItems]);
+
   return (
     <>
-      <CommonDivider label={"Vehicle IMEI Wise Report"} />
+      <CommonDivider label={"Vehicle Tracking Report"} />
       <div className="flex justify-end gap-2 font-semibold">
         <ExportToPDF
           titleName={`${fileName}`}

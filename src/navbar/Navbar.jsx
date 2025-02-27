@@ -635,7 +635,7 @@ const Navbar = ({ lang, setLang }) => {
         key: "12",
         label: (
           <Link className="text-black no-underline" to="/vehicle-imei-report">
-            Vehicle IMEI Wise Report
+            Vehicle Tracking Report
           </Link>
         ),
       },
