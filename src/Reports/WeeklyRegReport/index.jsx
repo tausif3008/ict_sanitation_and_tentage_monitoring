@@ -83,7 +83,7 @@ const WeeklyRegistrationReport = () => {
     form.setFieldValue("date_format", "Today");
   };
 
-  const pdfHeader = ["Sr No", "Asset Type", "Total Unit"];
+  const pdfHeader = ["Sr No", "Toilet Type", "Registration Count"];
   const fileName = "Weekly Registration Report";
 
   useEffect(() => {
