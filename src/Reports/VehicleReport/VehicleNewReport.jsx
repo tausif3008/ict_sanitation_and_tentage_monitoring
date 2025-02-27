@@ -274,7 +274,6 @@ const VehicleImeiReport = () => {
 
   const pdfData = useMemo(() => {
     return myExcelItems?.map((item) => {
-      // Filter out 'vendor_name' key and return values of the remaining properties
       const filteredItem = Object.entries(item)
         .filter(([key]) => key !== "Vendor Name" && key !== "Vehicle Type") // Exclude 'vendor_name'
         .map(([_, value]) => value); // Get the values of the remaining properties

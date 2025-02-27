@@ -98,7 +98,7 @@ const WeeklyRegistrationReport = () => {
         fileName,
         `${filesName}-${fileName}-${fileDateName}`,
         pdfHeader,
-        [...pdfData, ...[["", "Total Units", sum]]],
+        [...pdfData, ...[["", "Total Registration Count", sum]]],
         false,
         true,
         [],
