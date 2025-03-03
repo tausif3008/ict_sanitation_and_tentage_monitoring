@@ -165,7 +165,7 @@ const VendorRegistrationReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
+    const maxDate = moment(startDate).clone().add(90, "days");
     return (
       current &&
       (current.isBefore(startDate, "day") || current.isAfter(maxDate, "day"))
@@ -401,7 +401,7 @@ const VendorRegistrationReport = () => {
                               startDate,
                               "days"
                             );
-                            if (daysDifference > 7) {
+                            if (daysDifference > 89) {
                               form.setFieldValue("to_date", null);
                             } else {
                               // If the difference is within the allowed range, you can keep the value or process further if needed.
