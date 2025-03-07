@@ -15,6 +15,11 @@ import { MonitoringDailyReportPdf } from "../../complaince/DailyReport";
 import { revertMonitoringSlice } from "../../Redux/action";
 import { getVendorCategoryTypeDrop } from "../VendorwiseReports/vendorslice";
 import VendorSelectors from "../VendorwiseReports/vendorSelectors";
+import AssetTypeSelectors from "../../register/AssetType/assetTypeSelectors";
+import {
+  getAssetMainTypes,
+  getAssetTypes,
+} from "../../register/AssetType/AssetTypeSlice";
 
 const WeeklyMonitoringReport = () => {
   const [startDate, setStartDate] = useState(null);
@@ -22,17 +27,52 @@ const WeeklyMonitoringReport = () => {
 
   const { DailyReport, loading } = MonitoringSelector(); // daily report
   const { VendorCatTypeDrop } = VendorSelectors(); // vendor dropdown & Reports
+  const { AssetMainTypeDrop, AssetTypeDrop } = AssetTypeSelectors(); // asset main type & asset type
 
   const userRoleId = localStorage.getItem("role_id");
   const userId = localStorage.getItem("userId");
 
   const dispatch = useDispatch();
   const [form] = Form.useForm();
+  const formValue = form.getFieldsValue();
+
+  const IsVendor = Number(userRoleId) === 8;
+
+  // handle category
+  const handleSelect = (value) => {
+    form.setFieldsValue({
+      asset_type_id: null,
+      vendor_id: null,
+    });
+    const url = URLS?.assetType?.path + value;
+    dispatch(getAssetTypes(url)); // get assset type
+    if (!IsVendor && value) {
+      const paramData = {
+        asset_main_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
+  };
+
+  const handleTypeSelect = (value) => {
+    form.setFieldsValue({
+      vendor_id: null,
+    });
+    if (!IsVendor && value) {
+      const paramData = {
+        asset_main_type_id: formValue?.asset_main_type_id,
+        asset_type_id: value,
+      };
+      dispatch(getVendorCategoryTypeDrop(paramData)); // vendor list
+    }
+  };
 
   // fiter finish
   const onFinishForm = async (values) => {
     const finalData = {
       vendor_id: userRoleId === "8" ? userId : values?.vendor_id,
+      asset_type_id: values?.asset_type_id,
+      asset_main_type_id: values?.asset_main_type_id,
     };
     const name = getValueLabel(values?.vendor_id, VendorCatTypeDrop, "");
     if (values?.form_date || values?.to_date) {
@@ -98,12 +138,14 @@ const WeeklyMonitoringReport = () => {
   }, [DailyReport]);
 
   useEffect(() => {
-    userRoleId !== "8" &&
-      dispatch(
-        getVendorCategoryTypeDrop({
-          asset_main_type_id: 1,
-        })
-      ); // vendor list
+    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    // userRoleId !== "8" &&
+    //   dispatch(
+    //     getVendorCategoryTypeDrop({
+    //       asset_main_type_id: 1,
+    //     })
+    //   ); // vendor list
     setValue();
   }, []);
 
@@ -130,6 +172,36 @@ const WeeklyMonitoringReport = () => {
                 key="form1"
               >
                 <Row gutter={[16, 16]} align="middle">
+                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_main_type_id"}
+                      label={"Select Category"}
+                      placeholder={"Select Category"}
+                      onSelect={handleSelect}
+                      options={AssetMainTypeDrop?.slice(0, 2) || []}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Category!",
+                        },
+                      ]}
+                    />
+                  </Col>
+                  <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
+                    <CustomSelect
+                      name={"asset_type_id"}
+                      label={"Select Type"}
+                      placeholder={"Select Type"}
+                      options={AssetTypeDrop || []}
+                      onSelect={handleTypeSelect}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please select Type!",
+                        },
+                      ]}
+                    />
+                  </Col>
                   {userRoleId !== "8" && (
                     <Col key="vendor_id" xs={24} sm={12} md={6} lg={5}>
                       <CustomSelect
