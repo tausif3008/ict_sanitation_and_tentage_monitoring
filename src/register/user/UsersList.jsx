@@ -163,19 +163,19 @@ const UserList = () => {
       key: "email",
       width: 250,
     },
-    {
-      title: "Password",
-      dataIndex: "password",
-      key: "password",
-      width: 110,
-      render: (text, record) => {
-        if (hidePasswordField.includes(record?.user_type_id)) {
-          return "**********";
-        } else {
-          return text;
-        }
-      },
-    },
+    // {
+    //   title: "Password",
+    //   dataIndex: "password",
+    //   key: "password",
+    //   width: 110,
+    //   render: (text, record) => {
+    //     if (hidePasswordField.includes(record?.user_type_id)) {
+    //       return "**********";
+    //     } else {
+    //       return text;
+    //     }
+    //   },
+    // },
     {
       title: "Allocate Sector",
       dataIndex: "allocate_sector_id",
