@@ -27,274 +27,6 @@ export const MonitoringDailyReportPdf = (
     "DD-MMM-YYYY"
   );
 
-  // tableObject = {
-  //   date: "24-Dec-2024",
-  //   type: "Type-2 FRP Soak Pit",
-  //   vendor_name: "M/s Bhutani International Private Limited",
-  //   vendor_phone: "7070096133",
-  //   smscount: 88,
-  //   questions: [
-  //     {
-  //       que: 1,
-  //       que_eng: "Do toilets have ramps/hand bar railing for disabled people?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 2,
-  //       que_eng:
-  //         "Are there 9 Indian + 1 Western seat per toilet block (10 seats)?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 15,
-  //       que_eng: "Is water not overflowing from the soakpit?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 4,
-  //       que_eng: "Is there Soap/handwash in the toilet block?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 5,
-  //       que_eng: "Is there any cleaning staff  in the toilet premises?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 6,
-  //       que_eng: "Is there 1 large dustbin for every 10 toilets?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 7,
-  //       que_eng: "Is the toilet cleaned by jet spray?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 8,
-  //       que_eng: "Is Male/Female/non-smoking signage placed on toilet?",
-  //       que_hin: "Common",
-  //     },
-  //     {
-  //       que: 9,
-  //       que_eng: "Is the toilet clean?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 10,
-  //       que_eng:
-  //         "Is drainage and sewerage system working properly inside the toilets?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 11,
-  //       que_eng: "Is the toilet door have a latch inside/outside?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 12,
-  //       que_eng:
-  //         "Are there potholes, cracks and concrete joints regularly repairs?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 13,
-  //       que_eng: "Is bulb/LED in toilet working?",
-  //       que_hin: "Individual",
-  //     },
-  //     {
-  //       que: 14,
-  //       que_eng: "Has the unpleasant odor been removed?",
-  //       que_hin: "Individual",
-  //     },
-  //   ],
-  //   incidence_array: [
-  //     {
-  //       sector_id: "1",
-  //       incidence_que_array: [
-  //         {
-  //           question_id: "1",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "2",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "15",
-  //           incidence_count: "8",
-  //         },
-  //         {
-  //           question_id: "4",
-  //           incidence_count: "2",
-  //         },
-  //         {
-  //           question_id: "5",
-  //           incidence_count: "1",
-  //         },
-  //         {
-  //           question_id: "6",
-  //           incidence_count: "4",
-  //         },
-  //         {
-  //           question_id: "7",
-  //           incidence_count: "2",
-  //         },
-  //         {
-  //           question_id: "8",
-  //           incidence_count: "3",
-  //         },
-  //         {
-  //           question_id: "9",
-  //           incidence_count: "11",
-  //         },
-  //         {
-  //           question_id: "10",
-  //           incidence_count: "11",
-  //         },
-  //         {
-  //           question_id: "11",
-  //           incidence_count: "8",
-  //         },
-  //         {
-  //           question_id: "12",
-  //           incidence_count: "11",
-  //         },
-  //         {
-  //           question_id: "13",
-  //           incidence_count: "14",
-  //         },
-  //         {
-  //           question_id: "14",
-  //           incidence_count: "11",
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       sector_id: "2",
-  //       incidence_que_array: [
-  //         {
-  //           question_id: "1",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "2",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "15",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "4",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "5",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "6",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "7",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "8",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "9",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "10",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "11",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "12",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "13",
-  //           incidence_count: "1",
-  //         },
-  //         {
-  //           question_id: "14",
-  //           incidence_count: "-",
-  //         },
-  //       ],
-  //     },
-  //     {
-  //       sector_id: "3",
-  //       incidence_que_array: [
-  //         {
-  //           question_id: "1",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "2",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "15",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "4",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "5",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "6",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "7",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "8",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "9",
-  //           incidence_count: "1",
-  //         },
-  //         {
-  //           question_id: "10",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "11",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "12",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "13",
-  //           incidence_count: "-",
-  //         },
-  //         {
-  //           question_id: "14",
-  //           incidence_count: "-",
-  //         },
-  //       ],
-  //     },
-  //   ],
-  // };
-
   const headerData = ["Que", "Questions", "Question Type"];
   let col = [];
 
@@ -309,30 +41,10 @@ export const MonitoringDailyReportPdf = (
     }
   });
 
-  // tableObject?.incidence_array?.[0]?.incidence_que_array
-  //   ?.sort((a, b) => {
-  //     // Sorting based on question_id
-  //     const questionA = Number(a?.question_id);
-  //     const questionB = Number(b?.question_id);
-  //     return questionA - questionB; // Ascending order (1, 2, 3,...)
-  //   })
-  //   ?.forEach((element) => {
-  //     col?.push(`Q-${element?.question_id}`);
-  //   });
-
   const questionArray =
     tableObject?.questions?.map((data) => {
       return [data?.que, data?.que_eng, data?.que_hin];
     }) || [];
-
-  // const sortedQuestionArray = questionArray?.sort((a, b) => {
-  //   const questionA = Number(a[0]); // Convert the que value to a number
-  //   const questionB = Number(b[0]); // Convert the que value to a number
-
-  //   if (questionA < questionB) return -1; // If questionA is smaller, it comes first
-  //   if (questionA > questionB) return 1; // If questionA is larger, it comes after
-  //   return 0; // If they are equal, no change
-  // });
 
   let tableRow = [];
 
@@ -341,13 +53,9 @@ export const MonitoringDailyReportPdf = (
     arr?.push(`Sector- ${item?.sector_id}`);
 
     const rohitArray =
-      Array.from(item?.incidence_que_array || [])
-        // .sort((a, b) => {
-        //   const questionA = Number(a?.question_id);
-        //   const questionB = Number(b?.question_id);
-        //   return questionA - questionB; // Sorting in ascending order (1, 2, 3, ...)
-        // })
-        ?.map((element) => `${element?.incidence_count}`) || []; // Default to empty array if undefined
+      Array.from(item?.incidence_que_array || [])?.map(
+        (element) => `${element?.incidence_count}`
+      ) || []; // Default to empty array if undefined
 
     arr = [...arr, ...rohitArray];
 
@@ -423,9 +131,9 @@ export const MonitoringDailyReportPdf = (
 
   doc.y += 10;
   const title = `${titleName}`;
-  const dateString = moment().format("DD-MMM-YYYY hh:mm A");
+  // const dateString = moment().format("DD-MMM-YYYY hh:mm A");
   const titleX = 54;
-  const dateX = pageWidth - doc.getTextWidth(dateString) - 34;
+  // const dateX = pageWidth - doc.getTextWidth(dateString) - 34;
 
   // Add title and date below the subheading
   doc.setFontSize(12);
@@ -434,7 +142,7 @@ export const MonitoringDailyReportPdf = (
 
   doc.setFont("normal");
   doc.setFontSize(10);
-  doc.text(dateString, dateX + 30, doc.y);
+  // doc.text(dateString, dateX + 30, doc.y);
 
   // Table for dynamic fields (label-value pairs)
   const tableData = [
@@ -494,69 +202,6 @@ export const MonitoringDailyReportPdf = (
     doc.text(line, 15, currentY + index * lineHeight); // Adjusting the Y position for each line
   });
 
-  // const instructionDataParts = [
-  //   "You are hereby being put to notice that upon inspection on ",
-  //   {
-  //     text: moment(tableObject?.date).format("DD-MMM-YYYY"),
-  //     bold: true,
-  //   },
-  //   " you have been sent ",
-  //   { text: totalCount || "", bold: true },
-  //   " number of SMS alerts on your registered Mobile Number ",
-  //   { text: tableObject?.vendor_phone || "", bold: true },
-  //   " individually for each ",
-  //   {
-  //     text: tableObject?.asset_main_type_id === "2" ? "TAF ID" : "PTC ID",
-  //     bold: true,
-  //   },
-  //   " for the infractions/lacunas/defects discovered with respect to the abovementioned type of toilet and the following deviations have been found overall with respect to the under mentioned work(s):",
-  // ];
-
-  // // Set up the font size and initial position
-  // doc.setFontSize(12);
-  // let currentY = doc.y;
-  // const margin = 15;
-  // let currentX = margin;
-  // const lineHeight = 5;
-
-  // const backgroundHeight = 33;
-  // doc.setFillColor(240, 240, 240);
-  // doc.rect(10, doc.y - 9, pageWidth - 20, backgroundHeight, "F");
-
-  // // Loop through the parts and add them to the document
-  // instructionDataParts?.forEach((part) => {
-  //   // Apply the correct font style (normal or bold)
-  //   if (typeof part === "string") {
-  //     doc.setFont("helvetica", "normal");
-  //     doc.setFont("normal");
-  //   } else if (part.bold) {
-  //     doc.setFont("helvetica", "bold");
-  //     doc.setFont("bold");
-  //   }
-
-  //   const text = typeof part === "string" ? part : part?.text;
-  //   const textArray = doc.splitTextToSize(text, pageWidth - 40); // Adjust the width to fit the page
-
-  //   textArray?.forEach((line, index) => {
-  //     const textWidth = doc.getTextWidth(line);
-
-  //     // Move to the next line if the current line exceeds the page width
-  //     if (currentX + textWidth > pageWidth - margin) {
-  //       currentX = margin;
-  //       currentY += lineHeight;
-  //     }
-
-  //     doc.text(line, currentX, currentY);
-  //     currentX += textWidth;
-
-  //     // Add a line break after each line (except the last line)
-  //     if (index < textArray?.length - 1) {
-  //       currentX = margin;
-  //       currentY += lineHeight;
-  //     }
-  //   });
-  // });
-
   doc.y += 33;
 
   const sectorTableStyles = {
@@ -566,7 +211,6 @@ export const MonitoringDailyReportPdf = (
   doc.autoTable({
     head: [columnNames],
     body: myNewArray,
-    // body: [tableRow],
     startY: doc.y,
     styles: sectorTableStyles,
     didDrawPage: function (data) {
