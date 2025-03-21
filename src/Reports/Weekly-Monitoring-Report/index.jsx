@@ -72,13 +72,24 @@ const WeeklyMonitoringReport = () => {
     const finalData = {
       vendor_id: userRoleId === "8" ? userId : values?.vendor_id,
       asset_type_id: values?.asset_type_id,
-      asset_main_type_id: values?.asset_main_type_id,
+      asset_main_type_id: 1,
     };
-    const name = getValueLabel(values?.vendor_id, VendorCatTypeDrop, "");
-    if (values?.form_date || values?.to_date) {
-      const dayjsObjectFrom = dayjs(values?.form_date?.$d);
-      const dayjsObjectTo = dayjs(values?.to_date?.$d);
+    const dayjsObjectFrom = dayjs(values?.form_date?.$d);
+    const dayjsObjectTo = dayjs(values?.to_date?.$d);
 
+    const vendor_name = getValueLabel(
+      values?.vendor_id,
+      VendorCatTypeDrop,
+      null
+    );
+    const asset_type_id_name = getValueLabel(
+      values?.asset_type_id,
+      AssetTypeDrop,
+      null
+    );
+    const startName = dayjsObjectFrom.format("DD-MMM-YY");
+    const endName = dayjsObjectTo.format("DD-MMM-YY");
+    if (values?.form_date || values?.to_date) {
       // Format the date as 'YYYY-MM-DD'
       const start = dayjsObjectFrom.format("YYYY-MM-DD");
       const end = dayjsObjectTo.format("YYYY-MM-DD");
@@ -86,7 +97,9 @@ const WeeklyMonitoringReport = () => {
       finalData.to_date = values?.to_date ? end : start;
     }
 
-    setFilesName(name);
+    setFilesName(
+      `${vendor_name}-${asset_type_id_name}- Weekly Monitoring Report (${startName} to ${endName})`
+    );
     const url = URLS?.monitoringDailyReport?.path;
     dispatch(getMonitoringDailyReport(url, finalData));
   };
@@ -100,7 +113,7 @@ const WeeklyMonitoringReport = () => {
   };
 
   const disabledDate = (current) => {
-    const maxDate = moment(startDate).clone().add(8, "days");
+    const maxDate = moment(startDate).clone().add(6, "days");
     const minDate = moment(startDate).clone().add(1, "day"); // Set minimum date to one day after startDate
 
     return (
@@ -111,6 +124,7 @@ const WeeklyMonitoringReport = () => {
 
   const setValue = () => {
     form.setFieldValue("date_format", "Today");
+    handleSelect(1);
   };
 
   useEffect(() => {
@@ -118,9 +132,7 @@ const WeeklyMonitoringReport = () => {
       MonitoringDailyReportPdf(
         DailyReport?.data,
         "Weekly Monitoring Report",
-        filesName
-          ? `${filesName}- Weekly Monitoring Report`
-          : "Weekly Monitoring Report",
+        filesName ? `${filesName}` : "Weekly Monitoring Report",
         false,
         false,
         false
@@ -138,8 +150,8 @@ const WeeklyMonitoringReport = () => {
   }, [DailyReport]);
 
   useEffect(() => {
-    const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
-    dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
+    // const assetMainTypeUrl = URLS?.assetMainTypePerPage?.path;
+    // dispatch(getAssetMainTypes(assetMainTypeUrl)); // asset main type
     // userRoleId !== "8" &&
     //   dispatch(
     //     getVendorCategoryTypeDrop({
@@ -172,7 +184,7 @@ const WeeklyMonitoringReport = () => {
                 key="form1"
               >
                 <Row gutter={[16, 16]} align="middle">
-                  <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
+                  {/* <Col key="asset_main_type_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"asset_main_type_id"}
                       label={"Select Category"}
@@ -186,7 +198,7 @@ const WeeklyMonitoringReport = () => {
                         },
                       ]}
                     />
-                  </Col>
+                  </Col> */}
                   <Col key="asset_type_id" xs={24} sm={12} md={6} lg={5}>
                     <CustomSelect
                       name={"asset_type_id"}
@@ -233,7 +245,8 @@ const WeeklyMonitoringReport = () => {
                       onChange={(date) => {
                         const dayjsObjectFrom = dayjs(date?.$d);
                         const startDate = dayjsObjectFrom;
-
+                        const setEndDate = startDate.add(6, "day");
+                        form.setFieldValue("to_date", setEndDate);
                         const dayjsObjectTo = dayjs(
                           form.getFieldValue("to_date")?.$d
                         );
@@ -250,7 +263,7 @@ const WeeklyMonitoringReport = () => {
 
                         // Condition 2: If startDate is more than 7 days before endDate, set end_time to null
                         const daysDifference = endDate.diff(startDate, "days");
-                        if (daysDifference > 7) {
+                        if (daysDifference > 6) {
                           form.setFieldValue("to_date", null);
                         } else {
                           // If the difference is within the allowed range, you can keep the value or process further if needed.
