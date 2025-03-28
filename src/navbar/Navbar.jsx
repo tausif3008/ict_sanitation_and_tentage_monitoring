@@ -257,22 +257,22 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
-        key: "5",
-        label: (
-          <Link className="text-black no-underline" to="/gis-services">
-            GIS Map Registration
-          </Link>
-        ),
-      },
-      {
-        key: "6",
-        label: (
-          <Link className="text-black no-underline" to="/gis-services">
-            SLA Parameters
-          </Link>
-        ),
-      },
+      // {
+      //   key: "5",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/gis-services">
+      //       GIS Map Registration
+      //     </Link>
+      //   ),
+      // },
+      // {
+      //   key: "6",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/gis-services">
+      //       SLA Parameters
+      //     </Link>
+      //   ),
+      // },
       {
         key: "7",
         label: (
@@ -289,14 +289,14 @@ const Navbar = ({ lang, setLang }) => {
           </Link>
         ),
       },
-      {
-        key: "9",
-        label: (
-          <Link className="text-black no-underline" to="/manpower-assignment">
-            Manpower Assignment
-          </Link>
-        ),
-      },
+      // {
+      //   key: "9",
+      //   label: (
+      //     <Link className="text-black no-underline" to="/manpower-assignment">
+      //       Manpower Assignment
+      //     </Link>
+      //   ),
+      // },
       {
         key: "10",
         label: (
